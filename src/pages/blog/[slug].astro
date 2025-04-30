@@ -1,0 +1,15 @@
+---
+import { getEntry, render } from "astro:content";
+import Root from "../../layouts/Root.astro";
+
+const post = await getEntry("blog", "test");
+const { Content } = await render(post!);
+---
+
+<Root title={post?.data.title}>
+  <div class="prose dark:prose-invert">
+    <h1>{post?.data.title}</h1>
+    <p>{post?.data.description}</p>
+    <Content />
+  </div>
+</Root>

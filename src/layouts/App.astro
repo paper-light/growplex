@@ -1,0 +1,7 @@
+---
+import AppGlobalState from "../app/App.svelte";
+---
+
+<AppGlobalState client:only transition:persist name="app" />
+
+<slot />

@@ -1,0 +1,35 @@
+{
+  "name": "growplex",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.5",
+    "@astrojs/node": "^9.2.1",
+    "@astrojs/sitemap": "^3.3.1",
+    "@astrojs/svelte": "^7.0.11",
+    "@langchain/core": "^0.3.49",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.1.4",
+    "@types/express": "^5.0.1",
+    "@vite-pwa/astro": "^1.0.1",
+    "astro": "^5.7.5",
+    "chart.js": "^4.4.9",
+    "daisyui": "^5.0.28",
+    "express": "^5.1.0",
+    "langchain": "^0.3.24",
+    "pocketbase": "^0.26.0",
+    "svelte": "^5.28.2",
+    "tailwindcss": "^4.1.4",
+    "theme-change": "^2.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "zod": "^3.24.3"
+  }
+}

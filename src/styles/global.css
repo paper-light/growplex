@@ -1,0 +1,9 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@plugin "daisyui" {
+  themes: all;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

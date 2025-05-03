@@ -1,0 +1,80 @@
+---
+import { getCollection } from "astro:content";
+import Root from "../../layouts/Root.astro";
+import General from "../../layouts/General.astro";
+import Card from "../../components/Card.astro";
+
+const searchParams = new URLSearchParams(Astro.request.url.split("?")[1]);
+const category = searchParams.get("category");
+
+const blog = await getCollection("blog");
+const categories = [...new Set(blog.map((post) => post.data.category))];
+
+const filteredBlog = category
+  ? blog.filter((post) => post.data.category === category)
+  : blog;
+---
+
+<Root title="Growplex Blog">
+  <General active="blog">
+    <section class="mb-8">
+      <h3 class="text-lg font-semibold m-1">Filters</h3>
+      <div class="flex flex-wrap gap-2">
+        <a href="/blog" class:list={["badge", category || "badge-secondary"]}>
+          #All
+        </a>
+        {
+          categories.map((cat) => (
+            <a
+              href={`?category=${encodeURIComponent(cat)}`}
+              class:list={["badge", category === cat && "badge-secondary"]}
+            >
+              #{cat}
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section
+      class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center py-12 px-8 bg-base-200 rounded-xl shadow-sm mb-10"
+    >
+      <div>
+        <h1 class="text-4xl font-bold mb-4">Growplex Blog</h1>
+        <p class="text-base-content/70 max-w-md mb-6">
+          Insights, strategies, and tools for creators, founders, and indie
+          hackers building in the AI-powered digital world.
+        </p>
+        <a href="/blog/search" class="btn btn-primary hidden">
+          Search Articles
+        </a>
+      </div>
+
+      <a href={`/blog/${blog[0].id}`} class="block mx-auto">
+        <Card
+          title={blog[0].data.title}
+          description={blog[0].data.description}
+          detail={blog[0].data.pubDate}
+          image={blog[0].data.image}
+        />
+      </a>
+    </section>
+
+    <section
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-4 px-2"
+    >
+      {
+        filteredBlog.map((post) => (
+          <a href={`/blog/${post.id}`} class="block mx-auto">
+            <Card
+              title={post.data.title}
+              description={post.data.description}
+              detail={post.data.pubDate}
+              image={post.data.image}
+            />
+          </a>
+        ))
+      }
+    </section>
+  </General>
+</Root>

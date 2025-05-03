@@ -1,0 +1,25 @@
+---
+
+---
+
+<script is:inline>
+  if (localStorage.getItem("theme") === null) {
+    document.documentElement.setAttribute("data-theme", "light");
+    localStorage.setItem("theme", "light");
+  } else {
+    document.documentElement.setAttribute(
+      "data-theme",
+      localStorage.getItem("theme")
+    );
+  }
+
+  document.addEventListener("astro:before-swap", (e) => {
+    const theme = localStorage.getItem("theme") ?? "light";
+    e.newDocument.documentElement.setAttribute("data-theme", theme);
+  });
+</script>
+
+<script>
+  import { themeChange } from "theme-change";
+  themeChange(false);
+</script>

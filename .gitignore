@@ -28,3 +28,5 @@ pnpm-debug.log*
 data/**/*.mp3
 **/cookies.txt
 **/__pycache__
+
+pb/pb_data

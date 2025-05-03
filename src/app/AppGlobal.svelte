@@ -12,7 +12,3 @@
     };
   });
 </script>
-
-<h1>APP ROOT</h1>
-
-{JSON.stringify(user)}

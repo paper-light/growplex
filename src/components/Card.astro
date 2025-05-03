@@ -1,0 +1,28 @@
+---
+import { Image } from "astro:assets";
+const { title, description, detail, image } = Astro.props;
+---
+
+<div
+  class="card border border-base-300 bg-base-100 max-w-lg shadow-sm hover:shadow-md transition rounded-xl overflow-hidden"
+>
+  <Image
+    src={image}
+    alt={title}
+    class="w-full h-64 object-cover rounded-xl mb-4"
+    loading="lazy"
+    layout="responsive"
+    width={400}
+    height={300}
+  />
+  <div class="card-body">
+    <h4 class="card-title">{title}</h4>
+    <p>
+      {description}
+    </p>
+
+    <p class="text-sm text-base-content/80 mb-2">{detail}</p>
+
+    <slot name="action" />
+  </div>
+</div>

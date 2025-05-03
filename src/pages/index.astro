@@ -1,7 +1,62 @@
 ---
 import Root from "../layouts/Root.astro";
+import General from "../layouts/General.astro";
 ---
 
 <Root>
-  <h1>ROOT</h1>
+  <General active="home">
+    <div class="max-w-5xl mx-auto px-4 py-24 space-y-24">
+      <!-- Hero Section -->
+      <section class="text-center space-y-6">
+        <h1 class="text-5xl font-bold leading-tight">
+          Build Faster with AI<br />
+          Launch Bold Ideas
+        </h1>
+        <p class="text-lg max-w-xl mx-auto">
+          Growplex helps makers, founders, and indie hackers build, test, and
+          launch AI-powered products in days.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+          <a href="/products/agency" class="btn btn-primary text-lg px-8"
+            >Hire Our Team</a
+          >
+          <a href="/app" class="btn btn-secondary text-lg px-8"
+            >Use Our Platform</a
+          >
+        </div>
+      </section>
+
+      <!-- Value Propositions -->
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div class="card bg-base-100 shadow-md p-6">
+          <h3 class="text-xl font-semibold mb-2">Launch in Days</h3>
+          <p class="text-sm">
+            Our MVP templates and team help you go from idea to live product
+            fast.
+          </p>
+        </div>
+        <div class="card bg-base-100 shadow-md p-6">
+          <h3 class="text-xl font-semibold mb-2">AI-Native by Design</h3>
+          <p class="text-sm">
+            We bake LLMs, automation and content generation into your product
+            core.
+          </p>
+        </div>
+        <div class="card bg-base-100 shadow-md p-6">
+          <h3 class="text-xl font-semibold mb-2">Flexible Format</h3>
+          <p class="text-sm">
+            Web, Telegram, Chrome Extension, Iframe, or PWA — your product lives
+            where users are.
+          </p>
+        </div>
+      </section>
+
+      <!-- CTA / Footer -->
+      <section class="text-center">
+        <p class="text-sm mb-4">Want to know more about us?</p>
+        <a href="/about" class="btn btn-outline">Learn More About Growplex</a>
+      </section>
+    </div>
+  </General>
 </Root>

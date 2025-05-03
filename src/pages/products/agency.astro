@@ -1,0 +1,77 @@
+---
+import Root from "../../layouts/Root.astro";
+import General from "../../layouts/General.astro";
+---
+
+<Root>
+  <General active="agency">
+    <div class="max-w-6xl mx-auto px-4 py-24 space-y-24">
+      <!-- Hero -->
+      <section class="text-center space-y-6">
+        <h1 class="text-4xl font-bold">Growplex Agency</h1>
+        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+          We turn ideas into AI-powered MVPs — fast. From zero to launch with
+          our battle-tested Astro template and full-stack expertise.
+        </p>
+        <a href="/contact" class="btn btn-primary mt-6">Start Your Project</a>
+      </section>
+
+      <!-- Use Cases -->
+      <section class="space-y-8">
+        <h2 class="text-2xl font-semibold text-center">What We Build</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="card bg-base-100 shadow-md p-6">
+            <h3 class="text-lg font-bold mb-2">AI Agents</h3>
+            <p class="text-sm text-gray-500">
+              Deploy custom GPT-powered agents with a UI, Telegram interface,
+              and browser extension support.
+            </p>
+          </div>
+          <div class="card bg-base-100 shadow-md p-6">
+            <h3 class="text-lg font-bold mb-2">Content Platforms</h3>
+            <p class="text-sm text-gray-500">
+              SEO-optimized Astro content sites with blog, video generation, and
+              lead capture tools.
+            </p>
+          </div>
+          <div class="card bg-base-100 shadow-md p-6">
+            <h3 class="text-lg font-bold mb-2">Internal Tools</h3>
+            <p class="text-sm text-gray-500">
+              CRMs, dashboards, research apps and MVP backoffices — custom-built
+              for your workflows.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How We Work -->
+      <section class="text-center space-y-6">
+        <h2 class="text-2xl font-semibold">How We Work</h2>
+        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+          Our stack is ready. We don’t waste time on boilerplate. You get your
+          product in a week — launch-ready, extensible, and beautiful.
+        </p>
+        <ul
+          class="steps steps-vertical lg:steps-horizontal justify-center mt-6 text-left text-sm"
+        >
+          <li class="step step-primary">Idea</li>
+          <li class="step step-primary">Scoping & Planning</li>
+          <li class="step step-primary">Build</li>
+          <li class="step step-primary">Launch</li>
+        </ul>
+      </section>
+
+      <!-- Portfolio -->
+      <section class="space-y-8">
+        <h2 class="text-2xl font-semibold text-center">Portfolio</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <a
+            href="https://inboxai.5dgo.com"
+            class="card bg-base-100 shadow-md hover:shadow-lg transition"
+          >
+          </a>
+        </div>
+      </section>
+    </div></General
+  ></Root
+>

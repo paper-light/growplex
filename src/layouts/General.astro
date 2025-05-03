@@ -1,0 +1,20 @@
+---
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+const { active } = Astro.props;
+---
+
+<Header active={active} />
+
+<main class="mt-4 px-2 mx-auto max-w-screen-xl">
+  <slot />
+</main>
+
+<iframe
+  id="chat-widget"
+  allowtransparency="true"
+  src="http://localhost:4321/app/widgets/chat/w3981q79i86f9p4LOL"
+  class="fixed bottom-5 right-5 w-80 h-96 border-none rounded-lg z-10"></iframe>
+
+<Footer />

@@ -28,6 +28,8 @@ class AuthProvider {
       return;
     }
 
+    await this.refreshUser();
+
     await this.pb.collection("users").subscribe(this.user.id, async (e) => {
       switch (e.action) {
         case "update": {

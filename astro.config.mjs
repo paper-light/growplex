@@ -25,7 +25,10 @@ export default defineConfig({
         context: "client",
         access: "public",
       }),
-
+      PUBLIC_CHAT_DOMAIN: envField.string({
+        context: "client",
+        access: "public",
+      }),
       PB_ID: envField.string({ context: "server", access: "secret" }),
       PB_PASSWORD: envField.string({ context: "server", access: "secret" }),
 

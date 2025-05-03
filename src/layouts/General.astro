@@ -1,6 +1,7 @@
 ---
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import { PUBLIC_CHAT_DOMAIN } from "astro:env/client";
 
 const { active } = Astro.props;
 ---
@@ -14,7 +15,7 @@ const { active } = Astro.props;
 <iframe
   id="chat-widget"
   allowtransparency="true"
-  src="http://localhost:4321/app/widgets/chat/w3981q79i86f9p4LOL"
+  src={`${PUBLIC_CHAT_DOMAIN}/app/embed/chat/w3981q79i86f9p4`}
   class="fixed bottom-5 right-5 w-80 h-96 border-none rounded-lg z-10"></iframe>
 
 <Footer />

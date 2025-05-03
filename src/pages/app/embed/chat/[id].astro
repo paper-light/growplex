@@ -1,0 +1,21 @@
+---
+import Root from "../../../../layouts/Root.astro";
+import Chat from "../../../../components/embed/Chat.svelte";
+import { pbReady } from "../../../../../server/pb";
+import { ChatSchema } from "../../../../models/chat";
+
+const { id } = Astro.params;
+const pb = await pbReady;
+const chat = ChatSchema.parse(await pb.collection("chats").getOne(id!));
+---
+
+<Root>
+  <Chat chat={chat} client:only />
+</Root>
+
+<style>
+  html,
+  body {
+    background-color: transparent;
+  }
+</style>

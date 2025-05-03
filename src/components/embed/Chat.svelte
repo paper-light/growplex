@@ -1,5 +1,13 @@
 <script lang="ts">
+  import { z } from "zod";
+  import type { ChatSchema } from "@/models/chat";
   import { onMount } from "svelte";
+
+  interface Props {
+    chat: z.infer<typeof ChatSchema>;
+  }
+
+  const { chat }: Props = $props();
 
   let selectedDark = $state(false);
   let open = $state(false);
@@ -10,8 +18,8 @@
       : (selectedDark = false);
 
     window.addEventListener("message", (event) => {
-      // проверяем, что сообщение с того же origin, что и ваш сервер
-      if (event.origin !== "http://localhost:4321") return;
+      console.log(event.origin, chat.domain);
+      if (event.origin !== chat.domain) return;
       const { type, theme } = event.data || {};
       if (type === "theme-change") {
         selectedDark = theme === "dark";

@@ -18,13 +18,11 @@
       : (selectedDark = false);
 
     window.addEventListener("message", (event) => {
-      console.log(event.origin, chat.domain);
       if (event.origin !== chat.domain) return;
       const { type, theme } = event.data || {};
       if (type === "theme-change") {
         selectedDark = theme === "dark";
         document.documentElement.setAttribute("data-theme", theme);
-        localStorage.setItem("theme", theme);
       }
     });
   });

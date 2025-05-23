@@ -1,6 +1,7 @@
 ---
-import { House, ArrowBigLeft } from "@lucide/astro";
+import { House, ArrowBigLeft, ChevronDown } from "@lucide/astro";
 import AppGlobalState from "../app/AppGlobal.svelte";
+import ThemeController from "../components/ThemeController.svelte";
 
 const { pageName } = Astro.props;
 ---
@@ -41,8 +42,35 @@ const { pageName } = Astro.props;
         <span class="text-lg font-semibold">{pageName}</span>
       </div>
 
-      lol
-      <!-- <UserMenu /> -->
+      <div class="flex items-center gap-4">
+        <ThemeController client:only />
+        <div class="dropdown dropdown-bottom dropdown-end hover:cursor-pointer">
+          <div tabindex="0" role="button">
+            <div class="flex items-center">
+              <div class="avatar">
+                <div class="w-10 rounded-full">
+                  <!-- <img
+                    src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
+                  /> -->
+                </div>
+              </div>
+              <ChevronDown size={32} />
+            </div>
+          </div>
+
+          <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          >
+            <li><a>Item 1</a></li>
+            <li><a>Item 2</a></li>
+            <li><a>Item 3</a></li>
+            <li><a>Item 4</a></li>
+            <li><a>Item 5</a></li>
+            <li><a>Item 6</a></li>
+          </ul>
+        </div>
+      </div>
     </header>
 
     <header

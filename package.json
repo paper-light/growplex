@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "start": "tsx server/server.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

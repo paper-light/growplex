@@ -13,7 +13,7 @@ import node from "@astrojs/node";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://growplex.xyz",
+  site: "https://growplex.dev",
   env: {
     schema: {
       PUBLIC_PB_URL: envField.string({ context: "client", access: "public" }),

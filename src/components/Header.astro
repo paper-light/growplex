@@ -7,7 +7,10 @@ const { active } = Astro.props;
 <header
   class="max-w-screen-xl flex justify-between items-center border-b border-base-300 px-4 py-2 mx-auto rounded-2xl shadow sticky top-1 bg-base-100 z-10"
 >
-  <a href="/" class="inline-block text-xl font-bold">Growplex</a>
+  <a href="/" class="inline-block text-xl font-bold relative"
+    >Growplex <span class="absolute -top-2 -right-18 text-xs">by Gold Swan</span
+    ></a
+  >
 
   <!-- Desktop -->
   <nav class="gap-5 hidden md:flex">
@@ -19,11 +22,11 @@ const { active } = Astro.props;
       class={`link link-hover ${active === "blog" && "font-bold"}`}>Blog</a
     >
     <a
-      href="/products/agency"
-      class={`link link-hover ${active === "agency" && "font-bold"}`}>Agency</a
+      href="/products/forge"
+      class={`link link-hover ${active === "forge" && "font-bold"}`}>Forge</a
     >
     <a
-      href="/app"
+      href="/products/platform"
       class={`link link-hover ${active === "platform" && "font-bold"}`}
       >Platform</a
     >
@@ -34,7 +37,7 @@ const { active } = Astro.props;
 
     <slot name="CTA">
       <a
-        href="https://t.me/me4dgo_o"
+        href="https://t.me/growplex"
         target="_blank"
         class="btn btn-sm btn-primary rounded-xl">Contact</a
       >

@@ -12,7 +12,6 @@
   onMount(() => {
     window.addEventListener("message", (event) => {
       if (event.origin !== chat.domain) return;
-      console.log(event.data);
       const { type, newTheme } = event.data || {};
       if (type === "theme-change") {
         document.documentElement.setAttribute("data-theme", newTheme);

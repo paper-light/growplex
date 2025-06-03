@@ -37,6 +37,8 @@
     "postcss": "^8.5.3",
     "postcss-cli": "^11.0.1",
     "sharp": "^0.34.2",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "svelte": "^5.28.2",
     "tailwindcss": "^4.1.4",
     "theme-change": "^2.5.0",

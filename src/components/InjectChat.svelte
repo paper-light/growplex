@@ -1,18 +1,19 @@
 <script lang="ts">
   import { X, MessageCircle } from "@lucide/svelte";
   import { PUBLIC_CHAT_DOMAIN } from "astro:env/client";
+  import { fly } from "svelte/transition";
 
   let open = $state(false);
 </script>
 
 <div class="fixed bottom-0 right-0 flex flex-col z-10">
   <div
-    class="bg-base-100 mb-2 md:mr-14"
+    class="bg-base-100 mb-2 md:mr-18"
     id="chat-container"
     class:hidden={!open}
   >
     <iframe
-      class="w-screen h-[500px] md:w-[400px] md:h-[580px] rounded-lg shadow-lg border border-secondary"
+      class="w-screen h-[500px] md:w-[448px] md:h-[580px] rounded-lg shadow-lg border border-secondary"
       title="chat"
       id="chat-iframe"
       allowtransparency={true}

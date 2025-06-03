@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import Logo from "../assets/LOGO.png";
 import ThemeController from "../components/ThemeController.svelte";
 
 const { active } = Astro.props;
@@ -7,10 +9,17 @@ const { active } = Astro.props;
 <header
   class="max-w-screen-xl flex justify-between items-center border-b border-base-300 px-4 py-2 mx-auto rounded-2xl shadow sticky top-1 bg-base-100 z-10"
 >
-  <a href="/" class="inline-block text-xl font-bold relative"
-    >Growplex <span class="absolute -top-2 -right-18 text-xs">by Gold Swan</span
-    ></a
-  >
+  <a href="/" class="inline-flex text-xl font-bold relative items-center gap-2">
+    <Image
+      src={Logo}
+      alt="logo"
+      class="rounded-2xl"
+      width={40}
+      loading="lazy"
+    />
+    <span>Growplex</span>
+    <span class="absolute top-1 -right-18 text-xs">by Gold Swan</span>
+  </a>
 
   <!-- Desktop -->
   <nav class="gap-5 hidden md:flex">

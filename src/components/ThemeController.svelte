@@ -22,7 +22,7 @@
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
 
-    const iframe = document.getElementById("chat-widget") as HTMLIFrameElement;
+    const iframe = document.getElementById("chat-iframe") as HTMLIFrameElement;
 
     iframe?.contentWindow!.postMessage(
       { type: "theme-change", newTheme },

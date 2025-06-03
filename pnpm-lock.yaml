@@ -29,6 +29,9 @@ importers:
       '@lucide/astro':
         specifier: ^0.507.0
         version: 0.507.0(astro@5.8.1(@types/node@18.19.87)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@2.79.2)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1))
+      '@lucide/svelte':
+        specifier: ^0.511.0
+        version: 0.511.0(svelte@5.28.2)
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.10(tailwindcss@4.1.4)
@@ -968,6 +971,11 @@ packages:
     resolution: {integrity: sha512-rHE8pxuBHacbTo84zjJX1SIrBI7PdDz87i0AuZCFfP3I9c3jP5h2zLDoweFxzKdoESvRXnQ4dYr863PW/o0C3w==}
     peerDependencies:
       astro: ^4 || ^5
+
+  '@lucide/svelte@0.511.0':
+    resolution: {integrity: sha512-aLCSPMUJmHlCuLXzXENXa4Z1NV2mN1iAZAFKk4bEbey+/MdsNlu+/DqwVkgW3Yvj6p8y8Vn5xZ2v9CLmPlA6Vw==}
+    peerDependencies:
+      svelte: ^5
 
   '@mdx-js/mdx@3.1.0':
     resolution: {integrity: sha512-/QxEhPAvGwbQmy1Px8F899L5Uc2KZ6JtXwlCgJmjSTBedwOZkByYcBG4GceIGPXRDsmfxhHazuS+hlOShRLeDw==}
@@ -5279,6 +5287,10 @@ snapshots:
   '@lucide/astro@0.507.0(astro@5.8.1(@types/node@18.19.87)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@2.79.2)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1))':
     dependencies:
       astro: 5.8.1(@types/node@18.19.87)(jiti@2.4.2)(lightningcss@1.29.2)(rollup@2.79.2)(terser@5.39.0)(tsx@4.19.4)(typescript@5.8.3)(yaml@2.7.1)
+
+  '@lucide/svelte@0.511.0(svelte@5.28.2)':
+    dependencies:
+      svelte: 5.28.2
 
   '@mdx-js/mdx@3.1.0(acorn@8.14.1)':
     dependencies:

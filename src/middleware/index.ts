@@ -7,7 +7,6 @@ const PB_PASSWORD = getEnv("PB_PASSWORD");
 
 export const onRequest = defineMiddleware(async (context, next) => {
   try {
-    console.log("HELLO")
     if (!pb.authStore.isValid || !pb.authStore.isSuperuser) {
       const authData = await pb
         .collection("_superusers")

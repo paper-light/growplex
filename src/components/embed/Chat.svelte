@@ -9,19 +9,13 @@
 
   const { chat }: Props = $props();
 
-  let selectedDark = $state(false);
-
   onMount(() => {
-    localStorage.getItem("theme") === "dark"
-      ? (selectedDark = true)
-      : (selectedDark = false);
-
     window.addEventListener("message", (event) => {
       if (event.origin !== chat.domain) return;
-      const { type, theme } = event.data || {};
+      console.log(event.data);
+      const { type, newTheme } = event.data || {};
       if (type === "theme-change") {
-        selectedDark = theme === "dark";
-        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-theme", newTheme);
       }
     });
   });

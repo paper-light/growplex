@@ -1,7 +1,6 @@
 <script lang="ts">
   import { X, MessageCircle } from "@lucide/svelte";
   import { PUBLIC_CHAT_DOMAIN } from "astro:env/client";
-  import { fly } from "svelte/transition";
 
   let open = $state(false);
 </script>
@@ -13,11 +12,11 @@
     class:hidden={!open}
   >
     <iframe
-      class="w-screen h-[500px] md:w-[448px] md:h-[580px] rounded-lg shadow-lg border border-secondary"
+      class="w-screen h-[520px] md:w-[448px] md:h-[640px] rounded-lg shadow-lg border border-secondary"
       title="chat"
       id="chat-iframe"
       allowtransparency={true}
-      src={`${PUBLIC_CHAT_DOMAIN}/app/embed/chat/w3981q79i86f9p4`}
+      src={`${PUBLIC_CHAT_DOMAIN}/embed/chat/w3981q79i86f9p4`}
     ></iframe>
   </div>
 

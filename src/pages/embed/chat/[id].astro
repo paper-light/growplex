@@ -1,8 +1,8 @@
 ---
-import Root from "../../../../layouts/Root.astro";
-import Chat from "../../../../components/embed/Chat.svelte";
-import { pb } from "../../../../server/config/pb";
-import { ChatSchema } from "../../../../models/chat";
+import Root from "../../../layouts/Root.astro";
+import Chat from "../../../components/embed/Chat.svelte";
+import { pb } from "../../../server/config/pb";
+import { ChatSchema } from "../../../models/chat";
 
 const { id } = Astro.params;
 const chat = ChatSchema.parse(await pb.collection("chats").getOne(id!));

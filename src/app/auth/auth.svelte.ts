@@ -2,7 +2,7 @@ import { z } from "zod";
 import { PUBLIC_PB_URL } from "astro:env/client";
 import PocketBase, { AsyncAuthStore } from "pocketbase";
 
-import { UserSchema } from "./models";
+import { UserSchema } from "../../models";
 
 const store = new AsyncAuthStore({
   save: async (serialized: string) => {

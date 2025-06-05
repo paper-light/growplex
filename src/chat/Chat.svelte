@@ -1,26 +1,23 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
+  import { onMount, tick } from "svelte";
+  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { z } from "zod";
   import { DateTime } from "luxon";
 
   import type { ChatSchema } from "@/models/chat";
-  import { onMount, tick } from "svelte";
-  import Message from "../Message.svelte";
-  import { fade } from "svelte/transition";
+  import ChatMessage from "../components/Message.svelte";
+
+  import type { Message } from "./types";
+  import { injectTheme } from "./injectTheme";
 
   interface Props {
     chat: z.infer<typeof ChatSchema>;
   }
 
-  interface IMessage {
-    content: string;
-    incoming?: boolean;
-    name?: string;
-    timestamp?: DateTime;
-    status?: string;
-    avatarUrl?: string;
-  }
-
   const { chat }: Props = $props();
+
+  let canSend = $state(true);
 
   let messageContainer: HTMLElement | null = $state(null);
 
@@ -28,7 +25,7 @@
 
   let inputText = $state("");
 
-  let messages: IMessage[] = $state([
+  let messages: Message[] = $state([
     {
       content:
         "Yeah, I will provide info! Yeah, I will provide info! Yeah, I will provide info!",
@@ -80,20 +77,35 @@
   ]);
 
   onMount(() => {
+    const theme = document.documentElement.getAttribute("data-theme");
+    injectTheme(chat.theme[theme]);
+
     window.addEventListener("message", (event) => {
       if (event.origin !== chat.domain) return;
       const { type, newTheme } = event.data || {};
       if (type === "theme-change") {
         document.documentElement.setAttribute("data-theme", newTheme);
+        injectTheme(chat.theme[newTheme]);
       }
     });
   });
 
-  async function catchNewMessage(m: IMessage) {
+  $effect(() => {
+    if (messageContainer) scrollToBottom();
+  });
+
+  async function catchNewMessage(m: Message) {
+    if (!canSend) return;
+    canSend = false;
+
     inputText = "";
     messages.push(m);
     await tick();
     scrollToBottom();
+
+    setTimeout(() => {
+      canSend = true;
+    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
   }
 
   function scrollToBottom() {
@@ -150,9 +162,9 @@
     class="flex-1 overflow-y-auto space-y-2 p-2 overscroll-contain"
   >
     {#each messages as message, index (index)}
-      <Message {...message}>
+      <ChatMessage {...message}>
         {message.content}
-      </Message>
+      </ChatMessage>
     {/each}
   </main>
 
@@ -201,6 +213,7 @@
         class="input input-bordered flex-1"
       />
       <button
+        disabled={!canSend || inputText.length === 0}
         onclick={() =>
           catchNewMessage({
             content: inputText,

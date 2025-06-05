@@ -16,6 +16,10 @@ export default defineConfig({
   site: "https://growplex.dev",
   env: {
     schema: {
+      PUBLIC_MESSAGE_DELAY_SEC: envField.number({
+        context: "client",
+        access: "public",
+      }),
       PUBLIC_PB_URL: envField.string({ context: "client", access: "public" }),
       PUBLIC_POSTHOG_HOST: envField.string({
         context: "client",

@@ -1,8 +1,9 @@
 ---
 import Root from "../../../layouts/Root.astro";
-import Chat from "../../../components/embed/Chat.svelte";
 import { pb } from "../../../server/config/pb";
 import { ChatSchema } from "../../../models/chat";
+
+import Chat from "../../../chat/Chat.svelte";
 
 const { id } = Astro.params;
 const chat = ChatSchema.parse(await pb.collection("chats").getOne(id!));
@@ -11,6 +12,16 @@ const chat = ChatSchema.parse(await pb.collection("chats").getOne(id!));
 <Root>
   <Chat chat={chat} client:only />
 </Root>
+
+<!-- <script is:inline data-chat={JSON.stringify(chat)}>
+  const chat = JSON.parse(document.currentScript.dataset.chat);
+  const theme = document.documentElement.getAttribute("data-theme");
+  const properties = chat.theme[theme];
+  Object.entries(properties).forEach(([key, value]) => {
+    console.log(key, value);
+    document.documentElement.style.setProperty(key, value);
+  });
+</script> -->
 
 <style>
   html,

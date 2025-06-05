@@ -1,0 +1,5 @@
+services:
+  redis:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    ports:
+      - "6379:6379"

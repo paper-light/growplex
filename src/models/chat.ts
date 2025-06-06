@@ -10,3 +10,18 @@ export const ChatSchema = z.object({
   domain: z.string(),
   theme: ChatThemeSchema,
 });
+
+export const ChatMessageSchema = z.object({
+  id: z.string(),
+  content: z.string(),
+  metadata: z.any(),
+  role: z.union([
+    z.literal("assistant"),
+    z.literal("user"),
+    z.literal("operator"),
+  ]),
+  visible: z.boolean(),
+  room: z.string(),
+  sentBy: z.string(),
+  created: z.string(),
+});

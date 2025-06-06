@@ -1,32 +1,36 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
   import { DateTime } from "luxon";
+  import { z } from "zod";
+  import type { ChatMessageSchema } from "@/models/chat";
+  import { Bot, ChefHat, Smile } from "@lucide/svelte";
 
   interface Props {
-    children: Snippet;
-    incoming?: boolean;
-    name?: string;
-    timestamp?: DateTime;
-    status?: string;
-    avatarUrl?: string;
+    msg: z.infer<typeof ChatMessageSchema>;
   }
 
-  const {
-    incoming = false,
-    name = incoming ? "Assistant" : "You",
-    timestamp,
-    status = "",
-    avatarUrl = "https://i.pravatar.cc/40?img=5",
-    children,
-  }: Props = $props();
+  const { msg }: Props = $props();
 
+  // TIME
+  const timestamp = DateTime.fromFormat(
+    msg.created,
+    "yyyy-MM-dd HH:mm:ss.SSS'Z'",
+    { zone: "utc" }
+  );
   const formattedTime = timestamp ? timestamp.toFormat("h:mm a") : "";
+
+  const incoming = $derived(msg.role !== "user");
 </script>
 
 <div class={["chat", incoming ? "chat-start" : "chat-end"]}>
   <div class="chat-image avatar">
     <div class="w-10 rounded-full">
-      <img alt="avatar" src={avatarUrl} />
+      {#if msg.role === "assistant"}
+        <Bot />
+      {:else if msg.role === "operator"}
+        <ChefHat />
+      {:else}
+        <Smile />
+      {/if}
     </div>
   </div>
 
@@ -35,7 +39,7 @@
       <span
         class={["text-sm font-semibold", incoming ? "text-base-content" : ""]}
       >
-        {name}
+        {msg.sentBy}
       </span>
       {#if formattedTime}
         <time class="text-xs opacity-50">{formattedTime}</time>
@@ -48,10 +52,10 @@
         incoming ? "chat-bubble-base-200" : "chat-bubble-primary",
       ]}
     >
-      {@render children()}
+      {msg.content}
     </div>
 
-    {#if status}
+    <!-- {#if status}
       <div
         class={[
           "chat-footer opacity-50",
@@ -60,6 +64,6 @@
       >
         {status}
       </div>
-    {/if}
+    {/if} -->
   </div>
 </div>

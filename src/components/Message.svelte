@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { marked } from "marked";
+  import DOMPurify from "dompurify";
   import { DateTime } from "luxon";
   import { z } from "zod";
   import type { ChatMessageSchema } from "@/models/chat";
@@ -11,14 +13,18 @@
   const { msg }: Props = $props();
 
   // TIME
-  const timestamp = DateTime.fromFormat(
-    msg.created,
-    "yyyy-MM-dd HH:mm:ss.SSS'Z'",
-    { zone: "utc" }
-  );
-  const formattedTime = timestamp ? timestamp.toFormat("h:mm a") : "";
+  const utcTs = DateTime.fromFormat(msg.created, "yyyy-MM-dd HH:mm:ss.SSS'Z'", {
+    zone: "utc",
+  });
+
+  const localTs = utcTs.isValid ? utcTs.toLocal() : utcTs;
+
+  const formattedTime = localTs.isValid ? localTs.toFormat("h:mm a") : "";
 
   const incoming = $derived(msg.role !== "user");
+
+  const rawHtml = marked.parse(msg.content);
+  const safeHtml = DOMPurify.sanitize(rawHtml as string);
 </script>
 
 <div class={["chat", incoming ? "chat-start" : "chat-end"]}>
@@ -48,11 +54,11 @@
 
     <div
       class={[
-        "chat-bubble max-w-[60vw]",
+        "prose chat-bubble max-w-[60vw]",
         incoming ? "chat-bubble-base-200" : "chat-bubble-primary",
       ]}
     >
-      {msg.content}
+      {@html safeHtml}
     </div>
 
     <!-- {#if status}

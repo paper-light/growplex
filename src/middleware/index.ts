@@ -1,6 +1,6 @@
 import { defineMiddleware } from "astro:middleware";
-import { pb } from "../server/config/pb";
 import { getEnv } from "../helpers/get-env";
+import { pb } from "../lib/config/pb";
 
 const PB_ID = getEnv("PB_ID");
 const PB_PASSWORD = getEnv("PB_PASSWORD");

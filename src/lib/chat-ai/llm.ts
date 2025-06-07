@@ -1,5 +1,9 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import * as hub from "langchain/hub/node";
 
-export const llm = new ChatGoogleGenerativeAI({
-  model: "gemini-2.0-flash",
+import { getEnv } from "../../helpers/get-env";
+
+const ENV = getEnv("ENV");
+
+export const chain = await hub.pull(`chat-system:${ENV}`, {
+  includeModel: true,
 });

@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-import { ChatMessageSchema } from "@/models/chat";
+import { ChatMessageSchema } from "../../models/chat";
 
+import { getEnv } from "../../helpers/get-env";
 import { pb } from "../config/pb";
 import { redisClient } from "../config/redis";
 
-export const REDIS_PREFIX = "history:";
-export const HISTORY_LENGTH = 100;
+const REDIS_PREFIX = getEnv("CHAT_REDIS_PREFIX");
+const HISTORY_LENGTH = parseInt(getEnv("CHAT_HISTORY_LENGTH"));
 
 export async function getHistory(
   roomId: string
@@ -47,19 +48,17 @@ export async function updateHistory(
   pipeline.ltrim(redisKey, -HISTORY_LENGTH, -1);
   await pipeline.exec();
 
-  const createPromises = msgs.map((msg) =>
-    pb
-      .collection("messages")
-      .create({
+  for (const msg of msgs) {
+    try {
+      await pb.collection("messages").create({
         sentBy: msg.sentBy,
         visible: msg.visible,
         role: msg.role,
         content: msg.content,
         room: msg.room,
-      })
-      .catch((pbError) => {
-        console.warn("⚠️ Failed to save message to PB:", pbError);
-      })
-  );
-  await Promise.all(createPromises);
+      });
+    } catch (pbError) {
+      console.warn("⚠️ Failed to save message to PB:", pbError);
+    }
+  }
 }

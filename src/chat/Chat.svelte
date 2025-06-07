@@ -107,7 +107,7 @@
     canSend = false;
 
     const newMsg: z.infer<typeof ChatMessageSchema> = {
-      id: nanoid(8),
+      id: `temp-${nanoid(12)}`,
       content: inputText.trim(),
       role: "user",
       visible: true,
@@ -117,15 +117,16 @@
     };
 
     inputText = "";
-
     messages.push(newMsg);
-    await tick();
-    scrollToBottom();
 
     socket?.emit("send-message", {
+      chatId: chat.id,
       roomId,
       msgStr: JSON.stringify(newMsg),
     });
+
+    await tick();
+    scrollToBottom();
 
     setTimeout(() => {
       canSend = true;

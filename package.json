@@ -37,6 +37,7 @@
     "juice": "^11.0.1",
     "langchain": "^0.3.27",
     "langfuse-langchain": "^3.37.4",
+    "langsmith": "^0.3.30",
     "luxon": "^3.6.1",
     "marked": "^15.0.12",
     "nanoid": "^5.1.5",
@@ -51,6 +52,7 @@
     "svelte": "^5.33.14",
     "tailwindcss": "^4.1.8",
     "theme-change": "^2.5.0",
+    "tiktoken": "^1.0.21",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
     "zod": "^3.25.55"

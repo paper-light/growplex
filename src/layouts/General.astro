@@ -14,6 +14,6 @@ const { active } = Astro.props;
   <slot />
 </main>
 
-<InjectChat client:only />
+<InjectChat client:only transition:persist name="chat" />
 
 <Footer />

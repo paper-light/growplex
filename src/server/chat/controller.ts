@@ -8,6 +8,12 @@ import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 
 import { useMiddlewares } from "./middleware";
 
+interface SendMessageDTO {
+  chatId: string;
+  roomId: string;
+  msgStr: string;
+}
+
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
 
@@ -36,18 +42,20 @@ export function attachSocketIO(httpServer: any) {
 
     socket.on(
       "send-message",
-      async ({ roomId, msgStr }: { roomId: string; msgStr: string }) => {
+      async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
         const msg = JSON.parse(msgStr);
 
         const limiterKey = socket.id;
         try {
           await rateLimiter.consume(limiterKey, 1);
 
-          await updateHistory([msg]);
-
-          const newAssistantMsg = await processAssistantReply(roomId);
-
-          io.to(roomId).emit("new-message", newAssistantMsg);
+          try {
+            await updateHistory([msg]);
+            const newAssistantMsg = await processAssistantReply(chatId, roomId);
+            io.to(roomId).emit("new-message", newAssistantMsg);
+          } catch (err) {
+            console.error(err);
+          }
         } catch (err) {
           const res = err as RateLimiterRes;
           const retrySec = Math.ceil((res.msBeforeNext || 0) / 1000);

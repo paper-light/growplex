@@ -24,7 +24,9 @@
   const incoming = $derived(msg.role !== "user");
 
   const rawHtml = marked.parse(msg.content);
-  const safeHtml = DOMPurify.sanitize(rawHtml as string);
+  const safeHtml = DOMPurify.sanitize(rawHtml as string, {
+    ADD_ATTR: ["target", "rel"],
+  });
 </script>
 
 <div class={["chat", incoming ? "chat-start" : "chat-end"]}>
@@ -54,7 +56,7 @@
 
     <div
       class={[
-        "prose chat-bubble max-w-[60vw]",
+        "prose chat-bubble max-w-[80vw]",
         incoming ? "chat-bubble-base-200" : "chat-bubble-primary",
       ]}
     >

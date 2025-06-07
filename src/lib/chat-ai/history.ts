@@ -20,7 +20,7 @@ export async function getHistory(
   }
 
   const pbResp = await pb.collection("messages").getList(1, HISTORY_LENGTH, {
-    filter: `room = "${roomId}" & visible = true`,
+    filter: `room = "${roomId}" && visible = true`,
     sort: "created",
   });
 

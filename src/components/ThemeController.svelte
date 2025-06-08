@@ -3,8 +3,6 @@
 </script>
 
 <script lang="ts">
-  import { PUBLIC_CHAT_DOMAIN } from "astro:env/client";
-
   import { onMount } from "svelte";
 
   const { size = "size-8" } = $props();
@@ -21,13 +19,6 @@
 
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);
-
-    const iframe = document.getElementById("chat-iframe") as HTMLIFrameElement;
-
-    iframe?.contentWindow!.postMessage(
-      { type: "theme-change", newTheme },
-      PUBLIC_CHAT_DOMAIN
-    );
   });
 </script>
 

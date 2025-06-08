@@ -29,7 +29,11 @@ export default defineConfig({
         context: "client",
         access: "public",
       }),
-      PUBLIC_CHAT_DOMAIN: envField.string({
+      PUBLIC_CHAT_WIDGET_DOMAIN: envField.string({
+        context: "client",
+        access: "public",
+      }),
+      PUBLIC_CHAT_WIDGET_ID: envField.string({
         context: "client",
         access: "public",
       }),

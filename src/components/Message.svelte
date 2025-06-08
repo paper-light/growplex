@@ -31,7 +31,7 @@
 
 <div class={["chat", incoming ? "chat-start" : "chat-end"]}>
   <div class="chat-image avatar">
-    <div class="w-10 rounded-full">
+    <div class="w-10 rounded-full border">
       {#if msg.role === "assistant"}
         <Bot />
       {:else if msg.role === "operator"}

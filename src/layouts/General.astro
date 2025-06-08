@@ -1,9 +1,11 @@
 ---
-import { PUBLIC_CHAT_DOMAIN } from "astro:env/client";
+import {
+  PUBLIC_CHAT_WIDGET_DOMAIN,
+  PUBLIC_CHAT_WIDGET_ID,
+} from "astro:env/client";
 
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import InjectChat from "../components/InjectChat.svelte";
 
 const { active } = Astro.props;
 ---
@@ -14,6 +16,28 @@ const { active } = Astro.props;
   <slot />
 </main>
 
-<InjectChat client:only transition:persist name="chat" />
-
 <Footer />
+
+<script
+  src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}
+  data-chat-id={PUBLIC_CHAT_WIDGET_ID}></script>
+
+<script
+  is:inline
+  data-astro-rerun
+  data-domain={PUBLIC_CHAT_WIDGET_DOMAIN}
+  data-id={PUBLIC_CHAT_WIDGET_ID}
+>
+  (function () {
+    const { id, domain } = document.currentScript.dataset;
+    function boot() {
+      if (!window.ChatWidget) return;
+      if (!window.ChatWidget._loaded) {
+        window.ChatWidget.init({ id, domain });
+      } else {
+        window.ChatWidget.reload();
+      }
+    }
+    boot();
+  })();
+</script>

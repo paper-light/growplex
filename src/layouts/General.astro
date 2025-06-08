@@ -33,7 +33,11 @@ const { active } = Astro.props;
     function boot() {
       if (!window.ChatWidget) return;
       if (!window.ChatWidget._loaded) {
-        window.ChatWidget.init({ id, domain });
+        window.ChatWidget.init({
+          id,
+          domain,
+          color: "var(--color-yellow-500)",
+        });
       } else {
         window.ChatWidget.reload();
       }

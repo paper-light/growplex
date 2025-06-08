@@ -23,9 +23,6 @@
     if (document.getElementById(STYLE_ID)) return;
 
     const css = `
-      :root {
-        --chat-widget-primary: #4f46e5;
-      }
       .chat-widget-toggle {
         background: transparent;
         border: 2px solid var(--chat-widget-primary);
@@ -140,11 +137,24 @@
      * real setup only happens once.
      * @param {{id: string, domain: string}} options
      */
-    init({ id, domain }) {
+    init({ id, domain, color }) {
       if (this._loaded) return;
       this._loaded = true;
       this._config = { ...this._config, id, domain };
       injectStyles();
+
+      color = color || "oklch(85.2% 0.199 91.936)";
+      const applyColor = () => {
+        document.documentElement.style.setProperty(
+          "--chat-widget-primary",
+          color
+        );
+      };
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", applyColor);
+      } else {
+        applyColor();
+      }
 
       // Create toggle button
       const btn = document.createElement("button");

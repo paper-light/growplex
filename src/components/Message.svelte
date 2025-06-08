@@ -4,13 +4,13 @@
   import { DateTime } from "luxon";
   import { z } from "zod";
   import type { ChatMessageSchema } from "@/models/chat";
-  import { Bot, ChefHat, Smile } from "@lucide/svelte";
 
   interface Props {
     msg: z.infer<typeof ChatMessageSchema>;
+    avatar: string;
   }
 
-  const { msg }: Props = $props();
+  const { msg, avatar }: Props = $props();
 
   // TIME
   const utcTs = DateTime.fromFormat(msg.created, "yyyy-MM-dd HH:mm:ss.SSS'Z'", {
@@ -29,48 +29,41 @@
   });
 </script>
 
-<div class={["chat", incoming ? "chat-start" : "chat-end"]}>
-  <div class="chat-image avatar">
-    <div class="w-10 rounded-full border">
-      {#if msg.role === "assistant"}
-        <Bot />
-      {:else if msg.role === "operator"}
-        <ChefHat />
-      {:else}
-        <Smile />
-      {/if}
-    </div>
-  </div>
-
-  <div>
-    <div class="chat-header">
-      <span
-        class={["text-sm font-semibold", incoming ? "text-base-content" : ""]}
+<div class="chat-group">
+  <div class={incoming ? "chat chat-start" : "chat chat-end"}>
+    <div class="chat-image avatar">
+      <div
+        class="size-10 rounded-full border flex items-center justify-center overflow-hidden"
       >
-        {msg.sentBy}
-      </span>
+        <img alt={msg.role} src={avatar} class="w-full h-full object-cover" />
+      </div>
+    </div>
+
+    <div class="chat-header flex items-center space-x-2">
+      <span class="text-sm font-semibold">{msg.sentBy}</span>
       {#if formattedTime}
-        <time class="text-xs opacity-50">{formattedTime}</time>
+        <time datetime={msg.created} class="text-xs opacity-50">
+          {formattedTime}
+        </time>
       {/if}
     </div>
 
     <div
-      class={[
-        "prose chat-bubble max-w-[80vw]",
-        incoming ? "chat-bubble-base-200" : "chat-bubble-primary",
-      ]}
+      class="prose chat-bubble break-words max-w-[80vw] p-2 rounded-lg"
+      class:chat-bubble-base-200={incoming}
+      class:chat-bubble-primary={!incoming}
+      aria-label="Chat message"
     >
       {@html safeHtml}
     </div>
 
-    <!-- {#if status}
+    <!-- {#if msg.status}
       <div
-        class={[
-          "chat-footer opacity-50",
-          incoming ? "text-base-content" : "text-primary-content",
-        ]}
+        class="chat-footer text-xs opacity-50"
+        class:text-base-content={incoming}
+        class:text-primary-content={!incoming}
       >
-        {status}
+        {msg.status}
       </div>
     {/if} -->
   </div>

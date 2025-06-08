@@ -10,6 +10,7 @@
   import { fade } from "svelte/transition";
 
   import ChatMessage from "../components/Message.svelte";
+  import Img from "../assets/astro.svg";
 
   import { injectTheme } from "./injectTheme";
   import { pb } from "./pb";
@@ -179,7 +180,7 @@
     class="flex-1 overflow-y-auto space-y-2 p-2 overscroll-contain"
   >
     {#each messages as msg (msg.id)}
-      <ChatMessage {msg} />
+      <ChatMessage {msg} avatar={Img.src} />
     {/each}
   </main>
 

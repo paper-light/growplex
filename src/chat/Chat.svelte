@@ -164,7 +164,7 @@
         <div
           class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center"
         >
-          <img alt="avatar" src="https://i.pravatar.cc/40?img=5" />
+          <img alt="avatar" src={assistantAvatar} />
         </div>
       </div>
       <div class="flex flex-col">

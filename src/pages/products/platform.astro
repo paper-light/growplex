@@ -1,77 +1,160 @@
 ---
 import Root from "../../layouts/Root.astro";
 import General from "../../layouts/General.astro";
+import Thalia from "../../assets/Thalia.jpg";
+import Image from "astro/components/Image.astro";
 ---
 
 <Root title="Growplex | Platform">
   <General active="platform">
-    <div class="max-w-6xl mx-auto px-4 py-24 space-y-24">
+    <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
       <!-- Hero -->
-      <section class="text-center space-y-6">
-        <h1 class="text-4xl font-bold">Platform</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          We turn ideas into AI-powered MVPs — fast. From zero to launch with
-          our battle-tested Astro template and full-stack expertise.
-        </p>
-        <a href="/contact" class="btn btn-primary mt-6">Start Your Project</a>
-      </section>
-
-      <!-- Use Cases -->
-      <section class="space-y-8">
-        <h2 class="text-2xl font-semibold text-center">What We Build</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">AI Agents</h3>
-            <p class="text-sm text-gray-500">
-              Deploy custom GPT-powered agents with a UI, Telegram interface,
-              and browser extension support.
+      <section class="hero bg-base-200 min-h-screen">
+        <div class="hero-content flex-col lg:flex-row items-center text-center">
+          <div class="lg:w-1/2 space-y-6">
+            <span class="badge badge-secondary">Beta Run</span>
+            <h1 class="text-5xl font-bold">ThaliaAI</h1>
+            <p class="py-4 text-lg">
+              Embed an agentic AI on any page—generate leads, send invoices,
+              guide users, and integrate with Telegram for proactive outreach.
             </p>
+            <a
+              class="btn btn-primary btn-lg"
+              href="https://t.me/growplex"
+              target="_blank"
+            >
+              Start Beta
+            </a>
           </div>
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">Content Platforms</h3>
-            <p class="text-sm text-gray-500">
-              SEO-optimized Astro content sites with blog, video generation, and
-              lead capture tools.
-            </p>
-          </div>
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">Internal Tools</h3>
-            <p class="text-sm text-gray-500">
-              CRMs, dashboards, research apps and MVP backoffices — custom-built
-              for your workflows.
-            </p>
+          <div class="lg:w-1/2">
+            <Image
+              src={Thalia}
+              alt="ThaliaAI Illustration"
+              class="rounded-lg shadow-2xl max-w-md mx-auto"
+            />
           </div>
         </div>
       </section>
 
-      <!-- How We Work -->
-      <section class="text-center space-y-6">
-        <h2 class="text-2xl font-semibold">How We Work</h2>
-        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
-          Our stack is ready. We don’t waste time on boilerplate. You get your
-          product in a week — launch-ready, extensible, and beautiful.
-        </p>
-        <ul
-          class="steps steps-vertical lg:steps-horizontal justify-center mt-6 text-left text-sm"
-        >
-          <li class="step step-primary">Idea</li>
-          <li class="step step-primary">Scoping & Planning</li>
-          <li class="step step-primary">Build</li>
-          <li class="step step-primary">Launch</li>
-        </ul>
-      </section>
-
-      <!-- Portfolio -->
+      <!-- Features -->
       <section class="space-y-8">
-        <h2 class="text-2xl font-semibold text-center">Portfolio</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <a
-            href="https://inboxai.5dgo.com"
-            class="card bg-base-100 shadow-md hover:shadow-lg transition"
+        <h2 class="text-3xl font-bold text-center">Features</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <!-- Embed Chat Widget -->
+          <div
+            class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
           >
-          </a>
+            <div class="card-body">
+              <h3 class="card-title">Embed Chat Widget</h3>
+              <p>
+                Add a fully configurable chat widget—customize theme, assistant
+                persona, and branding to match your site.
+              </p>
+            </div>
+          </div>
+          <!-- CRM Platform (Coming Soon) -->
+          <div class="card bg-base-100 shadow-xl opacity-50">
+            <div class="card-body">
+              <h3 class="card-title">CRM Platform</h3>
+              <p>
+                Agentic configuration, ticketing, and human-in-the-loop chat
+                scenarios.
+              </p>
+              <div class="badge badge-outline mt-4">Coming Soon</div>
+            </div>
+          </div>
+          <!-- Agentic Leadgen (Coming Soon) -->
+          <div class="card bg-base-100 shadow-xl opacity-50">
+            <div class="card-body">
+              <h3 class="card-title">Agentic Leadgen</h3>
+              <p>
+                Proactively generate leads, message via Telegram/email, guide
+                users to products, and automate orders with billing.
+              </p>
+              <div class="badge badge-outline mt-4">Coming Soon</div>
+            </div>
+          </div>
+          <!-- Complex Use Cases (Coming Soon) -->
+          <div class="card bg-base-100 shadow-xl opacity-50">
+            <div class="card-body">
+              <h3 class="card-title">Complex Use Cases</h3>
+              <p>
+                Business-driven scenarios with multi-agent orchestration, MCP
+                tools, and advanced workflows.
+              </p>
+              <div class="badge badge-outline mt-4">Coming Soon</div>
+            </div>
+          </div>
         </div>
       </section>
-    </div></General
-  ></Root
->
+
+      <!-- How It Works -->
+      <section class="text-center space-y-6">
+        <h2 class="text-3xl font-bold">How It Works</h2>
+        <div
+          class="flex flex-col md:flex-row items-center justify-center gap-12"
+        >
+          <div class="flex flex-col items-center space-y-4">
+            <div
+              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+            >
+              1
+            </div>
+            <p>
+              Message our manager on Telegram:
+              <a href="https://t.me/growplex" class="link link-primary"
+                >@growplex</a
+              >
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center space-y-4">
+            <div
+              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+            >
+              2
+            </div>
+            <p>
+              Our developer connects ThaliaAI to your site and configures it to
+              your needs.
+            </p>
+          </div>
+
+          <div class="flex flex-col items-center space-y-4">
+            <div
+              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+            >
+              3
+            </div>
+            <p>
+              Enjoy full access to features now & lock in your lifetime<br
+                class="hidden sm:block"
+              />
+              super-discounted price.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Order Form -->
+      <section class="space-y-8">
+        <h2 class="text-3xl font-bold text-center">
+          Get Started with ThaliaAI
+        </h2>
+        <form class="max-w-lg mx-auto space-y-4">
+          <textarea
+            class="hidden textarea textarea-bordered w-full"
+            placeholder="Describe your ThaliaAI integration wishes..."
+          ></textarea>
+          <a
+            class="btn btn-primary w-full"
+            href="https://t.me/growplex"
+            target="_blank"
+          >
+            Contact Us on Telegram
+          </a>
+        </form>
+      </section>
+    </div>
+  </General>
+</Root>

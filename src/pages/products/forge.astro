@@ -9,40 +9,48 @@ import General from "../../layouts/General.astro";
       <!-- Hero -->
       <section class="text-center space-y-6">
         <h1 class="text-4xl font-bold">Forge</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p class="text-lg text-base-content opacity-70 max-w-2xl mx-auto">
           We turn ideas into AI-powered MVPs — fast. From zero to launch with
           our battle-tested Astro template and full-stack expertise.
         </p>
         <a
           href="https://t.me/growplex"
           target="_blank"
-          class="btn btn-primary mt-6">Start Your Project</a
+          class="btn btn-primary mt-6"
         >
+          Start Your Project
+        </a>
       </section>
 
       <!-- Use Cases -->
       <section class="space-y-8">
-        <h2 class="text-2xl font-semibold text-center">What We Build</h2>
+        <h2 class="text-3xl font-bold text-center">What We Build</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">AI Agents</h3>
-            <p class="text-sm text-gray-500">
+          <div
+            class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow p-6"
+          >
+            <h3 class="text-xl font-semibold mb-2">AI Agents</h3>
+            <p class="text-base-content opacity-70">
               Deploy custom GPT-powered agents with a UI, Telegram interface,
-              and browser extension support.
+              and browser-extension support.
             </p>
           </div>
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">Content Platforms</h3>
-            <p class="text-sm text-gray-500">
+          <div
+            class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow p-6"
+          >
+            <h3 class="text-xl font-semibold mb-2">Content Platforms</h3>
+            <p class="text-base-content opacity-70">
               SEO-optimized Astro content sites with blog, video generation, and
-              lead capture tools.
+              lead-capture tools.
             </p>
           </div>
-          <div class="card bg-base-100 shadow-md p-6">
-            <h3 class="text-lg font-bold mb-2">Internal Tools</h3>
-            <p class="text-sm text-gray-500">
-              CRMs, dashboards, research apps and MVP backoffices — custom-built
-              for your workflows.
+          <div
+            class="card bg-base-100 shadow-md hover:shadow-lg transition-shadow p-6"
+          >
+            <h3 class="text-xl font-semibold mb-2">Internal Tools</h3>
+            <p class="text-base-content opacity-70">
+              CRMs, dashboards, research apps, and MVP back-offices —
+              custom-built for your workflows.
             </p>
           </div>
         </div>
@@ -50,13 +58,13 @@ import General from "../../layouts/General.astro";
 
       <!-- How We Work -->
       <section class="text-center space-y-6">
-        <h2 class="text-2xl font-semibold">How We Work</h2>
-        <p class="text-sm text-gray-500 max-w-2xl mx-auto">
+        <h2 class="text-3xl font-bold">How We Work</h2>
+        <p class="text-base-content opacity-70 max-w-2xl mx-auto">
           Our stack is ready. We don’t waste time on boilerplate. You get your
-          product in a week — launch-ready, extensible, and beautiful.
+          product in a week—launch-ready, extensible, and beautiful.
         </p>
         <ul
-          class="steps steps-vertical lg:steps-horizontal justify-center mt-6 text-left text-sm"
+          class="steps steps-vertical lg:steps-horizontal justify-center mt-6 text-sm"
         >
           <li class="step step-primary">Idea</li>
           <li class="step step-primary">Scoping & Planning</li>
@@ -66,16 +74,31 @@ import General from "../../layouts/General.astro";
       </section>
 
       <!-- Portfolio -->
-      <section class="space-y-8">
-        <h2 class="text-2xl font-semibold text-center">Portfolio</h2>
+      <section class="space-y-8 hidden">
+        <h2 class="text-3xl font-bold text-center">Portfolio</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <a
             href="https://inboxai.5dgo.com"
-            class="card bg-base-100 shadow-md hover:shadow-lg transition"
+            class="card card-compact bg-base-100 shadow-md hover:shadow-lg transition p-0"
+            target="_blank"
           >
+            <figure>
+              <img
+                src="/assets/portfolio/inboxai.png"
+                alt="InboxAI Dashboard"
+                class="object-cover h-48 w-full"
+              />
+            </figure>
+            <div class="card-body">
+              <h3 class="card-title">InboxAI</h3>
+              <p class="text-base-content opacity-70">
+                AI-powered inbox management platform.
+              </p>
+            </div>
           </a>
+          <!-- Add more project cards here -->
         </div>
       </section>
-    </div></General
-  ></Root
->
+    </div>
+  </General>
+</Root>

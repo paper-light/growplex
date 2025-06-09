@@ -149,6 +149,10 @@
     height: 2rem;
     stroke: var(--chat-widget-primary);
   }
+
+  .safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
 `;
 
     const style = document.createElement("style");

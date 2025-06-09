@@ -221,7 +221,15 @@
   {/if}
 
   <!-- Footer with Input + Send Button -->
-  <footer class="border-t border-base-300 pt-2 mt-2">
+  <footer
+    class="
+      sticky bottom-0 left-0 w-full z-10
+      border-t border-base-300
+      bg-base-100
+      px-4 py-2
+      safe-area-bottom
+    "
+  >
     <div class="flex gap-2">
       <input
         onkeydown={(e) => {

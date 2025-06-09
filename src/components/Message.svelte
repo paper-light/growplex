@@ -31,9 +31,7 @@
 <div class="chat-group">
   <div class={incoming ? "chat chat-start" : "chat chat-end"}>
     <div class="chat-image avatar">
-      <div
-        class="size-10 rounded-full border flex items-center justify-center overflow-hidden"
-      >
+      <div class="size-10 rounded-full overflow-hidden">
         <img alt={msg.role} src={avatar} class="w-full h-full object-cover" />
       </div>
     </div>

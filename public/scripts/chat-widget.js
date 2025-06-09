@@ -23,98 +23,134 @@
     if (document.getElementById(STYLE_ID)) return;
 
     const css = `
-      .chat-widget-toggle {
-        background: transparent;
-        border: 2px solid var(--chat-widget-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        position: fixed;
-        bottom: 2rem;
-        right: 1rem;
-        width: 3.5rem;
-        height: 3.5rem;
-        cursor: pointer;
-        z-index: 10000;
-        transition: background 0.2s ease, transform 0.2s ease;
-      }
-      .chat-widget-toggle svg {
-        width: 2rem;
-        height: 2rem;
-        stroke: var(--chat-widget-primary);
-        transition: stroke 0.2s ease;
-      }
-      .chat-widget-toggle:hover {
-        background: var(--chat-widget-primary);
-      }
-      .chat-widget-toggle:hover svg {
-        stroke: #fff;
-      }
-      @media (min-width: 768px) {
-        .chat-widget-toggle {
-          width: 4rem;
-          height: 4rem;
-        }
-      }
-      .chat-widget-container {
-        display: none;
-        position: fixed;
-        bottom: 6.5rem;
-        right: 1rem;
-        width: 360px;
-        height: 640px;
-        max-width: 90vw;
-        max-height: 80vh;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-        overflow: hidden;
-        background: #fff;
-        z-index: 9999;
-        transition: right 0.2s ease, width 0.2s ease;
-      }
-      @media (min-width: 768px) {
-        .chat-widget-container {
-          right: 4rem;
-          width: 400px;
-        }
-      }
-      .chat-widget-container.fullscreen {
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw;
-        max-height: 100vh;
-        border-radius: 0;
-        box-shadow: none;
-      }
-      .chat-widget-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background: transparent;
-      }
-      .chat-widget-close {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        background: transparent;
-        border: none;
-        padding: 0.25rem;
-        cursor: pointer;
-        z-index: 10001;
-        display: none;
-      }
-      .chat-widget-close svg {
-        width: 2rem;
-        height: 2rem;
-        stroke: var(--chat-widget-primary);
-      }
-    `;
+  .chat-widget-toggle {
+    background: transparent;
+    border: 2px solid var(--chat-widget-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    position: fixed;
+    bottom: 2rem;
+    right: 1rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    cursor: pointer;
+    z-index: 10000;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .chat-widget-toggle svg {
+    width: 2rem;
+    height: 2rem;
+    stroke: var(--chat-widget-primary);
+    transition: stroke 0.2s ease;
+  }
+  .chat-widget-toggle:hover {
+    background: var(--chat-widget-primary);
+  }
+  .chat-widget-toggle:hover svg {
+    stroke: #fff;
+  }
+  @media (min-width: 768px) {
+    .chat-widget-toggle {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
+
+  .chat-widget-container {
+    position: fixed;
+    /* initial “small” position */
+    bottom: 6.5rem;
+    right: 1rem;
+    width: 360px;
+    height: 640px;
+    max-width: 90vw;
+    max-height: 80vh;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    background: #fff;
+    overflow: hidden;
+    z-index: 9999;
+
+    /* start off-screen to the right */
+    transform: translate3d(120%, 0, 0);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  /* Slide in to place when “open” */
+  .chat-widget-container.open {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+
+  /* Desktop tweak: nudge farther right, widen */
+  @media (min-width: 768px) {
+    .chat-widget-container {
+      right: 4rem;
+      width: 400px;
+    }
+  }
+
+  /* Mobile: override starting off-screen to bottom */
+  @media (max-width: 767px) {
+    .chat-widget-container {
+      /* ignore horizontal start */
+      transform: translate3d(0, 100%, 0);
+      /* keep bottom where the “small” state would have been */
+      bottom: 6.5rem;
+      right: 1rem;
+    }
+    .chat-widget-container.open {
+      transform: translate3d(0, 0, 0);
+      opacity: 1;
+    }
+  }
+
+  /* Fullscreen (mobile or desktop if you want) */
+  .chat-widget-container.fullscreen {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    border-radius: 0;
+    box-shadow: none;
+    /* ensure it’s fully visible */
+    transform: translate3d(0,0,0);
+    opacity: 1;
+  }
+
+  .chat-widget-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: transparent;
+  }
+
+  .chat-widget-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    padding: 0.25rem;
+    cursor: pointer;
+    z-index: 10001;
+    display: none; /* still toggled via JS */
+  }
+  .chat-widget-close svg {
+    width: 2rem;
+    height: 2rem;
+    stroke: var(--chat-widget-primary);
+  }
+`;
+
     const style = document.createElement("style");
     style.id = STYLE_ID;
     style.textContent = css;
@@ -199,6 +235,7 @@
       // Open / Close functions
       const openChat = () => {
         const cls = container.classList;
+        cls.add("open");
         if (isMobile()) {
           cls.add("fullscreen");
           closeBtn.style.display = "block";
@@ -206,25 +243,23 @@
         } else {
           cls.remove("fullscreen");
           closeBtn.style.display = "none";
-          btn.style.display = "flex"; // keep flex to center icon
+          btn.style.display = "flex";
           btn.innerHTML = CLOSE_SVG;
         }
-        container.style.display = "block";
         container.setAttribute("aria-hidden", "false");
         btn.setAttribute("aria-expanded", "true");
         sessionStorage.setItem("chat-widget-open", "true");
       };
 
       const closeChat = () => {
-        // Return focus before hiding
         btn.focus();
-        container.setAttribute("aria-hidden", "true");
-        container.style.display = "none";
-        container.classList.remove("fullscreen");
+        const cls = container.classList;
+        cls.remove("open", "fullscreen");
         closeBtn.style.display = "none";
         btn.style.display = "flex";
-        btn.setAttribute("aria-expanded", "false");
         btn.innerHTML = CHAT_SVG;
+        container.setAttribute("aria-hidden", "true");
+        btn.setAttribute("aria-expanded", "false");
         sessionStorage.setItem("chat-widget-open", "false");
       };
 

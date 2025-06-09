@@ -241,10 +241,9 @@
       // Theme forwarding
       const forwardTheme = (theme) => {
         if (iframe.contentWindow) {
-          const targetOrigin = new URL(iframe.src).origin;
           iframe.contentWindow.postMessage(
             { type: "theme-change", newTheme: theme },
-            targetOrigin
+            "*"
           );
         }
       };

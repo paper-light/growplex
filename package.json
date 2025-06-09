@@ -42,6 +42,7 @@
     "marked": "^15.0.12",
     "nanoid": "^5.1.5",
     "node-cron": "^3.0.3",
+    "pino": "^9.7.0",
     "pocketbase": "^0.26.0",
     "postcss": "^8.5.4",
     "postcss-cli": "^11.0.1",
@@ -57,5 +58,5 @@
     "typescript": "^5.8.3",
     "zod": "^3.25.55"
   },
-  "packageManager": "pnpm@10.11.1"
+  "packageManager": "pnpm@10.12.1"
 }

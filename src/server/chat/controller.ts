@@ -8,6 +8,12 @@ import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 
 import { useMiddlewares } from "./middleware";
 
+interface JoinRoomDTO {
+  chatId: string;
+  roomId: string;
+  username: string;
+}
+
 interface SendMessageDTO {
   chatId: string;
   roomId: string;
@@ -24,14 +30,14 @@ export function attachSocketIO(httpServer: any) {
 
     socket.on(
       "join-room",
-      async ({ roomId, username }: { roomId: string; username: string }) => {
+      async ({ chatId, roomId, username }: JoinRoomDTO) => {
         socket.join(roomId);
 
         socket.data.username = username;
         socket.data.roomId = roomId;
 
         try {
-          const history = await getHistory(roomId);
+          const history = await getHistory(chatId, roomId);
           socket.emit("chat-history", history);
         } catch (err) {
           console.error("Error in getHistory:", err);

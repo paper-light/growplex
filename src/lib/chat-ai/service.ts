@@ -11,7 +11,7 @@ export async function processAssistantReply(
   chatId: string,
   roomId: string
 ): Promise<z.infer<typeof ChatMessageSchema>> {
-  const history = await getHistory(roomId);
+  const history = await getHistory(chatId, roomId);
 
   const agent = (
     await pb.collection("chats").getOne(chatId, { expand: "agent" })

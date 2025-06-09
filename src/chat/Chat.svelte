@@ -5,12 +5,12 @@
 
   import type { ChatMessageSchema, ChatSchema } from "@/models/chat";
 
-  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
+  import { PUBLIC_MESSAGE_DELAY_SEC, PUBLIC_PB_URL } from "astro:env/client";
   import type { z } from "zod";
   import { fade } from "svelte/transition";
 
   import ChatMessage from "../components/Message.svelte";
-  import Img from "../assets/astro.svg";
+  import Man from "../assets/Man.png";
 
   import { injectTheme } from "./injectTheme";
   import { pb } from "./pb";
@@ -32,6 +32,8 @@
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
+
+  const assistantAvatar = `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`;
 
   $effect(() => {
     if (messageContainer) scrollToBottom();
@@ -71,7 +73,7 @@
 
     socket.on("connect", () => {
       console.log("🟢 Connected to server, socket.id =", socket?.id);
-      socket?.emit("join-room", { roomId, username });
+      socket?.emit("join-room", { chatId: chat.id, roomId, username });
     });
 
     socket.on(
@@ -180,7 +182,13 @@
     class="flex-1 overflow-y-auto space-y-2 p-2 overscroll-contain"
   >
     {#each messages as msg (msg.id)}
-      <ChatMessage {msg} avatar={Img.src} />
+      {@const avatar =
+        msg.role === "assistant"
+          ? assistantAvatar
+          : msg.role === "user"
+            ? Man.src
+            : Man.src}
+      <ChatMessage {msg} {avatar} />
     {/each}
   </main>
 

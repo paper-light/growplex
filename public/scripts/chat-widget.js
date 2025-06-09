@@ -31,7 +31,7 @@
         justify-content: center;
         border-radius: 50%;
         position: fixed;
-        bottom: 1rem;
+        bottom: 2rem;
         right: 1rem;
         width: 3.5rem;
         height: 3.5rem;
@@ -60,7 +60,7 @@
       .chat-widget-container {
         display: none;
         position: fixed;
-        bottom: 5.5rem;
+        bottom: 6.5rem;
         right: 1rem;
         width: 360px;
         height: 640px;

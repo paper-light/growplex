@@ -8,6 +8,8 @@ export const ChatThemeSchema = z.object({
 export const ChatSchema = z.object({
   id: z.string(),
   domain: z.string(),
+  avatar: z.string(),
+  firstMessage: z.string(),
   theme: ChatThemeSchema,
 });
 

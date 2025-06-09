@@ -30,7 +30,7 @@ export async function processAssistantReply(
     role: "assistant",
     visible: true,
     room: roomId,
-    sentBy: "Assistant",
+    sentBy: agent.name,
     created: new Date().toISOString().replace("T", " "),
   };
 

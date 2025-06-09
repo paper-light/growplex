@@ -10,16 +10,18 @@
   import { fade } from "svelte/transition";
 
   import ChatMessage from "../components/Message.svelte";
-  import Man from "../assets/Man.png";
+  import Man from "../assets/Man.jpg";
+  import Talia from "../assets/talia.jpg";
 
   import { injectTheme } from "./injectTheme";
   import { pb } from "./pb";
 
   interface Props {
     chat: z.infer<typeof ChatSchema>;
+    agent: any;
   }
 
-  const { chat }: Props = $props();
+  const { chat, agent }: Props = $props();
 
   let socket: Socket | null = $state(null);
   let roomId = $state("");
@@ -33,7 +35,9 @@
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
 
-  const assistantAvatar = `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`;
+  const assistantAvatar = chat.avatar
+    ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
+    : Talia.src;
 
   $effect(() => {
     if (messageContainer) scrollToBottom();
@@ -168,7 +172,7 @@
         </div>
       </div>
       <div class="flex flex-col">
-        <h2 class="text-lg font-semibold text-base-content">Assistant</h2>
+        <h2 class="text-lg font-semibold text-base-content">{agent.name}</h2>
         <span class="text-xs text-gray-500">Online</span>
       </div>
     </div>

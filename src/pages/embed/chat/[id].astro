@@ -6,11 +6,14 @@ import { ChatSchema } from "../../../models/chat";
 import Chat from "../../../chat/Chat.svelte";
 
 const { id } = Astro.params;
-const chat = ChatSchema.parse(await pb.collection("chats").getOne(id!));
+const chat = ChatSchema.parse(
+  await pb.collection("chats").getOne(id!, { expand: "agent" })
+);
+const agent = chat.expand!.agent;
 ---
 
 <Root>
-  <Chat chat={chat} client:only />
+  <Chat chat={chat} agent={agent} client:only />
 </Root>
 
 <style>

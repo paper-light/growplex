@@ -11,6 +11,11 @@ export const ChatSchema = z.object({
   avatar: z.string(),
   firstMessage: z.string(),
   theme: ChatThemeSchema,
+  expand: z
+    .object({
+      agent: z.any(),
+    })
+    .optional(),
 });
 
 export const ChatMessageSchema = z.object({

@@ -28,7 +28,8 @@ const { active } = Astro.props;
     >
     <a
       href="/blog"
-      class={`link link-hover ${active === "blog" && "font-bold"}`}>Blog</a
+      class={`hidden link link-hover ${active === "blog" && "font-bold"}`}
+      >Blog</a
     >
     <a
       href="/products/forge"
@@ -37,7 +38,7 @@ const { active } = Astro.props;
     <a
       href="/products/platform"
       class={`link link-hover ${active === "platform" && "font-bold"}`}
-      >Platform</a
+      >TaliaAI</a
     >
   </nav>
 
@@ -79,26 +80,31 @@ const { active } = Astro.props;
           >✕</label
         >
         <h3 class="text-xl font-bold text-center">Navigation</h3>
-        <nav class="*:block *:text-lg space-y-2 mb-2">
+        <nav class="*:text-lg space-y-2 mb-2">
           <a
             href="/"
-            class={`link link-hover ${active === "home" && "font-bold"}`}
+            class={`block link link-hover ${active === "home" && "font-bold"}`}
             >Home</a
           >
           <a
             href="/blog"
-            class={`link link-hover ${active === "blog" && "font-bold"}`}
+            class={`hidden link link-hover ${active === "blog" && "font-bold"}`}
             >Blog</a
           >
           <a
             href="/about"
-            class={`link link-hover ${active === "about" && "font-bold"}`}
+            class={`hidden link link-hover ${active === "about" && "font-bold"}`}
             >About</a
           >
           <a
-            href="/products"
-            class={`link link-hover ${active === "products" && "font-bold"}`}
-            >Services</a
+            href="/products/forge"
+            class={`block link link-hover ${active === "forge" && "font-bold"}`}
+            >Forge</a
+          >
+          <a
+            href="/products/platform"
+            class={`block link link-hover ${active === "platform" && "font-bold"}`}
+            >TaliaAI</a
           >
         </nav>
 
@@ -110,9 +116,11 @@ const { active } = Astro.props;
 
     <!-- CTA -->
     <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 rounded-3xl">
-      <button
+      <a
+        href="https://t.me/growplex"
+        target="_blank"
         class="btn btn-lg rounded-3xl btn-primary px-16 btn-outline bg-base-100"
-        >Contact</button
+        >Contact</a
       >
     </div>
   </div>

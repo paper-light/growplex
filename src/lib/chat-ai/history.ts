@@ -65,15 +65,18 @@ export async function getHistory(
 
   // 3) No messages in PB → seed with firstMessage
   log.warn({ chatId, roomId }, "no history found in PB, seeding firstMessage");
-  const chat = ChatSchema.parse(await pb.collection("chats").getOne(chatId));
+  const chat = ChatSchema.parse(
+    await pb.collection("chats").getOne(chatId, { expand: "agent" })
+  );
+  const agent = chat.expand!.agent;
   const welcome: z.infer<typeof ChatMessageSchema> = {
     id: `temp-${nanoid(12)}`,
     content: chat.firstMessage,
     role: "assistant",
     visible: true,
     room: roomId,
-    sentBy: "Assistant",
-    created: new Date().toISOString().split(".")[0].replace("T", " "),
+    sentBy: agent.name,
+    created: new Date().toISOString().replace("T", " "),
   };
 
   await updateHistory([welcome]);

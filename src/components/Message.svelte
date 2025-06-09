@@ -18,7 +18,6 @@
   });
 
   const localTs = utcTs.isValid ? utcTs.toLocal() : utcTs;
-
   const formattedTime = localTs.isValid ? localTs.toFormat("h:mm a") : "";
 
   const incoming = $derived(msg.role !== "user");

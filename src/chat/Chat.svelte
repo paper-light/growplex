@@ -11,7 +11,7 @@
 
   import ChatMessage from "../components/Message.svelte";
   import Man from "../assets/Man.jpg";
-  import Talia from "../assets/talia.jpg";
+  import Thalia from "../assets/Thalia.jpg";
 
   import { injectTheme } from "./injectTheme";
   import { pb } from "./pb";
@@ -37,7 +37,7 @@
 
   const assistantAvatar = chat.avatar
     ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
-    : Talia.src;
+    : Thalia.src;
 
   $effect(() => {
     if (messageContainer) scrollToBottom();

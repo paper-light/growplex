@@ -109,6 +109,18 @@
     }
   }
 
+    @media (max-width: 767px) {
+    /* when the widget is closed (i.e. no “open” class), ignore all pointer events */
+    .chat-widget-container:not(.open) {
+      pointer-events: none;
+    }
+    /* once it opens, restore interactivity */
+    .chat-widget-container.open {
+      pointer-events: auto;
+    }
+  }
+
+
   /* Fullscreen (mobile or desktop if you want) */
   .chat-widget-container.fullscreen {
     top: 0;
@@ -151,7 +163,7 @@
   }
 
   .safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 1rem);
+  padding-bottom: env(safe-area-inset-bottom, 3rem);
   }
 `;
 

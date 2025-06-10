@@ -8,6 +8,11 @@ import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 
 import { useMiddlewares } from "./middleware";
 
+const PUBLIC_CHAT_MAX_MESSAGE_TOKENS = parseInt(
+  process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!
+);
+const MAX_MESSAGE_CHARS = PUBLIC_CHAT_MAX_MESSAGE_TOKENS * 0.75 * 4.5;
+
 interface JoinRoomDTO {
   chatId: string;
   roomId: string;
@@ -50,6 +55,12 @@ export function attachSocketIO(httpServer: any) {
       "send-message",
       async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
         const msg = JSON.parse(msgStr);
+        if (msg.content > MAX_MESSAGE_CHARS) {
+          socket.emit("msg-length-limit", {
+            message: "Message is too long!",
+          });
+          return;
+        }
 
         const limiterKey = socket.id;
         try {

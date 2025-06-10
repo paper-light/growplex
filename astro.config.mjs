@@ -37,6 +37,10 @@ export default defineConfig({
         context: "client",
         access: "public",
       }),
+      PUBLIC_CHAT_MAX_MESSAGE_TOKENS: envField.number({
+        context: "client",
+        access: "public",
+      }),
       PB_ID: envField.string({ context: "server", access: "secret" }),
       PB_PASSWORD: envField.string({ context: "server", access: "secret" }),
 

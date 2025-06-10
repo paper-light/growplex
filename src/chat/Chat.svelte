@@ -1,7 +1,11 @@
 <script lang="ts">
   import type { z } from "zod";
   import { fade } from "svelte/transition";
-  import { PUBLIC_MESSAGE_DELAY_SEC, PUBLIC_PB_URL } from "astro:env/client";
+  import {
+    PUBLIC_MESSAGE_DELAY_SEC,
+    PUBLIC_PB_URL,
+    PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
+  } from "astro:env/client";
   import { onDestroy, onMount, tick } from "svelte";
   import { io, Socket } from "socket.io-client";
   import { nanoid } from "nanoid";
@@ -23,6 +27,12 @@
 
   const { chat, agent }: Props = $props();
 
+  const assistantAvatar = chat.avatar
+    ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
+    : Thalia.src;
+
+  const maxInputChars = PUBLIC_CHAT_MAX_MESSAGE_TOKENS * 0.75 * 4.5;
+
   let socket: Socket | null = $state(null);
   let roomId = $state("");
   let username = $state("");
@@ -35,10 +45,6 @@
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
-
-  const assistantAvatar = chat.avatar
-    ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
-    : Thalia.src;
 
   $effect(() => {
     if (messageContainer) scrollToBottom();
@@ -253,7 +259,9 @@
       ></textarea>
 
       <button
-        disabled={!canSend || inputText.length === 0}
+        disabled={!canSend ||
+          inputText.length === 0 ||
+          inputText.length > maxInputChars}
         onclick={sendMessage}
         class="label btn btn-primary btn-lg btn-block ml-auto w-fit rounded-xl"
       >

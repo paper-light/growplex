@@ -6,6 +6,7 @@ import {
 
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+import CookiesAccept from "../components/CookiesAccept.svelte";
 
 const { active } = Astro.props;
 ---
@@ -17,6 +18,8 @@ const { active } = Astro.props;
 </main>
 
 <Footer />
+
+<CookiesAccept client:only />
 
 <script
   src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}

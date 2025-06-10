@@ -207,7 +207,7 @@
     <button
       transition:fade
       onclick={scrollToBottom}
-      class="btn btn-secondary btn-circle fixed bottom-20 left-1/2 transform -translate-x-1/2 transition"
+      class="btn btn-secondary btn-circle fixed bottom-49 left-1/2 transform -translate-x-1/2 transition"
       aria-label="Scroll to bottom"
     >
       <svg

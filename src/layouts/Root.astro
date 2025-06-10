@@ -5,7 +5,7 @@ import { ClientRouter } from "astro:transitions";
 import Posthog from "../components/Posthog.astro";
 import ThemeLoad from "../components/ThemeLoad.astro";
 
-const { title } = Astro.props;
+const { title, isPosthog = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -18,7 +18,7 @@ const { title } = Astro.props;
     <title>{title}</title>
     <ThemeLoad />
     <ClientRouter />
-    <Posthog />
+    {isPosthog && <Posthog />}
   </head>
   <body>
     <slot />

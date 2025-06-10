@@ -12,7 +12,7 @@ const chat = ChatSchema.parse(
 const agent = chat.expand!.agent;
 ---
 
-<Root>
+<Root isPosthog={false}>
   <Chat chat={chat} agent={agent} client:only />
 </Root>
 

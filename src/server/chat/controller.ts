@@ -8,10 +8,8 @@ import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 
 import { useMiddlewares } from "./middleware";
 
-const PUBLIC_CHAT_MAX_MESSAGE_TOKENS = parseInt(
-  process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!
-);
-const MAX_MESSAGE_CHARS = PUBLIC_CHAT_MAX_MESSAGE_TOKENS * 0.75 * 4.5;
+const MAX_MESSAGE_CHARS =
+  parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!) * 0.75 * 4.5;
 
 interface JoinRoomDTO {
   chatId: string;

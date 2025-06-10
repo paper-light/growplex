@@ -18,7 +18,7 @@
         >Terms & Privacy</a
       >
       <button
-        class="self-end btn btn-primary btn-lg"
+        class="self-start btn btn-primary btn-lg"
         onclick={() => {
           localStorage.setItem("okCookies", "true");
           ok = true;

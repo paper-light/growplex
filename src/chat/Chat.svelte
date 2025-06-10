@@ -1,13 +1,13 @@
 <script lang="ts">
+  import type { z } from "zod";
+  import { fade } from "svelte/transition";
+  import { PUBLIC_MESSAGE_DELAY_SEC, PUBLIC_PB_URL } from "astro:env/client";
   import { onDestroy, onMount, tick } from "svelte";
   import { io, Socket } from "socket.io-client";
   import { nanoid } from "nanoid";
+  import { ChevronsRight } from "@lucide/svelte";
 
   import type { ChatMessageSchema, ChatSchema } from "@/models/chat";
-
-  import { PUBLIC_MESSAGE_DELAY_SEC, PUBLIC_PB_URL } from "astro:env/client";
-  import type { z } from "zod";
-  import { fade } from "svelte/transition";
 
   import ChatMessage from "../components/Message.svelte";
   import Man from "../assets/Man.jpg";
@@ -29,6 +29,7 @@
 
   let messages: z.infer<typeof ChatMessageSchema>[] = $state([]);
 
+  let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
   let canSend = $state(true);
 
@@ -154,10 +155,16 @@
     const atBottom = scrollTop + clientHeight >= scrollHeight - 5;
     showScrollButton = !atBottom;
   }
+
+  function autoGrow() {
+    if (!inputEl) return;
+    inputEl.style.height = "auto";
+    inputEl.style.height = `${inputEl.scrollHeight}px`;
+  }
 </script>
 
 <div
-  class="w-screen h-screen flex flex-col bg-base-100 shadow-lg rounded-lg p-4"
+  class="w-screen h-screen flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4"
 >
   <!-- Header -->
   <header
@@ -227,28 +234,40 @@
       border-t border-base-300
       bg-base-100
       px-4 py-2
-      safe-area-bottom
     "
   >
-    <div class="flex gap-2">
-      <input
+    <fieldset class="fieldset">
+      <textarea
+        bind:this={inputEl}
+        bind:value={inputText}
+        oninput={autoGrow}
         onkeydown={(e) => {
-          if (e.key === "Enter" && inputText.trim() !== "") {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
             sendMessage();
           }
         }}
-        bind:value={inputText}
-        type="text"
         placeholder="Type your message…"
-        class="input input-bordered flex-1"
-      />
+        class="textarea textarea-bordered resize-none w-full max-h-40 overflow-y-auto"
+        rows="1"
+      ></textarea>
+
       <button
         disabled={!canSend || inputText.length === 0}
         onclick={sendMessage}
-        class="btn btn-primary"
+        class="label btn btn-primary btn-lg btn-block ml-auto w-fit rounded-xl"
       >
-        Send
+        <ChevronsRight size={32} />
       </button>
+    </fieldset>
+
+    <div class="text-xs text-center mt-4">
+      Made by
+      <a
+        class="link link-hover font-semibold"
+        target="_blank"
+        href="https://growplex.dev/">Growplex</a
+      >
     </div>
   </footer>
 </div>

@@ -63,8 +63,8 @@
     /* initial “small” position */
     bottom: 6.5rem;
     right: 1rem;
-    width: 360px;
-    height: 640px;
+    width: 480px;
+    height: 720px;
     max-width: 90vw;
     max-height: 80vh;
     border: 1px solid #ccc;
@@ -160,10 +160,6 @@
     width: 2rem;
     height: 2rem;
     stroke: var(--chat-widget-primary);
-  }
-
-  .safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom, 3rem);
   }
 `;
 

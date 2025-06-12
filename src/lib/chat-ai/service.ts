@@ -2,20 +2,38 @@ import { nanoid } from "nanoid";
 import { z } from "zod";
 
 import { pb } from "../config/pb";
-import { ChatMessageSchema } from "../../models/chat";
+import { ChatMessageSchema, IntegrationSchema } from "../../models";
 
-import { chain } from "./llm";
+import { getChain } from "./llm";
 import { getHistory, updateHistory } from "./history";
+import { logger } from "../config/logger";
+
+const log = logger.child({ module: "chat-service" });
 
 export async function processAssistantReply(
-  chatId: string,
+  integrationId: string,
   roomId: string
 ): Promise<z.infer<typeof ChatMessageSchema>> {
-  const history = await getHistory(chatId, roomId);
+  const history = (await getHistory(integrationId, roomId)).map((m) => {
+    return {
+      content: m.content,
+      role: m.role,
+      name: `${m.role}-${m.sentBy}`,
+    };
+  });
 
-  const agent = (
-    await pb.collection("chats").getOne(chatId, { expand: "agent" })
+  const agent = IntegrationSchema.parse(
+    await pb
+      .collection("integrations")
+      .getOne(integrationId, { expand: "agent" })
   ).expand!.agent;
+
+  if (!agent) {
+    log.warn(`Integration ${integrationId} has not agent`);
+    return;
+  }
+
+  const chain = getChain(agent.provider);
 
   const llmResp = await chain.invoke({
     history,

@@ -1,6 +1,7 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
+import { ChatMessageSchema } from "@/models";
 import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
@@ -52,8 +53,8 @@ export function attachSocketIO(httpServer: any) {
     socket.on(
       "send-message",
       async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
-        const msg = JSON.parse(msgStr);
-        if (msg.content > MAX_MESSAGE_CHARS) {
+        const msg = ChatMessageSchema.parse(msgStr);
+        if (msg.content.length > MAX_MESSAGE_CHARS) {
           socket.emit("msg-length-limit", {
             message: "Message is too long!",
           });

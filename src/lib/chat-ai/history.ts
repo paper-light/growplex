@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { nanoid } from "nanoid";
 
-import { ChatMessageSchema, ChatSchema } from "../../models/chat";
+import { ChatMessageSchema, IntegrationSchema } from "../../models";
 import { getEnv } from "../../helpers/get-env";
 import { pb } from "../config/pb";
 import { redisClient } from "../config/redis";
@@ -14,11 +14,11 @@ const REDIS_PREFIX = getEnv("CHAT_REDIS_PREFIX");
 const HISTORY_LENGTH = parseInt(getEnv("CHAT_HISTORY_LENGTH"), 10);
 
 export async function getHistory(
-  chatId: string,
+  integrationId: string,
   roomId: string
 ): Promise<z.infer<typeof ChatMessageSchema>[]> {
   const redisKey = `${REDIS_PREFIX}${roomId}`;
-  log.debug({ chatId, roomId, redisKey }, "getHistory() start");
+  log.debug({ integrationId, roomId, redisKey }, "getHistory() start");
 
   // 1) Try Redis cache
   try {
@@ -64,11 +64,17 @@ export async function getHistory(
   }
 
   // 3) No messages in PB → seed with firstMessage
-  log.warn({ chatId, roomId }, "no history found in PB, seeding firstMessage");
-  const chat = ChatSchema.parse(
-    await pb.collection("chats").getOne(chatId, { expand: "agent" })
+  log.warn(
+    { integrationId, roomId },
+    "no history found in PB, seeding firstMessage"
   );
-  const agent = chat.expand!.agent;
+  const integration = IntegrationSchema.parse(
+    await pb
+      .collection("integrations")
+      .getOne(integrationId, { expand: "agent,chat" })
+  );
+  const agent = integration.expand!.agent!;
+  const chat = integration.expand!.chat!;
   const welcome: z.infer<typeof ChatMessageSchema> = {
     id: `temp-${nanoid(12)}`,
     content: chat.firstMessage,

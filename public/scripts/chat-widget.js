@@ -24,7 +24,7 @@
 
     const css = `
   .chat-widget-toggle {
-    background: transparent;
+    background: var(--chat-widget-primary);
     border: 2px solid var(--chat-widget-primary);
     display: flex;
     align-items: center;
@@ -42,14 +42,14 @@
   .chat-widget-toggle svg {
     width: 2rem;
     height: 2rem;
-    stroke: var(--chat-widget-primary);
+    stroke: #fff;
     transition: stroke 0.2s ease;
   }
   .chat-widget-toggle:hover {
-    background: var(--chat-widget-primary);
+    background: transparent;
   }
   .chat-widget-toggle:hover svg {
-    stroke: #fff;
+    stroke: var(--chat-widget-primary);;
   }
   @media (min-width: 768px) {
     .chat-widget-toggle {

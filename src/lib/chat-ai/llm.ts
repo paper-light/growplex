@@ -1,6 +1,5 @@
 import * as hub from "langchain/hub/node";
 import { ChatOpenAI } from "@langchain/openai";
-import { ChatDeepSeek } from "@langchain/deepseek";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
@@ -12,7 +11,6 @@ const MAX_TOKENS = parseInt(getEnv("PUBLIC_CHAT_MAX_MESSAGE_TOKENS"));
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 const GOOGLE_API_KEY = getEnv("GOOGLE_API_KEY");
 const ANTHROPIC_API_KEY = getEnv("ANTHROPIC_API_KEY");
-const DEEPSEEK_API_KEY = getEnv("DEEPSEEK_API_KEY");
 
 export const mainPrompt = await hub.pull(`chat-system:${ENV}`, {
   includeModel: false,
@@ -39,16 +37,7 @@ const anthropicModel = new ChatAnthropic({
   apiKey: ANTHROPIC_API_KEY,
 });
 
-const deepseekModel = new ChatDeepSeek({
-  model: "deepseek-chat",
-  temperature: 1,
-  maxTokens: MAX_TOKENS,
-  apiKey: DEEPSEEK_API_KEY,
-});
-
-const selectModel = (
-  provider: "openai" | "anthropic" | "google" | "deepseek"
-) => {
+const selectModel = (provider: "openai" | "anthropic" | "google") => {
   switch (provider) {
     case "openai":
       return openaiModel;
@@ -56,14 +45,10 @@ const selectModel = (
       return anthropicModel;
     case "google":
       return googleModel;
-    case "deepseek":
-      return deepseekModel;
   }
 };
 
-export const getChain = (
-  provider: "openai" | "anthropic" | "google" | "deepseek"
-) => {
+export const getChain = (provider: "openai" | "anthropic" | "google") => {
   const llm = selectModel(provider);
   return mainPrompt.pipe(llm);
 };

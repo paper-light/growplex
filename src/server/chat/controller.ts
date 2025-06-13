@@ -1,13 +1,14 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
-import { ChatMessageSchema } from "@/models";
+import { ChatMessageSchema, IntegrationSchema } from "@/models";
 import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
 import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 
 import { useMiddlewares } from "./middleware";
+import { pb } from "@/lib/config/pb";
 
 const MAX_MESSAGE_CHARS =
   parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!) * 0.75 * 4.5;
@@ -40,8 +41,14 @@ export function attachSocketIO(httpServer: any) {
         socket.data.username = username;
         socket.data.roomId = roomId;
 
+        const integration = IntegrationSchema.parse(
+          await pb
+            .collection("integrations")
+            .getFirstListItem(`chat="${chatId}"`)
+        );
+
         try {
-          const history = await getHistory(chatId, roomId);
+          const history = await getHistory(integration.id, roomId);
           socket.emit("chat-history", history);
         } catch (err) {
           console.error("Error in getHistory:", err);
@@ -53,7 +60,8 @@ export function attachSocketIO(httpServer: any) {
     socket.on(
       "send-message",
       async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
-        const msg = ChatMessageSchema.parse(msgStr);
+        const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
+
         if (msg.content.length > MAX_MESSAGE_CHARS) {
           socket.emit("msg-length-limit", {
             message: "Message is too long!",
@@ -65,9 +73,18 @@ export function attachSocketIO(httpServer: any) {
         try {
           await rateLimiter.consume(limiterKey, 1);
 
+          const integration = IntegrationSchema.parse(
+            await pb
+              .collection("integrations")
+              .getFirstListItem(`chat="${chatId}"`)
+          );
+
           try {
             await updateHistory([msg]);
-            const newAssistantMsg = await processAssistantReply(chatId, roomId);
+            const newAssistantMsg = await processAssistantReply(
+              integration.id,
+              roomId
+            );
             io.to(roomId).emit("new-message", newAssistantMsg);
           } catch (err) {
             console.error(err);

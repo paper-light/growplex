@@ -22,29 +22,32 @@ export async function processAssistantReply(
     };
   });
 
-  const agent = IntegrationSchema.parse(
+  const integration = IntegrationSchema.parse(
     await pb
       .collection("integrations")
       .getOne(integrationId, { expand: "agent" })
-  ).expand!.agent;
+  );
+  const agent = integration.expand!.agent;
 
   if (!agent) {
     log.warn(`Integration ${integrationId} has not agent`);
-    return;
+    throw Error(`Integration ${integrationId} has not agent`);
   }
 
   const chain = getChain(agent.provider);
 
   const llmResp = await chain.invoke({
     history,
-    knowledge: agent.knowledgeSources.length || "<NONE>",
+    knowledge: integration.knowledgeSources.length || "<NONE>",
     additional: agent.system || "<NONE>",
-    contact: agent.contact,
+    contact: agent.contact || "<NONE>",
   });
+
+  log.debug(llmResp);
 
   let newAssistantMsg: z.infer<typeof ChatMessageSchema> = {
     id: `temp-${nanoid(12)}`,
-    content: llmResp.content,
+    content: llmResp.content.toString(),
     role: "assistant",
     visible: true,
     room: roomId,

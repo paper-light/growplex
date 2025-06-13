@@ -11,9 +11,9 @@ export const IntegrationSchema = z.object({
   knowledgeSources: z.array(z.string()),
   expand: z
     .object({
-      agent: AgentSchema.nullable(),
-      chat: ChatSchema.nullable(),
-      knowledgeSources: z.array(KnowledgeSourceSchema),
+      agent: AgentSchema.optional(),
+      chat: ChatSchema.optional(),
+      knowledgeSources: z.array(KnowledgeSourceSchema).optional(),
     })
     .optional(),
 });

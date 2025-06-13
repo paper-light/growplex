@@ -26,21 +26,21 @@ const openaiModel = new ChatOpenAI({
 });
 
 const googleModel = new ChatGoogleGenerativeAI({
-  model: "",
+  model: "gemini-2.5-flash-preview-05-20",
   temperature: 1,
   maxOutputTokens: MAX_TOKENS,
   apiKey: GOOGLE_API_KEY,
 });
 
 const anthropicModel = new ChatAnthropic({
-  model: "",
+  model: "claude-3-haiku-20240307",
   temperature: 1,
   maxTokens: MAX_TOKENS,
   apiKey: ANTHROPIC_API_KEY,
 });
 
 const deepseekModel = new ChatDeepSeek({
-  model: "deepseek-reasoner",
+  model: "deepseek-chat",
   temperature: 1,
   maxTokens: MAX_TOKENS,
   apiKey: DEEPSEEK_API_KEY,
@@ -61,8 +61,8 @@ const selectModel = (
   }
 };
 
-export const getChain = async (
-  provider: "openai" | "anthropic" | "google" | "deepseek" = "openai"
+export const getChain = (
+  provider: "openai" | "anthropic" | "google" | "deepseek"
 ) => {
   const llm = selectModel(provider);
   return mainPrompt.pipe(llm);

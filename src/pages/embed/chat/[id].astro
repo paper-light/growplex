@@ -1,15 +1,18 @@
 ---
 import Root from "../../../layouts/Root.astro";
 import { pb } from "../../../lib/config/pb";
-import { ChatSchema } from "../../../models/chat";
+import { IntegrationSchema } from "../../../models";
 
 import Chat from "../../../chat/Chat.svelte";
 
 const { id } = Astro.params;
-const chat = ChatSchema.parse(
-  await pb.collection("chats").getOne(id!, { expand: "agent" })
+const integration = IntegrationSchema.parse(
+  await pb
+    .collection("integrations")
+    .getFirstListItem(`chat="${id}"`, { expand: "agent,chat" })
 );
-const agent = chat.expand!.agent;
+const chat = integration.expand!.chat!;
+const agent = integration.expand!.agent;
 ---
 
 <Root isPosthog={false}>

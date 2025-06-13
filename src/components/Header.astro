@@ -48,9 +48,29 @@ const { active } = Astro.props;
       <ThemeController client:only />
     </div>
 
-    <slot name="CTA">
+    <div>
+      <slot name="CTA">
+        <button
+          onclick="CTAMainModal.showModal()"
+          class="btn btn-primary rounded-xl px-4 hidden md:inline-block"
+        >
+          Contact Us
+        </button>
+      </slot>
+
+      <div
+        class="fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl md:hidden"
+      >
+        <button
+          onclick="CTAMainModal.showModal()"
+          class="btn btn-lg rounded-3xl btn-primary px-16 btn-outline bg-base-100"
+        >
+          Contact
+        </button>
+      </div>
+
       <FormCTA client:only />
-    </slot>
+    </div>
   </div>
 
   <!-- Mobile -->

@@ -13,10 +13,6 @@
     source = window.location.href;
   });
 
-  function openModal() {
-    modal?.showModal();
-  }
-
   function closeModal() {
     modal?.close();
   }
@@ -36,27 +32,8 @@
   }
 </script>
 
-<div>
-  <button
-    onclick={openModal}
-    class="btn btn-primary rounded-xl px-4 hidden md:inline-block"
-  >
-    Contact Us
-  </button>
-</div>
-
-<div
-  class="fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl md:hidden"
->
-  <button
-    onclick={openModal}
-    class="btn btn-lg rounded-3xl btn-primary px-16 btn-outline bg-base-100"
-  >
-    Contact
-  </button>
-</div>
-
 <dialog
+  id="CTAMainModal"
   bind:this={modal}
   aria-modal="true"
   aria-labelledby="contact-title"

@@ -45,6 +45,7 @@ export default defineConfig({
       PB_PASSWORD: envField.string({ context: "server", access: "secret" }),
 
       TG_TOKEN: envField.string({ context: "server", access: "secret" }),
+      TG_ID: envField.string({ context: "server", access: "secret" }),
 
       MAILGUN_TOKEN: envField.string({ context: "server", access: "secret" }),
     },

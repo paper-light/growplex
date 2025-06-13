@@ -2,6 +2,7 @@
 import { Image } from "astro:assets";
 import Logo from "../assets/LOGO.png";
 import ThemeController from "../components/ThemeController.svelte";
+import FormCTA from "../components/FormCTA.svelte";
 
 const { active } = Astro.props;
 ---
@@ -42,15 +43,13 @@ const { active } = Astro.props;
     >
   </nav>
 
-  <div class="items-center gap-3 hidden md:flex">
-    <ThemeController client:only />
+  <div class="items-center gap-3 flex">
+    <div class="hidden md:block">
+      <ThemeController client:only />
+    </div>
 
     <slot name="CTA">
-      <a
-        href="https://t.me/growplex"
-        target="_blank"
-        class="btn btn-primary rounded-xl px-4">Contact</a
-      >
+      <FormCTA client:only />
     </slot>
   </div>
 
@@ -112,16 +111,6 @@ const { active } = Astro.props;
         <ThemeController client:only size="size-12" />
       </div>
       <label class="modal-backdrop" for="modal_burger">Close</label>
-    </div>
-
-    <!-- CTA -->
-    <div class="fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl">
-      <a
-        href="https://t.me/growplex"
-        target="_blank"
-        class="btn btn-lg rounded-3xl btn-primary px-16 btn-outline bg-base-100"
-        >Contact</a
-      >
     </div>
   </div>
 </header>

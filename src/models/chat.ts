@@ -16,6 +16,8 @@ export const ChatSchema = z.object({
       agent: z.any(),
     })
     .optional(),
+
+  created: z.string(),
 });
 
 export const ChatMessageSchema = z.object({
@@ -31,4 +33,5 @@ export const ChatMessageSchema = z.object({
   room: z.string(),
   sentBy: z.string(),
   created: z.string(),
+  updated: z.string(),
 });

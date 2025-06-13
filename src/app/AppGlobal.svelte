@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
   import { authProvider } from "./auth/auth.svelte";
 
-  const user = $derived(authProvider.user);
-
   onMount(() => {
     authProvider.subscribeUser();
 

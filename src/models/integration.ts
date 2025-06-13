@@ -16,4 +16,7 @@ export const IntegrationSchema = z.object({
       knowledgeSources: z.array(KnowledgeSourceSchema).optional(),
     })
     .optional(),
+
+  created: z.string(),
+  updated: z.string(),
 });

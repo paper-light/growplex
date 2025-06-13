@@ -11,4 +11,7 @@ export const AgentSchema = z.object({
     z.literal("deepseek"),
     z.literal("google"),
   ]),
+
+  created: z.string(),
+  updated: z.string(),
 });

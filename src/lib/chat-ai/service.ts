@@ -18,7 +18,7 @@ export async function processAssistantReply(
     return {
       content: m.content,
       role: m.role,
-      name: `${m.role}-${m.sentBy}`,
+      name: `${m.role}-${m.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
     };
   });
 

@@ -18,6 +18,7 @@ export const ChatSchema = z.object({
     .optional(),
 
   created: z.string(),
+  updated: z.string(),
 });
 
 export const ChatMessageSchema = z.object({
@@ -33,5 +34,4 @@ export const ChatMessageSchema = z.object({
   room: z.string(),
   sentBy: z.string(),
   created: z.string(),
-  updated: z.string(),
 });

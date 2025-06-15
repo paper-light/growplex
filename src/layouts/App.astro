@@ -31,7 +31,7 @@ const { pageName } = Astro.props;
         <h1 class="text-xl font-semibold">{pageName}</h1>
       </div>
       <!-- Actions -->
-      <ProfileMenu client:only />
+      <ProfileMenu active={pageName} client:only />
     </header>
 
     <!-- Main slot -->

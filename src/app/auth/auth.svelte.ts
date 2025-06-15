@@ -71,7 +71,6 @@ class AuthProvider {
   }
 
   async refreshUser() {
-    console.log("refresh");
     const authResponse = await pb.collection("users").authRefresh({
       expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
     });

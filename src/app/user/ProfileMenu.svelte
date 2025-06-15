@@ -6,6 +6,12 @@
   import { authProvider } from "../auth/auth.svelte";
   import { navigate } from "astro:transitions/client";
 
+  interface Props {
+    active: string;
+  }
+
+  let { active = "" }: Props = $props();
+
   const user = $derived(authProvider.user);
 
   const avatar = $derived(
@@ -55,7 +61,13 @@
     bind:this={rootEl}
     class="dropdown-content menu bg-base-100 rounded-box w-48 shadow mt-2 p-2"
   >
-    <li><a class="font-semibold" href="/app/profile">Profile</a></li>
+    <li>
+      <a
+        class:text-primary={active === "Profile"}
+        class="font-semibold"
+        href="/app/profile">Profile</a
+      >
+    </li>
     <li>
       <button
         class="text-error font-semibold w-full text-left"

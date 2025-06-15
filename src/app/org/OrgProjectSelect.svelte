@@ -3,10 +3,10 @@
   import { onMount } from "svelte";
   import { ChevronDown, Check } from "@lucide/svelte";
 
-  import type { OrgSchema, ProjectSchema } from "../../models";
+  import { ProjectSchema, type OrgSchema } from "../../models";
 
   import { settingsProvider } from "../settings/settings.svelte";
-  import { authProvider } from "../auth/auth.svelte";
+  import { authProvider, pb } from "../auth/auth.svelte";
 
   const currentOrg = $derived(settingsProvider.currentOrg);
   const currentProject = $derived(settingsProvider.currentProject);
@@ -26,7 +26,6 @@
   let orgEl: HTMLElement;
   let projEl: HTMLElement;
 
-  // NEW: track rows for projects being created
   let creatingProjects = $state<{ id: string; name: string }[]>([]);
 
   function toggleOrg(e: MouseEvent) {
@@ -65,9 +64,19 @@
     openProject = true;
   }
 
-  function confirmCreate(cp: { id: string; name: string }) {
-    console.log("create project:", cp.name);
+  async function confirmCreate(cp: { id: string; name: string }) {
+    if (!currentOrg) return;
+
+    const project = ProjectSchema.parse(
+      await pb.collection("projects").create({ name: cp.name })
+    );
+    await pb
+      .collection("orgs")
+      .update(currentOrg.id, { "projects+": project.id });
+    await authProvider.refreshUser();
+
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
+    settingsProvider.setCurrentProject(project);
   }
 </script>
 
@@ -83,7 +92,11 @@
     >
       {#each orgs as org (org?.id)}
         <li>
-          <button class="w-full text-left" onclick={() => selectOrg(org!)}>
+          <button
+            class:text-primary={org?.id === currentOrg?.id}
+            class="w-full text-left"
+            onclick={() => selectOrg(org!)}
+          >
             <span class="font-semibold">{org?.name}</span>
           </button>
         </li>
@@ -108,6 +121,7 @@
       {#each projects as project (project?.id)}
         <li>
           <button
+            class:text-primary={project?.id === currentProject?.id}
             class="w-full text-left p-2"
             onclick={() => selectProject(project)}
           >
@@ -123,7 +137,7 @@
             <input
               class="input input-bordered flex-1"
               type="text"
-              placeholder="New project name"
+              placeholder="New name"
               bind:value={cp.name}
             />
             <button onclick={() => confirmCreate(cp)} class="btn btn-ghost">
@@ -133,7 +147,6 @@
         </li>
       {/each}
 
-      <!-- the "Create new" trigger -->
       <li>
         <button
           class="w-full text-left p-2 btn btn-primary btn-outline"

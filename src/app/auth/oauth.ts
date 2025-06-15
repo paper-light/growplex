@@ -1,19 +1,20 @@
 import { actions } from "astro:actions";
 
 import { UserSchema } from "../../models";
-import { authProvider } from "./auth.svelte";
+import { pb, authProvider } from "./auth.svelte";
 
 export const oauth2 = async (provider: string) => {
-  const userResult = await authProvider.pb
-    .collection("users")
-    .authWithOAuth2({ provider });
+  const userResult = await pb.collection("users").authWithOAuth2({
+    provider,
+    expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
+  });
   if (!userResult) {
     return;
   }
 
   const user = UserSchema.parse(userResult.record);
 
-  if (user.created === user.updated) {
+  if (user.orgMembers.length === 0) {
     await actions.seedUser(user);
   }
 };

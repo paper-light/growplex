@@ -19,7 +19,7 @@
 
     try {
       await signIn(email, password);
-      navigate("/app/auth/verify-email")
+      await navigate("/app/auth/verify-email");
     } catch (err) {
       console.error(err);
       error = err as AuthError;

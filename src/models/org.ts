@@ -4,14 +4,16 @@ import { ProjectSchema } from "./project";
 
 export const OrgSchema = z.object({
   id: z.string(),
+  name: z.string(),
   projects: z.array(z.string()),
+  created: z.string(),
+  updated: z.string(),
+
   expand: z
     .object({
       projects: z.array(ProjectSchema).optional(),
     })
     .optional(),
-  created: z.string(),
-  updated: z.string(),
 });
 
 export const OrgMemberSchema = z.object({
@@ -20,4 +22,10 @@ export const OrgMemberSchema = z.object({
   role: z.union([z.literal("owner"), z.literal("operator")]),
   created: z.string(),
   updated: z.string(),
+
+  expand: z
+    .object({
+      org: OrgSchema.optional(),
+    })
+    .optional(),
 });

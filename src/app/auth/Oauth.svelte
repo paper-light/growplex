@@ -22,7 +22,7 @@
     try {
       const target = e.currentTarget as HTMLElement;
       await oauth2(target.dataset.provider!);
-      navigate("/app");
+      await navigate("/app");
     } catch (e) {
       console.error("Error during OAuth2 flow:", e);
     } finally {

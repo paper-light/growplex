@@ -14,36 +14,50 @@ const store = new AsyncAuthStore({
   },
 });
 
+export const pb = new PocketBase(PUBLIC_PB_URL, store);
+
 class AuthProvider {
-  pb = new PocketBase(PUBLIC_PB_URL, store);
-  user: z.infer<typeof UserSchema> | null = $derived(
-    this.pb.authStore.record && this.pb.authStore.isValid
-      ? UserSchema.parse(this.pb.authStore.record)
-      : null
+  user = $state<z.infer<typeof UserSchema> | null>(
+    pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
   );
 
+  constructor() {
+    pb.authStore.onChange((token, rec) => {
+      if (rec && pb.authStore.isValid) {
+        this.user = UserSchema.parse(rec);
+      } else {
+        this.user = null;
+      }
+    });
+  }
+
   async subscribeUser() {
-    if (!this.user) {
+    if (!pb.authStore.isValid) {
       console.log("No user to subscribe to");
       return;
     }
 
     await this.refreshUser();
 
-    await this.pb.collection("users").subscribe(this.user.id, async (e) => {
-      switch (e.action) {
-        case "update": {
-          this.pb.authStore.save(this.pb.authStore.token, e.record);
-          break;
+    await pb.collection("users").subscribe(
+      pb.authStore.record!.id,
+      async (e) => {
+        switch (e.action) {
+          case "update": {
+            pb.authStore.save(pb.authStore.token, e.record);
+            break;
+          }
+          case "delete": {
+            pb.authStore.clear();
+            break;
+          }
+          default: {
+            console.log("Ignore action: ", e.action);
+          }
         }
-        case "delete": {
-          this.pb.authStore.clear();
-          break;
-        }
-        default:
-          console.log("Ignore action: ", e.action);
-      }
-    });
+      },
+      { expand: "orgMembers,orgMembers.org,orgMembers.org.projects" }
+    );
   }
 
   async unsubscribeUser() {
@@ -52,13 +66,20 @@ class AuthProvider {
       return;
     }
     console.log("Unsubscribing from user: ", this.user.id);
-    await this.pb.collection("users").unsubscribe(this.user.id);
-    this.pb.authStore.clear();
+    await pb.collection("users").unsubscribe(this.user.id);
+    this.logout();
   }
 
   async refreshUser() {
-    const authResponse = await this.pb.collection("users").authRefresh();
-    this.pb.authStore.save(authResponse.token, authResponse.record);
+    console.log("refresh");
+    const authResponse = await pb.collection("users").authRefresh({
+      expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
+    });
+    pb.authStore.save(authResponse.token, authResponse.record);
+  }
+
+  logout() {
+    pb.authStore.clear();
   }
 }
 

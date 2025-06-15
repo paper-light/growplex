@@ -35,8 +35,8 @@
     try {
       await signUp(email, password, confirmPassword, username);
       await signIn(email, password);
-      navigate("/app/auth/verify-email")
-      authProvider.pb.collection("users").requestVerification(email);
+      await navigate("/app/auth/verify-email");
+      await authProvider.pb.collection("users").requestVerification(email);
     } catch (err) {
       console.error(err);
     } finally {
@@ -126,7 +126,7 @@
         />
         <span class="label-text">
           I agree to the
-          <a href="/terms-and-privacy" class="link link-primary"
+          <a target="_blank" href="/terms-and-privacy" class="link link-primary"
             >Terms and Privacy</a
           >
         </span>

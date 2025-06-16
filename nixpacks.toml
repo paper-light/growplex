@@ -1,13 +1,11 @@
+providers = ['node']
 
-[[providers]]
-name = "node"
-
-[phases.install]
-cmds = ["pnpm i --frozen-lockfile"]
+[phases.setup]
+nixPkgs = ['nodejs_20', 'pnpm-9_x']
 
 [phases.build]
 cmds = ["pnpm run build"]
 cacheDirectories = ["node_modules/.cache"]
 
-[phases.start]
+[start]
 cmd = "pnpm run start"

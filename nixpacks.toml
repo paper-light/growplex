@@ -1,5 +1,13 @@
+
+[[providers]]
+name = "node"
+
+[phases.install]
+cmds = ["pnpm i --frozen-lockfile"]
+
 [phases.build]
 cmds = ["pnpm run build"]
+cacheDirectories = ["node_modules/.cache"]
 
-[start]
+[phases.start]
 cmd = "pnpm run start"

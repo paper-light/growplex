@@ -42,7 +42,11 @@ const { active } = Astro.props;
           color: "var(--color-yellow-500)",
         });
       } else {
-        window.ChatWidget.reload();
+        window.ChatWidget.reload({
+          id,
+          domain,
+          color: "var(--color-yellow-500)",
+        });
       }
     }
     boot();

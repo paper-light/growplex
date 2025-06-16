@@ -3,7 +3,7 @@
   import { signUp } from "./sign-up";
   import Oauth from "./Oauth.svelte";
   import type { AuthError } from "./models";
-  import { authProvider } from "./auth.svelte";
+  import { authProvider, pb } from "./auth.svelte";
   import { navigate } from "astro:transitions/client";
 
   let username = $state("");
@@ -36,7 +36,7 @@
       await signUp(email, password, confirmPassword, username);
       await signIn(email, password);
       await navigate("/app/auth/verify-email");
-      await authProvider.pb.collection("users").requestVerification(email);
+      await pb.collection("users").requestVerification(email);
     } catch (err) {
       console.error(err);
     } finally {

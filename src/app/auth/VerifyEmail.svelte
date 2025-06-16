@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { authProvider } from "./auth.svelte";
+  import { authProvider, pb } from "./auth.svelte";
 
   const user = $derived(authProvider.user);
 
@@ -14,9 +14,7 @@
 <button
   class="btn"
   onclick={(e) => {
-    console.log(authProvider.pb.authStore);
     authProvider.logout();
-    console.log(authProvider.pb.authStore);
   }}>Logout</button
 >
 
@@ -25,6 +23,6 @@
   class="btn"
   onclick={(e) => {
     if (!user) return;
-    authProvider.pb.collection("users").update(user.id, { name: i });
+    pb.collection("users").update(user.id, { name: i });
   }}>NAME</button
 >

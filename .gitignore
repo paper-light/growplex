@@ -31,3 +31,5 @@ data/**/*.mp3
 **/__pycache__
 
 pb/pb_data
+
+public/scripts/chat-widget.js

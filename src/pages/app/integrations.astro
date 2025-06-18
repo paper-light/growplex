@@ -1,4 +1,6 @@
 ---
+import {Home}  from "@lucide/astro";
+
 import Root from "../../layouts/Root.astro";
 import AppLayout from "../../layouts/App.astro";
 
@@ -19,12 +21,22 @@ import PickWidget from "../../app/shared/PickWidget.svelte"
 
         <PickWidget client:only type="chats"/>
         
-        <PickWidget client:only type="knowledgeSources"/>
-
-        <div
-          class="border border-base-300 rounded p-4 flex items-center justify-center"
+        <!-- <PickWidget client:only type="knowledgeSources"/> -->
+         <div
+          class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
         >
-          Operators
+          <div class="text-2xl font-semibold mb-2 opacity-60">Knowledge</div>
+          <span class="badge badge-warning badge-outline mb-4">Coming Soon</span>
+          <div class="text-5xl opacity-60"><Home/></div>
+        </div>
+
+        <!-- <PickWidget client:only type="operators"/> -->
+        <div
+          class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
+        >
+          <div class="text-2xl font-semibold mb-2 opacity-60">Operators</div>
+          <span class="badge badge-warning badge-outline mb-4">Coming Soon</span>
+          <div class="text-5xl opacity-60"><Home/></div>
         </div>
       </div>
       <ChatPreview client:only />

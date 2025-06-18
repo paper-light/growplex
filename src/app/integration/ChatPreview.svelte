@@ -4,10 +4,8 @@
   import { X, ChevronLeft } from "@lucide/svelte";
   import { onDestroy } from "svelte";
 
-  import { clickOutside } from "../shared/clickOutside";
-
   // reactive state
-  let open = $state(false);
+  let open = $state(true);
   let sidebarEl: HTMLElement | null = $state(null);
 
   function openSidebar() {
@@ -51,9 +49,8 @@
 {#if open}
   <aside
     bind:this={sidebarEl}
-    use:clickOutside={closeSidebar}
     class="fixed top-0 right-0 h-full w-80 bg-base-200 shadow-xl p-6 z-30"
-    transition:slide={{axis: "x"}}
+    transition:slide={{ axis: "x" }}
     aria-label="Sidebar"
     tabindex="-1"
     onintroend={() => sidebarEl?.focus()}

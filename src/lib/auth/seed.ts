@@ -5,13 +5,21 @@ import {
   OrgMemberSchema,
   ProjectSchema,
   type UserSchema,
+  IntegrationSchema,
 } from "../../models";
 
 import { pb } from "../config/pb";
 
 export async function seed(user: z.infer<typeof UserSchema>) {
+  const integration = IntegrationSchema.parse(
+    await pb.collection("integrations").create({
+      name: "Default Integration",
+    })
+  );
   const project = ProjectSchema.parse(
-    await pb.collection("projects").create({ name: "Default" })
+    await pb
+      .collection("projects")
+      .create({ name: "Default", integrations: [integration.id] })
   );
   const org = OrgSchema.parse(
     await pb.collection("orgs").create({

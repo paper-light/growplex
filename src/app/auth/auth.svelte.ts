@@ -31,9 +31,9 @@ class AuthProvider {
     "orgMembers.org.projects.integrations.knowledgeSources",
     "orgMembers.org.projects.integrations.chat",
   ] as const;
-  
+
   expandString = this.expandKeys.join(",");
-  
+
   user = $state<z.infer<typeof UserSchema> | null>(
     pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
   );
@@ -97,6 +97,7 @@ class AuthProvider {
 
   logout() {
     pb.authStore.clear();
+    settingsProvider.clear();
   }
 }
 

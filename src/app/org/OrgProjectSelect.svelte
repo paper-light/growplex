@@ -3,7 +3,11 @@
   import { onMount } from "svelte";
   import { ChevronDown, Check } from "@lucide/svelte";
 
-  import { ProjectSchema, type OrgSchema } from "../../models";
+  import {
+    IntegrationSchema,
+    ProjectSchema,
+    type OrgSchema,
+  } from "../../models";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider, pb } from "../auth/auth.svelte";
@@ -67,16 +71,25 @@
   async function confirmCreate(cp: { id: string; name: string }) {
     if (!currentOrg) return;
 
+    const integration = IntegrationSchema.parse(
+      await pb.collection("integrations").create({
+        name: "Default Integration",
+      })
+    );
     const project = ProjectSchema.parse(
-      await pb.collection("projects").create({ name: cp.name })
+      await pb
+        .collection("projects")
+        .create({ name: cp.name, integrations: [integration.id] })
     );
     await pb
       .collection("orgs")
       .update(currentOrg.id, { "projects+": project.id });
+
+    settingsProvider.setCurrentProject(project);
+    settingsProvider.setCurrentIntegration(integration);
     await authProvider.refreshUser();
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
-    settingsProvider.setCurrentProject(project);
   }
 </script>
 

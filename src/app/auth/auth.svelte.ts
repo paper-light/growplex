@@ -85,7 +85,6 @@ class AuthProvider {
     }
     console.log("Unsubscribing from user: ", this.user.id);
     await pb.collection("users").unsubscribe(this.user.id);
-    this.logout();
   }
 
   async refreshUser() {
@@ -96,6 +95,7 @@ class AuthProvider {
   }
 
   logout() {
+    this.unsubscribeUser();
     pb.authStore.clear();
     settingsProvider.clear();
   }

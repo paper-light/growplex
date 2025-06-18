@@ -4,14 +4,10 @@ import { House, Mail, User, Menu } from "@lucide/astro";
 import ProfileMenu from "../app/user/ProfileMenu.svelte";
 import OrgProjectSelect from "../app/org/OrgProjectSelect.svelte";
 import SidebarNav from "../app/shared/SidebarNav.svelte";
-import AppGlobalState from "../app/AppGlobal.svelte";
 import ThemeController from "../components/ThemeController.svelte";
 
 const { pageName } = Astro.props;
 ---
-
-<AppGlobalState client:only transition:persist name="app" />
-
 <div class="drawer lg:drawer-open">
   <!-- toggle checkbox -->
   <input id="sidebar-toggle" type="checkbox" class="drawer-toggle" />

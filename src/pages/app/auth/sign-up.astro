@@ -1,12 +1,15 @@
 ---
 import Root from "../../../layouts/Root.astro";
 import AuthLayout from "../../../layouts/Auth.astro";
+import ClientState from "../../../layouts/ClientState.astro";
 
 import SignUpWidget from "../../../app/auth/SignUp.svelte";
 ---
 
 <Root title="Growplex | SignUp">
-  <AuthLayout>
-    <SignUpWidget client:only />
-  </AuthLayout>
+  <ClientState>
+    <AuthLayout>
+      <SignUpWidget client:only />
+    </AuthLayout>
+  </ClientState>
 </Root>

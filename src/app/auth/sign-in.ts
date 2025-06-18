@@ -1,7 +1,6 @@
-import { pb } from "./auth.svelte";
+import { pb, authProvider } from "./auth.svelte";
 
 export const signIn = async (email: string, password: string) => {
-  await pb.collection("users").authWithPassword(email, password, {
-    expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
-  });
+  await pb.collection("users").authWithPassword(email, password);
+  authProvider.refreshUser();
 };

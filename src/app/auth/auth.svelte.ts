@@ -17,6 +17,8 @@ const store = new AsyncAuthStore({
 export const pb = new PocketBase(PUBLIC_PB_URL, store);
 
 class AuthProvider {
+  expandString =
+    "orgMembers,orgMembers.org,orgMembers.org.projects,orgMembers.org.projects.integrations,orgMembers.org.projects.agents,orgMembers.org.projects.knowledgeSources,orgMembers.org.projects.chats";
   user = $state<z.infer<typeof UserSchema> | null>(
     pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
   );
@@ -56,7 +58,7 @@ class AuthProvider {
           }
         }
       },
-      { expand: "orgMembers,orgMembers.org,orgMembers.org.projects" }
+      { expand: this.expandString }
     );
   }
 
@@ -72,7 +74,7 @@ class AuthProvider {
 
   async refreshUser() {
     const authResponse = await pb.collection("users").authRefresh({
-      expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
+      expand: this.expandString,
     });
     pb.authStore.save(authResponse.token, authResponse.record);
   }

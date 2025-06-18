@@ -11,10 +11,11 @@ export const oauth2 = async (provider: string) => {
     return;
   }
 
-  await authProvider.refreshUser();
-
   const user = UserSchema.parse(userResult.record);
   if (user.orgMembers.length === 0) {
     await actions.seedUser(user);
+    await authProvider.refreshUser();
+  } else {
+    await authProvider.refreshUser();
   }
 };

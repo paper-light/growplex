@@ -8,20 +8,22 @@ import {
 } from "../../models";
 import { authProvider } from "../auth/auth.svelte";
 
-const raw = localStorage.getItem("settings");
 
 class SettingsProvider {
-  settings = $state(
-    raw
-      ? SettingsSchema.parse(JSON.parse(raw))
-      : authProvider.user
-      ? this.initFromUser(authProvider.user)
-      : null
-  );
+  settings: z.infer<typeof SettingsSchema> | null = $state(null);
 
   currentOrg = $derived(this.settings?.currentOrg || null);
   currentProject = $derived(this.settings?.currentProject || null);
   currentIntegration = $derived(this.settings?.currentIntegration || null)
+
+  init() {
+    const raw = localStorage.getItem("settings");
+    if (raw) {
+      this.settings = SettingsSchema.parse(JSON.parse(raw));
+    } else if (authProvider.user) {
+      this.settings = this.initFromUser(authProvider.user)
+    }
+  }
 
   initFromUser(
     user: z.infer<typeof UserSchema>
@@ -49,15 +51,15 @@ class SettingsProvider {
 
     if (this.currentOrg) {
       const org = user.expand?.orgMembers?.find(o => o.org === this.currentOrg!.id)?.expand?.org
-      if (org) this.setCurrentOrg(org)
+      if (org) this.settings!.currentOrg = org
     }
     if (this.currentProject) {
       const proj = user.expand?.orgMembers?.find(o => o.org === this.currentOrg!.id)?.expand?.org?.expand?.projects?.find(p => p.id === this.currentProject?.id)
-      if (proj) this.setCurrentProject(proj)
+      if (proj) this.settings!.currentProject = proj
     }
     if (this.currentProject && this.currentIntegration) {
       const integ = user.expand?.orgMembers?.find(o => o.org === this.currentOrg!.id)?.expand?.org?.expand?.projects?.find(p => p.id === this.currentProject?.id)?.expand?.integrations?.find(i => i.id === this.currentIntegration?.id)
-      if (integ) this.setCurrentIntegration(integ)
+      if (integ) this.settings!.currentIntegration = integ
     }
   }
 
@@ -71,6 +73,7 @@ class SettingsProvider {
   }
   setCurrentProject(project: z.infer<typeof ProjectSchema>) {
     if (!this.settings) return;
+    console.log(project.name)
 
     this.settings.currentProject = project;
     this.settings.currentIntegration = project.expand?.integrations ? project.expand?.integrations[0] : null

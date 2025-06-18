@@ -92,7 +92,6 @@ class AuthProvider {
     const authResponse = await pb.collection("users").authRefresh({
       expand: this.expandString,
     });
-    console.log(authResponse.record.expand);
     pb.authStore.save(authResponse.token, authResponse.record);
   }
 

@@ -62,6 +62,8 @@
     await authProvider.refreshUser();
   }
 
+    function closeSelectModal() { selectOpen = false; }
+
   let createModalOpen = $state(false);
   function openCreate() {
     createModalOpen = true;
@@ -124,34 +126,6 @@
     {/if}
   </div>
   
-  {#if selectOpen}
-    <div class="absolute mt-2 left-0 w-full z-50">
-      {#if type === 'knowledgeSources'}
-        <div class="bg-base-100 border border-base-300 rounded p-2 shadow">
-          {#each objects as o}
-            <label class="inline-flex items-center w-full p-1">
-              <input type="checkbox" class="checkbox mr-2" bind:group={selectedIds} value={o.id} />
-              {o.name || o.id}
-            </label>
-          {/each}
-          <button class="btn btn-sm btn-primary mt-2" onclick={confirmSelect}>
-            Confirm
-          </button>
-        </div>
-      {:else}
-        <select class="select select-bordered w-full mb-2" bind:value={selectedId}>
-          <option value="" disabled selected>Select {type}</option>
-          {#each objects as o}
-            <option value={o.id}>{o.name || o.id}</option>
-          {/each}
-        </select>
-        <button class="btn btn-sm btn-primary" onclick={confirmSelect}>
-          Confirm
-        </button>
-      {/if}
-    </div>
-  {/if}
-  
   {#if createModalOpen}
     <input type="checkbox" class="modal-toggle" bind:checked={createModalOpen} />
     <div class="modal">
@@ -175,3 +149,43 @@
       </div>
     </div>
   {/if}
+
+<!-- Selection Modal -->
+<input type="checkbox" class="modal-toggle" bind:checked={selectOpen} />
+{#if selectOpen}
+<div class="modal">
+  <div class="modal-box relative">
+    <button class="btn btn-sm btn-circle absolute right-2 top-2" onclick={closeSelectModal}>
+      <X size={20} />
+    </button>
+
+    {#if type === 'knowledgeSources'}
+      <h3 class="font-bold text-lg mb-4">Select Knowledge Sources</h3>
+    {:else}
+      <h3 class="font-bold text-lg mb-4">Select {type.slice(0, -1)}</h3>
+    {/if}
+
+    <div class="modal-body space-y-3 max-h-64 overflow-y-auto">
+      {#if type === 'knowledgeSources'}
+        {#each objects as o}
+          <label class="flex items-center">
+            <input type="checkbox" class="checkbox mr-2" bind:group={selectedIds} value={o.id} />
+            {o.name || o.id}
+          </label>
+        {/each}
+      {:else}
+        <select class="select select-bordered w-full" bind:value={selectedId}>
+          <option value="" disabled selected>Select {type}</option>
+          {#each objects as o}
+            <option value={o.id}>{o.name || o.id}</option>
+          {/each}
+        </select>
+      {/if}
+    </div>
+
+    <div class="modal-action">
+      <button class="btn btn-primary" onclick={confirmSelect}>Confirm</button>
+    </div>
+  </div>
+</div>
+{/if}

@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { fade } from "svelte/transition"
-  // import { MessageCircle } from "@lucide/svelte";
+  import { fade } from "svelte/transition";
+  import { MessageCircle } from "@lucide/svelte";
 
   interface Props {
     isOpen: boolean;
@@ -18,6 +18,7 @@
     onclick={onToggle}
     transition:fade={{ duration: 100 }}
   >
+    <MessageCircle />
   </button>
 {/if}
 

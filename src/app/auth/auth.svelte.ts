@@ -3,6 +3,7 @@ import { PUBLIC_PB_URL } from "astro:env/client";
 import PocketBase, { AsyncAuthStore } from "pocketbase";
 
 import { UserSchema } from "../../models";
+import { settingsProvider } from "../settings/settings.svelte";
 
 const store = new AsyncAuthStore({
   save: async (serialized: string) => {
@@ -17,8 +18,22 @@ const store = new AsyncAuthStore({
 export const pb = new PocketBase(PUBLIC_PB_URL, store);
 
 class AuthProvider {
-  expandString =
-    "orgMembers,orgMembers.org,orgMembers.org.projects,orgMembers.org.projects.integrations,orgMembers.org.projects.agents,orgMembers.org.projects.knowledgeSources,orgMembers.org.projects.chats";
+  expandKeys = [
+    "orgMembers",
+    "orgMembers.org",
+    "orgMembers.org.projects",
+    "orgMembers.org.projects.integrations",
+    "orgMembers.org.projects.agents",
+    "orgMembers.org.projects.knowledgeSources",
+    "orgMembers.org.projects.chats",
+
+    "orgMembers.org.projects.integrations.agent",
+    "orgMembers.org.projects.integrations.knowledgeSources",
+    "orgMembers.org.projects.integrations.chat",
+  ] as const;
+  
+  expandString = this.expandKeys.join(",");
+  
   user = $state<z.infer<typeof UserSchema> | null>(
     pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
   );
@@ -27,6 +42,7 @@ class AuthProvider {
     pb.authStore.onChange((token, rec) => {
       if (rec && pb.authStore.isValid) {
         this.user = UserSchema.parse(rec);
+        settingsProvider.mergeUser(this.user);
       } else {
         this.user = null;
       }
@@ -76,6 +92,7 @@ class AuthProvider {
     const authResponse = await pb.collection("users").authRefresh({
       expand: this.expandString,
     });
+    console.log(authResponse.record.expand);
     pb.authStore.save(authResponse.token, authResponse.record);
   }
 

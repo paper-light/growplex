@@ -3,33 +3,30 @@ import Root from "../../layouts/Root.astro";
 import AppLayout from "../../layouts/App.astro";
 
 import ChatPreview from "../../app/integration/ChatPreview.svelte";
+import Sidebar from "../../app/integration/Sidebar.svelte"
+import PickWidget from "../../app/shared/PickWidget.svelte"
 ---
 
 <Root title="Growplex | App Home">
   <AppLayout pageName="Integrations">
-    <!-- Content grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
-      <div
-        class="border border-base-300 rounded p-4 flex items-center justify-center"
-      >
-        Agent
-      </div>
-      <div
-        class="border border-base-300 rounded p-4 flex items-center justify-center"
-      >
-        Chat
-      </div>
-      <div
-        class="border border-base-300 rounded p-4 flex items-center justify-center"
-      >
-        Knowledge
-      </div>
-      <div
-        class="border border-base-300 rounded p-4 flex items-center justify-center"
-      >
-        Operators
-      </div>
 
+    <div class="w-full h-full relative">
+      <Sidebar client:only/>
+
+      <!-- Content grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
+        <PickWidget client:only type="agents"/>
+
+        <PickWidget client:only type="chats"/>
+        
+        <PickWidget client:only type="knowledgeSources"/>
+
+        <div
+          class="border border-base-300 rounded p-4 flex items-center justify-center"
+        >
+          Operators
+        </div>
+      </div>
       <ChatPreview client:only />
     </div>
   </AppLayout>

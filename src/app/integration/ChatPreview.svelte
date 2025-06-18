@@ -8,7 +8,7 @@
 
   // reactive state
   let open = $state(false);
-  let sidebarEl: HTMLElement;
+  let sidebarEl: HTMLElement | null = $state(null);
 
   function openSidebar() {
     open = true;
@@ -41,7 +41,7 @@
 <!-- Open button -->
 <button
   type="button"
-  class="fixed top-1/2 right-0 -translate-y-1/2 rounded-full border"
+  class="absolute top-1/2 -right-8 -translate-y-1/2 rounded-full bg-primary hover:cursor-pointer hover:bg-base-200 transition border border-primary hover:text-primary"
   aria-label="Open sidebar"
   onclick={openSidebar}
 >
@@ -53,7 +53,7 @@
     bind:this={sidebarEl}
     use:clickOutside={closeSidebar}
     class="fixed top-0 right-0 h-full w-80 bg-base-200 shadow-xl p-6 z-30"
-    transition:slide={{ duration: 300, axis: "x" }}
+    transition:slide={{axis: "x"}}
     aria-label="Sidebar"
     tabindex="-1"
     onintroend={() => sidebarEl?.focus()}

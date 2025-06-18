@@ -6,6 +6,7 @@ import { KnowledgeSourceSchema } from "./knowledge";
 
 export const IntegrationSchema = z.object({
   id: z.string(),
+  name: z.string(),
   agent: z.string(),
   chat: z.string(),
   knowledgeSources: z.array(z.string()),

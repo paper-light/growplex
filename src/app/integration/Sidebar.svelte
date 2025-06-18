@@ -12,7 +12,7 @@
   const currentIntegration = $derived(settingsProvider.currentIntegration);
   const integrations = $derived(currentProject?.expand?.integrations || []);
 
-  let open = $state(true);
+  let open = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);
 
   function openSidebar() {

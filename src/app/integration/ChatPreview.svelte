@@ -5,7 +5,7 @@
   import { onDestroy } from "svelte";
 
   // reactive state
-  let open = $state(true);
+  let open = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);
 
   function openSidebar() {

@@ -6,14 +6,14 @@ import { pb, authProvider } from "./auth.svelte";
 export const oauth2 = async (provider: string) => {
   const userResult = await pb.collection("users").authWithOAuth2({
     provider,
-    expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
   });
   if (!userResult) {
     return;
   }
 
-  const user = UserSchema.parse(userResult.record);
+  await authProvider.refreshUser();
 
+  const user = UserSchema.parse(userResult.record);
   if (user.orgMembers.length === 0) {
     await actions.seedUser(user);
   }

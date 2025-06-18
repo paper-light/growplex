@@ -67,9 +67,10 @@
     if (savedRoom) {
       roomId = savedRoom;
     } else {
-      const rec = await pb.collection("rooms").create({ status: "auto" });
-      roomId = rec.id;
-      localStorage.setItem("chatRoomId", rec.id);
+      const room = await pb
+        .collection("rooms")
+        .create({ status: "auto", chat: chat.id });
+      localStorage.setItem("chatRoomId", room.id);
     }
 
     const savedUser = localStorage.getItem("chatUsername");

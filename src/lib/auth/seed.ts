@@ -4,13 +4,18 @@ import {
   OrgSchema,
   OrgMemberSchema,
   ProjectSchema,
-  type UserSchema,
+  UserSchema,
   IntegrationSchema,
 } from "../../models";
 
 import { pb } from "../config/pb";
 
 export async function seed(user: z.infer<typeof UserSchema>) {
+  const dbUser = UserSchema.parse(await pb.collection("users").getOne(user.id));
+  if (dbUser.orgMembers.length > 0) {
+    throw new Error("user already seeded");
+  }
+
   const integration = IntegrationSchema.parse(
     await pb.collection("integrations").create({
       name: "Default Integration",

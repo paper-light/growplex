@@ -1,7 +1,7 @@
 <script lang="ts">
   import z from "zod";
   import { onMount } from "svelte";
-  import { ChevronDown, Check } from "@lucide/svelte";
+  import { ChevronDown, Check, Edit, X } from "@lucide/svelte";
 
   import {
     IntegrationSchema,
@@ -31,6 +31,12 @@
   let projEl: HTMLElement;
 
   let creatingProjects = $state<{ id: string; name: string }[]>([]);
+
+  // Editing state
+  let editingOrgId = $state<string | null>(null);
+  let editingProjectId = $state<string | null>(null);
+  let editedOrgName = $state<string>("");
+  let editedProjectName = $state<string>("");
 
   function toggleOrg(e: MouseEvent) {
     e.stopPropagation();
@@ -91,6 +97,50 @@
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
   }
+
+  // Edit existing org
+  function startEditOrg(e: MouseEvent, org: z.infer<typeof OrgSchema>) {
+    e.stopPropagation();
+    editingOrgId = org.id;
+    editedOrgName = org.name;
+    openOrg = true;
+  }
+  function cancelEditOrg(e: MouseEvent) {
+    e.stopPropagation();
+    editingOrgId = null;
+    editedOrgName = "";
+  }
+  async function confirmEditOrg(e: MouseEvent, org: z.infer<typeof OrgSchema>) {
+    e.stopPropagation();
+    if (!editedOrgName.trim()) return;
+    await pb.collection("orgs").update(org.id, { name: editedOrgName.trim() });
+    settingsProvider.setCurrentOrg({ ...org, name: editedOrgName.trim() });
+    await authProvider.refreshUser();
+    editingOrgId = null;
+    editedOrgName = "";
+  }
+
+  // Edit existing project
+  function startEditProject(e: MouseEvent, project: z.infer<typeof ProjectSchema>) {
+    e.stopPropagation();
+    editingProjectId = project.id;
+    editedProjectName = project.name;
+    openProject = true;
+  }
+  function cancelEditProject(e: MouseEvent) {
+    e.stopPropagation();
+    editingProjectId = null;
+    editedProjectName = "";
+  }
+  async function confirmEditProject(e: MouseEvent, project: z.infer<typeof ProjectSchema>) {
+    e.stopPropagation();
+    if (!editedProjectName.trim()) return;
+    await pb.collection("projects").update(project.id, { name: editedProjectName.trim() });
+    settingsProvider.setCurrentProject({ ...project, name: editedProjectName.trim() });
+    await authProvider.refreshUser();
+    editingProjectId = null;
+    editedProjectName = "";
+  }
 </script>
 
 <div class="mb-6 space-y-1">
@@ -100,69 +150,103 @@
       ORG: {currentOrg?.name}
       <ChevronDown size={14} />
     </button>
-    <ul
-      class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-2 p-2"
-    >
+    <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1">
       {#each orgs as org (org?.id)}
-        <li>
-          <button
-            class:text-primary={org?.id === currentOrg?.id}
-            class="w-full text-left"
-            onclick={() => selectOrg(org!)}
-          >
-            <span class="font-semibold">{org?.name}</span>
-          </button>
+        <li class="w-full">
+          {#if editingOrgId === org?.id}
+            <div class="flex items-center w-full gap-1 p-1">
+              <input
+                class="input input-bordered flex-[2]"
+                bind:value={editedOrgName}
+                onclick={e => e.stopPropagation()}
+              />
+              <button onclick={(e) => confirmEditOrg(e, org!)} class="btn btn-ghost btn-xs p-1">
+                <Check size={12} />
+              </button>
+              <button onclick={cancelEditOrg} class="btn btn-ghost btn-xs p-1">
+                <X size={12} />
+              </button>
+            </div>
+          {:else}
+            <div class="flex items-center w-full gap-1 p-1">
+              <button
+                class:text-primary={org?.id === currentOrg?.id}
+                class="flex-[2] text-left p-1 text-sm"
+                onclick={() => selectOrg(org!)}
+              >
+                <span class="font-semibold">{org?.name}</span>
+              </button>
+              <button onclick={(e) => startEditOrg(e, org!)} class="btn btn-ghost btn-xs p-1">
+                <Edit size={12} />
+              </button>
+            </div>
+          {/if}
         </li>
       {/each}
     </ul>
   </div>
 
   <!-- Project selector -->
-  <div
-    class="dropdown w-full"
-    class:dropdown-open={openProject}
-    bind:this={projEl}
-  >
+  <div class="dropdown w-full" class:dropdown-open={openProject} bind:this={projEl}>
     <button class="btn btn-block justify-between" onclick={toggleProject}>
       PROJECT: {currentProject?.name}
       <ChevronDown size={14} />
     </button>
-    <ul
-      class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-2 p-2"
-    >
+    <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1">
       <!-- existing projects -->
       {#each projects as project (project?.id)}
-        <li>
-          <button
-            class:text-primary={project?.id === currentProject?.id}
-            class="w-full text-left p-2"
-            onclick={() => selectProject(project)}
-          >
-            <span class="font-semibold">{project?.name}</span>
-          </button>
+        <li class="w-full">
+          {#if editingProjectId === project?.id}
+            <div class="flex items-center w-full gap-1 p-1">
+              <input
+                class="input input-bordered flex-[2]"
+                bind:value={editedProjectName}
+                onclick={e => e.stopPropagation()}
+              />
+              <button onclick={(e) => confirmEditProject(e, project!)} class="btn btn-ghost btn-xs p-1">
+                <Check size={12} />
+              </button>
+              <button onclick={cancelEditProject} class="btn btn-ghost btn-xs p-1">
+                <X size={12} />
+              </button>
+            </div>
+          {:else}
+            <div class="flex items-center w-full gap-1 p-1">
+              <button
+                class:text-primary={project?.id === currentProject?.id}
+                class="flex-[2] text-left p-1 text-sm"
+                onclick={() => selectProject(project!)}
+              >
+                <span class="font-semibold">{project?.name}</span>
+              </button>
+              <button onclick={(e) => startEditProject(e, project!)} class="btn btn-ghost btn-xs p-1">
+                <Edit size={12} />
+              </button>
+            </div>
+          {/if}
         </li>
       {/each}
 
       <!-- in-progress new project rows -->
       {#each creatingProjects as cp (cp.id)}
         <li class="w-full">
-          <div class="flex items-center gap-2 p-2">
+          <div class="flex items-center w-full gap-1 p-1">
             <input
-              class="input input-bordered flex-1"
+              class="input input-bordered flex-[2]"
               type="text"
               placeholder="New name"
               bind:value={cp.name}
             />
-            <button onclick={() => confirmCreate(cp)} class="btn btn-ghost">
-              <Check />
+            <button onclick={() => confirmCreate(cp)} class="btn btn-ghost btn-xs p-1">
+              <Check size={12} />
             </button>
           </div>
         </li>
       {/each}
 
-      <li>
+      <li class="w-full">
         <button
-          class="w-full text-left p-2 btn btn-primary btn-outline"
+          class="w-full text-left p-1 text-sm btn btn-primary btn-outline"
           onclick={addCreatingProject}
         >
           <span class="font-semibold">+ Create new</span>

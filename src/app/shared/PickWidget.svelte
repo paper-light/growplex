@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { X } from "@lucide/svelte";
+  import { Edit, X } from "@lucide/svelte";
   import { authProvider, pb } from "../auth/auth.svelte";
   import { settingsProvider } from "../settings/settings.svelte";
   import CreateAgentForm from "../agent/CreateAgentForm.svelte";
@@ -45,6 +45,14 @@
   let selectOpen = $state(false);
   let selectedId = $state("");
   let selectedIds: string[] = $state([]);
+
+  let editModalOpen = $state(false);
+  function openEdit() {
+    editModalOpen = true;
+  }
+  function closeEdit() {
+    editModalOpen = false;
+  }
 
   function openSelect() {
     selectOpen = true;
@@ -139,11 +147,14 @@
       {/each}
     </div>
   {:else}
-    <div class="flex items-center gap-2">
-      <span class="text-2xl font-semibold"
-        >{type}: {(currentObject as any).name}</span
-      >
-      <button class="btn btn-ghost btn-sm" onclick={detach}>
+    <div class="flex items-center justify-center w-full px-12">
+      <span class="text-2xl font-semibold mr-auto">
+        {type.slice(0, -1)}: {(currentObject as any)?.name}
+      </span>
+      <button class="btn btn-ghost btn-square p-1 mr-2" onclick={openEdit}>
+        <Edit size={48} />
+      </button>
+      <button class="btn btn-ghost btn-square p-1" onclick={detach}>
         <X size={48} />
       </button>
     </div>
@@ -173,6 +184,28 @@
       <div class="mt-4">
         <!-- Form fields for {type} -->
       </div>
+    </div>
+  </div>
+{/if}
+
+<!-- Edit Modal -->
+{#if editModalOpen}
+  <input type="checkbox" class="modal-toggle" bind:checked={editModalOpen} />
+  <div class="modal">
+    <div class="modal-box relative">
+      <button
+        class="btn btn-sm btn-circle absolute right-2 top-2"
+        onclick={closeEdit}
+      >
+        <X size={20} />
+      </button>
+      {#if type === "agents"}
+        <!-- <EditAgentForm onClose={closeEdit} entity={currentObject as any} /> -->
+        <div>AGENT</div>
+      {:else if type === "chats"}
+        <!-- <EditChatForm onClose={closeEdit} entity={currentObject as any} /> -->
+        <div>CHAT</div>
+      {/if}
     </div>
   </div>
 {/if}

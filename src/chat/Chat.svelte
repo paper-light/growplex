@@ -11,7 +11,7 @@
   import { nanoid } from "nanoid";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import type { ChatMessageSchema, ChatSchema } from "@/models/chat";
+  import type { ChatMessageSchema, ChatSchema, AgentSchema } from "@/models";
 
   import ChatMessage from "../components/Message.svelte";
   import Man from "../assets/Man.jpg";
@@ -22,7 +22,7 @@
 
   interface Props {
     chat: z.infer<typeof ChatSchema>;
-    agent: any;
+    agent: z.infer<typeof AgentSchema>;
   }
 
   const { chat, agent }: Props = $props();

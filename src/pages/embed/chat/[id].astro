@@ -12,7 +12,7 @@ const integration = IntegrationSchema.parse(
     .getFirstListItem(`chat="${id}"`, { expand: "agent,chat" })
 );
 const chat = integration.expand!.chat!;
-const agent = integration.expand!.agent;
+const agent = integration.expand!.agent!;
 ---
 
 <Root isPosthog={false}>

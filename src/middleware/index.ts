@@ -10,7 +10,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     if (!pb.authStore.isValid || !pb.authStore.isSuperuser) {
       const authData = await pb
         .collection("_superusers")
-        .authWithPassword(PB_ID, PB_PASSWORD);
+        .authWithPassword(PB_ID, PB_PASSWORD, { requestKey: null });
 
       pb.authStore.save(authData.token, authData.record);
     }

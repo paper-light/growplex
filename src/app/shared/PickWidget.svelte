@@ -4,6 +4,8 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import CreateAgentForm from "../agent/CreateAgentForm.svelte";
   import CreateChatForm from "../chat/CreateChatForm.svelte";
+  import EditAgentForm from "../agent/EditAgentForm.svelte";
+  import EditChatForm from "../chat/EditChatForm.svelte";
 
   interface Props {
     type: "agents" | "knowledgeSources" | "chats" | "operators";
@@ -200,11 +202,9 @@
         <X size={20} />
       </button>
       {#if type === "agents"}
-        <!-- <EditAgentForm onClose={closeEdit} entity={currentObject as any} /> -->
-        <div>AGENT</div>
+        <EditAgentForm onClose={closeEdit} entity={currentObject as any} />
       {:else if type === "chats"}
-        <!-- <EditChatForm onClose={closeEdit} entity={currentObject as any} /> -->
-        <div>CHAT</div>
+        <EditChatForm onClose={closeEdit} entity={currentObject as any} />
       {/if}
     </div>
   </div>

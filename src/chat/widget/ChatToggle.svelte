@@ -18,7 +18,7 @@
     onclick={onToggle}
     transition:fade={{ duration: 100 }}
   >
-    <MessageCircle />
+    <MessageCircle size={32} stroke="currentColor" fill="none" />
   </button>
 {/if}
 
@@ -39,24 +39,34 @@
     z-index: 10000;
     transition:
       background 0.2s ease,
-      transform 0.2s ease;
+      transform 0.2s ease,
+      color 0.2s ease;
+    color: #fff;
   }
   .toggle svg {
     width: 2rem;
     height: 2rem;
-    stroke: #fff;
+    stroke: currentColor;
     transition: stroke 0.2s ease;
   }
   .toggle:hover {
     background: transparent;
+    color: var(--chat-widget-primary);
   }
   .toggle:hover svg {
-    stroke: var(--chat-widget-primary);
+    stroke: currentColor;
   }
   @media (min-width: 768px) {
     .toggle {
       width: 4rem;
       height: 4rem;
     }
+  }
+  .toggle::before,
+  .toggle::after,
+  .toggle svg::before,
+  .toggle svg::after {
+    content: none !important;
+    display: none !important;
   }
 </style>

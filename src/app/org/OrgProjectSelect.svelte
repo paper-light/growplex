@@ -121,7 +121,10 @@
   }
 
   // Edit existing project
-  function startEditProject(e: MouseEvent, project: z.infer<typeof ProjectSchema>) {
+  function startEditProject(
+    e: MouseEvent,
+    project: z.infer<typeof ProjectSchema>
+  ) {
     e.stopPropagation();
     editingProjectId = project.id;
     editedProjectName = project.name;
@@ -132,11 +135,19 @@
     editingProjectId = null;
     editedProjectName = "";
   }
-  async function confirmEditProject(e: MouseEvent, project: z.infer<typeof ProjectSchema>) {
+  async function confirmEditProject(
+    e: MouseEvent,
+    project: z.infer<typeof ProjectSchema>
+  ) {
     e.stopPropagation();
     if (!editedProjectName.trim()) return;
-    await pb.collection("projects").update(project.id, { name: editedProjectName.trim() });
-    settingsProvider.setCurrentProject({ ...project, name: editedProjectName.trim() });
+    await pb
+      .collection("projects")
+      .update(project.id, { name: editedProjectName.trim() });
+    settingsProvider.setCurrentProject({
+      ...project,
+      name: editedProjectName.trim(),
+    });
     await authProvider.refreshUser();
     editingProjectId = null;
     editedProjectName = "";
@@ -146,11 +157,13 @@
 <div class="mb-6 space-y-1">
   <!-- Organization selector -->
   <div class="dropdown w-full" class:dropdown-open={openOrg} bind:this={orgEl}>
-    <button class="btn btn-block justify-between" onclick={toggleOrg}>
+    <button class="btn btn-block justify-between truncate" onclick={toggleOrg}>
       ORG: {currentOrg?.name}
       <ChevronDown size={14} />
     </button>
-    <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1">
+    <ul
+      class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1"
+    >
       {#each orgs as org (org?.id)}
         <li class="w-full">
           {#if editingOrgId === org?.id}
@@ -158,9 +171,12 @@
               <input
                 class="input input-bordered flex-[2]"
                 bind:value={editedOrgName}
-                onclick={e => e.stopPropagation()}
+                onclick={(e) => e.stopPropagation()}
               />
-              <button onclick={(e) => confirmEditOrg(e, org!)} class="btn btn-ghost btn-xs p-1">
+              <button
+                onclick={(e) => confirmEditOrg(e, org!)}
+                class="btn btn-ghost btn-xs p-1"
+              >
                 <Check size={12} />
               </button>
               <button onclick={cancelEditOrg} class="btn btn-ghost btn-xs p-1">
@@ -176,7 +192,10 @@
               >
                 <span class="font-semibold">{org?.name}</span>
               </button>
-              <button onclick={(e) => startEditOrg(e, org!)} class="btn btn-ghost btn-xs p-1">
+              <button
+                onclick={(e) => startEditOrg(e, org!)}
+                class="btn btn-ghost btn-xs p-1"
+              >
                 <Edit size={12} />
               </button>
             </div>
@@ -187,12 +206,21 @@
   </div>
 
   <!-- Project selector -->
-  <div class="dropdown w-full" class:dropdown-open={openProject} bind:this={projEl}>
-    <button class="btn btn-block justify-between" onclick={toggleProject}>
+  <div
+    class="dropdown w-full"
+    class:dropdown-open={openProject}
+    bind:this={projEl}
+  >
+    <button
+      class="btn btn-block justify-between truncate"
+      onclick={toggleProject}
+    >
       PROJECT: {currentProject?.name}
       <ChevronDown size={14} />
     </button>
-    <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1">
+    <ul
+      class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1"
+    >
       <!-- existing projects -->
       {#each projects as project (project?.id)}
         <li class="w-full">
@@ -201,12 +229,18 @@
               <input
                 class="input input-bordered flex-[2]"
                 bind:value={editedProjectName}
-                onclick={e => e.stopPropagation()}
+                onclick={(e) => e.stopPropagation()}
               />
-              <button onclick={(e) => confirmEditProject(e, project!)} class="btn btn-ghost btn-xs p-1">
+              <button
+                onclick={(e) => confirmEditProject(e, project!)}
+                class="btn btn-ghost btn-xs p-1"
+              >
                 <Check size={12} />
               </button>
-              <button onclick={cancelEditProject} class="btn btn-ghost btn-xs p-1">
+              <button
+                onclick={cancelEditProject}
+                class="btn btn-ghost btn-xs p-1"
+              >
                 <X size={12} />
               </button>
             </div>
@@ -219,7 +253,10 @@
               >
                 <span class="font-semibold">{project?.name}</span>
               </button>
-              <button onclick={(e) => startEditProject(e, project!)} class="btn btn-ghost btn-xs p-1">
+              <button
+                onclick={(e) => startEditProject(e, project!)}
+                class="btn btn-ghost btn-xs p-1"
+              >
                 <Edit size={12} />
               </button>
             </div>
@@ -237,7 +274,10 @@
               placeholder="New name"
               bind:value={cp.name}
             />
-            <button onclick={() => confirmCreate(cp)} class="btn btn-ghost btn-xs p-1">
+            <button
+              onclick={() => confirmCreate(cp)}
+              class="btn btn-ghost btn-xs p-1"
+            >
               <Check size={12} />
             </button>
           </div>

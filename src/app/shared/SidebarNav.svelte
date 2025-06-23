@@ -26,7 +26,7 @@
                  group-open:text-primary
                  group-open:font-semibold"
         >
-          <span class="text-lg">ThaliaAI</span>
+          <span class="text-lg">Thalia</span>
         </summary>
 
         <ul class="mt-2 space-y-1">

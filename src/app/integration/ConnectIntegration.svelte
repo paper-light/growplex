@@ -60,7 +60,7 @@
     px-6 py-4
     "
   >
-    Connect ThaliaAI
+    Connect Thalia
   </button>
 
   {#if showModal}

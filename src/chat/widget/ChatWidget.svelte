@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import ChatToggle from "./ChatToggle.svelte";
   import ChatContainer from "./ChatContainer.svelte";
-  import ThemeForward from "./ThemeForward.svelte"
+  import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
     id: string;
@@ -14,8 +14,8 @@
 
   let isOpen = $state(false);
 
-  function toggle() {
-    isOpen = !isOpen;
+  function toggle(state: boolean) {
+    isOpen = state;
     sessionStorage.setItem("chat-widget-open", isOpen ? "true" : "false");
   }
 
@@ -31,6 +31,5 @@
   });
 </script>
 
-
-<ChatToggle {isOpen} onToggle={toggle} />
-<ChatContainer {isOpen} {id} {domain} onClose={() => (isOpen = false)} />
+<ChatToggle {isOpen} onToggle={() => toggle(true)} />
+<ChatContainer {isOpen} {id} {domain} onClose={() => toggle(false)} />

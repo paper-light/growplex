@@ -7,7 +7,8 @@ import ThemeLoad from "../components/ThemeLoad.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import CookiesAccept from "../components/CookiesAccept.svelte";
-import ChatWidgetLoader from "../chat/ChatWidgetLoader.svelte";
+
+import ChatLoad from "./ChatLoad.astro";
 
 const { title, active } = Astro.props;
 ---
@@ -34,6 +35,7 @@ const { title, active } = Astro.props;
     <Footer />
 
     <CookiesAccept client:only />
-    <ChatWidgetLoader client:only transition:persist="chat-widget" />
+
+    <ChatLoad />
   </body>
 </html>

@@ -1,29 +1,10 @@
 ---
-// import {
-//   PUBLIC_CHAT_WIDGET_DOMAIN,
-//   PUBLIC_CHAT_WIDGET_ID,
-// } from "astro:env/client";
-
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import CookiesAccept from "../components/CookiesAccept.svelte";
-import ChatWidgetLoader from "../chat/ChatWidgetLoader.svelte";
-
-const { active } = Astro.props;
+import {
+  PUBLIC_CHAT_WIDGET_DOMAIN,
+  PUBLIC_CHAT_WIDGET_ID,
+} from "astro:env/client";
 ---
 
-<Header active={active} />
-
-<main class="mt-4 px-2 mx-auto max-w-screen-xl">
-  <slot />
-</main>
-
-<Footer />
-
-<CookiesAccept client:only />
-<ChatWidgetLoader client:only transition:persist="chat-widget" />
-
-<!-- 
 <script
   src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}
   data-chat-id={PUBLIC_CHAT_WIDGET_ID}></script>
@@ -37,14 +18,20 @@ const { active } = Astro.props;
   (function () {
     const { id, domain } = document.currentScript.dataset;
     function boot() {
-      if (!window.ChatWidget) return;
+      console.log("boot");
+      if (!window.ChatWidget) {
+        console.log("no window.ChatWidget");
+        return;
+      }
       if (!window.ChatWidget._loaded) {
+        console.log("no window.ChatWidget._loaded");
         window.ChatWidget.init({
           id,
           domain,
           color: "var(--color-yellow-500)",
         });
       } else {
+        console.log("window.ChatWidget._loaded");
         window.ChatWidget.reload({
           id,
           domain,
@@ -54,4 +41,4 @@ const { active } = Astro.props;
     }
     boot();
   })();
-</script> -->
+</script>

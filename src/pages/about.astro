@@ -1,53 +1,50 @@
 ---
 import Root from "../layouts/Root.astro";
-import General from "../layouts/General.astro";
 ---
 
-<Root title="Growplex | About">
-  <General active="about">
-    <div class="max-w-4xl mx-auto px-4 py-8 space-y-12">
-      <section class="block md:flex border border-base-300 rounded px-6 py-3">
-        <div class="flex-2">
-          <h1 class="text-2xl font-bold mb-4">About Growplex</h1>
-          <p class="text-gray-600">
-            We help founders, freelancers, and small teams turn ideas into
-            AI-powered web products fast.
-          </p>
-        </div>
+<Root title="Growplex | About" active="about">
+  <div class="max-w-4xl mx-auto px-4 py-8 space-y-12">
+    <section class="block md:flex border border-base-300 rounded px-6 py-3">
+      <div class="flex-2">
+        <h1 class="text-2xl font-bold mb-4">About Growplex</h1>
+        <p class="text-gray-600">
+          We help founders, freelancers, and small teams turn ideas into
+          AI-powered web products fast.
+        </p>
+      </div>
 
-        <div class="divider divider-horizontal"></div>
+      <div class="divider divider-horizontal"></div>
 
-        <div class="flex-3">
-          <h2 class="text-2xl font-semibold mb-4">Our Mission</h2>
-          <p class="text-base text-gray-600 max-w-2xl mx-auto">
-            Growplex is on a mission to empower makers with tools and templates
-            that launch in days, not months. We believe in speed, simplicity,
-            and AI-native design.
-          </p>
-        </div>
-      </section>
-    </div>
-
-    <!-- What We Do -->
-    <section>
-      <h2 class="text-2xl font-semibold text-center mb-4">What We Build</h2>
-      <div class="flex flex-col md:flex-row gap-6 justify-center">
-        <a href="/products/forge" class="btn btn-outline btn-primary p-3"
-          >MVP Forge</a
-        >
-        <a href="/products/platform" class="btn btn-outline btn-secondary p-3"
-          >Platform</a
-        >
+      <div class="flex-3">
+        <h2 class="text-2xl font-semibold mb-4">Our Mission</h2>
+        <p class="text-base text-gray-600 max-w-2xl mx-auto">
+          Growplex is on a mission to empower makers with tools and templates
+          that launch in days, not months. We believe in speed, simplicity, and
+          AI-native design.
+        </p>
       </div>
     </section>
+  </div>
 
-    <!-- Call to Action -->
-    <section class="text-center pt-12 pb-12">
-      <h2 class="text-xl font-semibold mb-2">Let’s Build Something Together</h2>
-      <p class="text-sm text-gray-500 mb-4">
-        Have an idea? We can help you test and launch it fast.
-      </p>
-      <a href="/products/forge" class="btn btn-primary">Get Started</a>
-    </section>
-  </General>
+  <!-- What We Do -->
+  <section>
+    <h2 class="text-2xl font-semibold text-center mb-4">What We Build</h2>
+    <div class="flex flex-col md:flex-row gap-6 justify-center">
+      <a href="/products/forge" class="btn btn-outline btn-primary p-3"
+        >MVP Forge</a
+      >
+      <a href="/products/platform" class="btn btn-outline btn-secondary p-3"
+        >Platform</a
+      >
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="text-center pt-12 pb-12">
+    <h2 class="text-xl font-semibold mb-2">Let’s Build Something Together</h2>
+    <p class="text-sm text-gray-500 mb-4">
+      Have an idea? We can help you test and launch it fast.
+    </p>
+    <a href="/products/forge" class="btn btn-primary">Get Started</a>
+  </section>
 </Root>

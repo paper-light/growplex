@@ -1,13 +1,10 @@
 ---
-import Root from "../../layouts/Root.astro";
-import AppLayout from "../../layouts/App.astro";
-import ClientState from "../../layouts/ClientState.astro";
+import AppRoot from "../../app/AppRoot.astro";
+import AppDashboard from "../../app/shared/AppDashboard.astro";
 ---
 
-<Root title="Growplex | App Home">
-  <ClientState>
-    <AppLayout pageName="Profile">
-      <h1>Profile</h1>
-    </AppLayout>
-  </ClientState>
-</Root>
+<AppRoot title="Growplex | App Home" active="profile">
+  <AppDashboard pageName="Profile">
+    <h1>Profile</h1>
+  </AppDashboard>
+</AppRoot>

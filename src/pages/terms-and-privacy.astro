@@ -1,100 +1,95 @@
 ---
 import Root from "../layouts/Root.astro";
-import General from "../layouts/General.astro";
 ---
 
-<Root>
-  <General>
-    <div class="max-w-3xl mx-auto space-y-8 py-12 px-4">
-      <h1 class="text-4xl font-extrabold text-center">
-        Terms &amp; Conditions
-      </h1>
+<Root title="Terms & Privacy">
+  <div class="max-w-3xl mx-auto space-y-8 py-12 px-4">
+    <h1 class="text-4xl font-extrabold text-center">Terms &amp; Conditions</h1>
 
-      <div class="space-y-6">
+    <div class="space-y-6">
+      <p class="leading-relaxed">
+        Welcome to Gold Swan! By accessing or using our services, you agree to
+        these terms. Please read them carefully.
+      </p>
+
+      <!-- General Terms -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">1. General</h2>
+        <ul class="list-disc list-inside space-y-2">
+          <li>
+            <strong>Use of Content:</strong> All text, images, and code on this site
+            are owned by Gold Swan. You may view and share, but not republish or
+            distribute without permission.
+          </li>
+          <li>
+            <strong>No Warranty:</strong> This site and services are provided “as
+            is.” We make no guarantees about accuracy, completeness, or uptime.
+          </li>
+          <li>
+            <strong>Limitation of Liability:</strong> We’re not liable for any damages
+            arising from your use of the site or our services.
+          </li>
+          <li>
+            <strong>Changes:</strong> We may update these terms at any time. Your
+            continued use implies acceptance.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Forge Product Terms -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">2. Forge (IT Services)</h2>
         <p class="leading-relaxed">
-          Welcome to Gold Swan! By accessing or using our services, you agree to
-          these terms. Please read them carefully.
+          Forge provides custom IT services, software development, and hand-over
+          of deliverables to you. Our standard scope covers the features and
+          hours agreed in your project plan.
         </p>
+        <ul class="list-disc list-inside space-y-2">
+          <li>
+            <strong>Deliverables:</strong> We will develop, test, and transfer software
+            according to the project specification.
+          </li>
+          <li>
+            <strong>Over-Working:</strong> Any work beyond the agreed scope or hours
+            will incur additional fees at our standard hourly rate, outlined in your
+            contract.
+          </li>
+          <li>
+            <strong>Ownership:</strong> Upon full payment, you own the code and related
+            materials. Until then, Forge retains ownership.
+          </li>
+        </ul>
+      </section>
 
-        <!-- General Terms -->
-        <section class="space-y-4">
-          <h2 class="text-2xl font-semibold">1. General</h2>
-          <ul class="list-disc list-inside space-y-2">
-            <li>
-              <strong>Use of Content:</strong> All text, images, and code on this
-              site are owned by Gold Swan. You may view and share, but not republish
-              or distribute without permission.
-            </li>
-            <li>
-              <strong>No Warranty:</strong> This site and services are provided “as
-              is.” We make no guarantees about accuracy, completeness, or uptime.
-            </li>
-            <li>
-              <strong>Limitation of Liability:</strong> We’re not liable for any
-              damages arising from your use of the site or our services.
-            </li>
-            <li>
-              <strong>Changes:</strong> We may update these terms at any time. Your
-              continued use implies acceptance.
-            </li>
-          </ul>
-        </section>
-
-        <!-- Forge Product Terms -->
-        <section class="space-y-4">
-          <h2 class="text-2xl font-semibold">2. Forge (IT Services)</h2>
-          <p class="leading-relaxed">
-            Forge provides custom IT services, software development, and
-            hand-over of deliverables to you. Our standard scope covers the
-            features and hours agreed in your project plan.
-          </p>
-          <ul class="list-disc list-inside space-y-2">
-            <li>
-              <strong>Deliverables:</strong> We will develop, test, and transfer
-              software according to the project specification.
-            </li>
-            <li>
-              <strong>Over-Working:</strong> Any work beyond the agreed scope or
-              hours will incur additional fees at our standard hourly rate, outlined
-              in your contract.
-            </li>
-            <li>
-              <strong>Ownership:</strong> Upon full payment, you own the code and
-              related materials. Until then, Forge retains ownership.
-            </li>
-          </ul>
-        </section>
-
-        <!-- Thalia Product Terms -->
-        <section class="space-y-4">
-          <h2 class="text-2xl font-semibold">
-            3. Thalia (Chat Assistant &amp; Lead Generator)
-          </h2>
-          <p class="leading-relaxed">
-            Thalia is a chat-based assistant designed to help generate leads
-            and improve customer engagement.
-          </p>
-          <ul class="list-disc list-inside space-y-2">
-            <li>
-              <strong>Data Handling:</strong> All messages exchanged with Thalia
-              are securely stored in our server database.
-            </li>
-            <li>
-              <strong>Purpose:</strong> Stored messages are used solely for operator
-              processing, AI model training, and analytics to improve service quality.
-            </li>
-            <li>
-              <strong>Privacy:</strong> We do not share your chat logs with third
-              parties unless required by law or with your explicit consent.
-            </li>
-          </ul>
-        </section>
-
-        <!-- Footer Note -->
-        <p class="text-sm text-center">
-          © {new Date().getFullYear()} Gold Swan. All rights reserved.
+      <!-- Thalia Product Terms -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-semibold">
+          3. Thalia (Chat Assistant &amp; Lead Generator)
+        </h2>
+        <p class="leading-relaxed">
+          Thalia is a chat-based assistant designed to help generate leads and
+          improve customer engagement.
         </p>
-      </div>
+        <ul class="list-disc list-inside space-y-2">
+          <li>
+            <strong>Data Handling:</strong> All messages exchanged with Thalia are
+            securely stored in our server database.
+          </li>
+          <li>
+            <strong>Purpose:</strong> Stored messages are used solely for operator
+            processing, AI model training, and analytics to improve service quality.
+          </li>
+          <li>
+            <strong>Privacy:</strong> We do not share your chat logs with third parties
+            unless required by law or with your explicit consent.
+          </li>
+        </ul>
+      </section>
+
+      <!-- Footer Note -->
+      <p class="text-sm text-center">
+        © {new Date().getFullYear()} Gold Swan. All rights reserved.
+      </p>
     </div>
-  </General>
+  </div>
 </Root>

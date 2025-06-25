@@ -3,7 +3,6 @@ import type { GetStaticPaths } from "astro";
 export const prerender = true;
 import { getEntry, render } from "astro:content";
 import Root from "../../layouts/Root.astro";
-import General from "../../layouts/General.astro";
 import { getCollection } from "astro:content";
 
 export const getStaticPaths = (async () => {
@@ -20,24 +19,22 @@ const post = await getEntry("blog", slug!);
 const { Content } = await render(post!);
 ---
 
-<Root title={post?.data.title}>
-  <General active="blog">
-    <div class="flex gap-2 mb-4">
-      <aside class="flex-1 hidden md:block sticky top-20 self-start">
-        MORE BLOG
-      </aside>
+<Root title={post?.data.title} active="blog">
+  <div class="flex gap-2 mb-4">
+    <aside class="flex-1 hidden md:block sticky top-20 self-start">
+      MORE BLOG
+    </aside>
 
-      <article class="w-prose max-w-screen prose">
-        <div class="prose dark:prose-invert">
-          <h1>{post?.data.title}</h1>
-          <p>{post?.data.description}</p>
-          <Content />
-        </div>
-      </article>
+    <article class="w-prose max-w-screen prose">
+      <div class="prose dark:prose-invert">
+        <h1>{post?.data.title}</h1>
+        <p>{post?.data.description}</p>
+        <Content />
+      </div>
+    </article>
 
-      <aside class="flex-1 hidden lg:block sticky top-20 self-start">
-        <div>Subscribe</div>
-      </aside>
-    </div>
-  </General>
+    <aside class="flex-1 hidden lg:block sticky top-20 self-start">
+      <div>Subscribe</div>
+    </aside>
+  </div>
 </Root>

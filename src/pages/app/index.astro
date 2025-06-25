@@ -1,10 +1,10 @@
 ---
-import Root from "../../layouts/Root.astro";
-import AppLayout from "../../layouts/App.astro";
+import AppRoot from "../../app/AppRoot.astro";
+import AppDashboard from "../../app/shared/AppDashboard.astro";
 ---
 
-<Root title="Growplex | App Home">
-  <AppLayout pageName="Home">
+<AppRoot title="Growplex | App Home" active="home">
+  <AppDashboard pageName="Home">
     <h1>APP PAGE ROOT</h1>
-  </AppLayout>
-</Root>
+  </AppDashboard>
+</AppRoot>

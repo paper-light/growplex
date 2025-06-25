@@ -1,149 +1,144 @@
 ---
 import Root from "../../layouts/Root.astro";
-import General from "../../layouts/General.astro";
 import Thalia from "../../assets/Thalia.jpg";
 import Image from "astro/components/Image.astro";
 ---
 
-<Root title="Growplex | Platform">
-  <General active="platform">
-    <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
-      <!-- Hero -->
-      <section class="hero bg-base-200 min-h-screen">
-        <div class="hero-content flex-col lg:flex-row items-center text-center">
-          <div class="lg:w-1/2 space-y-6">
-            <span class="badge badge-secondary">Beta Run</span>
-            <h1 class="text-5xl font-bold">Thalia</h1>
-            <p class="py-4 text-lg">
-              Embed an agentic AI on any page—generate leads, send invoices,
-              guide users, and integrate with Telegram for proactive outreach.
-            </p>
-            <a href="/app/auth/sign-up" class="btn btn-primary btn-lg">
-              Start Beta
-            </a>
-          </div>
-          <div class="lg:w-1/2">
-            <Image
-              src={Thalia}
-              alt="Thalia Illustration"
-              class="rounded-lg shadow-2xl mx-auto w-3/4 sm:w-2/3 md:w-1/2 lg:w-full max-w-full h-auto"
-            />
-          </div>
-        </div>
-      </section>
-
-      <!-- Features -->
-      <section class="space-y-8">
-        <h2 class="text-3xl font-bold text-center">Features</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <!-- Embed Chat Widget -->
-          <div
-            class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-          >
-            <div class="card-body">
-              <h3 class="card-title">Embed Chat Widget</h3>
-              <p>
-                Add a fully configurable chat widget—customize theme, assistant
-                persona, and branding to match your site.
-              </p>
-            </div>
-          </div>
-          <!-- CRM Platform (Coming Soon) -->
-          <div class="card bg-base-100 shadow-xl opacity-50">
-            <div class="card-body">
-              <h3 class="card-title">CRM Platform</h3>
-              <p>
-                Agentic configuration, ticketing, and human-in-the-loop chat
-                scenarios.
-              </p>
-              <div class="badge badge-outline mt-4">Coming Soon</div>
-            </div>
-          </div>
-          <!-- Agentic Leadgen (Coming Soon) -->
-          <div class="card bg-base-100 shadow-xl opacity-50">
-            <div class="card-body">
-              <h3 class="card-title">Agentic Leadgen</h3>
-              <p>
-                Proactively generate leads, message via Telegram/email, guide
-                users to products, and automate orders with billing.
-              </p>
-              <div class="badge badge-outline mt-4">Coming Soon</div>
-            </div>
-          </div>
-          <!-- Complex Use Cases (Coming Soon) -->
-          <div class="card bg-base-100 shadow-xl opacity-50">
-            <div class="card-body">
-              <h3 class="card-title">Complex Use Cases</h3>
-              <p>
-                Business-driven scenarios with multi-agent orchestration, MCP
-                tools, and advanced workflows.
-              </p>
-              <div class="badge badge-outline mt-4">Coming Soon</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- How It Works -->
-      <section class="text-center space-y-6">
-        <h2 class="text-3xl font-bold">How It Works</h2>
-        <div
-          class="flex flex-col md:flex-row items-center justify-center gap-12"
-        >
-          <div class="flex flex-col items-center space-y-4">
-            <div
-              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-            >
-              1
-            </div>
-            <p>
-              Message our manager on Telegram:
-              <a href="https://t.me/growplex" class="link link-primary"
-                >@growplex</a
-              >
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center space-y-4">
-            <div
-              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-            >
-              2
-            </div>
-            <p>
-              Our developer connects Thalia to your site and configures it to
-              your needs.
-            </p>
-          </div>
-
-          <div class="flex flex-col items-center space-y-4">
-            <div
-              class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-            >
-              3
-            </div>
-            <p>
-              Enjoy full access to features now & lock in your lifetime<br
-                class="hidden sm:block"
-              />
-              super-discounted price.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- Order Form -->
-      <section class="space-y-8">
-        <h2 class="text-3xl font-bold text-center">Get Started with Thalia</h2>
-        <form class="max-w-lg mx-auto space-y-4">
-          <textarea
-            class="hidden textarea textarea-bordered w-full"
-            placeholder="Describe your Thalia integration wishes..."></textarea>
-          <a class="btn btn-primary w-full" href="/app/auth/sign-up">
-            Start beta!
+<Root title="Growplex | Platform" active="platform">
+  <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
+    <!-- Hero -->
+    <section class="hero bg-base-200 min-h-screen">
+      <div class="hero-content flex-col lg:flex-row items-center text-center">
+        <div class="lg:w-1/2 space-y-6">
+          <span class="badge badge-secondary">Beta Run</span>
+          <h1 class="text-5xl font-bold">Thalia</h1>
+          <p class="py-4 text-lg">
+            Embed an agentic AI on any page—generate leads, send invoices, guide
+            users, and integrate with Telegram for proactive outreach.
+          </p>
+          <a href="/app/auth/sign-up" class="btn btn-primary btn-lg">
+            Start Beta
           </a>
-        </form>
-      </section>
-    </div>
-  </General>
+        </div>
+        <div class="lg:w-1/2">
+          <Image
+            src={Thalia}
+            alt="Thalia Illustration"
+            class="rounded-lg shadow-2xl mx-auto w-3/4 sm:w-2/3 md:w-1/2 lg:w-full max-w-full h-auto"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">Features</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- Embed Chat Widget -->
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Embed Chat Widget</h3>
+            <p>
+              Add a fully configurable chat widget—customize theme, assistant
+              persona, and branding to match your site.
+            </p>
+          </div>
+        </div>
+        <!-- CRM Platform (Coming Soon) -->
+        <div class="card bg-base-100 shadow-xl opacity-50">
+          <div class="card-body">
+            <h3 class="card-title">CRM Platform</h3>
+            <p>
+              Agentic configuration, ticketing, and human-in-the-loop chat
+              scenarios.
+            </p>
+            <div class="badge badge-outline mt-4">Coming Soon</div>
+          </div>
+        </div>
+        <!-- Agentic Leadgen (Coming Soon) -->
+        <div class="card bg-base-100 shadow-xl opacity-50">
+          <div class="card-body">
+            <h3 class="card-title">Agentic Leadgen</h3>
+            <p>
+              Proactively generate leads, message via Telegram/email, guide
+              users to products, and automate orders with billing.
+            </p>
+            <div class="badge badge-outline mt-4">Coming Soon</div>
+          </div>
+        </div>
+        <!-- Complex Use Cases (Coming Soon) -->
+        <div class="card bg-base-100 shadow-xl opacity-50">
+          <div class="card-body">
+            <h3 class="card-title">Complex Use Cases</h3>
+            <p>
+              Business-driven scenarios with multi-agent orchestration, MCP
+              tools, and advanced workflows.
+            </p>
+            <div class="badge badge-outline mt-4">Coming Soon</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="text-center space-y-6">
+      <h2 class="text-3xl font-bold">How It Works</h2>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+          >
+            1
+          </div>
+          <p>
+            Message our manager on Telegram:
+            <a href="https://t.me/growplex" class="link link-primary"
+              >@growplex</a
+            >
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+          >
+            2
+          </div>
+          <p>
+            Our developer connects Thalia to your site and configures it to your
+            needs.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
+          >
+            3
+          </div>
+          <p>
+            Enjoy full access to features now & lock in your lifetime<br
+              class="hidden sm:block"
+            />
+            super-discounted price.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Order Form -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">Get Started with Thalia</h2>
+      <form class="max-w-lg mx-auto space-y-4">
+        <textarea
+          class="hidden textarea textarea-bordered w-full"
+          placeholder="Describe your Thalia integration wishes..."></textarea>
+        <a class="btn btn-primary w-full" href="/app/auth/sign-up">
+          Start beta!
+        </a>
+      </form>
+    </section>
+  </div>
 </Root>

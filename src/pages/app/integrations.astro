@@ -1,9 +1,8 @@
 ---
 import { Home } from "@lucide/astro";
 
-import Root from "../../layouts/Root.astro";
-import AppLayout from "../../layouts/App.astro";
-import ClientState from "../../layouts/ClientState.astro";
+import AppRoot from "../../app/AppRoot.astro";
+import AppDashboard from "../../app/shared/AppDashboard.astro";
 
 import ChatPreview from "../../app/integration/ChatPreview.svelte";
 import Sidebar from "../../app/integration/Sidebar.svelte";
@@ -11,9 +10,8 @@ import ConnectIntegration from "../../app/integration/ConnectIntegration.svelte"
 import PickWidget from "../../app/shared/PickWidget.svelte";
 ---
 
-<Root title="Growplex | App Home">
-  <ClientState>
-    <AppLayout pageName="Integrations">
+<AppRoot title="Growplex | App Home">
+  <AppDashboard pageName="Integrations">
       <div class="w-full h-full relative">
         <ConnectIntegration client:only />
 
@@ -49,6 +47,5 @@ import PickWidget from "../../app/shared/PickWidget.svelte";
         </div>
         <ChatPreview client:only />
       </div>
-    </AppLayout>
-  </ClientState>
-</Root>
+  </AppDashboard>
+</AppRoot>

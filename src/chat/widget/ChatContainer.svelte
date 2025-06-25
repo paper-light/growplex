@@ -1,6 +1,6 @@
 <script lang="ts">
   import { X } from "@lucide/svelte";
-  import ThemeForward from "./ThemeForward.svelte"
+  import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
     id: string;
@@ -27,7 +27,7 @@
     class="iframe"
     src={`${domain}/embed/chat/${id}`}
     title="Chat"
-    allowtransparency="true"
+    allowtransparency={true}
   />
 </aside>
 

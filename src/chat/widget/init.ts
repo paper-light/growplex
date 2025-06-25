@@ -9,19 +9,20 @@ type WidgetAPI = {
 let app: WidgetAPI | null = null;
 
 export function init(opts: { id: string; domain: string; color?: string }) {
+  const target = document.getElementById("chat-widget") || document.body;
   if (!app) {
     app = mount(ChatWidget, {
-      target: document.body,
+      target,
       props: opts,
       intro: true,
     });
     (window as any).ChatWidget._loaded = true;
   } else if (typeof app.$set === "function") {
-    app.$set!(opts); 
+    app.$set!(opts);
   } else {
     unmount(app, { outro: false });
     app = mount(ChatWidget, {
-      target: document.body,
+      target,
       props: opts,
     });
   }

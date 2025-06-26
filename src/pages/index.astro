@@ -2,6 +2,11 @@
 import Root from "../layouts/Root.astro";
 import ThaliaImg from "../assets/Thalia.jpg";
 import AletheiaImg from "../assets/Aletheia.jpg";
+import CalliopeImg from "../assets/Calliope.jpg";
+import AthenaImg from "../assets/Athena.jpg";
+import IynxImg from "../assets/Iynx.jpg";
+import HestiaImg from "../assets/Hestia.jpg";
+import PantheonImg from "../assets/Pantheon.jpg";
 import Logo from "../assets/LOGO.png";
 import { Image } from "astro:assets";
 ---
@@ -57,7 +62,7 @@ import { Image } from "astro:assets";
             <Image
               src={ThaliaImg}
               alt="Thalia"
-              class="rounded-xl h-32 object-cover mx-auto"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
             />
           </figure>
           <div class="card-body items-center text-center">
@@ -78,7 +83,7 @@ import { Image } from "astro:assets";
             <Image
               src={AletheiaImg}
               alt="Aletheia"
-              class="rounded-xl h-32 object-cover mx-auto"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
             />
           </figure>
           <div class="card-body items-center text-center">
@@ -95,6 +100,13 @@ import { Image } from "astro:assets";
           href="/products/calliope"
           class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-accent/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
+          <figure class="px-4 pt-4">
+            <Image
+              src={CalliopeImg}
+              alt="Calliope"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
+            />
+          </figure>
           <div class="card-body items-center text-center">
             <span class="badge badge-accent mb-2">Content AI</span>
             <h3 class="card-title">Calliope</h3>
@@ -112,6 +124,13 @@ import { Image } from "astro:assets";
           href="/products/athena"
           class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-success/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
+          <figure class="px-4 pt-4">
+            <Image
+              src={AthenaImg}
+              alt="Athena"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
+            />
+          </figure>
           <div class="card-body items-center text-center">
             <span class="badge badge-success mb-2">LLM-SEO</span>
             <h3 class="card-title">Athena</h3>
@@ -129,6 +148,13 @@ import { Image } from "astro:assets";
           href="/products/iynx"
           class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-warning/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
+          <figure class="px-4 pt-4">
+            <Image
+              src={IynxImg}
+              alt="Iynx"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
+            />
+          </figure>
           <div class="card-body items-center text-center">
             <span class="badge badge-warning mb-2">Outreach</span>
             <h3 class="card-title">Iynx</h3>
@@ -146,6 +172,13 @@ import { Image } from "astro:assets";
           href="/products/hestia"
           class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-neutral/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
+          <figure class="px-4 pt-4">
+            <Image
+              src={HestiaImg}
+              alt="Hestia"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
+            />
+          </figure>
           <div class="card-body items-center text-center">
             <span class="badge badge-neutral mb-2">Retention</span>
             <h3 class="card-title">Hestia</h3>
@@ -165,6 +198,39 @@ import { Image } from "astro:assets";
             </div>
             <div class="mt-2">
               <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Pantheon - Full Width Row -->
+      <div class="grid grid-cols-1 gap-8">
+        <a
+          href="/products/pantheon"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-primary/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <figure class="px-4 pt-4">
+            <Image
+              src={PantheonImg}
+              alt="Pantheon"
+              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
+            />
+          </figure>
+          <div class="card-body items-center text-center">
+            <span class="badge badge-primary mb-2">Platform Hub</span>
+            <h3 class="card-title text-3xl">Pantheon</h3>
+            <p class="text-lg text-base-content/80 max-w-3xl">
+              The ultimate linking module that connects all Growplex products
+              into one seamless experience. We bring the best AI-native
+              marketing toolkit on the market, optimized for every funnel stage.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4 mt-4">
+              <span class="badge badge-secondary">Thalia</span>
+              <span class="badge badge-info">Aletheia</span>
+              <span class="badge badge-accent">Calliope</span>
+              <span class="badge badge-success">Athena</span>
+              <span class="badge badge-warning">Iynx</span>
+              <span class="badge badge-neutral">Hestia</span>
             </div>
           </div>
         </a>

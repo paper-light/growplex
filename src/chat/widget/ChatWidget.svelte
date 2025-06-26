@@ -12,6 +12,7 @@
 
   let { id, domain, color }: Props = $props();
 
+  let authed = $state(false);
   let isOpen = $state(false);
 
   function toggle(state: boolean) {
@@ -19,10 +20,17 @@
     sessionStorage.setItem("chat-widget-open", isOpen ? "true" : "false");
   }
 
-  onMount(() => {
-    if (sessionStorage.getItem("chat-widget-open") === "true") {
-      isOpen = true;
-    }
+  onMount(async () => {
+    const response = await fetch("/api/chat/auth", {
+      method: "POST",
+      body: JSON.stringify({ id }),
+    });
+    const { token, payload } = await response.json();
+    sessionStorage.setItem("chat-widget-token", token);
+    sessionStorage.setItem("chat-widget-payload", JSON.stringify(payload));
+    authed = true;
+
+    if (sessionStorage.getItem("chat-widget-open") === "true") isOpen = true;
 
     document.documentElement.style.setProperty(
       "--chat-widget-primary",
@@ -31,5 +39,7 @@
   });
 </script>
 
-<ChatToggle {isOpen} onToggle={() => toggle(true)} />
-<ChatContainer {isOpen} {id} {domain} onClose={() => toggle(false)} />
+{#if authed}
+  <ChatToggle {isOpen} onToggle={() => toggle(true)} />
+  <ChatContainer {isOpen} {id} {domain} onClose={() => toggle(false)} />
+{/if}

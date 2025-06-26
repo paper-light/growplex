@@ -48,6 +48,7 @@ export default defineConfig({
       TG_ID: envField.string({ context: "server", access: "secret" }),
 
       MAILGUN_TOKEN: envField.string({ context: "server", access: "secret" }),
+      JWT_SECRET: envField.string({ context: "server", access: "secret" }),
     },
   },
   vite: {

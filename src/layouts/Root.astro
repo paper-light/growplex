@@ -21,6 +21,11 @@ const { title, active } = Astro.props;
     <link rel="icon" type="image/svg+xml" href="/LOGO.png" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
     <ThemeLoad />
     <ClientRouter />
     <Posthog />

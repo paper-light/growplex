@@ -1,7 +1,151 @@
 ---
 import Root from "../../layouts/Root.astro";
+import ThaliaImg from "../../assets/Thalia.jpg";
+import AletheiaImg from "../../assets/Aletheia.jpg";
+import { Image } from "astro:assets";
 ---
 
 <Root title="Growplex | Products" active="products">
-  <h1>ALL SERVICES & PRODUCTS</h1>
+  <div class="max-w-7xl mx-auto px-4 py-20 space-y-24">
+    <!-- Hero Section -->
+    <section class="text-center space-y-8">
+      <h1
+        class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
+        style="color: var(--color-primary)"
+      >
+        Growplex Platform Modules
+      </h1>
+      <p class="text-lg md:text-2xl max-w-2xl mx-auto text-base-content/80">
+        Discover our suite of AI-native modules designed to optimize every stage
+        of your marketing funnel. Each tool is built for seamless integration
+        and maximum impact.
+      </p>
+    </section>
+
+    <!-- Product Modules Grid -->
+    <section id="modules" class="space-y-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Thalia -->
+        <a
+          href="/products/thalia"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-primary/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <figure class="px-4 pt-4">
+            <Image
+              src={ThaliaImg}
+              alt="Thalia"
+              class="rounded-xl h-32 object-cover mx-auto"
+            />
+          </figure>
+          <div class="card-body items-center text-center">
+            <span class="badge badge-secondary mb-2">Chat Agent</span>
+            <h3 class="card-title">Thalia</h3>
+            <p class="text-base-content/80">
+              Conversational AI agent for effortless lead warming and
+              qualification.
+            </p>
+          </div>
+        </a>
+        <!-- Aletheia -->
+        <a
+          href="/products/aletheia"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-info/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <figure class="px-4 pt-4">
+            <Image
+              src={AletheiaImg}
+              alt="Aletheia"
+              class="rounded-xl h-32 object-cover mx-auto"
+            />
+          </figure>
+          <div class="card-body items-center text-center">
+            <span class="badge badge-info mb-2">Market Monitor</span>
+            <h3 class="card-title">Aletheia</h3>
+            <p class="text-base-content/80">
+              Real-time monitoring and insight generation from news, social
+              media, and more.
+            </p>
+          </div>
+        </a>
+        <!-- Calliope -->
+        <a
+          href="/products/calliope"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-accent/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-accent mb-2">Content AI</span>
+            <h3 class="card-title">Calliope</h3>
+            <p class="text-base-content/80">
+              AI-powered content generation: blogs, reels, video narratives, and
+              AI streamers.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </a>
+        <!-- Athena -->
+        <a
+          href="/products/athena"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-success/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-success mb-2">LLM-SEO</span>
+            <h3 class="card-title">Athena</h3>
+            <p class="text-base-content/80">
+              Automated website optimization, metadata generation, and AI-driven
+              SEO.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </a>
+        <!-- Iynx -->
+        <a
+          href="/products/iynx"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-warning/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-warning mb-2">Outreach</span>
+            <h3 class="card-title">Iynx</h3>
+            <p class="text-base-content/80">
+              Proactive multi-channel campaigns and personalized offers for warm
+              leads.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </a>
+        <!-- Hestia -->
+        <a
+          href="/products/hestia"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-neutral/60 hover:-translate-y-1 cursor-pointer no-underline"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-neutral mb-2">Retention</span>
+            <h3 class="card-title">Hestia</h3>
+            <ul
+              class="text-left text-base-content/80 text-sm list-disc list-inside space-y-1"
+            >
+              <li>
+                Client Health Score (0–100) based on purchases, engagement, and
+                feedback
+              </li>
+              <li>Trigger-based campaigns and automatic re-engagement</li>
+              <li>ML-powered repeat purchase prediction for cross- & upsell</li>
+              <li>Auto-NPS & feedback loops</li>
+            </ul>
+            <div class="mt-4 text-xs text-base-content/60">
+              Result: reduced churn, increased LTV, and lower acquisition costs.
+            </div>
+            <div class="mt-2">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
 </Root>

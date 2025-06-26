@@ -1,0 +1,131 @@
+---
+import Root from "../../layouts/Root.astro";
+---
+
+<Root title="Growplex | Iynx" active="products">
+  <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
+    <!-- Hero -->
+    <section class="hero bg-base-200 min-h-screen">
+      <div class="hero-content flex-col lg:flex-row items-center text-center">
+        <div class="lg:w-1/2 space-y-6">
+          <span class="badge badge-warning">Coming Soon</span>
+          <h1 class="text-5xl font-bold">Iynx</h1>
+          <p class="py-4 text-lg">
+            Proactive multi-channel outreach and personalized offers for warm
+            leads. Automate follow-up campaigns and convert prospects with
+            AI-driven engagement.
+          </p>
+          <button
+            onclick="CTAMainModal.showModal()"
+            class="btn btn-primary btn-lg"
+            disabled
+          >
+            Get Early Access
+          </button>
+        </div>
+        <div class="lg:w-1/2 flex items-center justify-center">
+          <div
+            class="rounded-lg shadow-2xl bg-base-100 w-48 h-48 flex items-center justify-center text-6xl"
+          >
+            <span role="img" aria-label="outreach">📧</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">Features</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Multi-Channel Outreach</h3>
+            <p>
+              Engage prospects across email, SMS, Telegram, and social media
+              with unified messaging.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Personalized Offers</h3>
+            <p>
+              Generate tailored offers and discounts based on prospect behavior
+              and preferences.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Automated Follow-Up</h3>
+            <p>
+              Set up intelligent follow-up sequences that adapt based on
+              prospect responses.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Lead Scoring</h3>
+            <p>
+              Automatically score and prioritize leads based on engagement and
+              conversion likelihood.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="text-center space-y-6">
+      <h2 class="text-3xl font-bold">How It Works</h2>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-warning text-warning-content p-4 text-2xl font-bold"
+          >
+            1
+          </div>
+          <p>Import your warm leads and define outreach goals.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-warning text-warning-content p-4 text-2xl font-bold"
+          >
+            2
+          </div>
+          <p>Iynx creates personalized campaigns across multiple channels.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-warning text-warning-content p-4 text-2xl font-bold"
+          >
+            3
+          </div>
+          <p>Track responses and automatically adjust follow-up strategies.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">
+        Get Notified When Iynx Launches
+      </h2>
+      <form class="max-w-lg mx-auto space-y-4">
+        <textarea
+          class="hidden textarea textarea-bordered w-full"
+          placeholder="Let us know your outreach needs..."></textarea>
+        <button class="btn btn-warning w-full" disabled>Coming Soon</button>
+      </form>
+    </section>
+  </div>
+</Root>

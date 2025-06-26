@@ -1,60 +1,233 @@
 ---
 import Root from "../layouts/Root.astro";
+import ThaliaImg from "../assets/Thalia.jpg";
+import AletheiaImg from "../assets/Aletheia.jpg";
+import Logo from "../assets/LOGO.png";
+import { Image } from "astro:assets";
 ---
 
 <Root title="Growplex | Home" active="home">
-  <div class="max-w-5xl mx-auto px-4 py-24 space-y-24">
+  <div class="max-w-7xl mx-auto px-4 py-20 space-y-32">
     <!-- Hero Section -->
-    <section class="text-center space-y-6">
-      <h1 class="text-5xl font-bold leading-tight">
-        Build Smarter Products <br />
-        {"<>"}
-        <br />
-        Ship Faster Than Ever
-      </h1>
-      <p class="text-lg max-w-xl mx-auto">
-        With our battle-tested AI templates and full-stack expertise, go from
-        zero to launch in days.
+    <section class="text-center space-y-8">
+      <div class="flex flex-col items-center gap-4">
+        <h1
+          class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight"
+          style="color: var(--color-primary)"
+        >
+          AI-Native Marketing Funnel Optimization
+        </h1>
+        <p class="text-lg md:text-2xl max-w-2xl mx-auto text-base-content/80">
+          Growplex is your all-in-one platform for automating, optimizing, and
+          scaling every stage of your marketing funnel with the latest in AI,
+          LLMs, and agentic automation.
+        </p>
+        <a href="#products" class="btn btn-primary btn-lg mt-4 shadow-xl"
+          >Explore Our Products</a
+        >
+      </div>
+    </section>
+
+    <!-- Company Intro -->
+    <section class="max-w-3xl mx-auto text-center space-y-4">
+      <h2
+        class="text-2xl md:text-3xl font-bold"
+        style="color: var(--color-secondary)"
+      >
+        What is Growplex?
+      </h2>
+      <p class="text-base md:text-lg text-base-content/80">
+        We empower marketing experts to seamlessly fuse their skills with
+        advanced AI tools, optimizing every stage of the funnel—from lead
+        capture and qualification to content, outreach, analytics, and
+        retention. Growplex is built for speed, scale, and seamless integration.
       </p>
+    </section>
 
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-        <a href="/products/forge" class="btn btn-primary text-lg px-8"
-          >Hire Our Team</a
+    <!-- Product Suite -->
+    <section id="products" class="space-y-8">
+      <h2 class="text-3xl font-bold text-center mb-8">Our Product Suite</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Thalia -->
+        <a
+          href="/products/platform"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-primary/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
-        <a href="/products/platform" class="btn btn-secondary text-lg px-8"
-          >Use Our Platform</a
+          <figure class="px-4 pt-4">
+            <Image
+              src={ThaliaImg}
+              alt="Thalia"
+              class="rounded-xl h-32 object-cover mx-auto"
+            />
+          </figure>
+          <div class="card-body items-center text-center">
+            <span class="badge badge-secondary mb-2">Chat Agent</span>
+            <h3 class="card-title">Thalia</h3>
+            <p class="text-base-content/80">
+              Conversational AI agent for effortless lead warming and
+              qualification.
+            </p>
+          </div>
+        </a>
+        <!-- Aletheia -->
+        <a
+          href="/products/aletheia"
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-info/60 hover:-translate-y-1 cursor-pointer no-underline"
         >
+          <figure class="px-4 pt-4">
+            <Image
+              src={AletheiaImg}
+              alt="Aletheia"
+              class="rounded-xl h-32 object-cover mx-auto"
+            />
+          </figure>
+          <div class="card-body items-center text-center">
+            <span class="badge badge-info mb-2">Market Monitor</span>
+            <h3 class="card-title">Aletheia</h3>
+            <p class="text-base-content/80">
+              Real-time monitoring and insight generation from news, social
+              media, and more.
+            </p>
+          </div>
+        </a>
+        <!-- Calliope -->
+        <div
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-accent/60 hover:-translate-y-1 cursor-not-allowed"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-accent mb-2">Content AI</span>
+            <h3 class="card-title">Calliope</h3>
+            <p class="text-base-content/80">
+              AI-powered content generation: blogs, reels, video narratives, and
+              AI streamers.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+        <!-- Athena -->
+        <div
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-success/60 hover:-translate-y-1 cursor-not-allowed"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-success mb-2">LLM-SEO</span>
+            <h3 class="card-title">Athena</h3>
+            <p class="text-base-content/80">
+              Automated website optimization, metadata generation, and AI-driven
+              SEO.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+        <!-- Iynx -->
+        <div
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-warning/60 hover:-translate-y-1 cursor-not-allowed"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-warning mb-2">Outreach</span>
+            <h3 class="card-title">Iynx</h3>
+            <p class="text-base-content/80">
+              Proactive multi-channel campaigns and personalized offers for warm
+              leads.
+            </p>
+            <div class="mt-4">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </div>
+        <!-- Hestia -->
+        <div
+          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-neutral/60 hover:-translate-y-1 cursor-not-allowed"
+        >
+          <div class="card-body items-center text-center">
+            <span class="badge badge-neutral mb-2">Retention</span>
+            <h3 class="card-title">Hestia</h3>
+            <ul
+              class="text-left text-base-content/80 text-sm list-disc list-inside space-y-1"
+            >
+              <li>
+                Client Health Score (0–100) based on purchases, engagement, and
+                feedback
+              </li>
+              <li>Trigger-based campaigns and automatic re-engagement</li>
+              <li>ML-powered repeat purchase prediction for cross- & upsell</li>
+              <li>Auto-NPS & feedback loops</li>
+            </ul>
+            <div class="mt-4 text-xs text-base-content/60">
+              Result: reduced churn, increased LTV, and lower acquisition costs.
+            </div>
+            <div class="mt-2">
+              <span class="badge badge-outline">Coming Soon</span>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- Value Propositions -->
-    <section class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-      <div class="card bg-base-100 shadow-md p-6">
-        <h3 class="text-xl font-semibold mb-2">Launch in Days</h3>
-        <p class="text-sm">
-          Our MVP templates and team help you go from idea to live product fast.
-        </p>
-      </div>
-      <div class="card bg-base-100 shadow-md p-6">
-        <h3 class="text-xl font-semibold mb-2">AI-Native by Design</h3>
-        <p class="text-sm">
-          We bake LLMs, automation and content generation into your product
-          core.
-        </p>
-      </div>
-      <div class="card bg-base-100 shadow-md p-6">
-        <h3 class="text-xl font-semibold mb-2">Flexible Format</h3>
-        <p class="text-sm">
-          Web, Telegram, Chrome Extension, Iframe, or PWA — your product lives
-          where users are.
-        </p>
+    <!-- Value Proposition / Why Growplex -->
+    <section class="mt-24">
+      <h2 class="text-3xl font-bold text-center mb-8">Why Choose Growplex?</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div
+          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
+        >
+          <h3
+            class="text-xl font-semibold mb-2"
+            style="color: var(--color-primary)"
+          >
+            Empowering Marketers with AI
+          </h3>
+          <p class="text-base-content/80">
+            Growplex enables marketing professionals to seamlessly combine their
+            expertise with advanced AI tools, maximizing impact and efficiency
+            at every funnel stage.
+          </p>
+        </div>
+        <div
+          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
+        >
+          <h3
+            class="text-xl font-semibold mb-2"
+            style="color: var(--color-secondary)"
+          >
+            Full-Funnel Automation
+          </h3>
+          <p class="text-base-content/80">
+            Our platform covers the entire customer journey—from lead generation
+            to retention—ensuring no opportunity is missed and every touchpoint
+            is optimized.
+          </p>
+        </div>
+        <div
+          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
+        >
+          <h3
+            class="text-xl font-semibold mb-2"
+            style="color: var(--color-accent)"
+          >
+            Seamless Integration & Scalability
+          </h3>
+          <p class="text-base-content/80">
+            Easily integrate Growplex with your existing stack. Our API-first,
+            multi-channel approach ensures your marketing operations scale as
+            you grow.
+          </p>
+        </div>
       </div>
     </section>
 
-    <!-- CTA / Footer -->
-    <section class="text-center hidden">
-      <p class="text-sm mb-4">Want to know more about us?</p>
-      <a href="/about" class="btn btn-outline">Learn More About Growplex</a>
+    <!-- Footer CTA -->
+    <section class="text-center mt-24">
+      <h2 class="text-2xl font-bold mb-4">
+        Ready to optimize your funnel with AI?
+      </h2>
+      <button
+        onclick="CTAMainModal.showModal()"
+        class="btn btn-primary btn-lg shadow-xl">Contact Us</button
+      >
     </section>
   </div>
 </Root>

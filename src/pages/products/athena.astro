@@ -1,0 +1,132 @@
+---
+import Root from "../../layouts/Root.astro";
+---
+
+<Root title="Growplex | Athena" active="products">
+  <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
+    <!-- Hero -->
+    <section class="hero bg-base-200 min-h-screen">
+      <div class="hero-content flex-col lg:flex-row items-center text-center">
+        <div class="lg:w-1/2 space-y-6">
+          <span class="badge badge-success">Coming Soon</span>
+          <h1 class="text-5xl font-bold">Athena</h1>
+          <p class="py-4 text-lg">
+            LLM-powered SEO and website optimization. Automatically generate
+            metadata, optimize content, and boost your search rankings with AI.
+          </p>
+          <button
+            onclick="CTAMainModal.showModal()"
+            class="btn btn-primary btn-lg"
+            disabled
+          >
+            Get Early Access
+          </button>
+        </div>
+        <div class="lg:w-1/2 flex items-center justify-center">
+          <div
+            class="rounded-lg shadow-2xl bg-base-100 w-48 h-48 flex items-center justify-center text-6xl"
+          >
+            <span role="img" aria-label="SEO">🔍</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">Features</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Automated Metadata</h3>
+            <p>
+              Generate titles, descriptions, and tags for every page—instantly
+              and at scale.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Content Optimization</h3>
+            <p>
+              Analyze and improve your site's content for readability,
+              engagement, and SEO performance.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">AI-Driven SEO</h3>
+            <p>
+              Leverage LLMs to identify ranking opportunities and optimize for
+              search intent.
+            </p>
+          </div>
+        </div>
+        <div
+          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        >
+          <div class="card-body">
+            <h3 class="card-title">Continuous Monitoring</h3>
+            <p>
+              Track SEO health and receive actionable insights to stay ahead of
+              the competition.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="text-center space-y-6">
+      <h2 class="text-3xl font-bold">How It Works</h2>
+      <div class="flex flex-col md:flex-row items-center justify-center gap-12">
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-success text-success-content p-4 text-2xl font-bold"
+          >
+            1
+          </div>
+          <p>Connect your website or content platform.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-success text-success-content p-4 text-2xl font-bold"
+          >
+            2
+          </div>
+          <p>Let Athena analyze and optimize your content automatically.</p>
+        </div>
+        <div class="flex flex-col items-center space-y-4">
+          <div
+            class="rounded-full bg-success text-success-content p-4 text-2xl font-bold"
+          >
+            3
+          </div>
+          <p>
+            Monitor results and adjust your strategy with AI-powered insights.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">
+        Get Notified When Athena Launches
+      </h2>
+      <form class="max-w-lg mx-auto space-y-4">
+        <textarea
+          class="hidden textarea textarea-bordered w-full"
+          placeholder="Let us know your SEO needs..."></textarea>
+        <button class="btn btn-success w-full" disabled>Coming Soon</button>
+      </form>
+    </section>
+  </div>
+</Root>

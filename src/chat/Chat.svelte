@@ -23,9 +23,10 @@
   interface Props {
     chat: z.infer<typeof ChatSchema>;
     agent: z.infer<typeof AgentSchema>;
+    token?: string | null;
   }
 
-  const { chat, agent }: Props = $props();
+  const { chat, agent, token }: Props = $props();
 
   const assistantAvatar = chat.avatar
     ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
@@ -81,7 +82,11 @@
       localStorage.setItem("chatUsername", username);
     }
 
-    socket = io();
+    socket = io({
+      auth: {
+        token: token || undefined,
+      },
+    });
 
     socket.on("connect", () => {
       console.log("🟢 Connected to server, socket.id =", socket?.id);

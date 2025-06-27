@@ -38,6 +38,13 @@ export function attachSocketIO(httpServer: any) {
       async ({ chatId, roomId, username }: JoinRoomDTO) => {
         socket.join(roomId);
 
+        if (!socket.data.user) {
+          socket.emit("unauthorized", {
+            message: "Unauthorized",
+          });
+          return;
+        }
+
         socket.data.username = username;
         socket.data.roomId = roomId;
 
@@ -61,6 +68,13 @@ export function attachSocketIO(httpServer: any) {
       "send-message",
       async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
         const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
+
+        if (!socket.data.user) {
+          socket.emit("unauthorized", {
+            message: "Unauthorized",
+          });
+          return;
+        }
 
         if (msg.content.length > MAX_MESSAGE_CHARS) {
           socket.emit("msg-length-limit", {

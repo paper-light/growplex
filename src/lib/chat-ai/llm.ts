@@ -37,7 +37,9 @@ const anthropicModel = new ChatAnthropic({
   apiKey: ANTHROPIC_API_KEY,
 });
 
-const selectModel = (provider: "openai" | "anthropic" | "google") => {
+const selectModel = (
+  provider: "openai" | "anthropic" | "google" | "deepseek"
+) => {
   switch (provider) {
     case "openai":
       return openaiModel;
@@ -45,10 +47,14 @@ const selectModel = (provider: "openai" | "anthropic" | "google") => {
       return anthropicModel;
     case "google":
       return googleModel;
+    case "deepseek":
+      return openaiModel;
   }
 };
 
-export const getChain = (provider: "openai" | "anthropic" | "google") => {
+export const getChain = (
+  provider: "openai" | "anthropic" | "google" | "deepseek"
+) => {
   const llm = selectModel(provider);
   return mainPrompt.pipe(llm);
 };

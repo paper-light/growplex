@@ -11,6 +11,18 @@
 
   let { id, isOpen, domain, onClose }: Props = $props();
   let iframeEl: HTMLIFrameElement | null = $state(null);
+
+  // Get the JWT token from sessionStorage
+  let token = $state(
+    typeof window !== "undefined"
+      ? sessionStorage.getItem("chat-widget-token")
+      : null
+  );
+  let iframeSrc = $derived(
+    token
+      ? `${domain}/embed/chat/${id}?token=${encodeURIComponent(token)}`
+      : `${domain}/embed/chat/${id}`
+  );
 </script>
 
 <aside
@@ -25,7 +37,7 @@
   <iframe
     bind:this={iframeEl}
     class="iframe"
-    src={`${domain}/embed/chat/${id}`}
+    src={iframeSrc}
     title="Chat"
     allowtransparency={true}
   />

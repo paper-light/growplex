@@ -8,6 +8,8 @@ import Chat from "../../../chat/Chat.svelte";
 import ThemeLoad from "../../../components/ThemeLoad.astro";
 
 const { id } = Astro.params;
+const token = Astro.url.searchParams.get("token");
+
 const integration = IntegrationSchema.parse(
   await pb
     .collection("integrations")
@@ -29,7 +31,7 @@ const agent = integration.expand!.agent!;
     <ClientRouter />
   </head>
   <body>
-    <Chat chat={chat} agent={agent} client:only />
+    <Chat chat={chat} agent={agent} token={token} client:only />
   </body>
 </html>
 

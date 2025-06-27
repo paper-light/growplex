@@ -1,3 +1,4 @@
+import z from "zod";
 import { defineAction } from "astro:actions";
 
 import { UserSchema } from "../models";
@@ -12,7 +13,10 @@ export const server = {
   }),
 
   seedUser: defineAction({
-    input: UserSchema,
+    input: z.object({
+      user: UserSchema,
+      provider: z.enum(["google"]).nullable(),
+    }),
     handler: seedHandler,
   }),
 };

@@ -1,10 +1,11 @@
 ---
 import AppRoot from "../../app/AppRoot.astro";
 import AppDashboard from "../../app/shared/AppDashboard.astro";
+import ProfileCard from "../../app/user/ProfileCard.svelte";
 ---
 
-<AppRoot title="Growplex | App Home" active="profile">
+<AppRoot title="Growplex | Profile" active="profile">
   <AppDashboard pageName="Profile">
-    <h1>Profile</h1>
+    <ProfileCard client:only />
   </AppDashboard>
 </AppRoot>

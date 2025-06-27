@@ -16,7 +16,7 @@ export const oauth2 = async (provider: string) => {
   const user = UserSchema.parse(userResult.record);
 
   if (user.orgMembers.length === 0) {
-    await actions.seedUser(user);
+    await actions.seedUser({ user, provider: provider as "google" });
   }
 
   await authProvider.refreshUser();

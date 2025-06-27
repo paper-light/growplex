@@ -72,6 +72,7 @@
         .collection("rooms")
         .create({ status: "auto", chat: chat.id });
       localStorage.setItem("chatRoomId", room.id);
+      roomId = room.id;
     }
 
     const savedUser = localStorage.getItem("chatUsername");

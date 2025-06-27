@@ -18,5 +18,5 @@ export const signUp = async (
     })
   );
 
-  await actions.seedUser(user);
+  await actions.seedUser({ user, provider: null });
 };

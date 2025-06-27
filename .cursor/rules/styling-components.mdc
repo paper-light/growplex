@@ -1,0 +1,11 @@
+---
+description: 
+globs: *.astro,*.svelte
+alwaysApply: false
+---
+- Use modern tailwind v4 for styles
+- Use daisyUI 5 if possible, use its semantic vars
+- Never write dark:, never hardcode theme variants inside components
+- Use @lucide/astro and @lucide/svelte for icons
+
+[global.css](mdc:src/styles/global.css)

@@ -73,8 +73,14 @@ export async function getHistory(
       .collection("integrations")
       .getOne(integrationId, { expand: "agent,chat" })
   );
-  const agent = integration.expand!.agent!;
-  const chat = integration.expand!.chat!;
+  const agent = integration.expand!.agent;
+  const chat = integration.expand!.chat;
+
+  if (!agent || !chat) {
+    log.error({ integrationId, roomId }, "no agent or chat found");
+    throw new Error("no agent or chat found");
+  }
+
   const welcome: z.infer<typeof ChatMessageSchema> = {
     id: `temp-${nanoid(12)}`,
     content: chat.firstMessage,

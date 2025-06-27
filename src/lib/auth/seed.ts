@@ -10,10 +10,19 @@ import {
 
 import { pb } from "../config/pb";
 
-export async function seed(user: z.infer<typeof UserSchema>) {
+export async function seed(
+  user: z.infer<typeof UserSchema>,
+  provider: "google" | null = null
+) {
   const dbUser = UserSchema.parse(await pb.collection("users").getOne(user.id));
   if (dbUser.orgMembers.length > 0) {
     throw new Error("user already seeded");
+  }
+
+  if (provider) {
+    await pb.collection("users").update(user.id, {
+      metadata: { provider },
+    });
   }
 
   const integration = IntegrationSchema.parse(

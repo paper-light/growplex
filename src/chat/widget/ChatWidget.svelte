@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import ChatToggle from "./ChatToggle.svelte";
   import ChatContainer from "./ChatContainer.svelte";
-  import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
     id: string;
@@ -21,10 +20,19 @@
   }
 
   onMount(async () => {
-    const response = await fetch("/api/chat/auth", {
+    const response = await fetch(`${domain}/api/chat/auth`, {
       method: "POST",
       body: JSON.stringify({ id }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
+
+    if (response.status !== 200) {
+      console.error("Failed to authenticate chat widget");
+      return;
+    }
+
     const { token, payload } = await response.json();
     sessionStorage.setItem("chat-widget-token", token);
     sessionStorage.setItem("chat-widget-payload", JSON.stringify(payload));

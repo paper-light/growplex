@@ -58,10 +58,8 @@
   }
   @media (max-width: 767px) {
     .container {
-      right: 1rem;
-      bottom: 6.5rem;
-      width: 90vw;
-      height: 80vh;
+      width: 100vw;
+      height: 100vh;
     }
   }
   .iframe {

@@ -14,8 +14,6 @@ async function parseOrigins(urls) {
   });
   if (!res.ok) throw new Error(`Failed to submit ${url}: ${res.statusText}`);
   const payload = await res.json();
-
-  
 }
 
 async function submitCrawl(urls) {
@@ -27,29 +25,34 @@ async function submitCrawl(urls) {
       priority: 10,
       crawler_config: {
         type: "CrawlerRunConfig",
-        params: {
-          wait_for: "css:body",
+        // params: {
+        //   wait_for: "css:body",
 
-          markdown_generator: {
-            type: "DefaultMarkdownGenerator",
-            params: {
-              content_filter: {
-                type: "PruningContentFilter",
-                params: {
-                  threshold: 0.2,
-                  threshold_type: "dynamic",
-                  min_word_threshold: 3,
-                },
-              },
-            },
-          },
-        },
+        //   markdown_generator: {
+        //     type: "DefaultMarkdownGenerator",
+        //     params: {
+        //       content_filter: {
+        //         type: "PruningContentFilter",
+        //         params: {
+        //           threshold: 0.2,
+        //           threshold_type: "dynamic",
+        //           min_word_threshold: 3,
+        //         },
+        //       },
+        //     },
+        //   },
+        // },
       },
     }),
   });
   if (!res.ok) throw new Error(`Failed to submit ${url}: ${res.statusText}`);
   const payload = await res.json();
-  console.log(payload.results[0].links.internal, payload.results[0].metadata);
+  for (const res of payload.results) {
+    if (res.status_code === 200) {
+      const hrefs = res.links.internal.map((l) => l.href);
+      console.log(res.url, hrefs.length, hrefs[0]);
+    }
+  }
   return payload.results;
 }
 
@@ -74,7 +77,7 @@ async function testCrawl(urlList) {
   console.log("✅ Wrote", toWrite.length, "items to results.json");
 }
 
-testCrawl(["https://mbl.is"]).catch((err) => {
+testCrawl(urls).catch((err) => {
   console.error("Crawl failed:", err);
   process.exit(1);
 });

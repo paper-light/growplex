@@ -49,6 +49,8 @@ export default defineConfig({
 
       MAILGUN_TOKEN: envField.string({ context: "server", access: "secret" }),
       JWT_SECRET: envField.string({ context: "server", access: "secret" }),
+
+      CRAWL4AI_URL: envField.string({ context: "server", access: "secret" }),
     },
   },
   vite: {

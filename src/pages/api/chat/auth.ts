@@ -32,15 +32,12 @@ export async function POST({ request }: { request: Request }) {
         headers: CORS_HEADERS,
       });
 
-    // let originHost;
-    // try {
-    //   originHost = new URL(origin).hostname;
-    // } catch {
-    //   originHost = origin;
-    // }
+    let originHost = new URL(origin).hostname;
+    let monoHost = new URL(MONO_URL).hostname;
+    let chatHost = new URL(chat.domain).hostname;
 
-    console.log(chat.domain, origin, MONO_URL);
-    if (chat.domain !== origin && origin !== MONO_URL) {
+    console.log(chatHost, originHost, monoHost);
+    if (chatHost !== originHost && originHost !== monoHost) {
       return new Response("Forbidden", {
         status: 403,
         headers: CORS_HEADERS,

@@ -98,7 +98,7 @@
   >
     <button
       type="button"
-      class="btn btn-primary btn-circle btn-sm absolute top-4 right-16"
+      class="btn btn-primary rounded-2xl btn-sm absolute top-4 right-16"
       aria-label="Reload chat"
       onclick={reloadChat}
     >

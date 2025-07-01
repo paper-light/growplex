@@ -39,6 +39,7 @@ export async function POST({ request }: { request: Request }) {
     //   originHost = origin;
     // }
 
+    console.log(chat.domain, origin, MONO_URL);
     if (chat.domain !== origin && origin !== MONO_URL) {
       return new Response("Forbidden", {
         status: 403,

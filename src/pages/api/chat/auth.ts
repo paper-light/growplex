@@ -32,12 +32,23 @@ export async function POST({ request }: { request: Request }) {
         headers: CORS_HEADERS,
       });
 
-    let originHost = new URL(origin).hostname;
-    let monoHost = new URL(MONO_URL).hostname;
-    let chatHost = new URL(chat.domain).hostname;
+    // Add basic validation for URL format
+    try {
+      new URL(chat.domain); // Validate stored domain is valid URL
+      new URL(origin); // Validate origin is valid URL
+    } catch {
+      return new Response("Invalid domain format", {
+        status: 400,
+        headers: CORS_HEADERS,
+      });
+    }
 
-    console.log(chatHost, originHost, monoHost);
-    if (chatHost !== originHost && originHost !== monoHost) {
+    // Hybrid approach: full origin for external domains, hostname for internal MONO_URL
+    const originHost = new URL(origin).hostname;
+    const monoHost = new URL(MONO_URL).hostname;
+
+    console.log("Domain check:", chat.domain, origin, MONO_URL);
+    if (chat.domain !== origin && originHost !== monoHost) {
       return new Response("Forbidden", {
         status: 403,
         headers: CORS_HEADERS,

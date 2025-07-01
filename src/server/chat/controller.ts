@@ -36,8 +36,6 @@ export function attachSocketIO(httpServer: any) {
     socket.on(
       "join-room",
       async ({ chatId, roomId, username }: JoinRoomDTO) => {
-        socket.join(roomId);
-
         if (!socket.data.user) {
           socket.emit("unauthorized", {
             message: "Unauthorized",
@@ -45,8 +43,27 @@ export function attachSocketIO(httpServer: any) {
           return;
         }
 
+        // CRITICAL: Validate room belongs to chat
+        try {
+          const room = await pb.collection("rooms").getOne(roomId);
+          if (room.chat !== chatId) {
+            socket.emit("unauthorized", {
+              message: "Room access denied - room doesn't belong to chat",
+            });
+            return;
+          }
+        } catch (error) {
+          console.error("Error validating room:", error);
+          socket.emit("unauthorized", {
+            message: "Invalid room",
+          });
+          return;
+        }
+
+        socket.join(roomId);
         socket.data.username = username;
         socket.data.roomId = roomId;
+        socket.data.chatId = chatId;
 
         const integration = IntegrationSchema.parse(
           await pb
@@ -76,6 +93,23 @@ export function attachSocketIO(httpServer: any) {
           return;
         }
 
+        // CRITICAL: Validate room belongs to chat (also on send-message)
+        try {
+          const room = await pb.collection("rooms").getOne(roomId);
+          if (room.chat !== chatId) {
+            socket.emit("unauthorized", {
+              message: "Message rejected - room doesn't belong to chat",
+            });
+            return;
+          }
+        } catch (error) {
+          console.error("Error validating room on message send:", error);
+          socket.emit("unauthorized", {
+            message: "Invalid room for message",
+          });
+          return;
+        }
+
         if (msg.content.length > MAX_MESSAGE_CHARS) {
           socket.emit("msg-length-limit", {
             message: "Message is too long!",
@@ -83,7 +117,11 @@ export function attachSocketIO(httpServer: any) {
           return;
         }
 
-        const limiterKey = socket.id;
+        // Rate limiting: Use room + user ID for more secure limiting
+        const userId =
+          socket.data.user?.id || socket.data.username || socket.id;
+        const limiterKey = `room:${roomId}:user:${userId}`;
+
         try {
           await rateLimiter.consume(limiterKey, 1);
 

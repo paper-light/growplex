@@ -1,4 +1,4 @@
-import { JWT_SECRET } from "astro:env/server";
+import { JWT_SECRET, MONO_URL } from "astro:env/server";
 import jwt from "jsonwebtoken";
 
 import { pb } from "../../../lib/config/pb";
@@ -39,8 +39,7 @@ export async function POST({ request }: { request: Request }) {
     //   originHost = origin;
     // }
 
-    console.log(chat.domain, origin);
-    if (chat.domain !== origin) {
+    if (chat.domain !== origin && origin !== MONO_URL) {
       return new Response("Forbidden", {
         status: 403,
         headers: CORS_HEADERS,

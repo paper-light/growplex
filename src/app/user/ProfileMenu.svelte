@@ -28,10 +28,10 @@
   function close() {
     open = false;
   }
-  function handleLogout() {
-    authProvider.logout();
+  async function handleLogout() {
     close();
-    navigate("/app/auth/sign-in");
+    await navigate("/app/auth/sign-in");
+    await authProvider.logout();
   }
 
   let rootEl: HTMLElement;

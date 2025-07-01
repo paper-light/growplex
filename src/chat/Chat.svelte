@@ -23,10 +23,11 @@
   interface Props {
     chat: z.infer<typeof ChatSchema>;
     agent: z.infer<typeof AgentSchema>;
+    roomInit?: "auto" | "preview";
     token?: string | null;
   }
 
-  const { chat, agent, token }: Props = $props();
+  const { chat, agent, roomInit = "auto", token }: Props = $props();
 
   const assistantAvatar = chat.avatar
     ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
@@ -68,9 +69,10 @@
     if (savedRoom) {
       roomId = savedRoom;
     } else {
-      const room = await pb
-        .collection("rooms")
-        .create({ status: "auto", chat: chat.id });
+      const room = await pb.collection("rooms").create({
+        status: roomInit,
+        chat: chat.id,
+      });
       localStorage.setItem("chatRoomId", room.id);
       roomId = room.id;
     }
@@ -177,7 +179,7 @@
 </script>
 
 <div
-  class="w-screen h-screen flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4"
+  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4"
 >
   <!-- Header -->
   <header

@@ -1,7 +1,7 @@
 <script lang="ts">
   import z from "zod";
   import { onMount } from "svelte";
-  import { ChevronDown, Check, Edit, X } from "@lucide/svelte";
+  import { ChevronDown, Check, Edit, X, Trash2 } from "@lucide/svelte";
 
   import {
     IntegrationSchema,
@@ -37,6 +37,9 @@
   let editingProjectId = $state<string | null>(null);
   let editedOrgName = $state<string>("");
   let editedProjectName = $state<string>("");
+
+  let showDeleteProjectModal = $state(false);
+  let projectToDelete = $state<z.infer<typeof ProjectSchema> | null>(null);
 
   function toggleOrg(e: MouseEvent) {
     e.stopPropagation();
@@ -152,6 +155,41 @@
     editingProjectId = null;
     editedProjectName = "";
   }
+
+  // Delete project functionality
+  function openDeleteProjectModal(
+    e: MouseEvent,
+    project: z.infer<typeof ProjectSchema>
+  ) {
+    e.stopPropagation();
+    projectToDelete = project;
+    showDeleteProjectModal = true;
+  }
+  function closeDeleteProjectModal() {
+    showDeleteProjectModal = false;
+    projectToDelete = null;
+  }
+  async function confirmDeleteProject() {
+    if (!projectToDelete || !currentOrg) return;
+
+    // Delete the project
+    await pb.collection("projects").delete(projectToDelete.id);
+
+    await authProvider.refreshUser();
+
+    // If we deleted the current project, select the first available project
+    if (currentProject?.id === projectToDelete.id) {
+      const remainingProjects = projects.filter(
+        (p) => p?.id !== projectToDelete?.id
+      );
+      if (remainingProjects.length > 0) {
+        settingsProvider.setCurrentProject(remainingProjects[0]!);
+      }
+    }
+
+    showDeleteProjectModal = false;
+    projectToDelete = null;
+  }
 </script>
 
 <div class="mb-6 space-y-1">
@@ -259,6 +297,15 @@
               >
                 <Edit size={12} />
               </button>
+              {#if projects.length > 1}
+                <button
+                  onclick={(e) => openDeleteProjectModal(e, project!)}
+                  class="btn btn-ghost btn-xs p-1 text-error"
+                  aria-label="Delete project"
+                >
+                  <Trash2 size={12} />
+                </button>
+              {/if}
             </div>
           {/if}
         </li>
@@ -295,3 +342,24 @@
     </ul>
   </div>
 </div>
+
+{#if showDeleteProjectModal}
+  <div
+    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40"
+    style="position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important; z-index: 9999 !important;"
+  >
+    <div
+      class="bg-base-100 rounded-lg shadow-lg p-6 w-full max-w-xs flex flex-col items-center"
+    >
+      <div class="text-lg font-semibold mb-4">Are you sure?</div>
+      <div class="flex gap-2 w-full justify-center">
+        <button class="btn btn-error btn-sm" onclick={confirmDeleteProject}
+          >Yes, delete</button
+        >
+        <button class="btn btn-ghost btn-sm" onclick={closeDeleteProjectModal}
+          >Cancel</button
+        >
+      </div>
+    </div>
+  </div>
+{/if}

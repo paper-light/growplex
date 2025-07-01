@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onDestroy } from "svelte";
   import { slide } from "svelte/transition";
-  import { X, Check, ChevronRight, Edit } from "@lucide/svelte";
+  import { X, Check, ChevronRight, Edit, Trash2 } from "@lucide/svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider, pb } from "../auth/auth.svelte";
@@ -18,6 +18,11 @@
   let creatingIntegrations = $state<{ id: string; name: string }[]>([]);
   let editingIntegrationId = $state<string | null>(null);
   let editedIntegrationName = $state<string>("");
+
+  let showDeleteModal = $state(false);
+  let integrationToDelete = $state<z.infer<typeof IntegrationSchema> | null>(
+    null
+  );
 
   function openSidebar() {
     open = true;
@@ -86,16 +91,41 @@
     editingIntegrationId = null;
     editedIntegrationName = "";
   }
+
+  function openDeleteModal(
+    e: MouseEvent,
+    integration: z.infer<typeof IntegrationSchema>
+  ) {
+    e.stopPropagation();
+    integrationToDelete = integration;
+    showDeleteModal = true;
+  }
+  function closeDeleteModal() {
+    showDeleteModal = false;
+    integrationToDelete = null;
+  }
+  async function confirmDeleteIntegration() {
+    if (!integrationToDelete) return;
+    await pb.collection("integrations").delete(integrationToDelete.id);
+    await authProvider.refreshUser();
+    showDeleteModal = false;
+    integrationToDelete = null;
+  }
 </script>
 
 {#if !open}
   <button
     type="button"
-    class="absolute top-1/2 -left-8 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40"
+    class="absolute top-1/2 -left-8 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40 flex flex-col items-center justify-center px-2 py-3"
     aria-label="Open sidebar"
     onclick={openSidebar}
+    style="height: 280px; min-width: 30px;"
   >
-    <ChevronRight size={32} />
+    {#each "INTEGRATIONS".split("") as letter, i}
+      <span class="block text-sm font-bold" style="transform: rotate(90deg);"
+        >{letter}</span
+      >
+    {/each}
   </button>
 {:else}
   <button
@@ -168,6 +198,13 @@
                 >
                   <Edit size={12} />
                 </button>
+                <button
+                  onclick={(e) => openDeleteModal(e, integration)}
+                  class="btn btn-ghost btn-xs p-1 text-error"
+                  aria-label="Delete integration"
+                >
+                  <Trash2 size={12} />
+                </button>
               </div>
             {/if}
           </li>
@@ -191,6 +228,16 @@
           >
             <Check size={12} />
           </button>
+          <button
+            onclick={() =>
+              (creatingIntegrations = creatingIntegrations.filter(
+                (i) => i.id !== ci.id
+              ))}
+            class="btn btn-ghost btn-xs p-1 text-error"
+            aria-label="Cancel creating integration"
+          >
+            <X size={12} />
+          </button>
         </div>
       {/each}
       <button
@@ -201,4 +248,22 @@
       </button>
     </div>
   </aside>
+{/if}
+
+{#if showDeleteModal}
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div
+      class="bg-base-100 rounded-lg shadow-lg p-6 w-full max-w-xs flex flex-col items-center"
+    >
+      <div class="text-lg font-semibold mb-4">Are you sure?</div>
+      <div class="flex gap-2 w-full justify-center">
+        <button class="btn btn-error btn-sm" onclick={confirmDeleteIntegration}
+          >Yes, delete</button
+        >
+        <button class="btn btn-ghost btn-sm" onclick={closeDeleteModal}
+          >Cancel</button
+        >
+      </div>
+    </div>
+  </div>
 {/if}

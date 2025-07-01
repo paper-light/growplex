@@ -51,6 +51,7 @@ export default defineConfig({
       JWT_SECRET: envField.string({ context: "server", access: "secret" }),
 
       CRAWL4AI_URL: envField.string({ context: "server", access: "secret" }),
+      MONO_URL: envField.string({ context: "server", access: "secret" }),
     },
   },
   vite: {

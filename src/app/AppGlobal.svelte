@@ -5,8 +5,9 @@
   import { settingsProvider } from "./settings/settings.svelte";
 
   onMount(() => {
+    settingsProvider.init(authProvider.user);
+
     authProvider.subscribeUser();
-    settingsProvider.init();
 
     return () => {
       authProvider.unsubscribeUser();

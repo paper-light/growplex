@@ -21,5 +21,5 @@ export const oauth2 = async (provider: string) => {
 
   await authProvider.refreshUser();
   await authProvider.subscribeUser();
-  settingsProvider.init();
+  settingsProvider.init(authProvider.user);
 };

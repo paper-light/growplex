@@ -6,7 +6,6 @@ import {
   SettingsSchema,
   UserSchema,
 } from "../../models";
-import { authProvider } from "../auth/auth.svelte";
 
 class SettingsProvider {
   settings: z.infer<typeof SettingsSchema> | null = $state(null);
@@ -15,12 +14,21 @@ class SettingsProvider {
   currentProject = $derived(this.settings?.currentProject || null);
   currentIntegration = $derived(this.settings?.currentIntegration || null);
 
-  init() {
-    const raw = localStorage.getItem("settings");
-    if (raw) {
-      this.settings = SettingsSchema.parse(JSON.parse(raw));
-    } else if (authProvider.user) {
-      this.settings = this.initFromUser(authProvider.user);
+  init(user?: z.infer<typeof UserSchema> | null) {
+    try {
+      const raw = localStorage.getItem("settings");
+      if (raw) {
+        this.settings = SettingsSchema.parse(JSON.parse(raw));
+      } else if (user) {
+        this.settings = this.initFromUser(user);
+      }
+    } catch (error) {
+      console.error("Failed to initialize settings:", error);
+      // Clear corrupted settings
+      localStorage.removeItem("settings");
+      if (user) {
+        this.settings = this.initFromUser(user);
+      }
     }
   }
 
@@ -41,33 +49,45 @@ class SettingsProvider {
       currentIntegration: integration,
     };
 
-    localStorage.setItem("settings", JSON.stringify(settings));
+    this.saveToStorage(settings);
     return settings;
   }
 
   mergeUser(user: z.infer<typeof UserSchema> | null) {
-    if (!user) return;
+    if (!user || !this.settings) return;
 
+    let hasChanges = false;
+
+    // Update current org if it exists in user data
     if (this.currentOrg) {
       const org = user.expand?.orgMembers?.find(
         (o) => o.org === this.currentOrg!.id
       )?.expand?.org;
-      if (org) {
+      if (org && JSON.stringify(org) !== JSON.stringify(this.currentOrg)) {
         console.log("Merging org: ", org.name);
-        this.settings!.currentOrg = org;
+        this.settings.currentOrg = org;
+        hasChanges = true;
       }
     }
-    if (this.currentProject) {
+
+    // Update current project if it exists in user data
+    if (this.currentProject && this.currentOrg) {
       const proj = user.expand?.orgMembers
         ?.find((o) => o.org === this.currentOrg!.id)
         ?.expand?.org?.expand?.projects?.find(
           (p) => p.id === this.currentProject?.id
         );
-      if (proj) {
+      if (
+        proj &&
+        JSON.stringify(proj) !== JSON.stringify(this.currentProject)
+      ) {
         console.log("Merging project: ", proj.name);
-        this.settings!.currentProject = proj;
+        this.settings.currentProject = proj;
+        hasChanges = true;
       }
     }
+
+    // Update current integration if it exists in user data
     if (this.currentProject && this.currentIntegration) {
       const integ = user.expand?.orgMembers
         ?.find((o) => o.org === this.currentOrg!.id)
@@ -77,10 +97,18 @@ class SettingsProvider {
         ?.expand?.integrations?.find(
           (i) => i.id === this.currentIntegration?.id
         );
-      if (integ) {
+      if (
+        integ &&
+        JSON.stringify(integ) !== JSON.stringify(this.currentIntegration)
+      ) {
         console.log("Merging integration: ", integ.name);
-        this.settings!.currentIntegration = integ;
+        this.settings.currentIntegration = integ;
+        hasChanges = true;
       }
+    }
+
+    if (hasChanges) {
+      this.saveToStorage(this.settings);
     }
   }
 
@@ -95,29 +123,42 @@ class SettingsProvider {
       ?.integrations
       ? this.settings.currentProject.expand?.integrations[0]
       : null;
-    localStorage.setItem("settings", JSON.stringify(this.settings));
+    this.saveToStorage(this.settings);
   }
+
   setCurrentProject(project: z.infer<typeof ProjectSchema>) {
     if (!this.settings) return;
-    console.log(project.name);
+    console.log("Setting project: ", project.name);
 
     this.settings.currentProject = project;
     this.settings.currentIntegration = project.expand?.integrations
       ? project.expand?.integrations[0]
       : null;
-    localStorage.setItem("settings", JSON.stringify(this.settings));
+    this.saveToStorage(this.settings);
   }
 
   setCurrentIntegration(integration: z.infer<typeof IntegrationSchema>) {
     if (!this.settings) return;
 
     this.settings.currentIntegration = integration;
-    localStorage.setItem("settings", JSON.stringify(this.settings));
+    this.saveToStorage(this.settings);
+  }
+
+  private saveToStorage(settings: z.infer<typeof SettingsSchema>) {
+    try {
+      localStorage.setItem("settings", JSON.stringify(settings));
+    } catch (error) {
+      console.error("Failed to save settings to localStorage:", error);
+    }
   }
 
   clear() {
     this.settings = null;
-    localStorage.removeItem("settings");
+    try {
+      localStorage.removeItem("settings");
+    } catch (error) {
+      console.error("Failed to clear settings from localStorage:", error);
+    }
   }
 }
 

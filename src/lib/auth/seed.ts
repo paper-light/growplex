@@ -6,6 +6,8 @@ import {
   ProjectSchema,
   UserSchema,
   IntegrationSchema,
+  AgentSchema,
+  ChatSchema,
 } from "../../models";
 
 import { pb } from "../config/pb";
@@ -25,15 +27,40 @@ export async function seed(
     });
   }
 
+  const agent = AgentSchema.parse(
+    await pb.collection("agents").create({
+      name: "Example Agent",
+      system: "Add >_< after each message",
+      provider: "openai",
+    })
+  );
+
+  const chat = ChatSchema.parse(
+    await pb.collection("chats").create({
+      name: "Default Chat",
+      theme: {
+        light: {},
+        dark: {},
+      },
+      firstMessage: "Hello, how are you?",
+      domain: "https://example.com",
+    })
+  );
+
   const integration = IntegrationSchema.parse(
     await pb.collection("integrations").create({
       name: "Default Integration",
+      agent: agent.id,
+      chat: chat.id,
     })
   );
   const project = ProjectSchema.parse(
-    await pb
-      .collection("projects")
-      .create({ name: "Default", integrations: [integration.id] })
+    await pb.collection("projects").create({
+      name: "Default",
+      integrations: [integration.id],
+      agents: [agent.id],
+      chats: [chat.id],
+    })
   );
   const org = OrgSchema.parse(
     await pb.collection("orgs").create({

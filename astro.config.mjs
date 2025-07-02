@@ -52,6 +52,7 @@ export default defineConfig({
 
       CRAWL4AI_URL: envField.string({ context: "server", access: "secret" }),
       MONO_URL: envField.string({ context: "server", access: "secret" }),
+      QDRANT_URL: envField.string({ context: "server", access: "secret" }),
     },
   },
   vite: {

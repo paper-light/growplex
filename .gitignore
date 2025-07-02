@@ -34,3 +34,4 @@ pb/pb_data
 
 public/scripts/chat-widget.js
 aletheia/data/results.json
+qdrant/data

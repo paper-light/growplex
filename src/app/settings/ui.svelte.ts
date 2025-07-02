@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const UIStateSchema = z.object({
   integrationsSidebarOpen: z.boolean().default(false),
-  chatPreviewOpen: z.boolean().default(false),
+  chatPreviewOpen: z.boolean().default(true),
 });
 
 type UIState = z.infer<typeof UIStateSchema>;

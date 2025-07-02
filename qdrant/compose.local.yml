@@ -1,0 +1,12 @@
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - 6333:6333
+    volumes:
+      - ./data:/qdrant/storage
+    environment:
+      QDRANT__AUTH__ENABLE: false
+      QDRANT__STORAGE__PATH: /qdrant/storage
+      QDRANT__STORAGE__VECTOR_CACHE_SIZE: 1000000000
+      QDRANT__STORAGE__VECTOR_CACHE_TTL: 604800

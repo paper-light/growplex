@@ -23,26 +23,26 @@ async function submitCrawl(urls) {
     body: JSON.stringify({
       urls: urls,
       priority: 10,
-      crawler_config: {
-        type: "CrawlerRunConfig",
-        // params: {
-        //   wait_for: "css:body",
+      // crawler_config: {
+      //   type: "CrawlerRunConfig",
+      //   // params: {
+      //   //   wait_for: "css:body",
 
-        //   markdown_generator: {
-        //     type: "DefaultMarkdownGenerator",
-        //     params: {
-        //       content_filter: {
-        //         type: "PruningContentFilter",
-        //         params: {
-        //           threshold: 0.2,
-        //           threshold_type: "dynamic",
-        //           min_word_threshold: 3,
-        //         },
-        //       },
-        //     },
-        //   },
-        // },
-      },
+      //   //   markdown_generator: {
+      //   //     type: "DefaultMarkdownGenerator",
+      //   //     params: {
+      //   //       content_filter: {
+      //   //         type: "PruningContentFilter",
+      //   //         params: {
+      //   //           threshold: 0.2,
+      //   //           threshold_type: "dynamic",
+      //   //           min_word_threshold: 3,
+      //   //         },
+      //   //       },
+      //   //     },
+      //   //   },
+      //   // },
+      // },
     }),
   });
   if (!res.ok) throw new Error(`Failed to submit ${url}: ${res.statusText}`);

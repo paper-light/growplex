@@ -8,7 +8,7 @@ import {
 } from "../../models";
 
 class SettingsProvider {
-  settings: z.infer<typeof SettingsSchema> | null = $state(null);
+  private settings: z.infer<typeof SettingsSchema> | null = $state(null);
 
   currentOrg = $derived(this.settings?.currentOrg || null);
   currentProject = $derived(this.settings?.currentProject || null);

@@ -5,6 +5,7 @@
   import { onDestroy } from "svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
+  import { uiProvider } from "../settings/ui.svelte";
   import Chat from "../../chat/Chat.svelte";
 
   const currentIntegration = $derived(settingsProvider.currentIntegration);
@@ -13,7 +14,7 @@
   const chat = $derived(currentIntegration?.expand?.chat || null);
 
   // reactive state
-  let open = $state(false);
+  const open = $derived(uiProvider.chatPreviewOpen);
   let sidebarEl: HTMLElement | null = $state(null);
 
   let token = $state("");
@@ -26,11 +27,11 @@
   }
 
   function openSidebar() {
-    open = true;
+    uiProvider.setChatPreviewOpen(true);
   }
 
   function closeSidebar() {
-    open = false;
+    uiProvider.setChatPreviewOpen(false);
   }
 
   // close on Escape

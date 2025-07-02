@@ -4,6 +4,7 @@
   import { X, Check, ChevronRight, Edit, Trash2 } from "@lucide/svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
+  import { uiProvider } from "../settings/ui.svelte";
   import { authProvider, pb } from "../auth/auth.svelte";
   import { IntegrationSchema } from "../../models";
   import z from "zod";
@@ -12,7 +13,7 @@
   const currentIntegration = $derived(settingsProvider.currentIntegration);
   const integrations = $derived(currentProject?.expand?.integrations || []);
 
-  let open = $state(false);
+  const open = $derived(uiProvider.integrationsSidebarOpen);
   let sidebarEl: HTMLElement | null = $state(null);
 
   let creatingIntegrations = $state<{ id: string; name: string }[]>([]);
@@ -25,10 +26,10 @@
   );
 
   function openSidebar() {
-    open = true;
+    uiProvider.setIntegrationsSidebarOpen(true);
   }
   function closeSidebar() {
-    open = false;
+    uiProvider.setIntegrationsSidebarOpen(false);
   }
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "Escape") closeSidebar();

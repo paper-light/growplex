@@ -13,10 +13,10 @@ import {
   is:inline
   data-astro-rerun
   data-domain={PUBLIC_CHAT_WIDGET_DOMAIN}
-  data-id={PUBLIC_CHAT_WIDGET_ID}
+  data-chat-id={PUBLIC_CHAT_WIDGET_ID}
 >
   (function () {
-    const { id, domain } = document.currentScript.dataset;
+    const { chatId, domain } = document.currentScript.dataset;
     function boot() {
       console.log("boot");
       if (!window.ChatWidget) {
@@ -26,14 +26,14 @@ import {
       if (!window.ChatWidget._loaded) {
         console.log("no window.ChatWidget._loaded");
         window.ChatWidget.init({
-          id,
+          chatId,
           domain,
           color: "var(--color-yellow-500)",
         });
       } else {
         console.log("window.ChatWidget._loaded");
         window.ChatWidget.reload({
-          id,
+          chatId,
           domain,
           color: "var(--color-yellow-500)",
         });

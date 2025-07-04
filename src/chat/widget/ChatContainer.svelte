@@ -3,25 +3,18 @@
   import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
-    id: string;
+    token: string;
+    chatId: string;
     isOpen: boolean;
     domain: string;
     onClose: () => void;
   }
 
-  let { id, isOpen, domain, onClose }: Props = $props();
+  let { token, chatId, isOpen, domain, onClose }: Props = $props();
   let iframeEl: HTMLIFrameElement | null = $state(null);
 
-  // Get the JWT token from sessionStorage
-  let token = $state(
-    typeof window !== "undefined"
-      ? sessionStorage.getItem("chat-widget-token")
-      : null
-  );
   let iframeSrc = $derived(
-    token
-      ? `${domain}/embed/chat/${id}?token=${encodeURIComponent(token)}`
-      : `${domain}/embed/chat/${id}`
+    `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}`
   );
 </script>
 

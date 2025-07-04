@@ -18,16 +18,21 @@
   import Thalia from "../assets/Thalia.jpg";
 
   import { injectTheme } from "./injectTheme";
-  import { pb } from "./pb";
+  import { parseJwtPayload } from "../helpers/parse-jwt";
+  import { ChatWidgetPayloadSchema } from "./models";
 
   interface Props {
     chat: z.infer<typeof ChatSchema>;
     agent: z.infer<typeof AgentSchema>;
-    roomInit?: "auto" | "preview";
-    token?: string | null;
+    token: string;
+    payload?: z.infer<typeof ChatWidgetPayloadSchema>;
   }
 
-  const { chat, agent, roomInit = "auto", token }: Props = $props();
+  const { chat, agent, token, payload }: Props = $props();
+
+  const { roomId, username } = $derived(
+    payload || ChatWidgetPayloadSchema.parse(parseJwtPayload(token!))
+  );
 
   const assistantAvatar = chat.avatar
     ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
@@ -36,8 +41,6 @@
   const maxInputChars = PUBLIC_CHAT_MAX_MESSAGE_TOKENS * 0.75 * 4.5;
 
   let socket: Socket | null = $state(null);
-  let roomId = $state("");
-  let username = $state("");
 
   let messages: z.infer<typeof ChatMessageSchema>[] = $state([]);
 
@@ -65,35 +68,17 @@
       }
     });
 
-    const savedRoom = localStorage.getItem("chatRoomId");
-    if (savedRoom) {
-      roomId = savedRoom;
-    } else {
-      const room = await pb.collection("rooms").create({
-        status: roomInit,
-        chat: chat.id,
-      });
-      localStorage.setItem("chatRoomId", room.id);
-      roomId = room.id;
-    }
-
-    const savedUser = localStorage.getItem("chatUsername");
-    if (savedUser) {
-      username = savedUser;
-    } else {
-      username = `Guest-${nanoid(4)}`;
-      localStorage.setItem("chatUsername", username);
-    }
-
     socket = io({
       auth: {
-        token: token || undefined,
+        token,
       },
     });
 
     socket.on("connect", () => {
-      console.log("🟢 Connected to server, socket.id =", socket?.id);
-      socket?.emit("join-room", { chatId: chat.id, roomId, username });
+      console.log("🟢 Connected to server, socket.id =", socket?.id, roomId);
+      socket?.emit("join-room", {
+        roomId,
+      });
     });
 
     socket.on(
@@ -113,10 +98,6 @@
     socket.on("rate-limit", (data: { message: string }) => {
       console.warn("Rate limit from server:", data.message);
     });
-
-    // socket.on("room-closed", () => {
-    //   console.log("🔴 Room has been closed by operator.");
-    // });
   });
 
   onDestroy(() => {
@@ -143,8 +124,7 @@
     messages.push(newMsg);
 
     socket?.emit("send-message", {
-      chatId: chat.id,
-      roomId,
+      roomId: roomId,
       msgStr: JSON.stringify(newMsg),
     });
 

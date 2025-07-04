@@ -2,29 +2,59 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { X } from "@lucide/svelte";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount, untrack } from "svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
+  import { authProvider } from "../auth/auth.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import Chat from "../../chat/Chat.svelte";
+  import { pb } from "../auth/auth.svelte";
 
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 
   const agent = $derived(currentIntegration?.expand?.agent || null);
   const chat = $derived(currentIntegration?.expand?.chat || null);
 
-  // reactive state
+  const token = $derived(authProvider.token);
+
   const open = $derived(uiProvider.chatPreviewOpen);
   let sidebarEl: HTMLElement | null = $state(null);
 
-  let token = $state("");
+  let roomId = $state("");
+
+  async function createRoom() {
+    const room = await pb.collection("rooms").create({
+      chat: chat?.id,
+      status: "preview",
+    });
+    roomId = room.id;
+    localStorage.setItem("chatRoomId", roomId);
+  }
+
+  function reloadChat() {
+    chatKey = Date.now();
+    if (roomId) {
+      localStorage.removeItem("chatRoomId");
+      pb.collection("rooms").delete(roomId);
+      createRoom();
+    } else {
+      roomId = localStorage.getItem("chatRoomId") || "";
+      if (!roomId) createRoom();
+    }
+  }
 
   let chatKey = $state(Date.now());
-  function reloadChat() {
-    localStorage.removeItem("chatRoomId");
-    localStorage.removeItem("chatUsername");
-    chatKey = Date.now();
-  }
+  $effect(() => {
+    if (!chat || !agent) return;
+    untrack(() => {
+      reloadChat();
+    });
+  });
+
+  const payload = $derived({
+    username: authProvider.user?.name || "",
+    roomId,
+  });
 
   function openSidebar() {
     uiProvider.setChatPreviewOpen(true);
@@ -38,26 +68,6 @@
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "Escape") closeSidebar();
   }
-
-  $effect(() => {
-    if (!chat?.id) return;
-
-    reloadChat();
-
-    if (token) return;
-
-    fetch(`/api/chat/auth`, {
-      method: "POST",
-      body: JSON.stringify({ id: chat.id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then(({ token: t, _ }) => {
-        token = t;
-      });
-  });
 
   $effect(() => {
     if (open) {
@@ -115,7 +125,7 @@
       <X size={20} />
     </button>
 
-    {#key [chatKey]}
+    {#key chatKey}
       {#if !agent}
         <div class="flex flex-col items-center justify-center h-full">
           <h1 class="text-2xl font-bold text-nowrap">No agent found</h1>
@@ -126,10 +136,10 @@
         </div>
       {:else if !token}
         <div class="flex flex-col items-center justify-center h-full">
-          <h1 class="text-2xl font-bold text-nowrap">Waiting for token...</h1>
+          <h1 class="text-2xl font-bold text-nowrap">No token found</h1>
         </div>
       {:else}
-        <Chat {chat} {agent} {token} roomInit="preview" />
+        <Chat {chat} {agent} {payload} {token} />
       {/if}
     {/key}
   </aside>

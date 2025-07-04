@@ -2,6 +2,7 @@ import { JWT_SECRET, MONO_URL } from "astro:env/server";
 import jwt from "jsonwebtoken";
 
 import { pb } from "../../../lib/config/pb";
+import { nanoid } from "nanoid";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -11,31 +12,30 @@ const CORS_HEADERS = {
 
 export async function POST({ request }: { request: Request }) {
   try {
-    const { id } = await request.json();
-    if (!id)
+    let { chatId, roomId, username } = await request.json();
+    if (!chatId)
       return new Response("Missing id", {
         status: 400,
         headers: CORS_HEADERS,
       });
 
-    const chat = await pb.collection("chats").getOne(id);
+    const chat = await pb.collection("chats").getOne(chatId);
     if (!chat)
       return new Response("Chat not found", {
         status: 404,
         headers: CORS_HEADERS,
       });
 
-    const origin = request.headers.get("origin"); // || request.headers.get("referer");
+    const origin = request.headers.get("origin");
     if (!origin)
       return new Response("Missing Origin", {
         status: 400,
         headers: CORS_HEADERS,
       });
 
-    // Add basic validation for URL format
     try {
-      new URL(chat.domain); // Validate stored domain is valid URL
-      new URL(origin); // Validate origin is valid URL
+      new URL(chat.domain);
+      new URL(origin);
     } catch {
       return new Response("Invalid domain format", {
         status: 400,
@@ -43,7 +43,6 @@ export async function POST({ request }: { request: Request }) {
       });
     }
 
-    // Hybrid approach: full origin for external domains, hostname for internal MONO_URL
     const originHost = new URL(origin).hostname;
     const monoHost = new URL(MONO_URL).hostname;
 
@@ -55,10 +54,29 @@ export async function POST({ request }: { request: Request }) {
       });
     }
 
+    if (!username) {
+      username = `Guest-${nanoid(6)}`;
+    }
+
+    if (roomId) {
+      const room = await pb.collection("rooms").getOne(roomId);
+      if (room.chat !== chat.id) {
+        return new Response("Forbidden: Room does not belong to chat", {
+          status: 403,
+          headers: CORS_HEADERS,
+        });
+      }
+    } else {
+      const room = await pb.collection("rooms").create({
+        chat: chat.id,
+        status: "seeded",
+      });
+      roomId = room.id;
+    }
+
     const payload = {
-      id: chat.id,
-      origin: origin,
-      domain: chat.domain,
+      roomId,
+      username,
       theme: chat.theme,
     };
     const token = jwt.sign(payload, JWT_SECRET);

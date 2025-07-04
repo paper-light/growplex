@@ -8,7 +8,7 @@ type WidgetAPI = {
 
 let app: WidgetAPI | null = null;
 
-export function init(opts: { id: string; domain: string; color?: string }) {
+export function init(opts: { chatId: string; domain: string; color?: string }) {
   const target = document.getElementById("chat-widget") || document.body;
   if (!app) {
     app = mount(ChatWidget, {
@@ -28,7 +28,11 @@ export function init(opts: { id: string; domain: string; color?: string }) {
   }
 }
 
-export function reload(opts?: { id: string; domain: string; color?: string }) {
+export function reload(opts?: {
+  chatId: string;
+  domain: string;
+  color?: string;
+}) {
   init(opts ?? (app as any));
 }
 

@@ -4,6 +4,7 @@
   import { authProvider } from "./auth/auth.svelte";
   import { settingsProvider } from "./settings/settings.svelte";
   import { uiProvider } from "./settings/ui.svelte";
+  import { socketProvider } from "./chat/socket.svelte";
 
   onMount(() => {
     uiProvider.init();
@@ -12,8 +13,12 @@
 
     authProvider.subscribeUser();
 
+    socketProvider.init();
+
     return () => {
       authProvider.unsubscribeUser();
+
+      socketProvider.disconnect();
     };
   });
 </script>

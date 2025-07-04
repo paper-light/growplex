@@ -35,17 +35,16 @@ export async function getHistory(
   // 2) Fetch from PocketBase
   let msgs: z.infer<typeof ChatMessageSchema>[] = [];
   try {
-    const pbResp = await pb.collection("messages").getList(1, HISTORY_LENGTH, {
+    const res = await pb.collection("messages").getList(1, HISTORY_LENGTH, {
       filter: `room = "${roomId}" && visible = true`,
       sort: "-created",
     });
 
     // reverse into chronological order
-    msgs = z.array(ChatMessageSchema).parse(pbResp.items.reverse());
+    msgs = z.array(ChatMessageSchema).parse(res.items.reverse());
     log.info({ roomId, count: msgs.length }, "loaded from PB");
   } catch (pbErr) {
     log.error({ err: pbErr, roomId }, "PocketBase fetch error");
-    // bubble up so caller can handle (e.g. emit empty history or an error)
     throw pbErr;
   }
 
@@ -91,39 +90,25 @@ export async function getHistory(
     created: new Date().toISOString().replace("T", " "),
   };
 
-  await updateHistory([welcome]);
+  const ids = await updateHistory([welcome]);
+  welcome.id = ids[0];
   return [welcome];
 }
 
 export async function updateHistory(
   msgs: z.infer<typeof ChatMessageSchema>[]
-): Promise<void> {
+): Promise<string[]> {
   if (msgs.length === 0) {
     log.debug("updateHistory: no messages to persist");
-    return;
+    return [];
   }
 
   const roomId = msgs[0].room;
   const redisKey = `${REDIS_PREFIX}${roomId}`;
   log.debug({ roomId, count: msgs.length }, "updateHistory() start");
 
-  // 1) Push into Redis
-  try {
-    const pipeline = redisClient.multi();
-    for (const msg of msgs) {
-      pipeline.rpush(redisKey, JSON.stringify(msg));
-    }
-    pipeline.ltrim(redisKey, -HISTORY_LENGTH, -1);
-    await pipeline.exec();
-    log.debug({ roomId }, "updateHistory: Redis cache updated");
-  } catch (redisErr) {
-    log.error(
-      { err: redisErr, roomId },
-      "updateHistory: failed to write to Redis"
-    );
-  }
-
-  // 2) Persist to PocketBase
+  // 1) Persist to PocketBase
+  const pbMsgs: z.infer<typeof ChatMessageSchema>[] = [];
   for (const msg of msgs) {
     try {
       const created = await pb.collection("messages").create({
@@ -137,6 +122,7 @@ export async function updateHistory(
         { roomId, tempId: msg.id, newId: created.id },
         "updateHistory: saved to PB"
       );
+      pbMsgs.push(ChatMessageSchema.parse(created));
     } catch (pbError) {
       log.warn(
         { err: pbError, roomId, tempId: msg.id },
@@ -145,5 +131,22 @@ export async function updateHistory(
     }
   }
 
+  // 2) Push into Redis
+  try {
+    const pipeline = redisClient.multi();
+    for (const msg of pbMsgs) {
+      pipeline.rpush(redisKey, JSON.stringify(msg));
+    }
+    pipeline.ltrim(redisKey, -HISTORY_LENGTH, -1);
+    await pipeline.exec();
+    log.debug({ roomId }, "updateHistory: Redis cache updated");
+  } catch (redisErr) {
+    log.error(
+      { err: redisErr, roomId },
+      "updateHistory: failed to write to Redis"
+    );
+  }
+
   log.info({ roomId, count: msgs.length }, "updateHistory: complete");
+  return pbMsgs.map((m) => m.id);
 }

@@ -1,17 +1,22 @@
 <script lang="ts">
+  import z from "zod";
   import { onMount } from "svelte";
   import ChatToggle from "./ChatToggle.svelte";
   import ChatContainer from "./ChatContainer.svelte";
+  import { ChatWidgetPayloadSchema } from "../models";
 
   interface Props {
-    id: string;
+    chatId: string;
     domain: string;
     color?: string;
   }
 
-  let { id, domain, color }: Props = $props();
+  type ChatWidgetPayload = z.infer<typeof ChatWidgetPayloadSchema>;
 
-  let authed = $state(false);
+  let { chatId, domain, color }: Props = $props();
+
+  let token = $state("");
+
   let isOpen = $state(false);
 
   function toggle(state: boolean) {
@@ -20,9 +25,18 @@
   }
 
   onMount(async () => {
+    const payloadStr = localStorage.getItem("chat-widget-payload");
+    const payload = payloadStr
+      ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
+      : null;
+
     const response = await fetch(`${domain}/api/chat/auth`, {
       method: "POST",
-      body: JSON.stringify({ id }),
+      body: JSON.stringify({
+        chatId,
+        roomId: payload?.roomId,
+        username: payload?.username,
+      }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -33,10 +47,9 @@
       return;
     }
 
-    const { token, payload } = await response.json();
-    sessionStorage.setItem("chat-widget-token", token);
-    sessionStorage.setItem("chat-widget-payload", JSON.stringify(payload));
-    authed = true;
+    const { token: t, payload: p } = await response.json();
+    localStorage.setItem("chat-widget-payload", JSON.stringify(p));
+    token = t;
 
     if (sessionStorage.getItem("chat-widget-open") === "true") isOpen = true;
 
@@ -47,7 +60,13 @@
   });
 </script>
 
-{#if authed}
+{#if token}
   <ChatToggle {isOpen} onToggle={() => toggle(true)} />
-  <ChatContainer {isOpen} {id} {domain} onClose={() => toggle(false)} />
+  <ChatContainer
+    {token}
+    {isOpen}
+    {chatId}
+    {domain}
+    onClose={() => toggle(false)}
+  />
 {/if}

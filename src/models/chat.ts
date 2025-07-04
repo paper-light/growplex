@@ -27,6 +27,8 @@ export const ChatRoomSchema = z.object({
     z.literal("auto"),
     z.literal("operator"),
     z.literal("frozen"),
+    z.literal("preview"),
+    z.literal("seeded"),
   ]),
   created: z.string(),
   updated: z.string(),

@@ -40,12 +40,15 @@ class AuthProvider {
 
   private subscriptionId: string | null = null;
 
+  token = $state(pb.authStore.token);
+
   constructor() {
     pb.authStore.onChange((token, rec) => {
       if (rec && pb.authStore.isValid) {
         try {
           this.user = UserSchema.parse(rec);
           settingsProvider.mergeUser(this.user);
+          this.token = token;
         } catch (error) {
           console.error("Failed to parse user data:", error);
           this.user = null;

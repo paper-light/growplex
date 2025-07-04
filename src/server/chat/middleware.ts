@@ -1,5 +1,8 @@
+import PocketBase from "pocketbase";
+
 import { pb } from "@/lib/config/pb";
 import jwt from "jsonwebtoken";
+import { UserSchema } from "@/models/user";
 
 export async function ensureSuperuser() {
   if (!pb.authStore.isValid || !pb.authStore.isSuperuser) {
@@ -20,10 +23,22 @@ export function useMiddlewares(io: any) {
       const token = socket.handshake.auth.token;
       if (token) {
         try {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-          socket.data.user = decoded;
+          const authPb = new PocketBase(process.env.PUBLIC_PB_URL!);
+          authPb.authStore.save(token);
+          const res = await authPb.collection("users").authRefresh({
+            expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
+          });
+          const user = UserSchema.parse(res.record);
+          socket.data.user = user;
         } catch (err) {
-          console.error("Invalid JWT token:", err);
+          console.error("Invalid user token:", err);
+        }
+
+        try {
+          const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+          socket.data.guest = decoded;
+        } catch (err) {
+          console.error("Invalid Guest token:", err);
         }
       }
 

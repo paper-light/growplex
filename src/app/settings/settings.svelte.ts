@@ -1,14 +1,21 @@
-import type { z } from "zod";
+import { z } from "zod";
 import {
   IntegrationSchema,
   OrgSchema,
   ProjectSchema,
-  SettingsSchema,
   UserSchema,
 } from "../../models";
 
+const SettingsSchema = z.object({
+  currentOrg: OrgSchema.nullable(),
+  currentProject: ProjectSchema.nullable(),
+  currentIntegration: IntegrationSchema.nullable(),
+});
+
+type Settings = z.infer<typeof SettingsSchema>;
+
 class SettingsProvider {
-  private settings: z.infer<typeof SettingsSchema> | null = $state(null);
+  private settings: Settings | null = $state(null);
 
   currentOrg = $derived(this.settings?.currentOrg || null);
   currentProject = $derived(this.settings?.currentProject || null);

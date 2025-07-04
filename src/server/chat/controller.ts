@@ -1,7 +1,12 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
-import { ChatMessageSchema, IntegrationSchema } from "@/models";
+import {
+  ChatMessageSchema,
+  ChatRoomSchema,
+  IntegrationSchema,
+  UserSchema,
+} from "@/models";
 import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
@@ -33,123 +38,111 @@ export function attachSocketIO(httpServer: any) {
   io.on("connection", (socket: Socket) => {
     console.log(`🟢 Socket connected: ${socket.id}`);
 
-    socket.on(
-      "join-room",
-      async ({ chatId, roomId, username }: JoinRoomDTO) => {
-        if (!socket.data.user) {
+    socket.on("join-room", async ({ roomId }: JoinRoomDTO) => {
+      const room = ChatRoomSchema.parse(
+        await pb.collection("rooms").getOne(roomId, { expand: "chat" })
+      );
+
+      if (socket.data.guest) {
+        if (socket.data.guest.roomId !== roomId) {
           socket.emit("unauthorized", {
             message: "Unauthorized",
           });
           return;
         }
-
-        // CRITICAL: Validate room belongs to chat
-        try {
-          const room = await pb.collection("rooms").getOne(roomId);
-          if (room.chat !== chatId) {
-            socket.emit("unauthorized", {
-              message: "Room access denied - room doesn't belong to chat",
-            });
-            return;
-          }
-        } catch (error) {
-          console.error("Error validating room:", error);
+      } else if (socket.data.user) {
+        const user = UserSchema.parse(socket.data.user);
+        const chat = room.expand!.chat!;
+        const project = await pb
+          .collection("projects")
+          .getFirstListItem(`chats:each='${chat.id}'`);
+        const projects = user.expand!.orgMembers!.flatMap(
+          (m) => m.expand!.org!.projects
+        );
+        if (!project || !projects.includes(project.id)) {
           socket.emit("unauthorized", {
-            message: "Invalid room",
+            message: "Unauthorized",
           });
           return;
         }
+      } else {
+        socket.emit("unauthorized", {
+          message: "Unauthorized",
+        });
+        return;
+      }
 
-        socket.join(roomId);
-        socket.data.username = username;
-        socket.data.roomId = roomId;
-        socket.data.chatId = chatId;
+      socket.join(roomId);
+      if (!socket.data.authorizedRooms) socket.data.authorizedRooms = new Set();
+      socket.data.authorizedRooms.add(roomId);
 
+      const integration = IntegrationSchema.parse(
+        await pb
+          .collection("integrations")
+          .getFirstListItem(`chat="${room.chat}"`)
+      );
+
+      try {
+        const history = await getHistory(integration.id, roomId);
+        socket.emit("chat-history", history);
+      } catch (err) {
+        console.error("Error in getHistory:", err);
+        socket.emit("chat-history", []);
+      }
+    });
+
+    socket.on("send-message", async ({ roomId, msgStr }: SendMessageDTO) => {
+      if (
+        !socket.data.authorizedRooms ||
+        !socket.data.authorizedRooms.has(roomId)
+      ) {
+        socket.emit("unauthorized", { message: "Unauthorized" });
+        return;
+      }
+
+      const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
+
+      if (msg.content.length > MAX_MESSAGE_CHARS) {
+        socket.emit("msg-length-limit", {
+          message: "Message is too long!",
+        });
+        return;
+      }
+
+      // Rate limiting: Use room + user ID for more secure limiting
+      const userId = socket.data.user?.id || socket.data.guest?.username;
+      const limiterKey = `room:${roomId}:user:${userId}`;
+
+      try {
+        await rateLimiter.consume(limiterKey, 1);
+
+        const room = ChatRoomSchema.parse(
+          await pb.collection("rooms").getOne(roomId)
+        );
         const integration = IntegrationSchema.parse(
           await pb
             .collection("integrations")
-            .getFirstListItem(`chat="${chatId}"`)
+            .getFirstListItem(`chat="${room.chat}"`)
         );
 
         try {
-          const history = await getHistory(integration.id, roomId);
-          socket.emit("chat-history", history);
-        } catch (err) {
-          console.error("Error in getHistory:", err);
-          socket.emit("chat-history", []);
-        }
-      }
-    );
-
-    socket.on(
-      "send-message",
-      async ({ chatId, roomId, msgStr }: SendMessageDTO) => {
-        const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
-
-        if (!socket.data.user) {
-          socket.emit("unauthorized", {
-            message: "Unauthorized",
-          });
-          return;
-        }
-
-        // CRITICAL: Validate room belongs to chat (also on send-message)
-        try {
-          const room = await pb.collection("rooms").getOne(roomId);
-          if (room.chat !== chatId) {
-            socket.emit("unauthorized", {
-              message: "Message rejected - room doesn't belong to chat",
-            });
-            return;
-          }
-        } catch (error) {
-          console.error("Error validating room on message send:", error);
-          socket.emit("unauthorized", {
-            message: "Invalid room for message",
-          });
-          return;
-        }
-
-        if (msg.content.length > MAX_MESSAGE_CHARS) {
-          socket.emit("msg-length-limit", {
-            message: "Message is too long!",
-          });
-          return;
-        }
-
-        // Rate limiting: Use room + user ID for more secure limiting
-        const userId =
-          socket.data.user?.id || socket.data.username || socket.id;
-        const limiterKey = `room:${roomId}:user:${userId}`;
-
-        try {
-          await rateLimiter.consume(limiterKey, 1);
-
-          const integration = IntegrationSchema.parse(
-            await pb
-              .collection("integrations")
-              .getFirstListItem(`chat="${chatId}"`)
+          await updateHistory([msg]);
+          const newAssistantMsg = await processAssistantReply(
+            integration.id,
+            roomId
           );
-
-          try {
-            await updateHistory([msg]);
-            const newAssistantMsg = await processAssistantReply(
-              integration.id,
-              roomId
-            );
-            io.to(roomId).emit("new-message", newAssistantMsg);
-          } catch (err) {
-            console.error(err);
-          }
+          io.to(roomId).emit("new-message", newAssistantMsg);
         } catch (err) {
-          const res = err as RateLimiterRes;
-          const retrySec = Math.ceil((res.msBeforeNext || 0) / 1000);
-          socket.emit("rate-limit", {
-            message: `Rate limit exceeded. Try again in ${retrySec} second(s).`,
-          });
+          console.error(err);
         }
+      } catch (err) {
+        const res = err as RateLimiterRes;
+        const retrySec = Math.ceil((res.msBeforeNext || 0) / 1000);
+        socket.emit("rate-limit", {
+          message: `Rate limit exceeded. Try again in ${retrySec} second(s).`,
+        });
       }
-    );
+    });
 
     socket.on("disconnect", async () => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);

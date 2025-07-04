@@ -1,17 +1,13 @@
 ---
 import AppRoot from "../../../app/AppRoot.astro";
 import AppDashboard from "../../../app/shared/AppDashboard.astro";
-import RoomsSidebar from "../../../app/chat/RoomsSidebar.svelte";
+import ChatLayout from "../../../app/chat/ChatLayout.svelte";
 
 const { roomId } = Astro.params;
 ---
 
 <AppRoot title="Chat Rooms" active="chat-rooms">
   <AppDashboard pageName="Chat Rooms">
-    <RoomsSidebar
-      roomId={roomId}
-      client:only
-      transition:persist="rooms-sidebar"
-    />
+    <ChatLayout roomId={roomId} client:only transition:persist="chat-layout" />
   </AppDashboard>
 </AppRoot>

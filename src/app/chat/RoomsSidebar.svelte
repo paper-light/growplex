@@ -245,7 +245,7 @@
             {@const statusInfo = getStatusInfo(room.status)}
             {@const isActive = currentRoom?.id === room.id}
             <button
-              class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative"
+              class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative hover:cursor-pointer"
               class:border-l-4={isActive}
               class:border-l-primary={isActive}
               onclick={() => handleRoomClick(room)}

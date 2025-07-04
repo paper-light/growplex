@@ -6,6 +6,6 @@ import RoomsSidebar from "../../../app/chat/RoomsSidebar.svelte";
 
 <AppRoot title="Chat Rooms" active="chat-rooms">
   <AppDashboard pageName="Chat Rooms">
-    <RoomsSidebar client:load />
+    <RoomsSidebar client:only transition:persist="rooms-sidebar" />
   </AppDashboard>
 </AppRoot>

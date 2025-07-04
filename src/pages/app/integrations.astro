@@ -15,13 +15,13 @@ import PickWidget from "../../app/shared/PickWidget.svelte";
     <div class="w-full h-full relative">
       <ConnectIntegration client:only />
 
-      <Sidebar client:load />
+      <Sidebar client:only transition:persist="sidebar" />
 
       <!-- Content grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
-        <PickWidget client:load type="agents" />
+        <PickWidget client:only type="agents" />
 
-        <PickWidget client:load type="chats" />
+        <PickWidget client:only type="chats" />
 
         <!-- <PickWidget client:only type="knowledgeSources"/> -->
         <div

@@ -4,29 +4,94 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import { navigate } from "astro:transitions/client";
   import { ChatRoomSchema } from "../../models";
+  import { onMount } from "svelte";
 
-  // Integrations
+  const { roomId } = $props();
+
   const integrations = $derived(
     settingsProvider.currentProject?.expand!.integrations! || []
   );
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 
-  // Room type filters
   const roomTypes = [
-    { value: "seeded", label: "Seeded" },
-    { value: "auto", label: "Auto" },
-    { value: "waitingOperator", label: "Waiting Operator" },
-    { value: "operator", label: "Operator" },
+    { value: "operator", label: "Operator", color: "success" },
+    { value: "waitingOperator", label: "Waiting", color: "warning" },
+    { value: "auto", label: "Auto", color: "info" },
+    { value: "seeded", label: "Seeded", color: "secondary" },
   ];
-  let activeType: string | null = $state(null);
+
+  let selectedTypes = $state<Set<string>>(new Set());
+
+  let roomListElement: HTMLDivElement;
+  let scrollPosition = $state(0);
+
+  function saveScrollPosition() {
+    if (roomListElement) {
+      scrollPosition = roomListElement.scrollTop;
+    }
+  }
+
+  function restoreScrollPosition() {
+    if (roomListElement && scrollPosition > 0) {
+      roomListElement.scrollTop = scrollPosition;
+    }
+  }
+
+  onMount(async () => {
+    const room = await chatProvider.currentRoom;
+    if (room && roomId !== room?.id) {
+      await navigate(`/app/chat/${room.id}`);
+    }
+  });
+
+  $effect(() => {
+    const handleAfterSwap = () => {
+      setTimeout(restoreScrollPosition, 0);
+    };
+
+    document.addEventListener("astro:after-swap", handleAfterSwap);
+
+    return () => {
+      document.removeEventListener("astro:after-swap", handleAfterSwap);
+    };
+  });
 
   // Rooms
   const rooms = $derived.by(async () => {
-    const rooms = await chatProvider.rooms;
-    return rooms
-      .filter((room) => room.status !== "preview")
-      .sort(sortRooms)
-      .filter((room) => !activeType || room.status === activeType);
+    const allRooms = await chatProvider.rooms;
+    return allRooms.filter((room) => room.status !== "preview");
+  });
+
+  const roomTypeCounts = $derived.by(async () => {
+    const allRooms = await rooms;
+    if (!allRooms) return new Map<string, number>();
+
+    const counts = new Map<string, number>();
+    allRooms.forEach((room) => {
+      counts.set(room.status, (counts.get(room.status) || 0) + 1);
+    });
+
+    return counts;
+  });
+
+  // Filtered and sorted rooms
+  const filteredRooms = $derived.by(async () => {
+    // Access dependencies BEFORE async operation
+    const currentSelectedTypes = selectedTypes;
+    const allRooms = await rooms;
+    if (!allRooms) return [];
+
+    let filtered = allRooms;
+
+    // Apply type filter
+    if (currentSelectedTypes.size > 0) {
+      filtered = filtered.filter((room) =>
+        currentSelectedTypes.has(room.status)
+      );
+    }
+
+    // Sort rooms
+    return filtered.sort(sortRooms);
   });
 
   // Sorting function
@@ -47,6 +112,7 @@
 
   // Handle room click
   async function handleRoomClick(room: z.infer<typeof ChatRoomSchema>) {
+    saveScrollPosition();
     await chatProvider.setCurrentRoom(room.id);
     navigate(`/app/chat/${room.id}`);
   }
@@ -56,81 +122,184 @@
     const target = e.target as HTMLSelectElement;
     settingsProvider.setCurrentIntegration(target.value);
   }
+
+  // Toggle room type filter
+  function toggleTypeFilter(type: string) {
+    const newSelected = new Set(selectedTypes);
+    if (newSelected.has(type)) {
+      newSelected.delete(type);
+    } else {
+      newSelected.add(type);
+    }
+    selectedTypes = newSelected;
+  }
+
+  // Get status display info
+  function getStatusInfo(status: string) {
+    const statusMap: Record<string, { label: string; color: string }> = {
+      operator: { label: "Operator", color: "badge-success" },
+      waitingOperator: { label: "Waiting", color: "badge-warning" },
+      auto: { label: "Auto", color: "badge-info" },
+      seeded: { label: "Seeded", color: "badge-secondary" },
+      frozen: { label: "Frozen", color: "badge-neutral" },
+    };
+    return statusMap[status] || { label: status, color: "badge-neutral" };
+  }
+
+  // Format room ID for display
+  function formatRoomId(id: string) {
+    return id.length > 8 ? id.substring(0, 8) + "..." : id;
+  }
 </script>
 
-{#await chatProvider.currentRoom}
-  <div class="flex items-center gap-2">
-    <span>Loading...</span>
-  </div>
-{:then room}
-  <div class="flex items-center gap-2">
-    <span>{room?.id}-{room?.status}</span>
-  </div>
-{/await}
-
-<div class="flex flex-col h-full w-64 bg-base-200 p-4 gap-4">
-  <!-- Integration Select -->
-  <select
-    class="select select-bordered w-full"
-    value={currentIntegration?.id}
-    onchange={handleIntegrationChange}
-  >
-    {#each integrations as integration}
-      <option
-        value={integration.id}
-        selected={integration.id === currentIntegration?.id}
+<div class="flex flex-col h-full w-80 bg-base-100 border-r border-base-300">
+  <!-- Header -->
+  <div class="p-4 border-b border-base-300">
+    <!-- Integration Select -->
+    <div class="form-control w-full">
+      <label for="integration-select" class="label">
+        <span class="label-text font-medium text-sm">Integration</span>
+      </label>
+      <select
+        id="integration-select"
+        class="select select-bordered w-full"
+        value={currentIntegration?.id}
+        onchange={handleIntegrationChange}
       >
-        {integration.name}
-      </option>
-    {/each}
-  </select>
+        {#each integrations as integration}
+          <option
+            value={integration.id}
+            selected={integration.id === currentIntegration?.id}
+          >
+            {integration.name}
+          </option>
+        {/each}
+      </select>
+    </div>
+  </div>
 
-  <!-- Room Type Filters -->
-  <div class="flex gap-2">
-    {#each roomTypes as type}
-      <button
-        class="btn btn-sm"
-        class:selected={activeType === type.value}
-        onclick={() =>
-          (activeType = activeType === type.value ? null : type.value)}
-      >
-        {type.label}
-      </button>
-    {/each}
+  <!-- Filters -->
+  <div class="p-4 border-b border-base-300">
+    <div class="flex flex-wrap gap-2">
+      {#await roomTypeCounts}
+        <!-- Loading counts -->
+      {:then counts}
+        {#each roomTypes as type}
+          {@const count = counts.get(type.value) || 0}
+          {#if count > 0}
+            <button
+              class="btn btn-xs"
+              class:btn-primary={selectedTypes.has(type.value)}
+              class:btn-outline={!selectedTypes.has(type.value)}
+              onclick={() => toggleTypeFilter(type.value)}
+            >
+              {type.label}
+              <span class="badge badge-xs ml-1">{count}</span>
+            </button>
+          {/if}
+        {/each}
+      {/await}
+
+      <!-- Clear filters -->
+      {#if selectedTypes.size > 0}
+        <button
+          class="btn btn-xs btn-ghost"
+          onclick={() => (selectedTypes = new Set())}
+        >
+          Clear
+        </button>
+      {/if}
+    </div>
   </div>
 
   <!-- Room List -->
-  <div class="flex-1 overflow-y-auto mt-2">
-    {#await rooms}
-      <div class="flex items-center gap-2">
-        <span>Loading...</span>
+  <div class="flex-1 overflow-y-auto" bind:this={roomListElement}>
+    {#await filteredRooms}
+      <div class="flex items-center justify-center p-8">
+        <span class="loading loading-spinner loading-md"></span>
+        <span class="ml-2 text-base-content/70">Loading rooms...</span>
       </div>
     {:then rooms}
-      {#each rooms as room}
-        <button
-          class="btn btn-block justify-start mb-2"
-          onclick={() => handleRoomClick(room)}
-        >
-          <span class="indicator mr-2">
-            {#if room.status === "operator"}
-              <span class="badge badge-success"></span>
-            {:else if room.status === "auto"}
-              <span class="badge badge-info"></span>
-            {:else if room.status === "seeded"}
-              <span class="badge badge-warning"></span>
-            {:else}
-              <span class="badge badge-neutral"></span>
-            {/if}
-          </span>
-          <span>{room.id}-{room.status}</span>
-        </button>
-      {/each}
       {#if rooms.length === 0}
-        <div class="text-center text-base-content/50 mt-8">No rooms</div>
+        <div class="flex flex-col items-center justify-center p-8 text-center">
+          <div class="text-4xl mb-2">💬</div>
+          <p class="text-base-content/70">
+            {selectedTypes.size > 0
+              ? "No rooms match your filters"
+              : "No rooms available"}
+          </p>
+          {#if selectedTypes.size > 0}
+            <button
+              class="btn btn-sm btn-outline mt-2"
+              onclick={() => (selectedTypes = new Set())}
+            >
+              Clear filters
+            </button>
+          {/if}
+        </div>
+      {:else}
+        {#await chatProvider.currentRoom}
+          <!-- Loading current room -->
+        {:then currentRoom}
+          {#each rooms as room}
+            {@const statusInfo = getStatusInfo(room.status)}
+            {@const isActive = currentRoom?.id === room.id}
+            <button
+              class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative"
+              class:border-l-4={isActive}
+              class:border-l-primary={isActive}
+              onclick={() => handleRoomClick(room)}
+            >
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                  <!-- Status indicator -->
+                  <div class="flex-shrink-0">
+                    <span class="badge badge-xs {statusInfo.color}"></span>
+                  </div>
+
+                  <!-- Room info -->
+                  <div class="min-w-0 flex-1">
+                    <div
+                      class="font-medium text-sm truncate"
+                      class:text-primary={isActive}
+                    >
+                      {formatRoomId(room.id)}
+                    </div>
+                    <div
+                      class="text-xs truncate"
+                      class:text-primary={isActive}
+                      class:text-base-content={!isActive}
+                    >
+                      {statusInfo.label}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Status badge -->
+                <div class="flex-shrink-0">
+                  <span class="badge badge-xs {statusInfo.color}">
+                    {statusInfo.label}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Active indicator -->
+              {#if isActive}
+                <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                  <div class="w-2 h-2 bg-primary rounded-full"></div>
+                </div>
+              {/if}
+            </button>
+          {/each}
+        {/await}
       {/if}
     {:catch error}
-      <div class="flex items-center gap-2">
-        <span>Error: {error.message}</span>
+      <div class="flex items-center justify-center p-8 text-center">
+        <div class="text-error">
+          <div class="text-2xl mb-2">⚠️</div>
+          <p class="text-sm">Failed to load rooms</p>
+          <p class="text-xs text-base-content/60 mt-1">{error.message}</p>
+        </div>
       </div>
     {/await}
   </div>

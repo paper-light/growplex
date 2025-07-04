@@ -28,11 +28,15 @@ const { pageName } = Astro.props;
         <h1 class="text-xl font-semibold">{pageName}</h1>
       </div>
       <!-- Actions -->
-      <ProfileMenu active={pageName} client:load />
+      <ProfileMenu
+        active={pageName}
+        client:only
+        transition:persist="profile-menu"
+      />
     </header>
 
     <!-- Main slot -->
-    <main class="flex-1 overflow-auto p-6">
+    <main class="flex-1 overflow-auto">
       <slot />
     </main>
 
@@ -67,13 +71,17 @@ const { pageName } = Astro.props;
     <aside
       class="w-72 lg:w-64 bg-base-100 border-r border-base-300 p-4 flex flex-col h-screen"
     >
-      <OrgProjectSelect client:load />
+      <OrgProjectSelect client:only transition:persist="org-project-select" />
 
-      <SidebarNav active={pageName} client:load />
+      <SidebarNav
+        active={pageName}
+        client:only
+        transition:persist="sidebar-nav"
+      />
 
       <!-- Theme toggle at bottom -->
       <div class="mt-auto">
-        <ThemeController client:load />
+        <ThemeController client:only transition:persist="theme-controller" />
       </div>
     </aside>
   </div>

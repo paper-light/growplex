@@ -11,7 +11,8 @@ class SocketProvider {
 
   token = $derived(authProvider.token);
 
-  async connect() {
+  connect() {
+    console.log(authProvider.token);
     this.socket = io({
       auth: {
         token: this.token,

@@ -1,0 +1,11 @@
+---
+import AppRoot from "../../../app/AppRoot.astro";
+import AppDashboard from "../../../app/shared/AppDashboard.astro";
+import RoomsSidebar from "../../../app/chat/RoomsSidebar.svelte";
+---
+
+<AppRoot title="Chat Rooms" active="chat-rooms">
+  <AppDashboard pageName="Chat Rooms">
+    <RoomsSidebar client:load />
+  </AppDashboard>
+</AppRoot>

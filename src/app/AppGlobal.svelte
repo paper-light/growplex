@@ -1,23 +1,17 @@
 <script lang="ts">
+  import "./auth/pbOnChange";
+
   import { onMount } from "svelte";
 
   import { authProvider } from "./auth/auth.svelte";
-  import { settingsProvider } from "./settings/settings.svelte";
-  import { uiProvider } from "./settings/ui.svelte";
   import { socketProvider } from "./chat/socket.svelte";
 
   onMount(() => {
-    uiProvider.init();
-
-    settingsProvider.init(authProvider.user);
-
     authProvider.subscribeUser();
-
-    socketProvider.init();
+    socketProvider.connect();
 
     return () => {
       authProvider.unsubscribeUser();
-
       socketProvider.disconnect();
     };
   });

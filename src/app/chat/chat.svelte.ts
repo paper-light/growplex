@@ -1,51 +1,68 @@
 import { z } from "zod";
 
-import { pb } from "../auth/auth.svelte";
+import { pb } from "../auth/pb";
 import { settingsProvider } from "../settings/settings.svelte";
 import { ChatMessageSchema, ChatRoomSchema } from "../../models/chat";
 import { socketProvider } from "./socket.svelte";
 
 class ChatProvider {
-  private currentChatId: string | null = null;
+  private currentChatId: string | null = $state(null);
+  private currentRoomId: string | null = $state(null);
+  private cachedRooms: z.infer<typeof ChatRoomSchema>[] = $state([]);
 
-  messages = $state<z.infer<typeof ChatMessageSchema>[]>([]);
+  messages: z.infer<typeof ChatMessageSchema>[] = $state([]);
 
   rooms = $derived.by(async () => {
-    const chat = settingsProvider.currentIntegration?.expand?.chat || null;
+    const chat = settingsProvider.currentChat;
+
     if (!chat) {
+      this.currentRoomId = null;
+      this.currentChatId = null;
+      this.cachedRooms = [];
       pb.collection("rooms").unsubscribe();
       return [];
     }
+
+    if (this.currentChatId === chat.id) {
+      return this.cachedRooms;
+    }
+
+    pb.collection("rooms").unsubscribe();
+    this.currentRoomId = null;
+
     const res = await pb.collection("rooms").getFullList({
       filter: `chat = "${chat.id}"`,
     });
-    if (this.currentChatId !== chat.id) {
-      this.currentChatId = chat.id;
-      this.subscribeRooms(chat.id);
-    }
-    return z.array(ChatRoomSchema).parse(res);
+    const rooms = z.array(ChatRoomSchema).parse(res);
+
+    this.currentChatId = chat.id;
+    this.cachedRooms = rooms;
+    this.subscribeRooms(chat.id);
+
+    this.currentRoomId = rooms.length > 0 ? rooms[0]?.id : null;
+
+    return rooms;
   });
 
   currentRoom = $derived.by(async () => {
+    this.currentRoomId;
     const rooms = await this.rooms;
-    return rooms.length > 0 ? ChatRoomSchema.parse(rooms[0]) : null;
+
+    if (!rooms) return null;
+    if (!this.currentRoomId) return rooms[0] || null;
+    return rooms.find((r) => r.id === this.currentRoomId) || null;
   });
 
-  async setCurrentRoom(room: z.infer<typeof ChatRoomSchema>) {
+  async setCurrentRoom(roomId: string) {
     const currentRoom = await this.currentRoom;
+    if (currentRoom?.id === roomId) return;
+
     if (currentRoom) {
       socketProvider.leaveRoom(currentRoom.id);
     }
     this.messages = [];
-    socketProvider.joinRoom(room.id);
-  }
-
-  pushMessage(msg: any) {
-    this.messages.push(ChatMessageSchema.parse(msg));
-  }
-
-  setHistory(history: any[]) {
-    this.messages = z.array(ChatMessageSchema).parse(history);
+    socketProvider.joinRoom(roomId);
+    this.currentRoomId = roomId;
   }
 
   private subscribeRooms(chatId: string) {
@@ -54,36 +71,21 @@ class ChatProvider {
       (res) => {
         switch (res.action) {
           case "create":
-            this.rooms
-              .then((rooms) => {
-                rooms.push(ChatRoomSchema.parse(res.record));
-              })
-              .catch((err) => {
-                console.error(err);
-              });
+            const newRoom = ChatRoomSchema.parse(res.record);
+            this.cachedRooms = [...this.cachedRooms, newRoom];
             break;
           case "delete":
-            this.rooms
-              .then((rooms) => {
-                rooms = rooms.filter((r) => r.id !== res.record.id);
-              })
-              .catch((err) => {
-                console.error(err);
-              });
+            this.cachedRooms = this.cachedRooms.filter(
+              (r) => r.id !== res.record.id
+            );
             break;
           case "update":
-            this.rooms
-              .then((rooms) => {
-                rooms = rooms.map((r) =>
-                  r.id === res.record.id ? ChatRoomSchema.parse(res.record) : r
-                );
-              })
-              .catch((err) => {
-                console.error(err);
-              });
+            const updatedRoom = ChatRoomSchema.parse(res.record);
+            this.cachedRooms = this.cachedRooms.map((r) =>
+              r.id === res.record.id ? updatedRoom : r
+            );
             break;
           default:
-            console.log("ignore action", res.action);
             break;
         }
       },

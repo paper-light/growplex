@@ -2,13 +2,13 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { X } from "@lucide/svelte";
-  import { onDestroy, onMount, untrack } from "svelte";
+  import { onDestroy, untrack } from "svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import Chat from "../../chat/Chat.svelte";
-  import { pb } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
 
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 

@@ -10,7 +10,8 @@
   } from "../../models";
 
   import { settingsProvider } from "../settings/settings.svelte";
-  import { authProvider, pb } from "../auth/auth.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
 
   const currentOrg = $derived(settingsProvider.currentOrg);
   const currentProject = $derived(settingsProvider.currentProject);
@@ -53,12 +54,12 @@
   }
 
   function selectOrg(org: z.infer<typeof OrgSchema>) {
-    settingsProvider.setCurrentOrg(org);
+    settingsProvider.setCurrentOrg(org.id);
     openOrg = false;
   }
 
   function selectProject(project: z.infer<typeof ProjectSchema>) {
-    settingsProvider.setCurrentProject(project);
+    settingsProvider.setCurrentProject(project.id);
     openProject = false;
   }
 
@@ -94,8 +95,8 @@
       .collection("orgs")
       .update(currentOrg.id, { "projects+": project.id });
 
-    settingsProvider.setCurrentProject(project);
-    settingsProvider.setCurrentIntegration(integration);
+    settingsProvider.setCurrentProject(project.id);
+    settingsProvider.setCurrentIntegration(integration.id);
     await authProvider.refreshUser();
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
@@ -117,7 +118,7 @@
     e.stopPropagation();
     if (!editedOrgName.trim()) return;
     await pb.collection("orgs").update(org.id, { name: editedOrgName.trim() });
-    settingsProvider.setCurrentOrg({ ...org, name: editedOrgName.trim() });
+    settingsProvider.setCurrentOrg(org.id);
     await authProvider.refreshUser();
     editingOrgId = null;
     editedOrgName = "";
@@ -147,10 +148,7 @@
     await pb
       .collection("projects")
       .update(project.id, { name: editedProjectName.trim() });
-    settingsProvider.setCurrentProject({
-      ...project,
-      name: editedProjectName.trim(),
-    });
+    settingsProvider.setCurrentProject(project.id);
     await authProvider.refreshUser();
     editingProjectId = null;
     editedProjectName = "";
@@ -183,7 +181,7 @@
         (p) => p?.id !== projectToDelete?.id
       );
       if (remainingProjects.length > 0) {
-        settingsProvider.setCurrentProject(remainingProjects[0]!);
+        settingsProvider.setCurrentProject(remainingProjects[0]!.id);
       }
     }
 

@@ -1,21 +1,8 @@
 import { z } from "zod";
-import { PUBLIC_PB_URL } from "astro:env/client";
-import PocketBase, { AsyncAuthStore } from "pocketbase";
 
 import { UserSchema } from "../../models";
-import { settingsProvider } from "../settings/settings.svelte";
 
-const store = new AsyncAuthStore({
-  save: async (serialized: string) => {
-    localStorage.setItem("pb_auth", serialized);
-  },
-  initial: localStorage.getItem("pb_auth") ?? "",
-  clear: async () => {
-    localStorage.removeItem("pb_auth");
-  },
-});
-
-export const pb = new PocketBase(PUBLIC_PB_URL, store);
+import { pb } from "./pb";
 
 class AuthProvider {
   expandKeys = [
@@ -31,33 +18,23 @@ class AuthProvider {
     "orgMembers.org.projects.integrations.knowledgeSources",
     "orgMembers.org.projects.integrations.chat",
   ] as const;
-
   expandString = this.expandKeys.join(",");
 
   user = $state<z.infer<typeof UserSchema> | null>(
     pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
   );
+  token = $state(pb.authStore.token);
+
+  orgMembers = $derived(this.user?.expand!.orgMembers || []);
+  orgs = $derived(this.orgMembers.map((m) => m.expand!.org!));
 
   private subscriptionId: string | null = null;
 
-  token = $state(pb.authStore.token);
-
-  constructor() {
-    pb.authStore.onChange((token, rec) => {
-      if (rec && pb.authStore.isValid) {
-        try {
-          this.user = UserSchema.parse(rec);
-          settingsProvider.mergeUser(this.user);
-          this.token = token;
-        } catch (error) {
-          console.error("Failed to parse user data:", error);
-          this.user = null;
-        }
-      } else {
-        this.user = null;
-        settingsProvider.clear();
-      }
-    });
+  setUser(user: z.infer<typeof UserSchema> | null) {
+    this.user = user;
+  }
+  setToken(token: string) {
+    this.token = token;
   }
 
   async subscribeUser() {
@@ -117,15 +94,12 @@ class AuthProvider {
       pb.authStore.save(authResponse.token, authResponse.record);
     } catch (error) {
       console.error("Failed to refresh user:", error);
-      // If refresh fails, clear auth state
       pb.authStore.clear();
     }
   }
 
   logout() {
-    this.unsubscribeUser();
     pb.authStore.clear();
-    settingsProvider.clear();
   }
 }
 

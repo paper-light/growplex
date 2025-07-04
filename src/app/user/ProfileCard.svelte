@@ -1,6 +1,7 @@
 <script lang="ts">
   import { PUBLIC_PB_URL } from "astro:env/client";
-  import { authProvider, pb } from "../auth/auth.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
   import { z } from "zod";
   import { Check, X, Edit, Upload } from "@lucide/svelte";
   import { navigate } from "astro:transitions/client";

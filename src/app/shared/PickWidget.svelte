@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Edit, X } from "@lucide/svelte";
-  import { authProvider, pb } from "../auth/auth.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
   import { settingsProvider } from "../settings/settings.svelte";
   import CreateAgentForm from "../agent/CreateAgentForm.svelte";
   import CreateChatForm from "../chat/CreateChatForm.svelte";

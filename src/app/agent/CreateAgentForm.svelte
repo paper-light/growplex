@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { authProvider, pb } from "../auth/auth.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
   import { settingsProvider } from "../settings/settings.svelte";
 
   interface Props {

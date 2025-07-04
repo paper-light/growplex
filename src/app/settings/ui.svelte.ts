@@ -8,7 +8,7 @@ const UIStateSchema = z.object({
 type UIState = z.infer<typeof UIStateSchema>;
 
 class UIProvider {
-  private state: UIState = $state(UIStateSchema.parse({}));
+  private state: UIState = $state(this.loadState());
 
   integrationsSidebarOpen = $derived(this.state.integrationsSidebarOpen);
   chatPreviewOpen = $derived(this.state.chatPreviewOpen);
@@ -29,10 +29,6 @@ class UIProvider {
 
   toggleChatPreview() {
     this.setChatPreviewOpen(!this.state.chatPreviewOpen);
-  }
-
-  init() {
-    this.state = this.loadState();
   }
 
   private loadState(): UIState {

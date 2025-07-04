@@ -1,48 +1,49 @@
 import { io, Socket } from "socket.io-client";
 
 import { chatProvider } from "./chat.svelte";
-import { pb } from "../auth/auth.svelte";
+import { authProvider } from "../auth/auth.svelte";
+import { ChatMessageSchema } from "../../models/chat";
+import z from "zod";
 
 class SocketProvider {
   socket: Socket | null = null;
   private isConnected = $state(false);
 
-  async init() {
-    const token = pb.authStore.token || null;
+  token = $derived(authProvider.token);
 
+  async connect() {
     this.socket = io({
       auth: {
-        token,
+        token: this.token,
       },
     });
 
     this.socket.on("connect", () => {
-      console.log("🟢 Socket connected:", this.socket?.id);
+      console.log("🟢 socket.svelte.ts connected:", this.socket?.id);
       this.isConnected = true;
     });
 
     this.socket.on("disconnect", () => {
-      console.log("🔴 Socket disconnected");
+      console.log("🔴 socket.svelte.ts disconnected");
       this.isConnected = false;
     });
 
     this.socket.on("new-message", (msg: any) => {
-      chatProvider.pushMessage(msg);
+      chatProvider.messages.push(ChatMessageSchema.parse(msg));
     });
 
     this.socket.on("chat-history", (history: any[]) => {
-      chatProvider.setHistory(history);
+      chatProvider.messages = z.array(ChatMessageSchema).parse(history);
     });
   }
 
-  joinRoom(roomId: string, username?: string) {
+  joinRoom(roomId: string) {
     if (!this.socket || !this.isConnected) {
       console.warn("Socket not connected, cannot join room");
       return;
     }
     this.socket.emit("join-room", {
       roomId,
-      username: username || "Operator",
     });
     console.log("Joined room:", roomId);
   }

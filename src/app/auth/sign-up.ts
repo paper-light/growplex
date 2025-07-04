@@ -1,7 +1,7 @@
 import { actions } from "astro:actions";
 import { UserSchema } from "../../models";
 
-import { pb } from "./auth.svelte";
+import { pb } from "./pb";
 
 export const signUp = async (
   email: string,

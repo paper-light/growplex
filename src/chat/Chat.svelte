@@ -121,7 +121,6 @@
     };
 
     inputText = "";
-    messages.push(newMsg);
 
     socket?.emit("send-message", {
       roomId: roomId,

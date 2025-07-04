@@ -12,40 +12,38 @@ import PickWidget from "../../app/shared/PickWidget.svelte";
 
 <AppRoot title="Growplex | App Home">
   <AppDashboard pageName="Integrations">
-      <div class="w-full h-full relative">
-        <ConnectIntegration client:only />
+    <div class="w-full h-full relative">
+      <ConnectIntegration client:only />
 
-        <Sidebar client:only />
+      <Sidebar client:load />
 
-        <!-- Content grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
-          <PickWidget client:only type="agents" />
+      <!-- Content grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
+        <PickWidget client:load type="agents" />
 
-          <PickWidget client:only type="chats" />
+        <PickWidget client:load type="chats" />
 
-          <!-- <PickWidget client:only type="knowledgeSources"/> -->
-          <div
-            class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
+        <!-- <PickWidget client:only type="knowledgeSources"/> -->
+        <div
+          class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
+        >
+          <div class="text-2xl font-semibold mb-2 opacity-60">Knowledge</div>
+          <span class="badge badge-warning badge-outline mb-4">Coming Soon</span
           >
-            <div class="text-2xl font-semibold mb-2 opacity-60">Knowledge</div>
-            <span class="badge badge-warning badge-outline mb-4"
-              >Coming Soon</span
-            >
-            <div class="text-5xl opacity-60"><Home /></div>
-          </div>
-
-          <!-- <PickWidget client:only type="operators"/> -->
-          <div
-            class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
-          >
-            <div class="text-2xl font-semibold mb-2 opacity-60">Operators</div>
-            <span class="badge badge-warning badge-outline mb-4"
-              >Coming Soon</span
-            >
-            <div class="text-5xl opacity-60"><Home /></div>
-          </div>
+          <div class="text-5xl opacity-60"><Home /></div>
         </div>
-        <ChatPreview client:only />
+
+        <!-- <PickWidget client:only type="operators"/> -->
+        <div
+          class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
+        >
+          <div class="text-2xl font-semibold mb-2 opacity-60">Operators</div>
+          <span class="badge badge-warning badge-outline mb-4">Coming Soon</span
+          >
+          <div class="text-5xl opacity-60"><Home /></div>
+        </div>
       </div>
+      <ChatPreview client:only />
+    </div>
   </AppDashboard>
 </AppRoot>

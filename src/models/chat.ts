@@ -25,6 +25,7 @@ export const ChatRoomSchema = z.object({
   chat: z.string(),
   status: z.union([
     z.literal("auto"),
+    z.literal("waitingOperator"),
     z.literal("operator"),
     z.literal("frozen"),
     z.literal("preview"),

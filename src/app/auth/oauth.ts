@@ -1,8 +1,8 @@
 import { actions } from "astro:actions";
 
 import { UserSchema } from "../../models";
-import { pb, authProvider } from "./auth.svelte";
-import { settingsProvider } from "../settings/settings.svelte";
+import { pb } from "./pb";
+import { authProvider } from "./auth.svelte";
 
 export const oauth2 = async (provider: string) => {
   const userResult = await pb.collection("users").authWithOAuth2({
@@ -21,5 +21,4 @@ export const oauth2 = async (provider: string) => {
 
   await authProvider.refreshUser();
   await authProvider.subscribeUser();
-  settingsProvider.init(authProvider.user);
 };

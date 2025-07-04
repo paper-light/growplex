@@ -1,13 +1,14 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
   import { slide } from "svelte/transition";
-  import { X, Check, ChevronRight, Edit, Trash2 } from "@lucide/svelte";
+  import { X, Check, Edit, Trash2 } from "@lucide/svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { uiProvider } from "../settings/ui.svelte";
-  import { authProvider, pb } from "../auth/auth.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+  import { pb } from "../auth/pb";
   import { IntegrationSchema } from "../../models";
   import z from "zod";
+  import { onMount } from "svelte";
 
   const currentProject = $derived(settingsProvider.currentProject);
   const currentIntegration = $derived(settingsProvider.currentIntegration);
@@ -40,8 +41,10 @@
     else window.removeEventListener("keydown", handleKeydown);
   });
 
-  onDestroy(() => {
-    window.removeEventListener("keydown", handleKeydown);
+  onMount(() => {
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
   });
 
   function addCreatingIntegration() {
@@ -59,7 +62,7 @@
       .update(currentProject.id, { "integrations+": newInt.id });
     await authProvider.refreshUser();
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);
-    settingsProvider.setCurrentIntegration(newInt);
+    settingsProvider.setCurrentIntegration(newInt.id);
   }
 
   function startEditIntegration(
@@ -84,10 +87,7 @@
     await pb
       .collection("integrations")
       .update(integration.id, { name: editedIntegrationName.trim() });
-    settingsProvider.setCurrentIntegration({
-      ...integration,
-      name: editedIntegrationName.trim(),
-    });
+    settingsProvider.setCurrentIntegration(integration.id);
     await authProvider.refreshUser();
     editingIntegrationId = null;
     editedIntegrationName = "";
@@ -189,7 +189,7 @@
                   class="flex-1 text-left btn btn-block btn-ghost hover:bg-base-300 truncate p-1"
                   class:text-primary={integration.id === currentIntegration?.id}
                   onclick={() =>
-                    settingsProvider.setCurrentIntegration(integration)}
+                    settingsProvider.setCurrentIntegration(integration.id)}
                 >
                   {integration.name}
                 </button>

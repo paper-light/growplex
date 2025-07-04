@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { chatProvider } from "../chat/chat.svelte";
   interface Props {
     active: string;
   }
+
+  const currentRoom = $derived(chatProvider.currentRoom);
 
   let { active }: Props = $props();
 
@@ -36,9 +39,18 @@
             </a>
           </li>
           <li class="w-full">
-            <a href="/app/chat-rooms" class={linkClass("Chat Rooms")}>
-              Chat Rooms
-            </a>
+            {#await currentRoom}
+              <a href={`/app/chat`} class={linkClass("Chat Rooms")}>
+                Chat Rooms
+              </a>
+            {:then room}
+              <a
+                href={`/app/chat/${room?.id || ""}`}
+                class={linkClass("Chat Rooms")}
+              >
+                Chat Rooms
+              </a>
+            {/await}
           </li>
         </ul>
       </details>

@@ -101,6 +101,10 @@ export function attachSocketIO(httpServer: any) {
       }
 
       const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
+      if (socket.data.user) {
+        io.to(roomId).emit("new-message", msg);
+        return;
+      }
 
       if (msg.content.length > MAX_MESSAGE_CHARS) {
         socket.emit("msg-length-limit", {
@@ -115,10 +119,17 @@ export function attachSocketIO(httpServer: any) {
 
       try {
         await rateLimiter.consume(limiterKey, 1);
+        io.to(roomId).emit("new-message", msg);
 
         const room = ChatRoomSchema.parse(
           await pb.collection("rooms").getOne(roomId)
         );
+        if (room.status === "seeded") {
+          await pb.collection("rooms").update(roomId, {
+            status: "auto",
+          });
+        }
+
         const integration = IntegrationSchema.parse(
           await pb
             .collection("integrations")
@@ -127,6 +138,8 @@ export function attachSocketIO(httpServer: any) {
 
         try {
           await updateHistory([msg]);
+          if (room.status !== "auto") return;
+
           const newAssistantMsg = await processAssistantReply(
             integration.id,
             roomId

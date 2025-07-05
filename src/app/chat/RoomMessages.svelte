@@ -9,14 +9,40 @@
   import ChatMessage from "../../components/Message.svelte";
   import Man from "../../assets/Man.jpg";
   import Thalia from "../../assets/Thalia.jpg";
+  import { PUBLIC_PB_URL } from "astro:env/client";
+  import { settingsProvider } from "../settings/settings.svelte";
+  import { authProvider } from "../auth/auth.svelte";
+
+  const { roomId } = $props();
 
   const messages = $derived(chatProvider.messages);
+
+  const avatar = $derived(
+    authProvider.user?.avatar
+      ? `${PUBLIC_PB_URL}/api/files/users/${authProvider.user.id}/${authProvider.user.avatar}`
+      : "https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
+  );
+
+  const assistantAvatar = $derived(
+    settingsProvider.currentChat?.avatar
+      ? `${PUBLIC_PB_URL}/api/files/chats/${settingsProvider.currentChat.id}/${settingsProvider.currentChat.avatar}`
+      : Thalia.src
+  );
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
 
   $effect(() => {
-    if (messageContainer) scrollToBottom();
+    if (socketProvider.connected) {
+      chatProvider.setCurrentRoom(roomId);
+    }
+  });
+
+  $effect(() => {
+    console.log("messages", messages.length);
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
   });
 
   function scrollToBottom() {
@@ -37,13 +63,15 @@
   // Get avatar for message
   function getAvatar(msg: z.infer<typeof ChatMessageSchema>) {
     if (msg.role === "assistant") {
-      return Thalia.src;
+      return assistantAvatar;
+    } else if (msg.role === "operator") {
+      return avatar;
     }
     return Man.src;
   }
 </script>
 
-<div class="flex flex-col h-full bg-base-100">
+<div class="flex flex-col h-full bg-base-100 relative">
   <!-- Messages Area -->
   <main
     bind:this={messageContainer}
@@ -72,7 +100,7 @@
     <button
       transition:fade
       onclick={scrollToBottom}
-      class="btn btn-secondary btn-circle fixed bottom-24 right-4 z-10"
+      class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-6 right-1/2 translate-x-1/2 z-10"
       aria-label="Scroll to bottom"
     >
       <ChevronsDown size={20} />

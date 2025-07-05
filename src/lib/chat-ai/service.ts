@@ -17,7 +17,7 @@ export async function processAssistantReply(
   const history = (await getHistory(integrationId, roomId)).map((m) => {
     return {
       content: m.content,
-      role: m.role,
+      role: m.role === "operator" ? "user" : m.role,
       name: `${m.role}-${m.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
     };
   });

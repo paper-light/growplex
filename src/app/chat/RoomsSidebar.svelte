@@ -4,9 +4,6 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import { navigate } from "astro:transitions/client";
   import { ChatRoomSchema } from "../../models";
-  import { onMount } from "svelte";
-
-  const { roomId } = $props();
 
   const integrations = $derived(
     settingsProvider.currentProject?.expand!.integrations! || []
@@ -33,20 +30,20 @@
 
   function restoreScrollPosition() {
     if (roomListElement && scrollPosition > 0) {
-      roomListElement.scrollTop = scrollPosition;
+      // Use smooth scrolling for better UX
+      roomListElement.scrollTo({
+        top: scrollPosition,
+        behavior: "smooth",
+      });
     }
   }
 
-  onMount(async () => {
-    const room = await chatProvider.currentRoom;
-    if (room && roomId !== room?.id) {
-      await navigate(`/app/chat/${room.id}`);
-    }
-  });
-
   $effect(() => {
     const handleAfterSwap = () => {
-      setTimeout(restoreScrollPosition, 0);
+      // Use requestAnimationFrame for smoother restoration
+      requestAnimationFrame(() => {
+        restoreScrollPosition();
+      });
     };
 
     document.addEventListener("astro:after-swap", handleAfterSwap);
@@ -113,7 +110,6 @@
   // Handle room click
   async function handleRoomClick(room: z.infer<typeof ChatRoomSchema>) {
     saveScrollPosition();
-    await chatProvider.setCurrentRoom(room.id);
     navigate(`/app/chat/${room.id}`);
   }
 
@@ -213,7 +209,11 @@
   </div>
 
   <!-- Room List -->
-  <div class="flex-1 overflow-y-auto" bind:this={roomListElement}>
+  <div
+    class="flex-1 overflow-y-auto scroll-smooth"
+    bind:this={roomListElement}
+    style="scroll-behavior: smooth; -webkit-overflow-scrolling: touch;"
+  >
     {#await filteredRooms}
       <div class="flex items-center justify-center p-8">
         <span class="loading loading-spinner loading-md"></span>

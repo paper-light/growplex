@@ -15,6 +15,7 @@ class ChatProvider {
   rooms = $derived.by(async () => {
     const chat = settingsProvider.currentChat;
 
+    console.log("chat", chat);
     if (!chat) {
       this.currentRoomId = null;
       this.currentChatId = null;

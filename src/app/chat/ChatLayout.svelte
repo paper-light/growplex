@@ -66,7 +66,7 @@
 
     <!-- Sidebar Content -->
     <div class="h-full pt-16 lg:pt-0">
-      <RoomsSidebar {roomId} />
+      <RoomsSidebar />
     </div>
   </aside>
 
@@ -74,7 +74,7 @@
   <div class="flex flex-col flex-1 min-w-0">
     <!-- Messages Area -->
     <div class="flex-1 overflow-hidden">
-      <RoomMessages />
+      <RoomMessages {roomId} />
     </div>
 
     <!-- Interactions Area -->

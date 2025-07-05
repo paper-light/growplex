@@ -4,12 +4,13 @@ import { chatProvider } from "./chat.svelte";
 import { authProvider } from "../auth/auth.svelte";
 import { ChatMessageSchema } from "../../models/chat";
 import z from "zod";
+import { pb } from "../auth/pb";
 
 class SocketProvider {
   socket: Socket | null = null;
   private isConnected = $state(false);
 
-  token = $derived(authProvider.token);
+  token = $derived(authProvider.token || pb.authStore.token);
 
   connect() {
     console.log(authProvider.token);

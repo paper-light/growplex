@@ -1,8 +1,6 @@
-// src/server/middleware/pbAdminMiddleware.ts
-
 import type { Request, Response, NextFunction } from "express";
 import { pb } from "@/lib/config/pb";
-import { getEnv } from "../../helpers/get-env";
+import { getEnv } from "@/helpers/get-env";
 
 const PB_ID = getEnv("PB_ID");
 const PB_PASSWORD = getEnv("PB_PASSWORD");

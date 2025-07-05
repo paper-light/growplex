@@ -5,6 +5,7 @@
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
   import { nanoid } from "nanoid";
+  import { authProvider } from "../auth/auth.svelte";
 
   const currentRoom = $derived.by(async () => await chatProvider.currentRoom);
   const messages = $derived(chatProvider.messages);
@@ -36,7 +37,7 @@
         room = { id: firstMessage.room } as any;
       }
     }
-    
+
     if (!room) return;
 
     canSend = false;
@@ -44,10 +45,10 @@
     const newMsg: z.infer<typeof ChatMessageSchema> = {
       id: `temp-${nanoid(12)}`,
       content: inputText.trim(),
-      role: "user",
+      role: "operator",
       visible: true,
       room: room.id,
-      sentBy: "You",
+      sentBy: authProvider.user!.name,
       created: new Date().toISOString().replace("T", " "),
     };
 

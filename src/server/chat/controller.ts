@@ -55,7 +55,7 @@ export function attachSocketIO(httpServer: any) {
         const chat = room.expand!.chat!;
         const project = await pb
           .collection("projects")
-          .getFirstListItem(`chats:each='${chat.id}'`);
+          .getFirstListItem(`chats:each ?= '${chat.id}'`);
         const projects = user.expand!.orgMembers!.flatMap(
           (m) => m.expand!.org!.projects
         );
@@ -102,6 +102,7 @@ export function attachSocketIO(httpServer: any) {
 
       const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
       if (socket.data.user) {
+        await updateHistory([msg]);
         io.to(roomId).emit("new-message", msg);
         return;
       }
@@ -121,13 +122,15 @@ export function attachSocketIO(httpServer: any) {
         await rateLimiter.consume(limiterKey, 1);
         io.to(roomId).emit("new-message", msg);
 
-        const room = ChatRoomSchema.parse(
+        let room = ChatRoomSchema.parse(
           await pb.collection("rooms").getOne(roomId)
         );
         if (room.status === "seeded") {
-          await pb.collection("rooms").update(roomId, {
-            status: "auto",
-          });
+          room = ChatRoomSchema.parse(
+            await pb.collection("rooms").update(roomId, {
+              status: "auto",
+            })
+          );
         }
 
         const integration = IntegrationSchema.parse(

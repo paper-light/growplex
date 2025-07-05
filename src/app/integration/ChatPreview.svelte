@@ -86,7 +86,7 @@
 <!-- Open button -->
 <button
   type="button"
-  class="absolute top-1/2 -right-8 -translate-y-1/2 rounded-full bg-primary hover:cursor-pointer hover:bg-base-200 transition border border-primary hover:text-primary flex flex-col items-center justify-center px-2 py-3"
+  class="absolute top-1/2 -right-1 -translate-y-1/2 rounded-full bg-primary hover:cursor-pointer hover:bg-base-200 transition border border-primary hover:text-primary flex flex-col items-center justify-center px-2 py-3"
   aria-label="Open sidebar"
   onclick={openSidebar}
   style="height: 260px; min-width: 30px;"

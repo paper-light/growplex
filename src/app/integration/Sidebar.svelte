@@ -117,7 +117,7 @@
 {#if !open}
   <button
     type="button"
-    class="absolute top-1/2 -left-8 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40 flex flex-col items-center justify-center px-2 py-3"
+    class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40 flex flex-col items-center justify-center px-2 py-3"
     aria-label="Open sidebar"
     onclick={openSidebar}
     style="height: 280px; min-width: 30px;"
@@ -131,7 +131,7 @@
 {:else}
   <button
     type="button"
-    class="absolute top-1/2 -left-8 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40"
+    class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40"
     aria-label="Close sidebar"
     onclick={closeSidebar}
   >
@@ -142,7 +142,7 @@
 {#if open}
   <aside
     bind:this={sidebarEl}
-    class="fixed top-0 left-0 lg:left-64 h-full lg:w-64 bg-base-200 shadow-xl flex flex-col px-2 pt-10 z-30"
+    class="fixed top-0 left-0 h-full lg:w-64 bg-base-200 shadow-xl flex flex-col px-2 pt-10 z-30"
     transition:slide={{ axis: "x" }}
     aria-label="Integration sidebar"
     tabindex="-1"

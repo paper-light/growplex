@@ -66,7 +66,7 @@
 
     <!-- Sidebar Content -->
     <div class="h-full pt-16 lg:pt-0">
-      <RoomsSidebar />
+      <RoomsSidebar {roomId} />
     </div>
   </aside>
 

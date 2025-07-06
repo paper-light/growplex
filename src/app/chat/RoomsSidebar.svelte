@@ -5,6 +5,8 @@
   import { navigate } from "astro:transitions/client";
   import { ChatRoomSchema } from "../../models";
 
+  const { roomId } = $props();
+
   const integrations = $derived(
     settingsProvider.currentProject?.expand!.integrations! || []
   );
@@ -107,6 +109,7 @@
 
   // Handle room click
   async function handleRoomClick(room: z.infer<typeof ChatRoomSchema>) {
+    if (room.id === roomId) return;
     saveScrollPosition();
     await chatProvider.setCurrentRoom(room.id);
     navigate(`/app/chat/${room.id}`);

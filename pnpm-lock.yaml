@@ -38,6 +38,9 @@ importers:
       '@langchain/openai':
         specifier: ^0.5.13
         version: 0.5.13(@langchain/core@0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63)))(ws@8.18.1)
+      '@langchain/qdrant':
+        specifier: ^0.1.2
+        version: 0.1.2(@langchain/core@0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63)))(typescript@5.8.3)
       '@lucide/astro':
         specifier: ^0.514.0
         version: 0.514.0(astro@5.9.2(@types/node@24.0.1)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.42.0)(tsx@4.20.2)(typescript@5.8.3)(yaml@2.8.0))
@@ -1168,6 +1171,12 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.3.58 <0.4.0'
 
+  '@langchain/qdrant@0.1.2':
+    resolution: {integrity: sha512-Bz4VCZeKgL8DYAyfrSOv2zF6AKKr0tISjGwqe77BATmh4ae2Zkc6mHSB0StZCLiur7u+C2weyY+YimmkcZVyeA==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      '@langchain/core': '>=0.2.21 <0.4.0'
+
   '@langchain/textsplitters@0.1.0':
     resolution: {integrity: sha512-djI4uw9rlkAb5iMhtLED+xJebDdAG935AdP4eRTB02R7OB/act55Bj9wsskhZsvuyQRpO4O1wQOp85s6T6GWmw==}
     engines: {node: '>=18'}
@@ -1196,6 +1205,16 @@ packages:
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
+
+  '@qdrant/js-client-rest@1.14.1':
+    resolution: {integrity: sha512-CkCCTDc4gCXq+hhjB3yDw9Hs/PxCJ0bKqk/LjAAmuL9+nDm/RPue4C/tGOIMlzouTQ2l6J6t+JPeM//j38VFug==}
+    engines: {node: '>=18.17.0', pnpm: '>=8'}
+    peerDependencies:
+      typescript: '>=4.7'
+
+  '@qdrant/openapi-typescript-fetch@1.2.6':
+    resolution: {integrity: sha512-oQG/FejNpItrxRHoyctYvT3rwGZOnK4jr3JdppO/c78ktDvkWiPXPHNsrDf33K9sZdRb6PR7gi4noIapu5q4HA==}
+    engines: {node: '>=18.0.0', pnpm: '>=8'}
 
   '@rollup/plugin-babel@5.3.1':
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -1345,6 +1364,9 @@ packages:
     resolution: {integrity: sha512-SnGhLiE5rlK0ofq8kzuDkM0g7FN1s5VYY+YSMTibP7CqShxCQvqtNxTARS4xX4PFJfHjG0ZQYX9iGzI3FQh5Aw==}
     cpu: [x64]
     os: [win32]
+
+  '@sevinf/maybe@0.5.0':
+    resolution: {integrity: sha512-ARhyoYDnY1LES3vYI0fiG6e9esWfTNcXcO6+MPJJXcnyMV3bim4lnFt45VXouV7y82F4x3YH8nOQ6VztuvUiWg==}
 
   '@shikijs/core@3.6.0':
     resolution: {integrity: sha512-9By7Xb3olEX0o6UeJyPLI1PE1scC4d3wcVepvtv2xbuN9/IThYN4Wcwh24rcFeASzPam11MCq8yQpwwzCgSBRw==}
@@ -4228,6 +4250,10 @@ packages:
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
 
+  undici@6.21.3:
+    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
+    engines: {node: '>=18.17'}
+
   undici@7.10.0:
     resolution: {integrity: sha512-u5otvFBOBZvmdjWLVW+5DAc9Nkq8f24g0O9oY7qw2JVIF1VocIFoyz9JFkuVOS2j41AufeO0xnlweJ2RLT8nGw==}
     engines: {node: '>=20.18.1'}
@@ -5794,6 +5820,14 @@ snapshots:
       - encoding
       - ws
 
+  '@langchain/qdrant@0.1.2(@langchain/core@0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63)))(typescript@5.8.3)':
+    dependencies:
+      '@langchain/core': 0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63))
+      '@qdrant/js-client-rest': 1.14.1(typescript@5.8.3)
+      uuid: 10.0.0
+    transitivePeerDependencies:
+      - typescript
+
   '@langchain/textsplitters@0.1.0(@langchain/core@0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63)))':
     dependencies:
       '@langchain/core': 0.3.58(openai@4.104.0(ws@8.18.1)(zod@3.25.63))
@@ -5852,6 +5886,15 @@ snapshots:
       - supports-color
 
   '@oslojs/encoding@1.1.0': {}
+
+  '@qdrant/js-client-rest@1.14.1(typescript@5.8.3)':
+    dependencies:
+      '@qdrant/openapi-typescript-fetch': 1.2.6
+      '@sevinf/maybe': 0.5.0
+      typescript: 5.8.3
+      undici: 6.21.3
+
+  '@qdrant/openapi-typescript-fetch@1.2.6': {}
 
   '@rollup/plugin-babel@5.3.1(@babel/core@7.27.4)(rollup@2.79.2)':
     dependencies:
@@ -5960,6 +6003,8 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.43.0':
     optional: true
+
+  '@sevinf/maybe@0.5.0': {}
 
   '@shikijs/core@3.6.0':
     dependencies:
@@ -9592,6 +9637,8 @@ snapshots:
   undici-types@5.26.5: {}
 
   undici-types@7.8.0: {}
+
+  undici@6.21.3: {}
 
   undici@7.10.0: {}
 

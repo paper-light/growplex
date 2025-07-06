@@ -21,6 +21,7 @@
     "@langchain/deepseek": "^0.0.2",
     "@langchain/google-genai": "^0.2.11",
     "@langchain/openai": "^0.5.13",
+    "@langchain/qdrant": "^0.1.2",
     "@lucide/astro": "^0.514.0",
     "@lucide/svelte": "^0.514.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",

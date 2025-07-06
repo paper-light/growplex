@@ -12,6 +12,7 @@
   import { PUBLIC_PB_URL } from "astro:env/client";
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
+  import { navigate } from "astro:transitions/client";
 
   const { roomId } = $props();
 
@@ -32,9 +33,13 @@
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
 
-  $effect(() => {
-    if (socketProvider.connected) {
-      chatProvider.setCurrentRoom(roomId);
+  onMount(async () => {
+    await socketProvider.isConnectedPromise;
+    const room = await chatProvider.currentRoom;
+    if (room?.id !== roomId) {
+      await chatProvider.setCurrentRoom(roomId);
+      await navigate(`/app/chat/${roomId}`);
+      scrollToBottom();
     }
   });
 

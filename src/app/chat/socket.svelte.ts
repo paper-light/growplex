@@ -9,6 +9,17 @@ import { pb } from "../auth/pb";
 class SocketProvider {
   socket: Socket | null = null;
   private isConnected = $state(false);
+  private resolveConnection: ((value: boolean) => void) | null = null;
+
+  isConnectedPromise = $derived.by(async () => {
+    if (this.isConnected) {
+      return true;
+    }
+    
+    return new Promise<boolean>((resolve) => {
+      this.resolveConnection = resolve;
+    });
+  });
 
   token = $derived(authProvider.token || pb.authStore.token);
 
@@ -23,6 +34,10 @@ class SocketProvider {
     this.socket.on("connect", () => {
       console.log("🟢 socket.svelte.ts connected:", this.socket?.id);
       this.isConnected = true;
+      if (this.resolveConnection) {
+        this.resolveConnection(true);
+        this.resolveConnection = null;
+      }
     });
 
     this.socket.on("disconnect", () => {
@@ -48,12 +63,6 @@ class SocketProvider {
       roomId,
     });
     console.log("Joined room:", roomId);
-  }
-
-  leaveRoom(roomId: string) {
-    if (!this.socket || !this.isConnected) return;
-    this.socket.emit("leave-room", { roomId });
-    console.log("Left room:", roomId);
   }
 
   sendMessage(roomId: string, message: any) {

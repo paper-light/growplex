@@ -30,7 +30,6 @@
 
   function restoreScrollPosition() {
     if (roomListElement && scrollPosition > 0) {
-      // Use smooth scrolling for better UX
       roomListElement.scrollTo({
         top: scrollPosition,
         behavior: "smooth",
@@ -40,7 +39,6 @@
 
   $effect(() => {
     const handleAfterSwap = () => {
-      // Use requestAnimationFrame for smoother restoration
       requestAnimationFrame(() => {
         restoreScrollPosition();
       });
@@ -110,13 +108,16 @@
   // Handle room click
   async function handleRoomClick(room: z.infer<typeof ChatRoomSchema>) {
     saveScrollPosition();
+    await chatProvider.setCurrentRoom(room.id);
     navigate(`/app/chat/${room.id}`);
   }
 
   // Handle integration change
-  function handleIntegrationChange(e: Event) {
+  async function handleIntegrationChange(e: Event) {
     const target = e.target as HTMLSelectElement;
     settingsProvider.setCurrentIntegration(target.value);
+    const room = await chatProvider.currentRoom;
+    navigate(`/app/chat/${room?.id}`);
   }
 
   // Toggle room type filter

@@ -33,8 +33,8 @@
   let showPasswordModal = $state(false);
 
   // Form values
-  let nameValue = $state("");
-  let emailValue = $state("");
+  let nameValue = $state(authProvider.user?.name || "");
+  let emailValue = $state(pb.authStore.record?.email || "");
   let passwordValue = $state("");
   let oldPasswordValue = $state("");
 
@@ -55,15 +55,6 @@
   const passwordSchema = z
     .string()
     .min(8, "Password must be at least 8 characters");
-
-  // Initialize form values when user data is available
-  $effect(() => {
-    if (user) {
-      nameValue = user.name || "";
-      emailValue = pb.authStore.record?.email || "";
-      passwordValue = "";
-    }
-  });
 
   async function updateUserField(
     field: string,

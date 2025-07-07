@@ -10,27 +10,21 @@ export class ExtractorService {
 
   constructor(
     private useCache: boolean = true,
-    chunkSize: number = 1000,
+    chunkSize: number = 8000,
     chunkOverlap: number = 200
   ) {
     this.chunkingService = new TextChunkingService(chunkSize, chunkOverlap);
     this.storageService = new VectorStorageService();
   }
 
+  // Document Management
   async addDocuments(orgId: string, documents: Document[], projectId?: string) {
     const vectorStore = await this.storageService.createOrgVectorStore(
       orgId,
       this.useCache
     );
 
-    const documentsWithProject = documents.map((doc) => ({
-      ...doc,
-      metadata: {
-        ...doc.metadata,
-        ...(projectId && { projectId }),
-      },
-    }));
-
+    const documentsWithProject = this.addProjectMetadata(documents, projectId);
     return await vectorStore.addDocuments(documentsWithProject);
   }
 
@@ -53,18 +47,11 @@ export class ExtractorService {
     projectId?: string
   ) {
     const documents = await this.chunkingService.splitTextsIntoDocuments(texts);
-
-    const documentsWithProject = documents.map((doc) => ({
-      ...doc,
-      metadata: {
-        ...doc.metadata,
-        ...(projectId && { projectId }),
-      },
-    }));
-
+    const documentsWithProject = this.addProjectMetadata(documents, projectId);
     return await this.addDocuments(orgId, documentsWithProject);
   }
 
+  // Search Operations
   async similaritySearch(
     orgId: string,
     query: string,
@@ -98,6 +85,7 @@ export class ExtractorService {
     return await this.similaritySearch(orgId, query, k, filter);
   }
 
+  // Retriever Creation
   async createRetriever(
     orgId: string,
     options: {
@@ -121,12 +109,28 @@ export class ExtractorService {
     return await this.createRetriever(orgId, { filter, k });
   }
 
+  // Cache Management
   clearOrgCache(orgId: string) {
     this.storageService.clearOrgCache(orgId);
   }
 
   clearAllCache() {
     this.storageService.clearAllCache();
+  }
+
+  private addProjectMetadata(
+    documents: Document[],
+    projectId?: string
+  ): Document[] {
+    if (!projectId) return documents;
+
+    return documents.map((doc) => ({
+      ...doc,
+      metadata: {
+        ...doc.metadata,
+        projectId,
+      },
+    }));
   }
 }
 

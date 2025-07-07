@@ -6,6 +6,7 @@ import { getEnv } from "../../helpers/get-env";
 import { pb } from "../config/pb";
 import { redisClient } from "../config/redis";
 import { logger } from "../config/logger";
+import { globalEncoderService } from "./encoder";
 
 const log = logger.child({ module: "chat-history" });
 log.info("starting getHistory");
@@ -117,6 +118,7 @@ export async function updateHistory(
         role: msg.role,
         content: msg.content,
         room: msg.room,
+        tokenCount: globalEncoderService.countTokens(msg.content, "gpt-4"),
       });
       log.debug(
         { roomId, tempId: msg.id, newId: created.id },

@@ -1,10 +1,7 @@
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import type { Document } from "@langchain/core/documents";
 
 import { getEnv } from "../../helpers/get-env";
-import { TextChunkingService } from "./chunker";
-import { createProjectFilter, createMultiProjectFilter } from "./filters";
 
 const QDRANT_URL = getEnv("QDRANT_URL");
 
@@ -15,7 +12,7 @@ export const embeddings = new OpenAIEmbeddings({
 export class VectorStorageService {
   private vectorStoreCache = new Map<string, QdrantVectorStore>();
 
-  async createVectorStore(
+  private async createVectorStore(
     collectionName: string,
     useCache: boolean = false
   ): Promise<QdrantVectorStore> {
@@ -38,8 +35,8 @@ export class VectorStorageService {
     return vectorStore;
   }
 
-  getOrgCollectionName(orgId: string): string {
-    return `org:${orgId}`;
+  private getOrgCollectionName(orgId: string): string {
+    return `org_${orgId}`;
   }
 
   async createOrgVectorStore(

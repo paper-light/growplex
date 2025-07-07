@@ -12,7 +12,6 @@
   let { entity, onClose }: Props = $props();
 
   let agentName = $state(entity?.name ?? "");
-  let agentContact = $state(entity?.contact ?? "");
   let systemInstruction = $state(entity?.system ?? "");
   let provider = $state<"openai" | "anthropic" | "deepseek" | "google">(
     (entity?.provider as any) ?? "openai"
@@ -25,7 +24,6 @@
     try {
       await pb.collection("agents").update(entity.id, {
         name: agentName,
-        contact: agentContact,
         system: systemInstruction,
         provider,
       });
@@ -52,19 +50,6 @@
       required
       class="input input-bordered w-full"
       placeholder="Agent name"
-    />
-  </div>
-
-  <div class="form-control w-full">
-    <label for="agentContact" class="label">
-      <span class="label-text">Contact</span>
-    </label>
-    <input
-      id="agentContact"
-      type="text"
-      bind:value={agentContact}
-      class="input input-bordered w-full"
-      placeholder="Href Link to your contact (e.g. https://t.me/your_contact)"
     />
   </div>
 

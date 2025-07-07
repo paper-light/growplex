@@ -48,3 +48,16 @@ export function createMultiMetadataFilter(
     })),
   };
 }
+
+export function createDocumentIdsFilter(documentIds: string[]) {
+  return {
+    must: [
+      {
+        key: "metadata.documentId",
+        match: {
+          any: documentIds,
+        },
+      },
+    ],
+  };
+}

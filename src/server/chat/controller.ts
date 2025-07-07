@@ -1,6 +1,7 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
+import { pb } from "@/lib/config/pb";
 import {
   ChatMessageSchema,
   ChatRoomSchema,
@@ -11,12 +12,9 @@ import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
 import { getHistory, updateHistory } from "@/lib/chat-ai/history";
+import { globalEncoderService } from "@/lib/chat-ai/encoder";
 
 import { useMiddlewares } from "./middleware";
-import { pb } from "@/lib/config/pb";
-
-const MAX_MESSAGE_CHARS =
-  parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!) * 0.75 * 4.5;
 
 interface JoinRoomDTO {
   chatId: string;
@@ -107,7 +105,10 @@ export function attachSocketIO(httpServer: any) {
         return;
       }
 
-      if (msg.content.length > MAX_MESSAGE_CHARS) {
+      if (
+        globalEncoderService.countTokens(msg.content, "gpt-4") >
+        parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!)
+      ) {
         socket.emit("msg-length-limit", {
           message: "Message is too long!",
         });

@@ -13,7 +13,6 @@
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 
   let agentName = $state("");
-  let agentContact = $state("");
   let systemInstruction = $state("");
 
   async function submitCreateAgent(e: Event) {
@@ -23,7 +22,6 @@
     try {
       const newAgent = await pb.collection("agents").create({
         name: agentName,
-        contact: agentContact,
         system: systemInstruction,
         provider: "openai",
       });
@@ -38,7 +36,6 @@
       ]);
 
       agentName = "";
-      agentContact = "";
       systemInstruction = "";
 
       await authProvider.refreshUser();
@@ -63,19 +60,6 @@
       required
       class="input input-bordered w-full"
       placeholder="Agent name"
-    />
-  </div>
-
-  <div class="form-control w-full">
-    <label for="agentContact" class="label">
-      <span class="label-text">Contact</span>
-    </label>
-    <input
-      id="agentContact"
-      type="text"
-      bind:value={agentContact}
-      class="input input-bordered w-full"
-      placeholder="Href Link to your contact (e.g. https://t.me/your_contact)"
     />
   </div>
 

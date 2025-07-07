@@ -2,7 +2,9 @@ import z from "zod";
 
 import { AgentSchema } from "./agent";
 import { ChatSchema } from "./chat";
-import { sourceschema } from "./knowledge";
+import { SourceSchema } from "./knowledge";
+
+import { ProjectSchema } from "./project";
 
 export const IntegrationSchema = z.object({
   id: z.string(),
@@ -14,8 +16,9 @@ export const IntegrationSchema = z.object({
     .object({
       agent: AgentSchema.optional(),
       chat: ChatSchema.optional(),
-      sources: z.array(sourceschema).optional(),
+      sources: z.array(SourceSchema).optional(),
     })
+    .and(z.record(z.any()))
     .optional(),
 
   created: z.string(),

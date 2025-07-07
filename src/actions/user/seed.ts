@@ -1,7 +1,7 @@
 import z from "zod";
 
-import type { UserSchema } from "../models";
-import { seed } from "../lib/auth/seed";
+import type { UserSchema } from "../../models";
+import { seed } from "../../lib/auth/seed";
 
 export const seedHandler = async (input: {
   user: z.infer<typeof UserSchema>;

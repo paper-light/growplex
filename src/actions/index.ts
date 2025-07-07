@@ -3,8 +3,8 @@ import { defineAction } from "astro:actions";
 
 import { UserSchema } from "../models";
 
-import { tgHandler, TGSchema } from "./tg";
-import { seedHandler } from "./seed";
+import { tgHandler, TGSchema } from "./notification/tg";
+import { seedHandler } from "./user/seed";
 
 export const server = {
   sendTG: defineAction({

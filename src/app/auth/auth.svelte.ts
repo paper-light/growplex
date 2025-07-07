@@ -11,11 +11,11 @@ class AuthProvider {
     "orgMembers.org.projects",
     "orgMembers.org.projects.integrations",
     "orgMembers.org.projects.agents",
-    "orgMembers.org.projects.knowledgeSources",
+    "orgMembers.org.projects.sources",
     "orgMembers.org.projects.chats",
 
     "orgMembers.org.projects.integrations.agent",
-    "orgMembers.org.projects.integrations.knowledgeSources",
+    "orgMembers.org.projects.integrations.sources",
     "orgMembers.org.projects.integrations.chat",
   ] as const;
   expandString = this.expandKeys.join(",");

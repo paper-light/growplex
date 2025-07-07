@@ -38,7 +38,7 @@ export async function processAssistantReply(
 
   const llmResp = await chain.invoke({
     history,
-    knowledge: integration.knowledgeSources.length || "<NONE>",
+    knowledge: integration.sources.length || "<NONE>",
     additional: agent.system || "<NONE>",
     contact: agent.contact || "<NONE>",
   });

@@ -9,7 +9,7 @@
   import EditChatForm from "../chat/EditChatForm.svelte";
 
   interface Props {
-    type: "agents" | "knowledgeSources" | "chats" | "operators";
+    type: "agents" | "sources" | "chats" | "operators";
   }
 
   let { type }: Props = $props();
@@ -21,8 +21,8 @@
     switch (type) {
       case "agents":
         return currentProject?.expand?.agents || [];
-      case "knowledgeSources":
-        return currentProject?.expand?.knowledgeSources || [];
+      case "sources":
+        return currentProject?.expand?.sources || [];
       case "chats":
         return currentProject?.expand?.chats || [];
       default:
@@ -35,9 +35,9 @@
       case "agents":
         return objects?.find((o) => o.id === currentIntegration?.agent);
 
-      case "knowledgeSources":
+      case "sources":
         return objects?.filter((o) =>
-          currentIntegration?.knowledgeSources.includes(o.id)
+          currentIntegration?.sources.includes(o.id)
         );
 
       case "chats":
@@ -64,10 +64,10 @@
 
   async function confirmSelect() {
     if (!currentIntegration) return;
-    if (type === "knowledgeSources") {
+    if (type === "sources") {
       // update multiple selection and keep open
       await pb.collection("integrations").update(currentIntegration.id, {
-        knowledgeSources: selectedIds,
+        sources: selectedIds,
       });
     } else if (selectedId) {
       const data: Record<string, any> = {};
@@ -94,7 +94,7 @@
   async function detachOne(id: string) {
     if (!currentIntegration) return;
     await pb.collection("integrations").update(currentIntegration.id, {
-      "knowledgeSources-": [id],
+      "sources-": [id],
     });
     await authProvider.refreshUser();
   }
@@ -117,7 +117,7 @@
 <div
   class="relative border border-base-300 rounded p-4 flex items-center justify-between"
 >
-  {#if !currentObject || (type === "knowledgeSources" && (currentObject as any[]).length === 0)}
+  {#if !currentObject || (type === "sources" && (currentObject as any[]).length === 0)}
     <div class="flex flex-col w-full gap-4">
       <button
         onclick={openCreate}
@@ -135,7 +135,7 @@
         </button>
       {/if}
     </div>
-  {:else if type === "knowledgeSources"}
+  {:else if type === "sources"}
     <div class="flex flex-wrap gap-2">
       {#each currentObject as any[] as o}
         <span class="badge badge-outline flex items-center p-2">
@@ -176,7 +176,7 @@
       </button>
       {#if type === "agents"}
         <CreateAgentForm onClose={closeCreate} />
-      {:else if type === "knowledgeSources"}
+      {:else if type === "sources"}
         <h3 class="font-bold text-lg">Create Knowledge Source</h3>
       {:else if type === "chats"}
         <CreateChatForm onClose={closeCreate} />
@@ -223,14 +223,14 @@
         <X size={20} />
       </button>
 
-      {#if type === "knowledgeSources"}
+      {#if type === "sources"}
         <h3 class="font-bold text-lg mb-4">Select Knowledge Sources</h3>
       {:else}
         <h3 class="font-bold text-lg mb-4">Select {type.slice(0, -1)}</h3>
       {/if}
 
       <div class="modal-body space-y-3 max-h-64 overflow-y-auto">
-        {#if type === "knowledgeSources"}
+        {#if type === "sources"}
           {#each objects as o}
             <label class="flex items-center">
               <input

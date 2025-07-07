@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const KnowledgeSourceSchema = z.object({
+export const sourceschema = z.object({
   id: z.string(),
   name: z.string(),
   created: z.string(),

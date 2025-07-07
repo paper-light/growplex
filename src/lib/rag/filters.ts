@@ -6,14 +6,10 @@ export function createProjectFilter(projectId: string) {
 
 export function createMultiProjectFilter(projectIds: string[]) {
   return {
-    must: [
-      {
-        key: "metadata.projectId",
-        match: {
-          any: projectIds,
-        },
-      },
-    ],
+    should: projectIds.map((projectId) => ({
+      key: "metadata.projectId",
+      match: { value: projectId },
+    })),
   };
 }
 
@@ -51,13 +47,9 @@ export function createMultiMetadataFilter(
 
 export function createDocumentIdsFilter(documentIds: string[]) {
   return {
-    must: [
-      {
-        key: "metadata.documentId",
-        match: {
-          any: documentIds,
-        },
-      },
-    ],
+    should: documentIds.map((id) => ({
+      key: "metadata.documentId",
+      match: { value: id },
+    })),
   };
 }

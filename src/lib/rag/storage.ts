@@ -9,50 +9,38 @@ export const embeddings = new OpenAIEmbeddings({
   model: "text-embedding-3-small",
 });
 
-export class VectorStorageService {
-  private vectorStoreCache = new Map<string, QdrantVectorStore>();
+const vectorStoreCache = new Map<string, QdrantVectorStore>();
 
-  private async createVectorStore(
-    collectionName: string,
-    useCache: boolean = false
-  ): Promise<QdrantVectorStore> {
-    if (useCache && this.vectorStoreCache.has(collectionName)) {
-      return this.vectorStoreCache.get(collectionName)!;
-    }
+function getOrgCollectionName(orgId: string): string {
+  return `org_${orgId}`;
+}
 
-    const vectorStore = await QdrantVectorStore.fromExistingCollection(
-      embeddings,
-      {
-        url: QDRANT_URL,
-        collectionName,
-      }
-    );
+export async function createOrgVectorStore(
+  orgId: string,
+  useCache: boolean = true
+): Promise<QdrantVectorStore> {
+  const collectionName = getOrgCollectionName(orgId);
 
-    if (useCache) {
-      this.vectorStoreCache.set(collectionName, vectorStore);
-    }
-
-    return vectorStore;
+  if (useCache && vectorStoreCache.has(collectionName)) {
+    return vectorStoreCache.get(collectionName)!;
   }
 
-  private getOrgCollectionName(orgId: string): string {
-    return `org_${orgId}`;
+  const vectorStore = await QdrantVectorStore.fromExistingCollection(
+    embeddings,
+    { url: QDRANT_URL, collectionName }
+  );
+
+  if (useCache) {
+    vectorStoreCache.set(collectionName, vectorStore);
   }
 
-  async createOrgVectorStore(
-    orgId: string,
-    useCache: boolean = true
-  ): Promise<QdrantVectorStore> {
-    const collectionName = this.getOrgCollectionName(orgId);
-    return await this.createVectorStore(collectionName, useCache);
-  }
+  return vectorStore;
+}
 
-  clearOrgCache(orgId: string) {
-    const collectionName = this.getOrgCollectionName(orgId);
-    this.vectorStoreCache.delete(collectionName);
-  }
+export function clearOrgCache(orgId: string) {
+  vectorStoreCache.delete(getOrgCollectionName(orgId));
+}
 
-  clearAllCache() {
-    this.vectorStoreCache.clear();
-  }
+export function clearAllCache() {
+  vectorStoreCache.clear();
 }

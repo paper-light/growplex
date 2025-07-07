@@ -1,69 +1,57 @@
 import type { Document } from "@langchain/core/documents";
 
+import { splitTextIntoDocuments } from "./chunker";
 import { createProjectFilter, createMultiProjectFilter } from "./filters";
-import { TextChunkingService } from "./chunker";
-import { VectorStorageService } from "./storage";
+import { createOrgVectorStore, clearOrgCache, clearAllCache } from "./storage";
 
-export class ExtractorService {
-  private chunkingService: TextChunkingService;
-  private storageService: VectorStorageService;
-
-  constructor(
-    private useCache: boolean = true,
-    chunkSize: number = 8000,
-    chunkOverlap: number = 200
-  ) {
-    this.chunkingService = new TextChunkingService(chunkSize, chunkOverlap);
-    this.storageService = new VectorStorageService();
-  }
-
-  // Document Management
-  async addDocuments(orgId: string, documents: Document[], projectId?: string) {
-    const vectorStore = await this.storageService.createOrgVectorStore(
-      orgId,
-      this.useCache
-    );
-
-    const documentsWithProject = this.addProjectMetadata(documents, projectId);
-    return await vectorStore.addDocuments(documentsWithProject);
-  }
-
+export const extractorService = {
   async addText(
     orgId: string,
     text: string,
     metadata: Record<string, any> = {},
     projectId?: string
   ) {
-    const documents = await this.chunkingService.splitTextIntoDocuments(text, {
+    const documents = await splitTextIntoDocuments(text, {
       ...metadata,
       ...(projectId && { projectId }),
     });
-    return await this.addDocuments(orgId, documents);
-  }
+    return await this.addDocuments(orgId, documents, projectId);
+  },
 
   async addTexts(
     orgId: string,
     texts: Array<{ content: string; metadata?: Record<string, any> }>,
     projectId?: string
   ) {
-    const documents = await this.chunkingService.splitTextsIntoDocuments(texts);
-    const documentsWithProject = this.addProjectMetadata(documents, projectId);
-    return await this.addDocuments(orgId, documentsWithProject);
-  }
+    const allDocuments: Document[] = [];
 
-  // Search Operations
+    for (const textObj of texts) {
+      const documents = await splitTextIntoDocuments(
+        textObj.content,
+        textObj.metadata || {}
+      );
+      allDocuments.push(...documents);
+    }
+
+    const documentsWithProject = addProjectMetadata(allDocuments, projectId);
+    return await this.addDocuments(orgId, documentsWithProject);
+  },
+
+  async addDocuments(orgId: string, documents: Document[], projectId?: string) {
+    const vectorStore = await createOrgVectorStore(orgId, true);
+    const docsWithProject = addProjectMetadata(documents, projectId);
+    return await vectorStore.addDocuments(docsWithProject);
+  },
+
   async similaritySearch(
     orgId: string,
     query: string,
     k: number = 4,
     filter?: any
   ) {
-    const vectorStore = await this.storageService.createOrgVectorStore(
-      orgId,
-      this.useCache
-    );
+    const vectorStore = await createOrgVectorStore(orgId, true);
     return await vectorStore.similaritySearch(query, k, filter);
-  }
+  },
 
   async similaritySearchInProject(
     orgId: string,
@@ -73,7 +61,7 @@ export class ExtractorService {
   ) {
     const filter = createProjectFilter(projectId);
     return await this.similaritySearch(orgId, query, k, filter);
-  }
+  },
 
   async similaritySearchInProjects(
     orgId: string,
@@ -83,22 +71,15 @@ export class ExtractorService {
   ) {
     const filter = createMultiProjectFilter(projectIds);
     return await this.similaritySearch(orgId, query, k, filter);
-  }
+  },
 
-  // Retriever Creation
   async createRetriever(
     orgId: string,
-    options: {
-      filter?: any;
-      k?: number;
-    } = {}
+    options: { filter?: any; k?: number } = {}
   ) {
-    const vectorStore = await this.storageService.createOrgVectorStore(
-      orgId,
-      this.useCache
-    );
+    const vectorStore = await createOrgVectorStore(orgId, true);
     return vectorStore.asRetriever(options);
-  }
+  },
 
   async createProjectRetriever(
     orgId: string,
@@ -107,31 +88,23 @@ export class ExtractorService {
   ) {
     const filter = createProjectFilter(projectId);
     return await this.createRetriever(orgId, { filter, k });
-  }
+  },
 
-  // Cache Management
-  clearOrgCache(orgId: string) {
-    this.storageService.clearOrgCache(orgId);
-  }
+  clearOrgCache,
+  clearAllCache,
+};
 
-  clearAllCache() {
-    this.storageService.clearAllCache();
-  }
+function addProjectMetadata(
+  documents: Document[],
+  projectId?: string
+): Document[] {
+  if (!projectId) return documents;
 
-  private addProjectMetadata(
-    documents: Document[],
-    projectId?: string
-  ): Document[] {
-    if (!projectId) return documents;
-
-    return documents.map((doc) => ({
-      ...doc,
-      metadata: {
-        ...doc.metadata,
-        projectId,
-      },
-    }));
-  }
+  return documents.map((doc) => ({
+    ...doc,
+    metadata: {
+      ...doc.metadata,
+      projectId,
+    },
+  }));
 }
-
-export const extractorService = new ExtractorService();

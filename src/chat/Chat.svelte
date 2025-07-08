@@ -233,7 +233,7 @@
       sticky bottom-0 left-0 w-full z-10
       border-t border-base-300
       bg-base-100
-      px-4 py-2
+      px-3 py-1
     "
   >
     <fieldset class="fieldset">
@@ -263,7 +263,7 @@
       </button>
     </fieldset>
 
-    <div class="text-xs text-center mt-4">
+    <div class="text-xs text-center mt-2">
       Made by
       <a
         class="link link-hover font-semibold"

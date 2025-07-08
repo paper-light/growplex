@@ -7,6 +7,7 @@
   import CreateChatForm from "../chat/CreateChatForm.svelte";
   import EditAgentForm from "../agent/EditAgentForm.svelte";
   import EditChatForm from "../chat/EditChatForm.svelte";
+  import { portal } from "../../shared/actions/portal";
 
   interface Props {
     type: "agents" | "sources" | "chats" | "operators";
@@ -165,27 +166,33 @@
 </div>
 
 {#if createModalOpen}
-  <input type="checkbox" class="modal-toggle" bind:checked={createModalOpen} />
-  <div class="modal">
-    <div class="modal-box relative">
-      <button
-        class="btn btn-sm btn-circle absolute right-2 top-2"
-        onclick={closeCreate}
-      >
-        <X size={20} />
-      </button>
-      {#if type === "agents"}
-        <CreateAgentForm onClose={closeCreate} />
-      {:else if type === "sources"}
-        <h3 class="font-bold text-lg">Create Knowledge Source</h3>
-      {:else if type === "chats"}
-        <CreateChatForm onClose={closeCreate} />
-      {:else if type === "operators"}
-        <h3 class="font-bold text-lg">Create Operator</h3>
-      {/if}
-      <!-- Render your specific creation form here -->
-      <div class="mt-4">
-        <!-- Form fields for {type} -->
+  <div use:portal={"body"}>
+    <input
+      type="checkbox"
+      class="modal-toggle"
+      bind:checked={createModalOpen}
+    />
+    <div class="modal">
+      <div class="modal-box relative">
+        <button
+          class="btn btn-sm btn-circle absolute right-2 top-2"
+          onclick={closeCreate}
+        >
+          <X size={20} />
+        </button>
+        {#if type === "agents"}
+          <CreateAgentForm onClose={closeCreate} />
+        {:else if type === "sources"}
+          <h3 class="font-bold text-lg">Create Knowledge Source</h3>
+        {:else if type === "chats"}
+          <CreateChatForm onClose={closeCreate} />
+        {:else if type === "operators"}
+          <h3 class="font-bold text-lg">Create Operator</h3>
+        {/if}
+        <!-- Render your specific creation form here -->
+        <div class="mt-4">
+          <!-- Form fields for {type} -->
+        </div>
       </div>
     </div>
   </div>
@@ -193,67 +200,76 @@
 
 <!-- Edit Modal -->
 {#if editModalOpen}
-  <input type="checkbox" class="modal-toggle" bind:checked={editModalOpen} />
-  <div class="modal">
-    <div class="modal-box relative">
-      <button
-        class="btn btn-sm btn-circle absolute right-2 top-2"
-        onclick={closeEdit}
-      >
-        <X size={20} />
-      </button>
-      {#if type === "agents"}
-        <EditAgentForm onClose={closeEdit} entity={currentObject as any} />
-      {:else if type === "chats"}
-        <EditChatForm onClose={closeEdit} entity={currentObject as any} />
-      {/if}
+  <div use:portal={"body"}>
+    <input type="checkbox" class="modal-toggle" bind:checked={editModalOpen} />
+    <div class="modal">
+      <div class="modal-box relative">
+        <button
+          class="btn btn-sm btn-circle absolute right-2 top-2"
+          onclick={closeEdit}
+        >
+          <X size={20} />
+        </button>
+        {#if type === "agents"}
+          <EditAgentForm onClose={closeEdit} entity={currentObject as any} />
+        {:else if type === "chats"}
+          <EditChatForm onClose={closeEdit} entity={currentObject as any} />
+        {/if}
+      </div>
     </div>
   </div>
 {/if}
 
 <!-- Selection Modal -->
-<input type="checkbox" class="modal-toggle" bind:checked={selectOpen} />
 {#if selectOpen}
-  <div class="modal">
-    <div class="modal-box relative">
-      <button
-        class="btn btn-sm btn-circle absolute right-2 top-2"
-        onclick={closeSelectModal}
-      >
-        <X size={20} />
-      </button>
+  <div use:portal={"body"}>
+    <input type="checkbox" class="modal-toggle" bind:checked={selectOpen} />
+    <div class="modal">
+      <div class="modal-box relative">
+        <button
+          class="btn btn-sm btn-circle absolute right-2 top-2"
+          onclick={closeSelectModal}
+        >
+          <X size={20} />
+        </button>
 
-      {#if type === "sources"}
-        <h3 class="font-bold text-lg mb-4">Select Knowledge Sources</h3>
-      {:else}
-        <h3 class="font-bold text-lg mb-4">Select {type.slice(0, -1)}</h3>
-      {/if}
-
-      <div class="modal-body space-y-3 max-h-64 overflow-y-auto">
         {#if type === "sources"}
-          {#each objects as o}
-            <label class="flex items-center">
-              <input
-                type="checkbox"
-                class="checkbox mr-2"
-                bind:group={selectedIds}
-                value={o.id}
-              />
-              {o.name || o.id}
-            </label>
-          {/each}
+          <h3 class="font-bold text-lg mb-4">Select Knowledge Sources</h3>
         {:else}
-          <select class="select select-bordered w-full" bind:value={selectedId}>
-            <option value="" disabled selected>Select {type}</option>
-            {#each objects as o}
-              <option value={o.id}>{o.name || o.id}</option>
-            {/each}
-          </select>
+          <h3 class="font-bold text-lg mb-4">Select {type.slice(0, -1)}</h3>
         {/if}
-      </div>
 
-      <div class="modal-action">
-        <button class="btn btn-primary" onclick={confirmSelect}>Confirm</button>
+        <div class="modal-body space-y-3 max-h-64 overflow-y-auto">
+          {#if type === "sources"}
+            {#each objects as o}
+              <label class="flex items-center">
+                <input
+                  type="checkbox"
+                  class="checkbox mr-2"
+                  bind:group={selectedIds}
+                  value={o.id}
+                />
+                {o.name || o.id}
+              </label>
+            {/each}
+          {:else}
+            <select
+              class="select select-bordered w-full"
+              bind:value={selectedId}
+            >
+              <option value="" disabled selected>Select {type}</option>
+              {#each objects as o}
+                <option value={o.id}>{o.name || o.id}</option>
+              {/each}
+            </select>
+          {/if}
+        </div>
+
+        <div class="modal-action">
+          <button class="btn btn-primary" onclick={confirmSelect}
+            >Confirm</button
+          >
+        </div>
       </div>
     </div>
   </div>

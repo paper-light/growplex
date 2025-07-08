@@ -7,6 +7,7 @@ import ThemeLoad from "../components/ThemeLoad.astro";
 import CookiesAccept from "../components/CookiesAccept.svelte";
 
 import AppState from "./AppGlobal.svelte";
+import PortalHost from "../shared/ui/PortalHost.svelte";
 
 const { title, active } = Astro.props;
 ---
@@ -28,5 +29,7 @@ const { title, active } = Astro.props;
     <slot />
 
     <CookiesAccept client:only />
+
+    <PortalHost client:only />
   </body>
 </html>

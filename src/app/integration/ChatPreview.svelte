@@ -22,6 +22,8 @@
   let roomId = $state(localStorage.getItem("chatRoomId") || "");
 
   async function createRoom() {
+    await socketProvider.isConnectedPromise;
+
     const room = await pb.collection("rooms").create({
       chat: chat?.id,
       status: "preview",
@@ -84,33 +86,35 @@
   {/each}
 </button>
 
-{#if open}
-  <aside
-    bind:this={sidebarEl}
-    class="fixed top-0 right-0 h-full w-100 bg-base-200 shadow-xl z-30"
-    transition:slide={{ axis: "x" }}
-    aria-label="Sidebar"
-    tabindex="-1"
-    onintroend={() => sidebarEl?.focus()}
+<aside
+  bind:this={sidebarEl}
+  class="absolute top-0 right-0 h-full w-screen md:w-100 bg-base-200 shadow-xl z-100 flex flex-col transition-transform duration-300 ease-in-out"
+  aria-label="Sidebar"
+  tabindex="-1"
+  style={`transform: translateX(${open ? "0" : "100%"})`}
+  onintroend={() => sidebarEl?.focus()}
+>
+  <div
+    class="flex justify-between items-center px-4 py-1 border-b border-base-300"
   >
     <button
       type="button"
-      class="btn btn-primary rounded-xl btn-sm absolute right-36"
+      class="btn btn-primary rounded-xl btn-sm"
       aria-label="Reload chat"
       onclick={reloadChat}
     >
       RELOAD CHAT
     </button>
-    <!-- Close button -->
     <button
       type="button"
-      class="btn btn-sm btn-ghost btn-circle absolute top-4 right-4"
+      class="btn btn-sm btn-ghost btn-circle"
       aria-label="Close sidebar"
       onclick={closeSidebar}
     >
       <X size={20} />
     </button>
-
+  </div>
+  <div class="flex-1 overflow-y-auto">
     {#key [roomId, agent, chat, token]}
       {#if !agent}
         <div class="flex flex-col items-center justify-center h-full">
@@ -128,5 +132,5 @@
         <Chat {chat} {agent} {payload} {token} />
       {/if}
     {/key}
-  </aside>
-{/if}
+  </div>
+</aside>

@@ -12,7 +12,7 @@ import PickWidget from "../../app/shared/PickWidget.svelte";
 
 <AppRoot title="Growplex | App Home">
   <AppDashboard pageName="Integrations">
-    <div class="w-full h-full relative">
+    <div class="w-full h-full relative overflow-x-hidden">
       <ConnectIntegration client:only />
 
       <Sidebar client:only transition:persist="sidebar" />
@@ -43,6 +43,7 @@ import PickWidget from "../../app/shared/PickWidget.svelte";
           <div class="text-5xl opacity-60"><Home /></div>
         </div>
       </div>
+
       <ChatPreview client:only />
     </div>
   </AppDashboard>

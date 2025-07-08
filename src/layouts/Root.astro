@@ -10,6 +10,8 @@ import CookiesAccept from "../components/CookiesAccept.svelte";
 
 import ChatLoad from "./ChatLoad.astro";
 
+import PortalHost from "../shared/ui/PortalHost.svelte";
+
 const { title, active } = Astro.props;
 ---
 
@@ -42,5 +44,7 @@ const { title, active } = Astro.props;
     <CookiesAccept client:only />
 
     <ChatLoad />
+
+    <PortalHost client:only />
   </body>
 </html>

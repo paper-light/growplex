@@ -5,6 +5,10 @@ export function createProjectFilter(projectId: string) {
 }
 
 export function createMultiProjectFilter(projectIds: string[]) {
+  if (projectIds.length === 0) {
+    return { must: [] }; // Return empty filter if no projects
+  }
+
   return {
     should: projectIds.map((projectId) => ({
       key: "metadata.projectId",
@@ -37,8 +41,13 @@ export function createMetadataFilter(
 export function createMultiMetadataFilter(
   filters: Record<string, string | number | boolean>
 ) {
+  const filterEntries = Object.entries(filters);
+  if (filterEntries.length === 0) {
+    return { must: [] }; // Return empty filter if no filters
+  }
+
   return {
-    must: Object.entries(filters).map(([key, value]) => ({
+    must: filterEntries.map(([key, value]) => ({
       key: `metadata.${key}`,
       match: { value },
     })),
@@ -46,6 +55,10 @@ export function createMultiMetadataFilter(
 }
 
 export function createDocumentIdsFilter(documentIds: string[]) {
+  if (documentIds.length === 0) {
+    return { must: [] }; // Return empty filter if no document IDs
+  }
+
   return {
     should: documentIds.map((id) => ({
       key: "metadata.documentId",

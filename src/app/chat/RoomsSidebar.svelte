@@ -1,9 +1,8 @@
 <script lang="ts">
-  import z from "zod";
   import { chatProvider } from "./chat.svelte";
   import { settingsProvider } from "../settings/settings.svelte";
   import { navigate } from "astro:transitions/client";
-  import { ChatRoomSchema } from "../../models";
+  import type { RoomsResponse } from "../../shared/models/pocketbase-types";
 
   const { roomId } = $props();
 
@@ -92,10 +91,7 @@
   });
 
   // Sorting function
-  function sortRooms(
-    a: z.infer<typeof ChatRoomSchema>,
-    b: z.infer<typeof ChatRoomSchema>
-  ) {
+  function sortRooms(a: RoomsResponse, b: RoomsResponse) {
     const order = {
       operator: 0,
       waitingOperator: 1,
@@ -108,7 +104,7 @@
   }
 
   // Handle room click
-  async function handleRoomClick(room: z.infer<typeof ChatRoomSchema>) {
+  async function handleRoomClick(room: RoomsResponse) {
     if (room.id === roomId) return;
     saveScrollPosition();
     await chatProvider.setCurrentRoom(room.id);

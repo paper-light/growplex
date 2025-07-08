@@ -1,13 +1,7 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
-import { pb } from "@/lib/config/pb";
-import {
-  ChatMessageSchema,
-  ChatRoomSchema,
-  IntegrationSchema,
-  UserSchema,
-} from "@/models";
+import { pb } from "@/shared/pb";
 import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
@@ -15,6 +9,11 @@ import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 import { globalEncoderService } from "@/lib/chat-ai/encoder";
 
 import { useMiddlewares } from "./middleware";
+import {
+  RoomsStatusOptions,
+  type RoomsResponse,
+} from "@/shared/models/pocketbase-types";
+import type { RoomExpand } from "@/shared/models/expands";
 
 interface JoinRoomDTO {
   chatId: string;
@@ -37,9 +36,11 @@ export function attachSocketIO(httpServer: any) {
     console.log(`🟢 Socket connected: ${socket.id}`);
 
     socket.on("join-room", async ({ roomId }: JoinRoomDTO) => {
-      const room = ChatRoomSchema.parse(
-        await pb.collection("rooms").getOne(roomId, { expand: "chat" })
-      );
+      const room = await pb
+        .collection("rooms")
+        .getOne<RoomsResponse<RoomExpand>>(roomId, {
+          expand: "chat",
+        });
 
       if (socket.data.guest) {
         if (socket.data.guest.roomId !== roomId) {
@@ -49,13 +50,13 @@ export function attachSocketIO(httpServer: any) {
           return;
         }
       } else if (socket.data.user) {
-        const user = UserSchema.parse(socket.data.user);
+        const user = socket.data.user;
         const chat = room.expand!.chat!;
         const project = await pb
           .collection("projects")
           .getFirstListItem(`chats:each ?= '${chat.id}'`);
         const projects = user.expand!.orgMembers!.flatMap(
-          (m) => m.expand!.org!.projects
+          (m: any) => m.expand!.org!.projects
         );
         if (!project || !projects.includes(project.id)) {
           socket.emit("unauthorized", {
@@ -74,11 +75,9 @@ export function attachSocketIO(httpServer: any) {
       if (!socket.data.authorizedRooms) socket.data.authorizedRooms = new Set();
       socket.data.authorizedRooms.add(roomId);
 
-      const integration = IntegrationSchema.parse(
-        await pb
-          .collection("integrations")
-          .getFirstListItem(`chat="${room.chat}"`)
-      );
+      const integration = await pb
+        .collection("integrations")
+        .getFirstListItem(`chat="${room.chat}"`);
 
       try {
         const history = await getHistory(integration.id, roomId);
@@ -98,12 +97,7 @@ export function attachSocketIO(httpServer: any) {
         return;
       }
 
-      const msg = ChatMessageSchema.parse(JSON.parse(msgStr));
-      if (socket.data.user) {
-        await updateHistory([msg]);
-        io.to(roomId).emit("new-message", msg);
-        return;
-      }
+      const msg = JSON.parse(msgStr);
 
       if (
         globalEncoderService.countTokens(msg.content, "gpt-4") >
@@ -121,28 +115,44 @@ export function attachSocketIO(httpServer: any) {
 
       try {
         await rateLimiter.consume(limiterKey, 1);
+        await updateHistory([msg]);
+
         io.to(roomId).emit("new-message", msg);
 
-        let room = ChatRoomSchema.parse(
-          await pb.collection("rooms").getOne(roomId)
-        );
+        let room = await pb
+          .collection("rooms")
+          .getOne<RoomsResponse<RoomExpand>>(roomId, {
+            expand: "chat",
+          });
+
+        if (socket.data.user && room.status !== RoomsStatusOptions.preview) {
+          return;
+        }
+
         if (room.status === "seeded") {
-          room = ChatRoomSchema.parse(
-            await pb.collection("rooms").update(roomId, {
-              status: "auto",
-            })
+          room = await pb.collection("rooms").update(
+            roomId,
+            {
+              status: RoomsStatusOptions.auto,
+            },
+            {
+              expand: "chat",
+            }
           );
         }
 
-        const integration = IntegrationSchema.parse(
-          await pb
-            .collection("integrations")
-            .getFirstListItem(`chat="${room.chat}"`)
-        );
+        const integration = await pb
+          .collection("integrations")
+          .getFirstListItem(`chat="${room.chat}"`);
 
         try {
-          await updateHistory([msg]);
-          if (room.status !== "auto") return;
+          if (
+            room.status !== RoomsStatusOptions.auto &&
+            room.status !== RoomsStatusOptions.preview
+          ) {
+            console.log("Room is not auto or preview");
+            return;
+          }
 
           const newAssistantMsg = await processAssistantReply(
             integration.id,

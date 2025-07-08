@@ -1,11 +1,14 @@
 <script lang="ts">
-  import { ChevronsRight, Send } from "@lucide/svelte";
-  import { z } from "zod";
-  import type { ChatMessageSchema } from "@/models/chat";
+  import { Send } from "@lucide/svelte";
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
   import { nanoid } from "nanoid";
   import { authProvider } from "../auth/auth.svelte";
+  import {
+    type MessagesRecord,
+    MessagesRoleOptions,
+  } from "../../shared/models/pocketbase-types";
+  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
 
   const currentRoom = $derived.by(async () => await chatProvider.currentRoom);
   const messages = $derived(chatProvider.messages);
@@ -42,10 +45,10 @@
 
     canSend = false;
 
-    const newMsg: z.infer<typeof ChatMessageSchema> = {
+    const newMsg: MessagesRecord = {
       id: `temp-${nanoid(12)}`,
       content: inputText.trim(),
-      role: "operator",
+      role: MessagesRoleOptions.operator,
       visible: true,
       room: room.id,
       sentBy: authProvider.user!.name,
@@ -54,7 +57,7 @@
 
     inputText = "";
 
-    socketProvider.sendMessage(room.id, newMsg);
+    socketProvider.sendMessage(room.id, newMsg as any);
 
     // Reset input height
     if (inputEl) {
@@ -64,7 +67,7 @@
     // Re-enable send after a short delay
     setTimeout(() => {
       canSend = true;
-    }, 1000);
+    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
   }
 </script>
 

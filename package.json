@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "build:gen-types": "npx pocketbase-typegen --url http://localhost:8080 --email growplexdev@gmail.com --password 'breAth20' --out src/shared/models/pocketbase-types.ts",
     "build:chat-widget": "vite build --config vite.chat-widget.config.ts",
     "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && pnpm run build:chat-widget && astro build",
     "preview": "astro preview",

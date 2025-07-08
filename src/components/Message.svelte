@@ -2,11 +2,10 @@
   import { marked } from "marked";
   import DOMPurify from "dompurify";
   import { DateTime } from "luxon";
-  import { z } from "zod";
-  import type { ChatMessageSchema } from "@/models/chat";
+  import type { MessagesResponse } from "../shared/models/pocketbase-types";
 
   interface Props {
-    msg: z.infer<typeof ChatMessageSchema>;
+    msg: MessagesResponse;
     avatar: string;
   }
 

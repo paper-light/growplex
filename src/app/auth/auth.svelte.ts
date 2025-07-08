@@ -1,8 +1,6 @@
-import { z } from "zod";
-
-import { UserSchema } from "../../models";
-
-import { pb } from "./pb";
+import { pb } from "../../shared/pb";
+import type { UserExpand } from "../../shared/models/expands";
+import type { UsersResponse } from "../../shared/models/pocketbase-types";
 
 class AuthProvider {
   expandKeys = [
@@ -17,11 +15,14 @@ class AuthProvider {
     "orgMembers.org.projects.integrations.agent",
     "orgMembers.org.projects.integrations.sources",
     "orgMembers.org.projects.integrations.chat",
+    "orgMembers.org.projects.integrations.operators",
   ] as const;
   expandString = this.expandKeys.join(",");
 
-  user = $state<z.infer<typeof UserSchema> | null>(
-    pb.authStore.isValid ? UserSchema.parse(pb.authStore.record!) : null
+  user = $state<UsersResponse<unknown, UserExpand> | null>(
+    pb.authStore.isValid
+      ? (pb.authStore.record as UsersResponse<unknown, UserExpand>)
+      : null
   );
   token = $state(pb.authStore.token);
 
@@ -30,7 +31,7 @@ class AuthProvider {
 
   private subscriptionId: string | null = null;
 
-  setUser(user: z.infer<typeof UserSchema> | null) {
+  setUser(user: UsersResponse<unknown, UserExpand> | null) {
     this.user = user;
   }
   setToken(token: string) {
@@ -52,7 +53,10 @@ class AuthProvider {
         async (e) => {
           switch (e.action) {
             case "update": {
-              pb.authStore.save(pb.authStore.token, e.record);
+              pb.authStore.save(
+                pb.authStore.token,
+                e.record as UsersResponse<unknown, UserExpand>
+              );
               break;
             }
             case "delete": {
@@ -91,7 +95,10 @@ class AuthProvider {
       const authResponse = await pb.collection("users").authRefresh({
         expand: this.expandString,
       });
-      pb.authStore.save(authResponse.token, authResponse.record);
+      pb.authStore.save(
+        authResponse.token,
+        authResponse.record as UsersResponse<void, UserExpand>
+      );
     } catch (error) {
       console.error("Failed to refresh user:", error);
       pb.authStore.clear();

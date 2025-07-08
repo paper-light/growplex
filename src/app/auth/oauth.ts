@@ -1,8 +1,9 @@
 import { actions } from "astro:actions";
 
-import { UserSchema } from "../../models";
-import { pb } from "./pb";
+import { pb } from "../../shared/pb";
 import { authProvider } from "./auth.svelte";
+import type { UsersResponse } from "../../shared/models/pocketbase-types";
+import type { UserExpand } from "../../shared/models/expands";
 
 export const oauth2 = async (provider: string) => {
   const userResult = await pb.collection("users").authWithOAuth2({
@@ -11,12 +12,11 @@ export const oauth2 = async (provider: string) => {
   if (!userResult) {
     return;
   }
-  pb.authStore.save(userResult.token, userResult.record);
-
-  const user = UserSchema.parse(userResult.record);
+  const user = userResult.record as UsersResponse<unknown, UserExpand>;
+  pb.authStore.save(userResult.token, user);
 
   if (user.orgMembers.length === 0) {
-    await actions.seedUser({ user, provider: provider as "google" });
+    await actions.seedUser({ userId: user.id, provider: provider as "google" });
   }
 
   await authProvider.refreshUser();

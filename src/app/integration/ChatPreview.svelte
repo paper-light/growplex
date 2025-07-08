@@ -1,26 +1,25 @@
-<!-- src/routes/+page.svelte -->
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { X } from "@lucide/svelte";
-  import { onDestroy, untrack } from "svelte";
+  import { onMount, untrack } from "svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import Chat from "../../chat/Chat.svelte";
-  import { pb } from "../auth/pb";
+  import { pb } from "../../shared/pb";
+  import { socketProvider } from "../chat/socket.svelte";
 
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 
   const agent = $derived(currentIntegration?.expand?.agent || null);
   const chat = $derived(currentIntegration?.expand?.chat || null);
-
   const token = $derived(authProvider.token);
 
   const open = $derived(uiProvider.chatPreviewOpen);
   let sidebarEl: HTMLElement | null = $state(null);
 
-  let roomId = $state("");
+  let roomId = $state(localStorage.getItem("chatRoomId") || "");
 
   async function createRoom() {
     const room = await pb.collection("rooms").create({
@@ -31,24 +30,18 @@
     localStorage.setItem("chatRoomId", roomId);
   }
 
-  function reloadChat() {
-    chatKey = Date.now();
-    if (roomId) {
-      localStorage.removeItem("chatRoomId");
-      pb.collection("rooms").delete(roomId);
-      createRoom();
-    } else {
-      roomId = localStorage.getItem("chatRoomId") || "";
-      if (!roomId) createRoom();
-    }
+  async function reloadChat() {
+    await pb.collection("rooms").delete(roomId);
+    localStorage.removeItem("chatRoomId");
+    await createRoom();
   }
 
-  let chatKey = $state(Date.now());
-  $effect(() => {
-    if (!chat || !agent) return;
-    untrack(() => {
-      reloadChat();
-    });
+  onMount(() => {
+    if (!roomId) createRoom();
+
+    return () => {
+      window.removeEventListener("keydown", handleKeydown);
+    };
   });
 
   const payload = $derived({
@@ -64,22 +57,15 @@
     uiProvider.setChatPreviewOpen(false);
   }
 
-  // close on Escape
   function handleKeydown(event: KeyboardEvent) {
     if (event.key === "Escape") closeSidebar();
   }
-
   $effect(() => {
     if (open) {
       window.addEventListener("keydown", handleKeydown);
     } else {
       window.removeEventListener("keydown", handleKeydown);
     }
-  });
-
-  // ensure cleanup on unmount
-  onDestroy(() => {
-    window.removeEventListener("keydown", handleKeydown);
   });
 </script>
 
@@ -109,7 +95,7 @@
   >
     <button
       type="button"
-      class="btn btn-primary rounded-2xl btn-sm absolute top-4 right-16"
+      class="btn btn-primary rounded-xl btn-sm absolute right-36"
       aria-label="Reload chat"
       onclick={reloadChat}
     >
@@ -125,7 +111,7 @@
       <X size={20} />
     </button>
 
-    {#key chatKey}
+    {#key [roomId, agent, chat, token]}
       {#if !agent}
         <div class="flex flex-col items-center justify-center h-full">
           <h1 class="text-2xl font-bold text-nowrap">No agent found</h1>

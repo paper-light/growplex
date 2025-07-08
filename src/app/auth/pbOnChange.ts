@@ -1,12 +1,13 @@
-import { UserSchema } from "../../models";
 import { authProvider } from "./auth.svelte";
-import { pb } from "./pb";
+import { pb } from "../../shared/pb";
 import { settingsProvider } from "../settings/settings.svelte";
+import type { UsersResponse } from "../../shared/models/pocketbase-types";
+import type { UserExpand } from "../../shared/models/expands";
 
 pb.authStore.onChange((token, rec) => {
   if (rec && pb.authStore.isValid) {
     try {
-      const user = UserSchema.parse(rec);
+      const user = rec as UsersResponse<unknown, UserExpand>;
       authProvider.setUser(user);
       authProvider.setToken(token);
     } catch (error) {

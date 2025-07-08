@@ -1,8 +1,6 @@
 import { nanoid } from "nanoid";
-import { z } from "zod";
 
-import { pb } from "../config/pb";
-import { ChatMessageSchema, IntegrationSchema, OrgSchema } from "../../models";
+import { pb } from "../../shared/pb";
 
 import { getChain } from "./llm";
 import { getHistory, updateHistory } from "./history";
@@ -10,28 +8,31 @@ import { logger } from "../config/logger";
 import { extractorService } from "../rag/extractor";
 import { createDocumentIdsFilter } from "../rag/filters";
 import { Document } from "@langchain/core/documents";
+import {
+  MessagesRoleOptions,
+  type IntegrationsResponse,
+  type MessagesRecord,
+  type MessagesResponse,
+} from "../../shared/models/pocketbase-types";
+import type { IntegrationExpand } from "../../shared/models/expands";
 
 const log = logger.child({ module: "chat-service" });
 
 export async function processAssistantReply(
   integrationId: string,
   roomId: string
-): Promise<z.infer<typeof ChatMessageSchema>> {
+): Promise<MessagesResponse> {
   // Get integration
-  const integration = IntegrationSchema.parse(
-    await pb.collection("integrations").getOne(integrationId, {
+  const integration = await pb
+    .collection("integrations")
+    .getOne<IntegrationsResponse<IntegrationExpand>>(integrationId, {
       expand:
         "agent,sources,projects_via_integrations,projects_via_integrations.orgs_via_projects",
-    })
-  );
+    });
 
-  const org = OrgSchema.parse(
-    integration
-      .expand!.projects_via_integrations.map(
-        (p: any) => p.expand!.orgs_via_projects
-      )
-      .flat()[0]!
-  );
+  const org =
+    integration.expand!.projects_via_integrations![0]!.expand!
+      .orgs_via_projects[0]!;
 
   const agent = integration.expand!.agent;
   const sources = integration.expand!.sources;
@@ -47,7 +48,10 @@ export async function processAssistantReply(
   const history = (await getHistory(integrationId, roomId)).map((m) => {
     return {
       content: m.content,
-      role: m.role === "operator" ? "user" : m.role,
+      role:
+        m.role === MessagesRoleOptions.operator
+          ? MessagesRoleOptions.user
+          : m.role,
       name: `${m.role}-${m.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
     };
   });
@@ -76,17 +80,19 @@ export async function processAssistantReply(
 
   log.debug(llmResp);
 
-  let newAssistantMsg: z.infer<typeof ChatMessageSchema> = {
+  let newAssistantMsg: MessagesRecord = {
     id: `temp-${nanoid(12)}`,
     content: llmResp.content.toString(),
-    role: "assistant",
+    role: MessagesRoleOptions.assistant,
     visible: true,
     room: roomId,
     sentBy: agent.name,
     created: new Date().toISOString().replace("T", " "),
   };
 
-  await updateHistory([newAssistantMsg]);
+  const ids = await updateHistory([newAssistantMsg]);
 
-  return newAssistantMsg;
+  const msg = await pb.collection("messages").getOne(ids[0]);
+
+  return msg;
 }

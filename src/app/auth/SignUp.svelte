@@ -3,8 +3,7 @@
   import { signUp } from "./sign-up";
   import Oauth from "./Oauth.svelte";
   import type { AuthError } from "./models";
-  import { authProvider } from "./auth.svelte";
-  import { pb } from "./pb";
+  import { pb } from "../../shared/pb";
   import { navigate } from "astro:transitions/client";
 
   let username = $state("");

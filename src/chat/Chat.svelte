@@ -11,19 +11,24 @@
   import { nanoid } from "nanoid";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import type { ChatMessageSchema, ChatSchema, AgentSchema } from "@/models";
-
   import ChatMessage from "../components/Message.svelte";
   import Man from "../assets/Man.jpg";
   import Thalia from "../assets/Thalia.jpg";
 
   import { injectTheme } from "./injectTheme";
-  import { parseJwtPayload } from "../helpers/parse-jwt";
+  import { parseJwtPayload } from "../shared/helpers/parse-jwt";
   import { ChatWidgetPayloadSchema } from "./models";
+  import {
+    type ChatsResponse,
+    type AgentsResponse,
+    type MessagesResponse,
+    type MessagesRecord,
+    MessagesRoleOptions,
+  } from "../shared/models/pocketbase-types";
 
   interface Props {
-    chat: z.infer<typeof ChatSchema>;
-    agent: z.infer<typeof AgentSchema>;
+    chat: ChatsResponse;
+    agent: AgentsResponse;
     token: string;
     payload?: z.infer<typeof ChatWidgetPayloadSchema>;
   }
@@ -42,7 +47,7 @@
 
   let socket: Socket | null = $state(null);
 
-  let messages: z.infer<typeof ChatMessageSchema>[] = $state([]);
+  let messages: MessagesResponse[] = $state([]);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
@@ -57,14 +62,14 @@
 
   onMount(async () => {
     const theme = document.documentElement.getAttribute("data-theme");
-    injectTheme(chat.theme[theme as "light" | "dark"]);
+    injectTheme((chat.theme as any)[theme as "light" | "dark"]);
 
     window.addEventListener("message", (event) => {
       if (event.origin !== chat.domain) return;
       const { type, newTheme } = event.data || {};
       if (type === "theme-change") {
         document.documentElement.setAttribute("data-theme", newTheme);
-        injectTheme(chat.theme[newTheme as "light" | "dark"]);
+        injectTheme((chat.theme as any)[newTheme as "light" | "dark"]);
       }
     });
 
@@ -81,16 +86,13 @@
       });
     });
 
-    socket.on(
-      "chat-history",
-      (history: z.infer<typeof ChatMessageSchema>[]) => {
-        console.log("HISTORY");
-        messages = history;
-        tick().then(() => scrollToBottom());
-      }
-    );
+    socket.on("chat-history", (history: MessagesResponse[]) => {
+      console.log("HISTORY");
+      messages = history;
+      tick().then(() => scrollToBottom());
+    });
 
-    socket.on("new-message", (m: z.infer<typeof ChatMessageSchema>) => {
+    socket.on("new-message", (m: MessagesResponse) => {
       messages.push(m);
       tick().then(() => scrollToBottom());
     });
@@ -110,10 +112,10 @@
 
     canSend = false;
 
-    const newMsg: z.infer<typeof ChatMessageSchema> = {
+    const newMsg: MessagesRecord = {
       id: `temp-${nanoid(12)}`,
       content: inputText.trim(),
-      role: "user",
+      role: MessagesRoleOptions.user,
       visible: true,
       room: roomId,
       sentBy: username,
@@ -158,7 +160,7 @@
 </script>
 
 <div
-  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4"
+  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative"
 >
   <!-- Header -->
   <header
@@ -201,7 +203,11 @@
     <button
       transition:fade
       onclick={scrollToBottom}
-      class="btn btn-secondary btn-circle fixed bottom-49 left-1/2 transform -translate-x-1/2 transition"
+      class="
+      p-1 bg-secondary text-secondary-content rounded-full border-2 border-secondary
+      hover:cursor-pointer hover:bg-base-100 hover:text-secondary
+      absolute bottom-49 left-1/2 transform -translate-x-1/2 transition
+      "
       aria-label="Scroll to bottom"
     >
       <svg

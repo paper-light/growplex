@@ -1,6 +1,8 @@
+import type { AuthRecord } from "pocketbase";
 import type { Request, Response, NextFunction } from "express";
-import { pb } from "@/lib/config/pb";
-import { getEnv } from "@/helpers/get-env";
+
+import { pb } from "@/shared/pb";
+import { getEnv } from "@/shared/helpers/get-env";
 
 const PB_ID = getEnv("PB_ID");
 const PB_PASSWORD = getEnv("PB_PASSWORD");
@@ -16,7 +18,7 @@ export async function pbAdminMiddleware(
         .collection("_superusers")
         .authWithPassword(PB_ID, PB_PASSWORD);
 
-      pb.authStore.save(authData.token, authData.record);
+      pb.authStore.save(authData.token, authData.record as AuthRecord);
     }
 
     next();

@@ -2,9 +2,8 @@ import { io, Socket } from "socket.io-client";
 
 import { chatProvider } from "./chat.svelte";
 import { authProvider } from "../auth/auth.svelte";
-import { ChatMessageSchema } from "../../models/chat";
-import z from "zod";
-import { pb } from "../auth/pb";
+import { pb } from "../../shared/pb";
+import type { MessagesResponse } from "../../shared/models/pocketbase-types";
 
 class SocketProvider {
   socket: Socket | null = null;
@@ -15,7 +14,7 @@ class SocketProvider {
     if (this.isConnected) {
       return true;
     }
-    
+
     return new Promise<boolean>((resolve) => {
       this.resolveConnection = resolve;
     });
@@ -45,12 +44,13 @@ class SocketProvider {
       this.isConnected = false;
     });
 
-    this.socket.on("new-message", (msg: any) => {
-      chatProvider.messages.push(ChatMessageSchema.parse(msg));
+    this.socket.on("new-message", (msg: MessagesResponse) => {
+      console.log("new-message", msg);
+      chatProvider.messages.push(msg);
     });
 
-    this.socket.on("chat-history", (history: any[]) => {
-      chatProvider.messages = z.array(ChatMessageSchema).parse(history);
+    this.socket.on("chat-history", (history: MessagesResponse[]) => {
+      chatProvider.messages = history;
     });
   }
 
@@ -65,7 +65,7 @@ class SocketProvider {
     console.log("Joined room:", roomId);
   }
 
-  sendMessage(roomId: string, message: any) {
+  sendMessage(roomId: string, message: MessagesResponse) {
     if (!this.socket || !this.isConnected) {
       console.warn("Socket not connected, cannot send message");
       return;

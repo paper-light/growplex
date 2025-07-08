@@ -2,19 +2,21 @@
 import "../../../styles/global.css";
 import { ClientRouter } from "astro:transitions";
 
-import { pb } from "../../../lib/config/pb";
-import { IntegrationSchema } from "../../../models";
+import { pb } from "../../../shared/pb";
 import Chat from "../../../chat/Chat.svelte";
 import ThemeLoad from "../../../components/ThemeLoad.astro";
+import type { IntegrationExpand } from "../../../shared/models/expands";
+import type { IntegrationsResponse } from "../../../shared/models/pocketbase-types";
 
 const { id } = Astro.params;
 const token = Astro.url.searchParams.get("token");
 
-const integration = IntegrationSchema.parse(
-  await pb
-    .collection("integrations")
-    .getFirstListItem(`chat="${id}"`, { expand: "agent,chat" })
-);
+const integration = await pb
+  .collection("integrations")
+  .getFirstListItem<IntegrationsResponse<IntegrationExpand>>(`chat="${id}"`, {
+    expand: "agent,chat",
+  });
+
 const chat = integration.expand!.chat!;
 const agent = integration.expand!.agent!;
 ---

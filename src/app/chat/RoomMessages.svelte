@@ -1,9 +1,7 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import { ChevronsDown } from "@lucide/svelte";
-  import { z } from "zod";
-  import type { ChatMessageSchema } from "@/models/chat";
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
   import ChatMessage from "../../components/Message.svelte";
@@ -13,6 +11,10 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
   import { navigate } from "astro:transitions/client";
+  import {
+    type MessagesRecord,
+    MessagesRoleOptions,
+  } from "../../shared/models/pocketbase-types";
 
   const { roomId } = $props();
 
@@ -44,7 +46,7 @@
   });
 
   $effect(() => {
-    console.log("messages", messages.length);
+    messages.length;
     setTimeout(() => {
       scrollToBottom();
     }, 100);
@@ -66,10 +68,10 @@
   }
 
   // Get avatar for message
-  function getAvatar(msg: z.infer<typeof ChatMessageSchema>) {
-    if (msg.role === "assistant") {
+  function getAvatar(msg: MessagesRecord) {
+    if (msg.role === MessagesRoleOptions.assistant) {
       return assistantAvatar;
-    } else if (msg.role === "operator") {
+    } else if (msg.role === MessagesRoleOptions.operator) {
       return avatar;
     }
     return Man.src;

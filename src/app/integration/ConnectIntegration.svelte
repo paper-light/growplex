@@ -60,7 +60,7 @@
     px-6 py-4
     "
   >
-    Connect Thalia
+    Connect
   </button>
 
   {#if showModal}

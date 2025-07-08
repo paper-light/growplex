@@ -1,6 +1,7 @@
+import AuthResponse from "pocketbase";
 import { defineMiddleware } from "astro:middleware";
-import { getEnv } from "../helpers/get-env";
-import { pb } from "../lib/config/pb";
+import { pb } from "../shared/pb";
+import { getEnv } from "../shared/helpers/get-env";
 
 const PB_ID = getEnv("PB_ID");
 const PB_PASSWORD = getEnv("PB_PASSWORD");
@@ -12,7 +13,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         .collection("_superusers")
         .authWithPassword(PB_ID, PB_PASSWORD, { requestKey: null });
 
-      pb.authStore.save(authData.token, authData.record);
+      pb.authStore.save(authData.token, authData.record as AuthResponse);
     }
     return next();
   } catch (err) {

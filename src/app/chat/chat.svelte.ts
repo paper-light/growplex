@@ -1,17 +1,19 @@
-import { z } from "zod";
-
-import { pb } from "../auth/pb";
-import { settingsProvider } from "../settings/settings.svelte";
-import { ChatMessageSchema, ChatRoomSchema } from "../../models/chat";
-import { socketProvider } from "./socket.svelte";
 import { untrack } from "svelte";
+
+import { pb } from "../../shared/pb";
+import { settingsProvider } from "../settings/settings.svelte";
+import { socketProvider } from "./socket.svelte";
+import type {
+  MessagesResponse,
+  RoomsResponse,
+} from "../../shared/models/pocketbase-types";
 
 class ChatProvider {
   private currentChatId: string | null = $state(null);
   private currentRoomId: string | null = $state(null);
-  private cachedRooms: z.infer<typeof ChatRoomSchema>[] = $state([]);
+  private cachedRooms: RoomsResponse[] = $state([]);
 
-  messages: z.infer<typeof ChatMessageSchema>[] = $state([]);
+  messages: MessagesResponse[] = $state([]);
 
   rooms = $derived.by(async () => {
     const chat = settingsProvider.currentChat;
@@ -36,10 +38,9 @@ class ChatProvider {
       pb.collection("rooms").unsubscribe();
       this.currentRoomId = null;
 
-      const res = await pb.collection("rooms").getFullList({
+      const rooms = await pb.collection("rooms").getFullList({
         filter: `chat = "${chat.id}"`,
       });
-      const rooms = z.array(ChatRoomSchema).parse(res);
       this.currentChatId = chat.id;
       this.cachedRooms = rooms;
       this.subscribeRooms(chat.id);
@@ -72,21 +73,21 @@ class ChatProvider {
   private subscribeRooms(chatId: string) {
     pb.collection("rooms").subscribe(
       "*",
-      (res) => {
-        switch (res.action) {
+      (room) => {
+        switch (room.action) {
           case "create":
-            const newRoom = ChatRoomSchema.parse(res.record);
+            const newRoom = room.record;
             this.cachedRooms = [...this.cachedRooms, newRoom];
             break;
           case "delete":
             this.cachedRooms = this.cachedRooms.filter(
-              (r) => r.id !== res.record.id
+              (r) => r.id !== room.record.id
             );
             break;
           case "update":
-            const updatedRoom = ChatRoomSchema.parse(res.record);
+            const updatedRoom = room.record;
             this.cachedRooms = this.cachedRooms.map((r) =>
-              r.id === res.record.id ? updatedRoom : r
+              r.id === room.record.id ? updatedRoom : r
             );
             break;
           default:

@@ -1,0 +1,370 @@
+/**
+* This file was @generated using pocketbase-typegen
+*/
+
+import type PocketBase from 'pocketbase'
+import type { RecordService } from 'pocketbase'
+
+export enum Collections {
+	Authorigins = "_authOrigins",
+	Externalauths = "_externalAuths",
+	Mfas = "_mfas",
+	Otps = "_otps",
+	Superusers = "_superusers",
+	Agents = "agents",
+	Chats = "chats",
+	Documents = "documents",
+	Feedbacks = "feedbacks",
+	Integrations = "integrations",
+	Leads = "leads",
+	Messages = "messages",
+	OrgMembers = "orgMembers",
+	Orgs = "orgs",
+	Projects = "projects",
+	Rooms = "rooms",
+	Sources = "sources",
+	Users = "users",
+}
+
+// Alias types for improved usability
+export type IsoDateString = string
+export type RecordIdString = string
+export type HTMLString = string
+
+type ExpandType<T> = unknown extends T
+	? T extends unknown
+		? { expand?: unknown }
+		: { expand: T }
+	: { expand: T }
+
+// System fields
+export type BaseSystemFields<T = unknown> = {
+	id: RecordIdString
+	collectionId: string
+	collectionName: Collections
+} & ExpandType<T>
+
+export type AuthSystemFields<T = unknown> = {
+	email: string
+	emailVisibility: boolean
+	username: string
+	verified: boolean
+} & BaseSystemFields<T>
+
+// Record types for each collection
+
+export type AuthoriginsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	fingerprint: string
+	id: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type ExternalauthsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	provider: string
+	providerId: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type MfasRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	method: string
+	recordRef: string
+	updated?: IsoDateString
+}
+
+export type OtpsRecord = {
+	collectionRef: string
+	created?: IsoDateString
+	id: string
+	password: string
+	recordRef: string
+	sentTo?: string
+	updated?: IsoDateString
+}
+
+export type SuperusersRecord = {
+	created?: IsoDateString
+	email: string
+	emailVisibility?: boolean
+	id: string
+	password: string
+	tokenKey: string
+	updated?: IsoDateString
+	verified?: boolean
+}
+
+export enum AgentsProviderOptions {
+	"openai" = "openai",
+	"anthropic" = "anthropic",
+	"google" = "google",
+}
+export type AgentsRecord = {
+	created?: IsoDateString
+	id: string
+	name?: string
+	provider?: AgentsProviderOptions
+	system?: string
+	updated?: IsoDateString
+}
+
+export type ChatsRecord<Ttheme = unknown> = {
+	avatar?: string
+	created?: IsoDateString
+	domain?: string
+	firstMessage?: string
+	id: string
+	name?: string
+	tg?: string
+	theme?: null | Ttheme
+	updated?: IsoDateString
+}
+
+export type DocumentsRecord<Tmetadata = unknown> = {
+	chunkCount?: number
+	content?: string
+	created?: IsoDateString
+	id: string
+	metadata?: null | Tmetadata
+	title?: string
+	tokenCount?: number
+	updated?: IsoDateString
+}
+
+export enum FeedbacksTypeOptions {
+	"support" = "support",
+	"idea" = "idea",
+}
+export type FeedbacksRecord<Tmetadata = unknown> = {
+	content?: string
+	created?: IsoDateString
+	id: string
+	metadata?: null | Tmetadata
+	type: FeedbacksTypeOptions
+	updated?: IsoDateString
+}
+
+export type IntegrationsRecord = {
+	agent?: RecordIdString
+	chat?: RecordIdString
+	created?: IsoDateString
+	id: string
+	name?: string
+	operators?: RecordIdString[]
+	sources?: RecordIdString[]
+	updated?: IsoDateString
+}
+
+export enum LeadsTypeOptions {
+	"cold" = "cold",
+	"warm" = "warm",
+	"hot" = "hot",
+	"client" = "client",
+}
+export type LeadsRecord<Tmetadata = unknown> = {
+	created?: IsoDateString
+	email?: string
+	id: string
+	metadata?: null | Tmetadata
+	phone?: string
+	tg?: string
+	type?: LeadsTypeOptions
+	updated?: IsoDateString
+}
+
+export enum MessagesRoleOptions {
+	"user" = "user",
+	"operator" = "operator",
+	"assistant" = "assistant",
+	"system" = "system",
+	"tool" = "tool",
+}
+export type MessagesRecord<Tmetadata = unknown> = {
+	content: string
+	created?: IsoDateString
+	id: string
+	metadata?: null | Tmetadata
+	role: MessagesRoleOptions
+	room: RecordIdString
+	sentBy: string
+	tokenCount?: number
+	visible?: boolean
+}
+
+export enum OrgMembersRoleOptions {
+	"owner" = "owner",
+	"operator" = "operator",
+}
+export type OrgMembersRecord = {
+	created?: IsoDateString
+	id: string
+	org?: RecordIdString
+	role: OrgMembersRoleOptions
+	updated?: IsoDateString
+}
+
+export type OrgsRecord = {
+	created?: IsoDateString
+	id: string
+	name: string
+	projects?: RecordIdString[]
+	updated?: IsoDateString
+}
+
+export type ProjectsRecord = {
+	agents?: RecordIdString[]
+	chats?: RecordIdString[]
+	created?: IsoDateString
+	id: string
+	integrations?: RecordIdString[]
+	name?: string
+	operators?: RecordIdString[]
+	sources?: RecordIdString[]
+	updated?: IsoDateString
+}
+
+export enum RoomsStatusOptions {
+	"auto" = "auto",
+	"operator" = "operator",
+	"waitingOperator" = "waitingOperator",
+	"preview" = "preview",
+	"seeded" = "seeded",
+}
+export type RoomsRecord = {
+	chat?: RecordIdString
+	created?: IsoDateString
+	id: string
+	status: RoomsStatusOptions
+	updated?: IsoDateString
+}
+
+export enum SourcesTypeOptions {
+	"webSitemap" = "webSitemap",
+	"webAuto" = "webAuto",
+	"custom" = "custom",
+}
+export type SourcesRecord<Tmetadata = unknown, Tsources = unknown> = {
+	content?: string
+	created?: IsoDateString
+	documents?: RecordIdString[]
+	files?: string[]
+	frequencyDays?: number
+	id: string
+	indexed?: IsoDateString
+	metadata?: null | Tmetadata
+	name?: string
+	sources?: null | Tsources
+	type?: SourcesTypeOptions
+	updated?: IsoDateString
+}
+
+export type UsersRecord<Tmetadata = unknown> = {
+	avatar?: string
+	created?: IsoDateString
+	email?: string
+	emailVisibility?: boolean
+	id: string
+	metadata?: null | Tmetadata
+	name?: string
+	orgMembers?: RecordIdString[]
+	password: string
+	tokenKey: string
+	updated?: IsoDateString
+	verified?: boolean
+}
+
+// Response types include system fields and match responses from the PocketBase API
+export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
+export type AgentsResponse<Texpand = unknown> = Required<AgentsRecord> & BaseSystemFields<Texpand>
+export type ChatsResponse<Ttheme = unknown, Texpand = unknown> = Required<ChatsRecord<Ttheme>> & BaseSystemFields<Texpand>
+export type DocumentsResponse<Tmetadata = unknown, Texpand = unknown> = Required<DocumentsRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type FeedbacksResponse<Tmetadata = unknown, Texpand = unknown> = Required<FeedbacksRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type IntegrationsResponse<Texpand = unknown> = Required<IntegrationsRecord> & BaseSystemFields<Texpand>
+export type LeadsResponse<Tmetadata = unknown, Texpand = unknown> = Required<LeadsRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type MessagesResponse<Tmetadata = unknown, Texpand = unknown> = Required<MessagesRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type OrgMembersResponse<Texpand = unknown> = Required<OrgMembersRecord> & BaseSystemFields<Texpand>
+export type OrgsResponse<Texpand = unknown> = Required<OrgsRecord> & BaseSystemFields<Texpand>
+export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
+export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
+export type SourcesResponse<Tmetadata = unknown, Tsources = unknown, Texpand = unknown> = Required<SourcesRecord<Tmetadata, Tsources>> & BaseSystemFields<Texpand>
+export type UsersResponse<Tmetadata = unknown, Texpand = unknown> = Required<UsersRecord<Tmetadata>> & AuthSystemFields<Texpand>
+
+// Types containing all Records and Responses, useful for creating typing helper functions
+
+export type CollectionRecords = {
+	_authOrigins: AuthoriginsRecord
+	_externalAuths: ExternalauthsRecord
+	_mfas: MfasRecord
+	_otps: OtpsRecord
+	_superusers: SuperusersRecord
+	agents: AgentsRecord
+	chats: ChatsRecord
+	documents: DocumentsRecord
+	feedbacks: FeedbacksRecord
+	integrations: IntegrationsRecord
+	leads: LeadsRecord
+	messages: MessagesRecord
+	orgMembers: OrgMembersRecord
+	orgs: OrgsRecord
+	projects: ProjectsRecord
+	rooms: RoomsRecord
+	sources: SourcesRecord
+	users: UsersRecord
+}
+
+export type CollectionResponses = {
+	_authOrigins: AuthoriginsResponse
+	_externalAuths: ExternalauthsResponse
+	_mfas: MfasResponse
+	_otps: OtpsResponse
+	_superusers: SuperusersResponse
+	agents: AgentsResponse
+	chats: ChatsResponse
+	documents: DocumentsResponse
+	feedbacks: FeedbacksResponse
+	integrations: IntegrationsResponse
+	leads: LeadsResponse
+	messages: MessagesResponse
+	orgMembers: OrgMembersResponse
+	orgs: OrgsResponse
+	projects: ProjectsResponse
+	rooms: RoomsResponse
+	sources: SourcesResponse
+	users: UsersResponse
+}
+
+// Type for usage with type asserted PocketBase instance
+// https://github.com/pocketbase/js-sdk#specify-typescript-definitions
+
+export type TypedPocketBase = PocketBase & {
+	collection(idOrName: '_authOrigins'): RecordService<AuthoriginsResponse>
+	collection(idOrName: '_externalAuths'): RecordService<ExternalauthsResponse>
+	collection(idOrName: '_mfas'): RecordService<MfasResponse>
+	collection(idOrName: '_otps'): RecordService<OtpsResponse>
+	collection(idOrName: '_superusers'): RecordService<SuperusersResponse>
+	collection(idOrName: 'agents'): RecordService<AgentsResponse>
+	collection(idOrName: 'chats'): RecordService<ChatsResponse>
+	collection(idOrName: 'documents'): RecordService<DocumentsResponse>
+	collection(idOrName: 'feedbacks'): RecordService<FeedbacksResponse>
+	collection(idOrName: 'integrations'): RecordService<IntegrationsResponse>
+	collection(idOrName: 'leads'): RecordService<LeadsResponse>
+	collection(idOrName: 'messages'): RecordService<MessagesResponse>
+	collection(idOrName: 'orgMembers'): RecordService<OrgMembersResponse>
+	collection(idOrName: 'orgs'): RecordService<OrgsResponse>
+	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
+	collection(idOrName: 'rooms'): RecordService<RoomsResponse>
+	collection(idOrName: 'sources'): RecordService<SourcesResponse>
+	collection(idOrName: 'users'): RecordService<UsersResponse>
+}

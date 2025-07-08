@@ -1,8 +1,8 @@
 <script lang="ts">
+  import { navigate } from "astro:transitions/client";
   import { signIn } from "./sign-in";
   import type { AuthError } from "./models";
   import Oauth from "./Oauth.svelte";
-  import { navigate } from "astro:transitions/client";
 
   let email = $state("");
   let password = $state("");

@@ -1,7 +1,6 @@
 import { actions } from "astro:actions";
-import { UserSchema } from "../../models";
 
-import { pb } from "./pb";
+import { pb } from "../../shared/pb";
 
 export const signUp = async (
   email: string,
@@ -9,14 +8,12 @@ export const signUp = async (
   passwordConfirm: string,
   name: string
 ) => {
-  const user = UserSchema.parse(
-    await pb.collection("users").create({
-      email,
-      password,
-      passwordConfirm,
-      name,
-    })
-  );
+  const user = await pb.collection("users").create({
+    email,
+    password,
+    passwordConfirm,
+    name,
+  });
 
-  await actions.seedUser({ user, provider: null });
+  await actions.seedUser({ userId: user.id, provider: null });
 };

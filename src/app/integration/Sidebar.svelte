@@ -1,14 +1,12 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { X, Check, Edit, Trash2 } from "@lucide/svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../auth/pb";
-  import { IntegrationSchema } from "../../models";
-  import z from "zod";
-  import { onMount } from "svelte";
+  import { pb } from "../../shared/pb";
 
   const currentProject = $derived(settingsProvider.currentProject);
   const currentIntegration = $derived(settingsProvider.currentIntegration);
@@ -22,9 +20,7 @@
   let editedIntegrationName = $state<string>("");
 
   let showDeleteModal = $state(false);
-  let integrationToDelete = $state<z.infer<typeof IntegrationSchema> | null>(
-    null
-  );
+  let integrationToDeleteId = $state<string | null>(null);
 
   function openSidebar() {
     uiProvider.setIntegrationsSidebarOpen(true);
@@ -52,11 +48,10 @@
   }
   async function confirmCreate(ci: { id: string; name: string }) {
     if (!currentProject) return;
-    const newInt = IntegrationSchema.parse(
-      await pb
-        .collection("integrations")
-        .create({ name: ci.name, project: currentProject.id })
-    );
+    const newInt = await pb
+      .collection("integrations")
+      .create({ name: ci.name, project: currentProject.id });
+
     await pb
       .collection("projects")
       .update(currentProject.id, { "integrations+": newInt.id });
@@ -65,52 +60,44 @@
     settingsProvider.setCurrentIntegration(newInt.id);
   }
 
-  function startEditIntegration(
-    e: MouseEvent,
-    integration: z.infer<typeof IntegrationSchema>
-  ) {
+  function startEditIntegration(e: MouseEvent, integrationId: string) {
     e.stopPropagation();
-    editingIntegrationId = integration.id;
-    editedIntegrationName = integration.name;
+    editingIntegrationId = integrationId;
+    editedIntegrationName =
+      integrations.find((i) => i.id === integrationId)?.name || "";
   }
   function cancelEditIntegration(e: MouseEvent) {
     e.stopPropagation();
     editingIntegrationId = null;
     editedIntegrationName = "";
   }
-  async function confirmEditIntegration(
-    e: MouseEvent,
-    integration: z.infer<typeof IntegrationSchema>
-  ) {
+  async function confirmEditIntegration(e: MouseEvent, integrationId: string) {
     e.stopPropagation();
     if (!editedIntegrationName.trim()) return;
     await pb
       .collection("integrations")
-      .update(integration.id, { name: editedIntegrationName.trim() });
-    settingsProvider.setCurrentIntegration(integration.id);
+      .update(integrationId, { name: editedIntegrationName.trim() });
+    settingsProvider.setCurrentIntegration(integrationId);
     await authProvider.refreshUser();
     editingIntegrationId = null;
     editedIntegrationName = "";
   }
 
-  function openDeleteModal(
-    e: MouseEvent,
-    integration: z.infer<typeof IntegrationSchema>
-  ) {
+  function openDeleteModal(e: MouseEvent, integrationId: string) {
     e.stopPropagation();
-    integrationToDelete = integration;
+    integrationToDeleteId = integrationId;
     showDeleteModal = true;
   }
   function closeDeleteModal() {
     showDeleteModal = false;
-    integrationToDelete = null;
+    integrationToDeleteId = null;
   }
   async function confirmDeleteIntegration() {
-    if (!integrationToDelete) return;
-    await pb.collection("integrations").delete(integrationToDelete.id);
+    if (!integrationToDeleteId) return;
+    await pb.collection("integrations").delete(integrationToDeleteId);
     await authProvider.refreshUser();
     showDeleteModal = false;
-    integrationToDelete = null;
+    integrationToDeleteId = null;
   }
 </script>
 
@@ -171,7 +158,7 @@
                   onclick={(e) => e.stopPropagation()}
                 />
                 <button
-                  onclick={(e) => confirmEditIntegration(e, integration)}
+                  onclick={(e) => confirmEditIntegration(e, integration.id)}
                   class="btn btn-ghost btn-xs p-1"
                 >
                   <Check size={12} />
@@ -194,13 +181,13 @@
                   {integration.name}
                 </button>
                 <button
-                  onclick={(e) => startEditIntegration(e, integration)}
+                  onclick={(e) => startEditIntegration(e, integration.id)}
                   class="btn btn-ghost btn-xs p-1"
                 >
                   <Edit size={12} />
                 </button>
                 <button
-                  onclick={(e) => openDeleteModal(e, integration)}
+                  onclick={(e) => openDeleteModal(e, integration.id)}
                   class="btn btn-ghost btn-xs p-1 text-error"
                   aria-label="Delete integration"
                 >

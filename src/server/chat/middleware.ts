@@ -1,8 +1,8 @@
-import PocketBase from "pocketbase";
-
-import { pb } from "@/lib/config/pb";
+import PocketBase, { type AuthRecord } from "pocketbase";
 import jwt from "jsonwebtoken";
-import { UserSchema } from "@/models/user";
+
+import { pb } from "@/shared/pb";
+import type { UsersResponse } from "@/shared/models/pocketbase-types";
 
 export async function ensureSuperuser() {
   if (!pb.authStore.isValid || !pb.authStore.isSuperuser) {
@@ -11,7 +11,7 @@ export async function ensureSuperuser() {
     const authData = await pb
       .collection("_superusers")
       .authWithPassword(PB_ID, PB_PASSWORD);
-    pb.authStore.save(authData.token, authData.record);
+    pb.authStore.save(authData.token, authData.record as AuthRecord);
   }
 }
 
@@ -28,7 +28,7 @@ export function useMiddlewares(io: any) {
           const res = await authPb.collection("users").authRefresh({
             expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
           });
-          const user = UserSchema.parse(res.record);
+          const user = res.record as UsersResponse;
           socket.data.user = user;
         } catch (err) {
           console.error("Invalid user token:", err);

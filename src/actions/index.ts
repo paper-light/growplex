@@ -1,8 +1,6 @@
 import z from "zod";
 import { defineAction } from "astro:actions";
 
-import { UserSchema } from "../models";
-
 import { tgHandler, TGSchema } from "./notification/tg";
 import { seedHandler } from "./user/seed";
 
@@ -14,7 +12,7 @@ export const server = {
 
   seedUser: defineAction({
     input: z.object({
-      user: UserSchema,
+      userId: z.string(),
       provider: z.enum(["google"]).nullable(),
     }),
     handler: seedHandler,

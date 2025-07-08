@@ -1,28 +1,17 @@
 <script lang="ts">
-  import z from "zod";
   import { onMount } from "svelte";
   import { ChevronDown, Check, Edit, X, Trash2 } from "@lucide/svelte";
 
-  import {
-    IntegrationSchema,
-    ProjectSchema,
-    type OrgSchema,
-  } from "../../models";
-
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../auth/pb";
+  import { pb } from "../../shared/pb";
 
   const currentOrg = $derived(settingsProvider.currentOrg);
   const currentProject = $derived(settingsProvider.currentProject);
 
-  const orgs = $derived(
-    authProvider.user?.expand?.orgMembers?.map((om) => om.expand?.org) || []
-  );
+  const orgs = $derived(authProvider.orgs);
   const projects = $derived(
-    authProvider.user?.expand?.orgMembers?.find(
-      (om) => om.org === currentOrg?.id
-    )?.expand?.org?.expand?.projects || []
+    orgs.find((o) => o.id === currentOrg?.id)?.expand!.projects!
   );
 
   let openOrg = $state(false);
@@ -40,7 +29,17 @@
   let editedProjectName = $state<string>("");
 
   let showDeleteProjectModal = $state(false);
-  let projectToDelete = $state<z.infer<typeof ProjectSchema> | null>(null);
+  let projectToDeleteId = $state<string | null>(null);
+
+  const editingOrg = $derived(
+    editingOrgId ? orgs.find((o) => o?.id === editingOrgId) : null
+  );
+  const editingProject = $derived(
+    editingProjectId ? projects.find((p) => p?.id === editingProjectId) : null
+  );
+  const projectToDelete = $derived(
+    projectToDeleteId ? projects.find((p) => p?.id === projectToDeleteId) : null
+  );
 
   function toggleOrg(e: MouseEvent) {
     e.stopPropagation();
@@ -53,13 +52,13 @@
     if (openProject) openOrg = false;
   }
 
-  function selectOrg(org: z.infer<typeof OrgSchema>) {
-    settingsProvider.setCurrentOrg(org.id);
+  function selectOrg(orgId: string) {
+    settingsProvider.setCurrentOrg(orgId);
     openOrg = false;
   }
 
-  function selectProject(project: z.infer<typeof ProjectSchema>) {
-    settingsProvider.setCurrentProject(project.id);
+  function selectProject(projectId: string) {
+    settingsProvider.setCurrentProject(projectId);
     openProject = false;
   }
 
@@ -81,16 +80,14 @@
   async function confirmCreate(cp: { id: string; name: string }) {
     if (!currentOrg) return;
 
-    const integration = IntegrationSchema.parse(
-      await pb.collection("integrations").create({
-        name: "Default Integration",
-      })
-    );
-    const project = ProjectSchema.parse(
-      await pb
-        .collection("projects")
-        .create({ name: cp.name, integrations: [integration.id] })
-    );
+    const integration = await pb.collection("integrations").create({
+      name: "Default Integration",
+    });
+
+    const project = await pb
+      .collection("projects")
+      .create({ name: cp.name, integrations: [integration.id] });
+
     await pb
       .collection("orgs")
       .update(currentOrg.id, { "projects+": project.id });
@@ -103,10 +100,10 @@
   }
 
   // Edit existing org
-  function startEditOrg(e: MouseEvent, org: z.infer<typeof OrgSchema>) {
+  function startEditOrg(e: MouseEvent, orgId: string) {
     e.stopPropagation();
-    editingOrgId = org.id;
-    editedOrgName = org.name;
+    editingOrgId = orgId;
+    editedOrgName = editingOrg?.name || "";
     openOrg = true;
   }
   function cancelEditOrg(e: MouseEvent) {
@@ -114,24 +111,21 @@
     editingOrgId = null;
     editedOrgName = "";
   }
-  async function confirmEditOrg(e: MouseEvent, org: z.infer<typeof OrgSchema>) {
+  async function confirmEditOrg(e: MouseEvent, orgId: string) {
     e.stopPropagation();
     if (!editedOrgName.trim()) return;
-    await pb.collection("orgs").update(org.id, { name: editedOrgName.trim() });
-    settingsProvider.setCurrentOrg(org.id);
+    await pb.collection("orgs").update(orgId, { name: editedOrgName.trim() });
+    settingsProvider.setCurrentOrg(orgId);
     await authProvider.refreshUser();
     editingOrgId = null;
     editedOrgName = "";
   }
 
   // Edit existing project
-  function startEditProject(
-    e: MouseEvent,
-    project: z.infer<typeof ProjectSchema>
-  ) {
+  function startEditProject(e: MouseEvent, projectId: string) {
     e.stopPropagation();
-    editingProjectId = project.id;
-    editedProjectName = project.name;
+    editingProjectId = projectId;
+    editedProjectName = editingProject?.name || "";
     openProject = true;
   }
   function cancelEditProject(e: MouseEvent) {
@@ -139,46 +133,40 @@
     editingProjectId = null;
     editedProjectName = "";
   }
-  async function confirmEditProject(
-    e: MouseEvent,
-    project: z.infer<typeof ProjectSchema>
-  ) {
+  async function confirmEditProject(e: MouseEvent, projectId: string) {
     e.stopPropagation();
     if (!editedProjectName.trim()) return;
     await pb
       .collection("projects")
-      .update(project.id, { name: editedProjectName.trim() });
-    settingsProvider.setCurrentProject(project.id);
+      .update(projectId, { name: editedProjectName.trim() });
+    settingsProvider.setCurrentProject(projectId);
     await authProvider.refreshUser();
     editingProjectId = null;
     editedProjectName = "";
   }
 
   // Delete project functionality
-  function openDeleteProjectModal(
-    e: MouseEvent,
-    project: z.infer<typeof ProjectSchema>
-  ) {
+  function openDeleteProjectModal(e: MouseEvent, projectId: string) {
     e.stopPropagation();
-    projectToDelete = project;
+    projectToDeleteId = projectId;
     showDeleteProjectModal = true;
   }
   function closeDeleteProjectModal() {
     showDeleteProjectModal = false;
-    projectToDelete = null;
+    projectToDeleteId = null;
   }
   async function confirmDeleteProject() {
-    if (!projectToDelete || !currentOrg) return;
+    if (!projectToDeleteId) return;
 
     // Delete the project
-    await pb.collection("projects").delete(projectToDelete.id);
+    await pb.collection("projects").delete(projectToDeleteId);
 
     await authProvider.refreshUser();
 
     // If we deleted the current project, select the first available project
-    if (currentProject?.id === projectToDelete.id) {
+    if (currentProject?.id === projectToDeleteId) {
       const remainingProjects = projects.filter(
-        (p) => p?.id !== projectToDelete?.id
+        (p) => p?.id !== projectToDeleteId
       );
       if (remainingProjects.length > 0) {
         settingsProvider.setCurrentProject(remainingProjects[0]!.id);
@@ -186,7 +174,7 @@
     }
 
     showDeleteProjectModal = false;
-    projectToDelete = null;
+    projectToDeleteId = null;
   }
 </script>
 
@@ -210,7 +198,7 @@
                 onclick={(e) => e.stopPropagation()}
               />
               <button
-                onclick={(e) => confirmEditOrg(e, org!)}
+                onclick={(e) => confirmEditOrg(e, org?.id)}
                 class="btn btn-ghost btn-xs p-1"
               >
                 <Check size={12} />
@@ -224,12 +212,12 @@
               <button
                 class:text-primary={org?.id === currentOrg?.id}
                 class="flex-[2] text-left p-1 text-sm"
-                onclick={() => selectOrg(org!)}
+                onclick={() => selectOrg(org.id)}
               >
                 <span class="font-semibold">{org?.name}</span>
               </button>
               <button
-                onclick={(e) => startEditOrg(e, org!)}
+                onclick={(e) => startEditOrg(e, org.id)}
                 class="btn btn-ghost btn-xs p-1"
               >
                 <Edit size={12} />
@@ -268,7 +256,7 @@
                 onclick={(e) => e.stopPropagation()}
               />
               <button
-                onclick={(e) => confirmEditProject(e, project!)}
+                onclick={(e) => confirmEditProject(e, project?.id)}
                 class="btn btn-ghost btn-xs p-1"
               >
                 <Check size={12} />
@@ -285,19 +273,19 @@
               <button
                 class:text-primary={project?.id === currentProject?.id}
                 class="flex-[2] text-left p-1 text-sm"
-                onclick={() => selectProject(project!)}
+                onclick={() => selectProject(project?.id)}
               >
                 <span class="font-semibold">{project?.name}</span>
               </button>
               <button
-                onclick={(e) => startEditProject(e, project!)}
+                onclick={(e) => startEditProject(e, project?.id)}
                 class="btn btn-ghost btn-xs p-1"
               >
                 <Edit size={12} />
               </button>
               {#if projects.length > 1}
                 <button
-                  onclick={(e) => openDeleteProjectModal(e, project!)}
+                  onclick={(e) => openDeleteProjectModal(e, project?.id)}
                   class="btn btn-ghost btn-xs p-1 text-error"
                   aria-label="Delete project"
                 >

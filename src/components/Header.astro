@@ -40,7 +40,7 @@ const { active } = Astro.props;
 
   <div class="items-center gap-3 flex">
     <div class="hidden md:block">
-      <ThemeController client:only />
+      <ThemeController client:load />
     </div>
 
     <div>
@@ -113,7 +113,7 @@ const { active } = Astro.props;
         </nav>
 
         <h4 class="text-xl font-bold text-center">Controls</h4>
-        <ThemeController client:only size="size-12" />
+        <ThemeController client:load size="size-12" />
       </div>
       <label class="modal-backdrop" for="modal_burger">Close</label>
     </div>

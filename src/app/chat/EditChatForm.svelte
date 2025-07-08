@@ -1,11 +1,10 @@
 <script lang="ts">
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../auth/pb";
-  import type { z } from "zod";
-  import { ChatSchema } from "../../models/chat";
+  import { pb } from "../../shared/pb";
+  import type { ChatsResponse } from "../../shared/models/pocketbase-types";
 
   interface Props {
-    entity: z.infer<typeof ChatSchema>;
+    entity: ChatsResponse;
     onClose: () => void;
   }
   let { entity, onClose }: Props = $props();

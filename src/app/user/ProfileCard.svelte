@@ -1,7 +1,7 @@
 <script lang="ts">
   import { PUBLIC_PB_URL } from "astro:env/client";
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../auth/pb";
+  import { pb } from "../../shared/pb";
   import { z } from "zod";
   import { Check, X, Edit, Upload } from "@lucide/svelte";
   import { navigate } from "astro:transitions/client";
@@ -15,12 +15,16 @@
 
   // OAuth detection
   const isOAuthUser = $derived(
-    user?.metadata ? user.metadata.provider || user.metadata.oauth2 : false
+    user?.metadata
+      ? (user.metadata as any).provider || (user.metadata as any).oauth2
+      : false
   );
 
   const oauthProvider = $derived(
     user?.metadata
-      ? user.metadata.provider || user.metadata.oauth2?.provider || null
+      ? (user.metadata as any).provider ||
+          (user.metadata as any).oauth2?.provider ||
+          null
       : null
   );
 

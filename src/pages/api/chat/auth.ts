@@ -1,8 +1,8 @@
-import { JWT_SECRET, MONO_URL } from "astro:env/server";
-import jwt from "jsonwebtoken";
-
-import { pb } from "../../../lib/config/pb";
 import { nanoid } from "nanoid";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET, MONO_URL } from "astro:env/server";
+
+import { pb } from "../../../shared/pb";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -59,6 +59,7 @@ export async function POST({ request }: { request: Request }) {
     }
 
     if (roomId) {
+      console.log("roomId", roomId);
       const room = await pb.collection("rooms").getOne(roomId);
       if (room.chat !== chat.id) {
         return new Response("Forbidden: Room does not belong to chat", {

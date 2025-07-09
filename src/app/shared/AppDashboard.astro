@@ -4,7 +4,7 @@ import { House, Mail, User, Menu } from "@lucide/astro";
 import ProfileMenu from "../user/ProfileMenu.svelte";
 import OrgProjectSelect from "../org/OrgProjectSelect.svelte";
 import SidebarNav from "../shared/SidebarNav.svelte";
-import ThemeController from "../../components/ThemeController.svelte";
+import ThemeController from "../../shared/ui/components/ThemeController.svelte";
 
 const { pageName } = Astro.props;
 ---
@@ -72,6 +72,8 @@ const { pageName } = Astro.props;
       class="w-72 lg:w-64 bg-base-100 border-r border-base-300 p-4 flex flex-col h-screen"
     >
       <OrgProjectSelect client:only transition:persist="org-project-select" />
+
+      <!-- <div class="divider w-full"></div> -->
 
       <SidebarNav
         active={pageName}

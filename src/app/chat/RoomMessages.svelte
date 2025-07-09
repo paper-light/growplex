@@ -5,8 +5,8 @@
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
   import ChatMessage from "../../shared/ui/components/Message.svelte";
-  import Man from "../../assets/Man.jpg";
-  import Thalia from "../../assets/Thalia.jpg";
+  import Man from "../../shared/assets/Man.jpg";
+  import Thalia from "../../shared/assets/Thalia.jpg";
   import { PUBLIC_PB_URL } from "astro:env/client";
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";

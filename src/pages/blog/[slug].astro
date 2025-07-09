@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 export const prerender = true;
 import { getEntry, render } from "astro:content";
-import Root from "../../layouts/Root.astro";
+import Root from "../../shared/ui/layouts/Root.astro";
 import { getCollection } from "astro:content";
 
 export const getStaticPaths = (async () => {

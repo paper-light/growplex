@@ -12,8 +12,8 @@
   import { ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "../shared/ui/components/Message.svelte";
-  import Man from "../assets/Man.jpg";
-  import Thalia from "../assets/Thalia.jpg";
+  import Man from "../shared/assets/Man.jpg";
+  import Thalia from "../shared/assets/Thalia.jpg";
 
   import { injectTheme } from "./injectTheme";
   import { parseJwtPayload } from "../shared/helpers/parse-jwt";

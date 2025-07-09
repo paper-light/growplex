@@ -34,10 +34,22 @@
     return names.includes(active) ? `${base} text-primary` : `${base} `;
   }
 
-  function linkClass(name: string) {
+  function linkClass(name: string, disabled = false) {
     const base = "btn btn-block w-full justify-start rounded-lg btn-ghost";
+    if (disabled) {
+      return `${base} text-base-content/50 cursor-not-allowed opacity-60`;
+    }
     return active === name ? `${base} text-primary` : `${base} `;
   }
+
+  const disabledLinks = [
+    "Agents",
+    "Chats",
+    "Knowledge",
+    "Operators",
+    "Analytics",
+    "Billing",
+  ];
 </script>
 
 <nav class="flex-1 overflow-y-auto">
@@ -54,7 +66,7 @@
         class={["text-left", linkClass("Wizard")]}
       >
         <Rocket size={18} />
-        Integrations Wizard
+        Integration Wizard
       </a>
     </li>
 
@@ -66,28 +78,40 @@
 
         <ul class="mt-2 space-y-1">
           <li class="w-full">
-            <a href="/app/agents" class={linkClass("Agents")}>
+            <span
+              class={["text-left", linkClass("Agents", true)]}
+              title="Coming soon"
+            >
               <Bot size={18} />
               Agents
-            </a>
+            </span>
           </li>
           <li class="w-full">
-            <a href="/app/chats" class={linkClass("Chats")}>
+            <span
+              class={["text-left", linkClass("Chats", true)]}
+              title="Coming soon"
+            >
               <MessageSquare size={18} />
               Chats
-            </a>
+            </span>
           </li>
           <li class="w-full">
-            <a href="/app/knowledge" class={linkClass("Knowledge")}>
+            <span
+              class={["text-left", linkClass("Knowledge", true)]}
+              title="Coming soon"
+            >
               <BookOpen size={18} />
               Knowledge
-            </a>
+            </span>
           </li>
           <li class="w-full">
-            <a href="/app/operators" class={linkClass("Operators")}>
+            <span
+              class={["text-left", linkClass("Operators", true)]}
+              title="Coming soon"
+            >
               <Users size={18} />
               Operators
-            </a>
+            </span>
           </li>
         </ul>
       </details>
@@ -113,10 +137,10 @@
             </a>
           </li>
           <li class="w-full">
-            <a href={`/app/tickets`} class={linkClass("Tickets")}>
+            <span class={linkClass("Tickets", true)} title="Coming soon">
               <Ticket size={18} />
               Tickets
-            </a>
+            </span>
           </li>
         </ul>
       </details>
@@ -130,16 +154,16 @@
 
         <ul class="mt-2 space-y-1">
           <li class="w-full">
-            <a href="/app/analytics" class={linkClass("Analytics")}>
+            <span class={linkClass("Analytics", true)} title="Coming soon">
               <ChartBar size={18} />
               Analytics
-            </a>
+            </span>
           </li>
           <li class="w-full">
-            <a href={`/app/billing`} class={linkClass("Billing")}>
+            <span class={linkClass("Billing", true)} title="Coming soon">
               <CreditCard size={18} />
               Billing
-            </a>
+            </span>
           </li>
         </ul>
       </details>

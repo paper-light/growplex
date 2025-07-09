@@ -1,6 +1,6 @@
 import { actions } from "astro:actions";
 
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 
 export const signUp = async (
   email: string,

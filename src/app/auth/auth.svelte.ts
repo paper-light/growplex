@@ -1,4 +1,4 @@
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import type { UserExpand } from "../../shared/models/expands";
 import type { UsersResponse } from "../../shared/models/pocketbase-types";
 

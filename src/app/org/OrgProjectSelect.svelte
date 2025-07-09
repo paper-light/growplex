@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { ChevronDown, Check, Edit, X, Trash2 } from "@lucide/svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../../shared/pb";
+  import { pb } from "../../shared/lib/pb";
+  import { clickOutside } from "../../shared/actions/click-outside";
 
   const currentOrg = $derived(settingsProvider.currentOrg);
   const currentProject = $derived(settingsProvider.currentProject);
@@ -16,9 +16,6 @@
 
   let openOrg = $state(false);
   let openProject = $state(false);
-
-  let orgEl: HTMLElement;
-  let projEl: HTMLElement;
 
   let creatingProjects = $state<{ id: string; name: string }[]>([]);
 
@@ -37,20 +34,6 @@
   const editingProject = $derived(
     editingProjectId ? projects.find((p) => p?.id === editingProjectId) : null
   );
-  const projectToDelete = $derived(
-    projectToDeleteId ? projects.find((p) => p?.id === projectToDeleteId) : null
-  );
-
-  function toggleOrg(e: MouseEvent) {
-    e.stopPropagation();
-    openOrg = !openOrg;
-    if (openOrg) openProject = false;
-  }
-  function toggleProject(e: MouseEvent) {
-    e.stopPropagation();
-    openProject = !openProject;
-    if (openProject) openOrg = false;
-  }
 
   function selectOrg(orgId: string) {
     settingsProvider.setCurrentOrg(orgId);
@@ -61,16 +44,6 @@
     settingsProvider.setCurrentProject(projectId);
     openProject = false;
   }
-
-  function onClickOutside(e: MouseEvent) {
-    if (orgEl && !orgEl.contains(e.target as Node)) openOrg = false;
-    if (projEl && !projEl.contains(e.target as Node)) openProject = false;
-  }
-
-  onMount(() => {
-    document.addEventListener("click", onClickOutside);
-    return () => document.removeEventListener("click", onClickOutside);
-  });
 
   function addCreatingProject() {
     creatingProjects.push({ id: String(Date.now()), name: "" });
@@ -113,6 +86,7 @@
   }
   async function confirmEditOrg(e: MouseEvent, orgId: string) {
     e.stopPropagation();
+    if (currentOrg?.id === orgId) return;
     if (!editedOrgName.trim()) return;
     await pb.collection("orgs").update(orgId, { name: editedOrgName.trim() });
     settingsProvider.setCurrentOrg(orgId);
@@ -135,6 +109,7 @@
   }
   async function confirmEditProject(e: MouseEvent, projectId: string) {
     e.stopPropagation();
+    if (currentProject?.id === projectId) return;
     if (!editedProjectName.trim()) return;
     await pb
       .collection("projects")
@@ -178,13 +153,24 @@
   }
 </script>
 
-<div class="mb-6 space-y-1">
+<div class="mb-4 space-y-2">
   <!-- Organization selector -->
-  <div class="dropdown w-full" class:dropdown-open={openOrg} bind:this={orgEl}>
-    <button class="btn btn-block justify-between truncate" onclick={toggleOrg}>
-      ORG: {currentOrg?.name}
+  <details
+    bind:open={openOrg}
+    class="dropdown w-full"
+    use:clickOutside={{
+      callback: () => (openOrg = false),
+    }}
+  >
+    <summary
+      class="btn btn-block btn-sm btn-ghost justify-between truncate relative"
+    >
+      <span class="absolute left-0 -top-1 text-info">
+        <span class="text-xs">org</span>
+      </span>
+      <span class="font-semibold">{currentOrg?.name}</span>
       <ChevronDown size={14} />
-    </button>
+    </summary>
     <ul
       class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1"
     >
@@ -227,21 +213,21 @@
         </li>
       {/each}
     </ul>
-  </div>
+  </details>
 
   <!-- Project selector -->
-  <div
+  <details
+    bind:open={openProject}
     class="dropdown w-full"
-    class:dropdown-open={openProject}
-    bind:this={projEl}
+    use:clickOutside={{ callback: () => (openProject = false) }}
   >
-    <button
-      class="btn btn-block justify-between truncate"
-      onclick={toggleProject}
-    >
-      PROJECT: {currentProject?.name}
+    <summary class="btn btn-block justify-between truncate btn-sm btn-ghost">
+      <span class="absolute left-0 -top-1 text-info">
+        <span class="text-xs text-light">project</span>
+      </span>
+      <span class="font-semibold">{currentProject?.name}</span>
       <ChevronDown size={14} />
-    </button>
+    </summary>
     <ul
       class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1 p-1"
     >
@@ -313,20 +299,30 @@
             >
               <Check size={12} />
             </button>
+            <button
+              onclick={() =>
+                (creatingProjects = creatingProjects.filter(
+                  (p) => p.id !== cp.id
+                ))}
+              class="btn btn-ghost btn-xs p-1"
+              aria-label="Cancel new project"
+            >
+              <X size={12} />
+            </button>
           </div>
         </li>
       {/each}
 
       <li class="w-full">
         <button
-          class="w-full text-left p-1 text-sm btn btn-primary btn-outline"
+          class="w-full text-left p-1 text-sm btn btn-primary btn-outline btn-sm"
           onclick={addCreatingProject}
         >
           <span class="font-semibold">+ Create new</span>
         </button>
       </li>
     </ul>
-  </div>
+  </details>
 </div>
 
 {#if showDeleteProjectModal}

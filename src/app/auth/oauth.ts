@@ -1,6 +1,6 @@
 import { actions } from "astro:actions";
 
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import { authProvider } from "./auth.svelte";
 import type { UsersResponse } from "../../shared/models/pocketbase-types";
 import type { UserExpand } from "../../shared/models/expands";

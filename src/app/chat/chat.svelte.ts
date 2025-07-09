@@ -1,6 +1,6 @@
 import { untrack } from "svelte";
 
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import { settingsProvider } from "../settings/settings.svelte";
 import { socketProvider } from "./socket.svelte";
 import type {

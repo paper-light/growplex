@@ -2,7 +2,7 @@ import { nanoid } from "nanoid";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET, MONO_URL } from "astro:env/server";
 
-import { pb } from "../../../shared/pb";
+import { pb } from "../../../shared/lib/pb";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",

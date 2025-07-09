@@ -1,7 +1,7 @@
 import type { AuthRecord } from "pocketbase";
 import type { Request, Response, NextFunction } from "express";
 
-import { pb } from "@/shared/pb";
+import { pb } from "@/shared/lib/pb";
 import { getEnv } from "@/shared/helpers/get-env";
 
 const PB_ID = getEnv("PB_ID");

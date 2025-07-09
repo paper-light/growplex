@@ -6,7 +6,7 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../../shared/pb";
+  import { pb } from "../../shared/lib/pb";
 
   const currentProject = $derived(settingsProvider.currentProject);
   const currentIntegration = $derived(settingsProvider.currentIntegration);

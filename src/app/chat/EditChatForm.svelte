@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authProvider } from "../auth/auth.svelte";
-  import { pb } from "../../shared/pb";
+  import { pb } from "../../shared/lib/pb";
   import type { ChatsResponse } from "../../shared/models/pocketbase-types";
 
   interface Props {

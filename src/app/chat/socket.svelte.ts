@@ -2,7 +2,7 @@ import { io, Socket } from "socket.io-client";
 
 import { chatProvider } from "./chat.svelte";
 import { authProvider } from "../auth/auth.svelte";
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import type { MessagesResponse } from "../../shared/models/pocketbase-types";
 
 class SocketProvider {

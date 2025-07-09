@@ -1,4 +1,4 @@
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import { authProvider } from "./auth.svelte";
 
 export const signIn = async (email: string, password: string) => {

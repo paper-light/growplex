@@ -1,6 +1,6 @@
 import AuthResponse from "pocketbase";
 import { defineMiddleware } from "astro:middleware";
-import { pb } from "../shared/pb";
+import { pb } from "../shared/lib/pb";
 import { getEnv } from "../shared/helpers/get-env";
 
 const PB_ID = getEnv("PB_ID");

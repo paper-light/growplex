@@ -7,7 +7,7 @@
   import { authProvider } from "../auth/auth.svelte";
   import { uiProvider } from "../settings/ui.svelte";
   import Chat from "../../chat/Chat.svelte";
-  import { pb } from "../../shared/pb";
+  import { pb } from "../../shared/lib/pb";
   import { socketProvider } from "../chat/socket.svelte";
 
   const currentIntegration = $derived(settingsProvider.currentIntegration);
@@ -99,7 +99,7 @@
   >
     <button
       type="button"
-      class="btn btn-primary rounded-xl btn-sm"
+      class="btn btn-primary btn-sm rounded-xl btn-outline"
       aria-label="Reload chat"
       onclick={reloadChat}
     >

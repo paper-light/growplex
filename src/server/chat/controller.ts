@@ -1,7 +1,7 @@
 import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
-import { pb } from "@/shared/pb";
+import { pb } from "@/shared/lib/pb";
 import { rateLimiter } from "@/lib/config/rate-limiter";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";

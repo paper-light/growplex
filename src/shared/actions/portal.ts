@@ -6,7 +6,6 @@ export function createPortal(node: HTMLElement, id = "default") {
   const key = `$$portal.${id}`;
   if (portalMap.has(key)) throw `duplicate portal key "${id}"`;
   else portalMap.set(key, node);
-  console.log("create portalMap", portalMap);
   return { destroy: () => portalMap.delete(key) };
 }
 function mount(node: HTMLElement, key: string) {
@@ -19,7 +18,6 @@ export function portal(node: HTMLElement, id = "default") {
   let destroy: (() => void) | undefined;
   const key = `$$portal.${id}`;
   if (!portalMap.has(key)) {
-    console.log("portalMap", portalMap);
     tick().then(() => {
       destroy = mount(node, key);
     });

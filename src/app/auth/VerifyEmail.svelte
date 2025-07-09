@@ -1,6 +1,6 @@
 <script lang="ts">
   import { authProvider } from "./auth.svelte";
-  import { pb } from "../../shared/pb";
+  import { pb } from "../../shared/lib/pb";
 
   const user = $derived(authProvider.user);
 

@@ -1,5 +1,5 @@
 import { authProvider } from "./auth.svelte";
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import { settingsProvider } from "../settings/settings.svelte";
 import type { UsersResponse } from "../../shared/models/pocketbase-types";
 import type { UserExpand } from "../../shared/models/expands";

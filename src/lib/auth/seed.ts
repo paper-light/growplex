@@ -1,4 +1,4 @@
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 
 export async function seed(userId: string, provider: "google" | null = null) {
   const user = await pb.collection("users").getOne(userId);

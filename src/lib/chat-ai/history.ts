@@ -1,7 +1,7 @@
 import { nanoid } from "nanoid";
 
 import { getEnv } from "../../helpers/get-env";
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 import { redisClient } from "../config/redis";
 import { logger } from "../config/logger";
 import { globalEncoderService } from "./encoder";

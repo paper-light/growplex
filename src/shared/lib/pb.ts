@@ -1,7 +1,7 @@
 import PocketBase, { AsyncAuthStore } from "pocketbase";
 
-import { getEnv } from "./helpers/get-env";
-import type { TypedPocketBase } from "./models/pocketbase-types";
+import { getEnv } from "../helpers/get-env";
+import type { TypedPocketBase } from "../models/pocketbase-types";
 
 const PUBLIC_PB_URL = getEnv("PUBLIC_PB_URL");
 

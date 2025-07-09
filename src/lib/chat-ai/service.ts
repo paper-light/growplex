@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 
-import { pb } from "../../shared/pb";
+import { pb } from "../../shared/lib/pb";
 
 import { getChain } from "./llm";
 import { getHistory, updateHistory } from "./history";

@@ -1,7 +1,7 @@
 import PocketBase, { type AuthRecord } from "pocketbase";
 import jwt from "jsonwebtoken";
 
-import { pb } from "@/shared/pb";
+import { pb } from "@/shared/lib/pb";
 import type { UsersResponse } from "@/shared/models/pocketbase-types";
 
 export async function ensureSuperuser() {

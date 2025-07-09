@@ -34,6 +34,13 @@ class SettingsProvider {
     }
     return orgs[0];
   });
+  currentRole = $derived.by(() => {
+    if (!this.selected.orgId) return null;
+    const role = authProvider.orgMembers.find(
+      (m) => m.expand!.org?.id === this.selected.orgId
+    );
+    return role?.role;
+  });
 
   currentProject = $derived.by(() => {
     const org = this.currentOrg;

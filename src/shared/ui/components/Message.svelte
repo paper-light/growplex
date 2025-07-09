@@ -2,7 +2,7 @@
   import { marked } from "marked";
   import DOMPurify from "dompurify";
   import { DateTime } from "luxon";
-  import type { MessagesResponse } from "../shared/models/pocketbase-types";
+  import type { MessagesResponse } from "../../models/pocketbase-types";
 
   interface Props {
     msg: MessagesResponse;

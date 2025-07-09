@@ -11,7 +11,7 @@
   import { nanoid } from "nanoid";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import ChatMessage from "../components/Message.svelte";
+  import ChatMessage from "../shared/ui/components/Message.svelte";
   import Man from "../assets/Man.jpg";
   import Thalia from "../assets/Thalia.jpg";
 

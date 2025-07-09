@@ -86,7 +86,6 @@
   }
   async function confirmEditOrg(e: MouseEvent, orgId: string) {
     e.stopPropagation();
-    if (currentOrg?.id === orgId) return;
     if (!editedOrgName.trim()) return;
     await pb.collection("orgs").update(orgId, { name: editedOrgName.trim() });
     settingsProvider.setCurrentOrg(orgId);
@@ -109,7 +108,6 @@
   }
   async function confirmEditProject(e: MouseEvent, projectId: string) {
     e.stopPropagation();
-    if (currentProject?.id === projectId) return;
     if (!editedProjectName.trim()) return;
     await pb
       .collection("projects")

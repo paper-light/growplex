@@ -11,6 +11,8 @@
 
   const { msg, avatar }: Props = $props();
 
+  const finalAvatar = (msg.metadata as any)?.avatar || avatar;
+
   // TIME
   const utcTs = DateTime.fromFormat(msg.created, "yyyy-MM-dd HH:mm:ss.SSS'Z'", {
     zone: "utc",
@@ -31,7 +33,11 @@
   <div class={incoming ? "chat chat-start" : "chat chat-end"}>
     <div class="chat-image avatar">
       <div class="size-10 rounded-full overflow-hidden">
-        <img alt={msg.role} src={avatar} class="w-full h-full object-cover" />
+        <img
+          alt={msg.role}
+          src={finalAvatar}
+          class="w-full h-full object-cover"
+        />
       </div>
     </div>
 

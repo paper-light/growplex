@@ -8,6 +8,12 @@
   import { authProvider } from "../auth/auth.svelte";
   import { pb } from "../../shared/lib/pb";
 
+  interface Props {
+    block?: boolean;
+  }
+
+  let { block = false }: Props = $props();
+
   const currentProject = $derived(settingsProvider.currentProject);
   const currentIntegration = $derived(settingsProvider.currentIntegration);
   const integrations = $derived(currentProject?.expand?.integrations || []);
@@ -33,7 +39,7 @@
   }
 
   $effect(() => {
-    if (open) window.addEventListener("keydown", handleKeydown);
+    if (open && !block) window.addEventListener("keydown", handleKeydown);
     else window.removeEventListener("keydown", handleKeydown);
   });
 
@@ -47,7 +53,7 @@
     creatingIntegrations.push({ id: String(Date.now()), name: "" });
   }
   async function confirmCreate(ci: { id: string; name: string }) {
-    if (!currentProject) return;
+    if (!currentProject || !ci.name.trim()) return;
     const newInt = await pb
       .collection("integrations")
       .create({ name: ci.name, project: currentProject.id });
@@ -101,51 +107,59 @@
   }
 </script>
 
-{#if !open}
-  <button
-    type="button"
-    class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40 flex flex-col items-center justify-center px-2 py-3"
-    aria-label="Open sidebar"
-    onclick={openSidebar}
-    style="height: 280px; min-width: 30px;"
-  >
-    {#each "INTEGRATIONS".split("") as letter, i}
-      <span class="block text-sm font-bold" style="transform: rotate(90deg);"
-        >{letter}</span
-      >
-    {/each}
-  </button>
-{:else}
-  <button
-    type="button"
-    class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40"
-    aria-label="Close sidebar"
-    onclick={closeSidebar}
-  >
-    <X size={32} />
-  </button>
-{/if}
-
-{#if open}
-  <aside
-    bind:this={sidebarEl}
-    class="fixed top-0 left-0 h-full lg:w-64 bg-base-200 shadow-xl flex flex-col px-2 pt-10 z-30"
-    transition:slide={{ axis: "x" }}
-    aria-label="Integration sidebar"
-    tabindex="-1"
-    onintroend={() => sidebarEl?.focus()}
-  >
+{#if !block}
+  {#if !open}
     <button
       type="button"
-      class="btn btn-sm btn-ghost btn-circle absolute top-4 right-4"
+      class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40 flex flex-col items-center justify-center px-2 py-3"
+      aria-label="Open sidebar"
+      onclick={openSidebar}
+      style="height: 280px; min-width: 30px;"
+    >
+      {#each "INTEGRATIONS".split("") as letter, i}
+        <span class="block text-sm font-bold" style="transform: rotate(90deg);"
+          >{letter}</span
+        >
+      {/each}
+    </button>
+  {:else}
+    <button
+      type="button"
+      class="absolute top-1/2 -left-1 -translate-y-1/2 rounded-full bg-primary hover:bg-base-200 transition border border-primary hover:cursor-pointer hover:text-primary z-40"
       aria-label="Close sidebar"
       onclick={closeSidebar}
     >
-      <X size={20} />
+      <X size={32} />
     </button>
+  {/if}
+{/if}
+
+{#if open || block}
+  <aside
+    bind:this={sidebarEl}
+    class={[
+      "bg-base-200 shadow-xl flex flex-col px-2 pt-10",
+      block ? "w-full h-full min-h-0" : "fixed top-0 left-0 w-80 z-30 h-full",
+    ]}
+    transition:slide={!block ? { axis: "x" } : undefined}
+    aria-label="Integration sidebar"
+    tabindex="-1"
+    style={block ? "height: 100%; max-height: 100%;" : undefined}
+    onintroend={() => sidebarEl?.focus()}
+  >
+    {#if !block}
+      <button
+        type="button"
+        class="btn btn-sm btn-ghost btn-circle absolute top-4 right-4"
+        aria-label="Close sidebar"
+        onclick={closeSidebar}
+      >
+        <X size={20} />
+      </button>
+    {/if}
 
     <!-- Scrollable list -->
-    <div class="flex-1 overflow-y-auto mt-2">
+    <div class="flex-1 min-h-0 overflow-y-auto mt-2">
       <ul class="p-0 space-y-1">
         {#each integrations as integration (integration.id)}
           <li class="p-1 pr-2">
@@ -201,7 +215,7 @@
     </div>
 
     <!-- Fixed footer -->
-    <div class="px-1 py-4 border-t">
+    <div class="px-1 py-4 border-t flex-shrink-0">
       {#each creatingIntegrations as ci (ci.id)}
         <div class="flex items-center gap-2 mb-2">
           <input

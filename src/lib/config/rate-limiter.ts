@@ -1,6 +1,6 @@
 import { RateLimiterRedis } from "rate-limiter-flexible";
 
-import { getEnv } from "../../helpers/get-env";
+import { getEnv } from "../../shared/helpers/get-env";
 
 import { redisClient } from "./redis";
 

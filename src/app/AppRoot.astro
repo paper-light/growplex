@@ -21,7 +21,7 @@ const { title, active } = Astro.props;
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <ThemeLoad />
-    <ClientRouter />
+    <ClientRouter fallback="swap" />
     <Posthog />
     <AppState client:only transition:persist="app" />
   </head>

@@ -1,4 +1,4 @@
-import { getEnv } from "../../helpers/get-env";
+import { getEnv } from "../../shared/helpers/get-env";
 
 const CRAWL4AI_URL = getEnv("CRAWL4AI_URL");
 

@@ -1,0 +1,71 @@
+---
+import AppRoot from "../../app/AppRoot.astro";
+import AppDashboard from "../../app/shared/AppDashboard.astro";
+import Sidebar from "../../app/integration/Sidebar.svelte";
+import ChatPreview from "../../app/integration/ChatPreview.svelte";
+---
+
+<AppRoot title="Growplex | Wizard" active="wizard">
+  <AppDashboard pageName="Wizard">
+    <div class="w-full h-full relative">
+      <!-- Desktop Layout: Grid with flexible main content -->
+      <div
+        class="hidden lg:grid h-full w-full"
+        style="grid-template-columns: minmax(200px, 320px) minmax(400px, 1fr) minmax(340px, 400px);"
+      >
+        <!-- Integrations Sidebar -->
+        <div class="h-full overflow-hidden">
+          <Sidebar block={true} client:load />
+        </div>
+
+        <!-- Main Content -->
+        <div class="h-full">
+          <div
+            class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-4 flex flex-col items-center justify-center text-center h-full"
+          >
+            <div class="text-2xl font-semibold mb-2 opacity-60">
+              Integration Wizard
+            </div>
+            <span class="badge badge-warning badge-outline mb-4"
+              >Coming Soon</span
+            >
+            <p class="text-base-content/70 max-w-md">
+              Configure your integrations and test them in real-time with our
+              wizard interface.
+            </p>
+          </div>
+        </div>
+
+        <!-- Chat Preview -->
+        <div class="h-full overflow-hidden">
+          <ChatPreview block={true} client:load />
+        </div>
+      </div>
+
+      <!-- Mobile Layout: Single column with overlays -->
+      <div class="lg:hidden w-full h-full relative">
+        <!-- Main Content -->
+        <div class="p-4 h-full">
+          <div
+            class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center h-full"
+          >
+            <div class="text-2xl font-semibold mb-2 opacity-60">
+              Integration Wizard
+            </div>
+            <span class="badge badge-warning badge-outline mb-4"
+              >Coming Soon</span
+            >
+            <p class="text-base-content/70 max-w-md">
+              Configure your integrations and test them in real-time with our
+              wizard interface.
+            </p>
+          </div>
+        </div>
+
+        <!-- Mobile Overlays -->
+        <Sidebar block={false} client:load />
+        <ChatPreview block={false} client:load />
+      </div>
+    </div>
+  </AppDashboard>
+</AppRoot>

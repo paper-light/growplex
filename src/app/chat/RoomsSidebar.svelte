@@ -7,7 +7,7 @@
   const { roomId } = $props();
 
   const integrations = $derived(
-    settingsProvider.currentProject?.expand!.integrations! || []
+    settingsProvider.currentProject?.expand?.integrations || []
   );
   const currentIntegration = $derived(settingsProvider.currentIntegration);
 

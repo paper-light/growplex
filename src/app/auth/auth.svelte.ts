@@ -26,7 +26,7 @@ class AuthProvider {
   );
   token = $state(pb.authStore.token);
 
-  orgMembers = $derived(this.user?.expand!.orgMembers || []);
+  orgMembers = $derived(this.user?.expand?.orgMembers || []);
   orgs = $derived(this.orgMembers.map((m) => m.expand!.org!));
 
   private subscriptionId: string | null = null;

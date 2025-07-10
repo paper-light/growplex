@@ -160,11 +160,12 @@
 </script>
 
 <div
-  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative"
+  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
+  style="height: 100%; max-height: 100%;"
 >
   <!-- Header -->
   <header
-    class="flex items-center justify-between border-b border-base-300 px-4 py-3"
+    class="flex items-center justify-between border-b border-base-300 px-4 py-3 flex-shrink-0"
   >
     <div class="flex items-center space-x-3">
       <div class="avatar">
@@ -186,7 +187,7 @@
   <main
     bind:this={messageContainer}
     onscroll={onScroll}
-    class="flex-1 overflow-y-auto space-y-2 p-2 overscroll-contain"
+    class="flex-1 min-h-0 overflow-y-auto space-y-2 p-2 overscroll-contain"
   >
     {#each messages as msg (msg.id)}
       {@const avatar =
@@ -230,7 +231,7 @@
   <!-- Footer with Input + Send Button -->
   <footer
     class="
-      sticky bottom-0 left-0 w-full z-10
+      flex-shrink-0
       border-t border-base-300
       bg-base-100
       px-3 py-1

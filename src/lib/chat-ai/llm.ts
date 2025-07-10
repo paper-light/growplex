@@ -3,7 +3,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatAnthropic } from "@langchain/anthropic";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
-import { getEnv } from "../../helpers/get-env";
+import { getEnv } from "../../shared/helpers/get-env";
 
 const ENV = getEnv("ENV");
 const MAX_TOKENS = parseInt(getEnv("PUBLIC_CHAT_MAX_MESSAGE_TOKENS"));

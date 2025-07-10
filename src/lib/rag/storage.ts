@@ -1,7 +1,7 @@
 import { QdrantVectorStore } from "@langchain/qdrant";
 import { OpenAIEmbeddings } from "@langchain/openai";
 
-import { getEnv } from "../../helpers/get-env";
+import { getEnv } from "../../shared/helpers/get-env";
 
 const QDRANT_URL = getEnv("QDRANT_URL");
 

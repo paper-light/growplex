@@ -61,10 +61,7 @@
       </a>
     </li>
     <li class="w-full">
-      <a
-        href="/app/integrations/wizard"
-        class={["text-left", linkClass("Wizard")]}
-      >
+      <a href="/app/wizard" class={["text-left", linkClass("Wizard")]}>
         <Rocket size={18} />
         Integration Wizard
       </a>

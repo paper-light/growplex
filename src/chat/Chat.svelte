@@ -7,7 +7,7 @@
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
   import { onDestroy, onMount, tick } from "svelte";
-  import { io, Socket } from "socket.io-client";
+  import { io, type Socket } from "socket.io-client";
   import { nanoid } from "nanoid";
   import { ChevronsRight } from "@lucide/svelte";
 

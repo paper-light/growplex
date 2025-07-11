@@ -1,5 +1,4 @@
 <script lang="ts">
-  import z from "zod";
   import { onMount } from "svelte";
   import ChatToggle from "./ChatToggle.svelte";
   import ChatContainer from "./ChatContainer.svelte";
@@ -10,8 +9,6 @@
     domain: string;
     color?: string;
   }
-
-  type ChatWidgetPayload = z.infer<typeof ChatWidgetPayloadSchema>;
 
   let { chatId, domain, color }: Props = $props();
 
@@ -30,13 +27,16 @@
       ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
       : null;
 
+    const body = JSON.stringify({
+      chatId,
+      roomId: payload?.roomId,
+      username: payload?.username,
+    });
+    console.log(payload, body);
+
     const response = await fetch(`${domain}/api/chat/auth`, {
       method: "POST",
-      body: JSON.stringify({
-        chatId,
-        roomId: payload?.roomId,
-        username: payload?.username,
-      }),
+      body,
       headers: {
         "Content-Type": "application/json",
       },

@@ -13,6 +13,10 @@ const CORS_HEADERS = {
 export async function POST({ request }: { request: Request }) {
   try {
     let { chatId, roomId, username } = await request.json();
+    console.log("chatId", chatId);
+    console.log("roomId", roomId);
+    console.log("username", username);
+
     if (!chatId)
       return new Response("Missing id", {
         status: 400,
@@ -58,8 +62,8 @@ export async function POST({ request }: { request: Request }) {
       username = `Guest-${nanoid(6)}`;
     }
 
+    console.log("ROOM", roomId);
     if (roomId) {
-      console.log("roomId", roomId);
       const room = await pb.collection("rooms").getOne(roomId);
       if (room.chat !== chat.id) {
         return new Response("Forbidden: Room does not belong to chat", {
@@ -89,6 +93,7 @@ export async function POST({ request }: { request: Request }) {
       },
     });
   } catch (err) {
+    console.error(err);
     return new Response("Server error", {
       status: 500,
       headers: CORS_HEADERS,

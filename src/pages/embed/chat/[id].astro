@@ -14,11 +14,15 @@ const integration = await pb
     expand: "agent,chat",
   });
 
-const chat = integration.expand!.chat!;
-const agent = integration.expand!.agent!;
+if (!integration.expand?.chat || !integration.expand?.agent) {
+  throw new Error("Integration not properly configured");
+}
+
+const chat = integration.expand.chat;
+const agent = integration.expand.agent;
 ---
 
-<Root title={chat.name}>
+<Root title={chat.name} needCookies={false}>
   <Chat chat={chat} agent={agent} token={token} client:only />
 </Root>
 

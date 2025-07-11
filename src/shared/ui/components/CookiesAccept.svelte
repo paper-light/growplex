@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  let ok = $state(true);
+  const { initOk = true } = $props();
+
+  let ok = $state(initOk);
 
   onMount(() => {
     ok = localStorage.getItem("okCookies") === "true";

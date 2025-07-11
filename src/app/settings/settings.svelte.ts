@@ -79,6 +79,11 @@ class SettingsProvider {
     if (!integration) return null;
     return integration.expand!.agent!;
   });
+  currentSources = $derived.by(() => {
+    const integration = this.currentIntegration;
+    if (!integration) return null;
+    return integration.expand!.sources!;
+  });
 
   setCurrentOrg(orgId: string) {
     if (this.selected.orgId === orgId) return;

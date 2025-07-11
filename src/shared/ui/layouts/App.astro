@@ -1,0 +1,12 @@
+---
+import AppState from "./App.svelte";
+import Root from "./Root.astro";
+
+const { title, favicon = "/LOGO.png" } = Astro.props;
+---
+
+<AppState client:only transition:persist="app-global-state" slot="head" />
+
+<Root title={title} favicon={favicon} slot="head">
+  <slot />
+</Root>

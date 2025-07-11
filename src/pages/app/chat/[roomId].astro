@@ -1,13 +1,10 @@
 ---
-import AppRoot from "../../../app/AppRoot.astro";
-import AppDashboard from "../../../app/shared/AppDashboard.astro";
+import AppDashboard from "../../../shared/ui/layouts/AppDashboard.astro";
 import ChatLayout from "../../../app/chat/ChatLayout.svelte";
 
 const { roomId } = Astro.params;
 ---
 
-<AppRoot title="Chat Rooms" active="chat-rooms">
-  <AppDashboard pageName="Chat Rooms">
-    <ChatLayout roomId={roomId} client:only transition:persist="chat-layout" />
-  </AppDashboard>
-</AppRoot>
+<AppDashboard title="Chat Rooms">
+  <ChatLayout roomId={roomId} client:only transition:persist="chat-layout" />
+</AppDashboard>

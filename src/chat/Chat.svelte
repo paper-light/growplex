@@ -16,7 +16,7 @@
   import Thalia from "../shared/assets/Thalia.jpg";
 
   import { injectTheme } from "./injectTheme";
-  import { parseJwtPayload } from "../shared/helpers/parse-jwt";
+  import { parseJwtPayload } from "../auth/parse-jwt";
   import { ChatWidgetPayloadSchema } from "./models";
   import {
     type ChatsResponse,

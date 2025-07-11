@@ -1,0 +1,13 @@
+---
+import App from "./App.astro";
+
+const { title, favicon = "/LOGO.png" } = Astro.props;
+---
+
+<App title={title} favicon={favicon}>
+  <main class="mx-auto mt-8 max-w-2xl">
+    <div class="bg-card border-card rounded-lg border p-4 shadow-lg">
+      <slot />
+    </div>
+  </main>
+</App>

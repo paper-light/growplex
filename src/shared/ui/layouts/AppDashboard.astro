@@ -1,0 +1,97 @@
+---
+import { House, Mail, User, Menu } from "@lucide/astro";
+
+import ProfileMenu from "../../../app/user/ProfileMenu.svelte";
+import OrgProjectSelect from "../../../app/org/OrgProjectSelect.svelte";
+import SidebarNav from "../../../app/shared/SidebarNav.svelte";
+import ThemeController from "../components/ThemeController.svelte";
+
+import App from "./App.astro";
+
+const { title, favicon = "/LOGO.png" } = Astro.props;
+---
+
+<App title={title} favicon={favicon}>
+  <div class="drawer lg:drawer-open">
+    <!-- toggle checkbox -->
+    <input id="sidebar-toggle" type="checkbox" class="drawer-toggle" />
+
+    <!-- Main page content -->
+    <div class="drawer-content flex flex-col h-screen bg-base-200">
+      <!-- Navbar -->
+      <header class="navbar bg-base-100 border-b border-base-300 px-1 lg:px-6">
+        <!-- Mobile: hamburger -->
+        <div class="flex-none lg:hidden">
+          <label for="sidebar-toggle" class="btn btn-square btn-ghost">
+            <Menu class="w-6 h-6" />
+          </label>
+        </div>
+        <!-- Page title -->
+        <div class="flex-1 px-2 text-center lg:text-left">
+          <h1 class="text-xl font-semibold">{title}</h1>
+        </div>
+        <!-- Actions -->
+        <ProfileMenu
+          active={title}
+          client:only
+          transition:persist="profile-menu"
+        />
+      </header>
+
+      <!-- Main slot -->
+      <main class="flex-1 overflow-auto">
+        <slot />
+      </main>
+
+      <!-- Mobile bottom nav -->
+      <footer
+        class="fixed bottom-0 inset-x-0 bg-base-100 border-t border-base-300 lg:hidden"
+      >
+        <nav class="flex justify-around py-2">
+          <a href="/app" class="btn btn-ghost flex flex-col items-center">
+            <House class="w-5 h-5" />
+            <span class="text-xs">Home</span>
+          </a>
+          <a
+            href="/app/integrations"
+            class="btn btn-ghost flex flex-col items-center"
+          >
+            <Mail class="w-5 h-5" />
+            <span class="text-xs">Connect</span>
+          </a>
+          <a
+            href="/app/profile"
+            class="btn btn-ghost flex flex-col items-center"
+          >
+            <User class="w-5 h-5" />
+            <span class="text-xs">Profile</span>
+          </a>
+        </nav>
+      </footer>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="drawer-side">
+      <!-- dark overlay when open on mobile -->
+      <label for="sidebar-toggle" class="drawer-overlay"></label>
+      <aside
+        class="w-72 lg:w-64 bg-base-100 border-r border-base-300 p-4 flex flex-col h-screen"
+      >
+        <OrgProjectSelect client:only transition:persist="org-project-select" />
+
+        <!-- <div class="divider w-full"></div> -->
+
+        <SidebarNav
+          active={title}
+          client:only
+          transition:persist="sidebar-nav"
+        />
+
+        <!-- Theme toggle at bottom -->
+        <div class="mt-auto">
+          <ThemeController client:only transition:persist="theme-controller" />
+        </div>
+      </aside>
+    </div>
+  </div>
+</App>

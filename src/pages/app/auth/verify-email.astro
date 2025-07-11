@@ -1,12 +1,9 @@
 ---
-import AppRoot from "../../../app/AppRoot.astro";
-import AuthLayout from "../../../app/auth/AuthLayout.astro";
+import AuthLayout from "../../../shared/ui/layouts/Auth.astro";
 
 import VerifyEmailWidget from "../../../app/auth/VerifyEmail.svelte";
 ---
 
-<AppRoot title="Growplex | Email">
-  <AuthLayout>
-    <VerifyEmailWidget client:load />
-  </AuthLayout>
-</AppRoot>
+<AuthLayout title="Email Verification">
+  <VerifyEmailWidget client:load />
+</AuthLayout>

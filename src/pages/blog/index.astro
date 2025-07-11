@@ -1,6 +1,6 @@
 ---
 import { getCollection } from "astro:content";
-import Root from "../../shared/ui/layouts/Root.astro";
+import Content from "../../shared/ui/layouts/Content.astro";
 import Card from "../../shared/ui/components/Card.astro";
 
 const searchParams = new URLSearchParams(Astro.request.url.split("?")[1]);
@@ -14,7 +14,7 @@ const filteredBlog = category
   : blog;
 ---
 
-<Root title="Growplex | Blog" active="blog">
+<Content title="Blog">
   <section class="mb-8">
     <h3 class="text-lg font-semibold m-1">Filters</h3>
     <div class="flex flex-wrap gap-2">
@@ -74,4 +74,4 @@ const filteredBlog = category
       ))
     }
   </section>
-</Root>
+</Content>

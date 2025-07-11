@@ -2,7 +2,7 @@
 import "dotenv/config";
 
 import { handler as astroHandler } from "../dist/server/entry.mjs";
-import { main } from "@/server/init";
+import { main } from "./init";
 
 main(astroHandler).catch((err) => {
   console.error("Fatal error during startup:", err);

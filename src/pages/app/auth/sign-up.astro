@@ -1,12 +1,9 @@
 ---
-import AppRoot from "../../../app/AppRoot.astro";
-import AuthLayout from "../../../app/auth/AuthLayout.astro";
+import AuthLayout from "../../../shared/ui/layouts/Auth.astro";
 
 import SignUpWidget from "../../../app/auth/SignUp.svelte";
 ---
 
-<AppRoot title="Growplex | SignUp">
-  <AuthLayout>
-    <SignUpWidget client:load />
-  </AuthLayout>
-</AppRoot>
+<AuthLayout title="Sign Up">
+  <SignUpWidget client:load />
+</AuthLayout>

@@ -1,5 +1,4 @@
 ---
-import Root from "../shared/ui/layouts/Root.astro";
 import ThaliaImg from "../shared/assets/Thalia.jpg";
 import AletheiaImg from "../shared/assets/Aletheia.jpg";
 import CalliopeImg from "../shared/assets/Calliope.jpg";
@@ -9,9 +8,10 @@ import HestiaImg from "../shared/assets/Hestia.jpg";
 import PantheonImg from "../shared/assets/Pantheon.jpg";
 import Logo from "../shared/assets/LOGO.png";
 import { Image } from "astro:assets";
+import Content from "../shared/ui/layouts/Content.astro";
 ---
 
-<Root title="Growplex | Home" active="home">
+<Content title="Home">
   <div class="max-w-7xl mx-auto px-4 py-20 space-y-32">
     <!-- Hero Section -->
     <section class="text-center space-y-8">
@@ -300,4 +300,4 @@ import { Image } from "astro:assets";
       >
     </section>
   </div>
-</Root>
+</Content>

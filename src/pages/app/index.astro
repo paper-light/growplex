@@ -1,11 +1,9 @@
 ---
-import AppRoot from "../../app/AppRoot.astro";
-import AppDashboard from "../../app/shared/AppDashboard.astro";
+import AppDashboard from "../../shared/ui/layouts/AppDashboard.astro";
 import { Wand } from "@lucide/astro";
 ---
 
-<AppRoot title="Growplex | App Home" active="home">
-  <AppDashboard pageName="Home">
+<AppDashboard title="Home">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
       <!-- Welcome Section -->
       <div class="text-center mb-12">
@@ -65,5 +63,4 @@ import { Wand } from "@lucide/astro";
         </div>
       </div>
     </div>
-  </AppDashboard>
-</AppRoot>
+</AppDashboard>

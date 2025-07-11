@@ -1,0 +1,21 @@
+---
+import Root from "./Root.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import ChatLoad from "../components/ChatLoad.astro";
+
+const { title, favicon = "/LOGO.png" } = Astro.props;
+---
+
+<Root title={title} favicon={favicon}>
+  <Header active={title} />
+
+  <main class="mt-4 px-2 mx-auto max-w-screen-xl">
+    <slot />
+  </main>
+
+  <Footer />
+
+  <!--  -->
+  <ChatLoad />
+</Root>

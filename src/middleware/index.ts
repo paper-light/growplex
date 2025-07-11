@@ -1,8 +1,9 @@
-
 import { defineMiddleware } from "astro:middleware";
 import { pb } from "../shared/lib/pb";
 import { getEnv } from "../shared/helpers/get-env";
 import type { AuthRecord } from "pocketbase";
+
+import { paraglideMiddleware } from "../shared/paraglide/server.js";
 
 const PB_ID = getEnv("PB_ID");
 const PB_PASSWORD = getEnv("PB_PASSWORD");
@@ -16,9 +17,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
       pb.authStore.save(authData.token, authData.record as AuthRecord);
     }
-    return next();
   } catch (err) {
     console.error("[pbAdminMiddleware] Failed to authenticate:", err);
     return new Response();
   }
+
+  return paraglideMiddleware(context.request, () => next());
 });

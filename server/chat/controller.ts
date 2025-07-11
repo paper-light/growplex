@@ -2,7 +2,7 @@ import { Server as IOServer, Socket } from "socket.io";
 import type { RateLimiterRes } from "rate-limiter-flexible";
 
 import { pb } from "@/shared/lib/pb";
-import { rateLimiter } from "@/lib/config/rate-limiter";
+import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
 import { getHistory, updateHistory } from "@/lib/chat-ai/history";
@@ -14,6 +14,7 @@ import {
   type RoomsResponse,
 } from "@/shared/models/pocketbase-types";
 import type { RoomExpand } from "@/shared/models/expands";
+import { chatRateLimiter } from "./rate-limiter";
 
 interface JoinRoomDTO {
   chatId: string;
@@ -114,7 +115,7 @@ export function attachSocketIO(httpServer: any) {
       const limiterKey = `room:${roomId}:user:${userId}`;
 
       try {
-        await rateLimiter.consume(limiterKey, 1);
+        await rateLimitThrow(chatRateLimiter, limiterKey, 1);
         await updateHistory([msg]);
 
         io.to(roomId).emit("new-message", msg);

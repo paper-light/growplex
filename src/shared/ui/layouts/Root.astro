@@ -4,41 +4,36 @@ import { ClientRouter } from "astro:transitions";
 
 import Posthog from "../components/Posthog.astro";
 import ThemeLoad from "../components/ThemeLoad.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
 import CookiesAccept from "../components/CookiesAccept.svelte";
-
-import ChatLoad from "./ChatLoad.astro";
-
 import PortalHost from "../../ui/PortalHost.svelte";
 
-const { title, active } = Astro.props;
+import { getLocale } from "../../paraglide/runtime";
+
+const { title, favicon = "/LOGO.png" } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={getLocale()}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/LOGO.png" />
     <meta name="generator" content={Astro.generator} />
+
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+
     <title>{title}</title>
+
     <ThemeLoad />
     <ClientRouter />
     <Posthog />
+
+    <slot name="head" />
   </head>
   <body>
-    <Header active={active} />
-
-    <main class="mt-4 px-2 mx-auto max-w-screen-xl">
-      <slot />
-    </main>
-
-    <Footer />
+    <slot />
 
     <CookiesAccept client:only />
-
-    <ChatLoad />
 
     <PortalHost client:only />
   </body>

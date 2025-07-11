@@ -2,7 +2,7 @@
 import type { GetStaticPaths } from "astro";
 export const prerender = true;
 import { getEntry, render } from "astro:content";
-import Root from "../../shared/ui/layouts/Root.astro";
+import Content from "../../shared/ui/layouts/Content.astro";
 import { getCollection } from "astro:content";
 
 export const getStaticPaths = (async () => {
@@ -16,10 +16,10 @@ export const getStaticPaths = (async () => {
 const { slug } = Astro.params;
 
 const post = await getEntry("blog", slug!);
-const { Content } = await render(post!);
+const { Content: BlogContent } = await render(post!);
 ---
 
-<Root title={post?.data.title} active="blog">
+<Content title={post?.data.title}>
   <div class="flex gap-2 mb-4">
     <aside class="flex-1 hidden md:block sticky top-20 self-start">
       MORE BLOG
@@ -29,7 +29,7 @@ const { Content } = await render(post!);
       <div class="prose dark:prose-invert">
         <h1>{post?.data.title}</h1>
         <p>{post?.data.description}</p>
-        <Content />
+        <BlogContent />
       </div>
     </article>
 
@@ -37,4 +37,4 @@ const { Content } = await render(post!);
       <div>Subscribe</div>
     </aside>
   </div>
-</Root>
+</Content>

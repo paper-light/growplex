@@ -10,10 +10,12 @@ import sitemap from "@astrojs/sitemap";
 import mdx from "@astrojs/mdx";
 
 import node from "@astrojs/node";
+import { paraglideVitePlugin } from "@inlang/paraglide-js";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://growplex.dev",
+  // site: "https://growplex.dev",
+  site: "http://localhost:2999",
   env: {
     schema: {
       PUBLIC_MESSAGE_DELAY_SEC: envField.number({
@@ -53,13 +55,26 @@ export default defineConfig({
       CRAWL4AI_URL: envField.string({ context: "server", access: "secret" }),
       MONO_URL: envField.string({ context: "server", access: "secret" }),
       QDRANT_URL: envField.string({ context: "server", access: "secret" }),
+      QDRANT_API_KEY: envField.string({ context: "server", access: "secret" }),
     },
   },
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [
+      tailwindcss(),
+      paraglideVitePlugin({
+        project: "./project.inlang",
+        outdir: "./src/shared/paraglide",
+      }),
+    ],
   },
 
-  integrations: [svelte(), sitemap(), mdx()],
+  integrations: [
+    svelte(),
+    mdx(),
+    sitemap({
+      filter: (page) => !page.includes("/app") && !page.includes("/api"),
+    }),
+  ],
 
   output: "server",
   adapter: node({

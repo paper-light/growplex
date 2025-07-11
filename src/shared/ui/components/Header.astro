@@ -24,16 +24,16 @@ const { active } = Astro.props;
 
   <!-- Desktop -->
   <nav class="gap-5 hidden md:flex">
-    <a href="/" class={`link link-hover ${active === "home" && "font-bold"}`}
+    <a href="/" class={`link link-hover ${active === "Home" && "font-bold"}`}
       >Home</a
     >
     <a
       href="/products/forge"
-      class={`link link-hover ${active === "forge" && "font-bold"}`}>Forge</a
+      class={`link link-hover ${active === "Forge" && "font-bold"}`}>Forge</a
     >
     <a
       href="/products"
-      class={`link link-hover ${active === "products" && "font-bold"}`}
+      class={`link link-hover ${["Products", "Pantheon", "Hestia", "Athena", "Aletheia", "Calliope", "Iynx", "Thalia"].includes(active) && "font-bold"}`}
       >Products</a
     >
   </nav>
@@ -97,17 +97,17 @@ const { active } = Astro.props;
         <nav class="*:text-lg space-y-2 mb-2">
           <a
             href="/"
-            class={`block link link-hover ${active === "home" && "font-bold"}`}
+            class={`block link link-hover ${active === "Home" && "font-bold"}`}
             >Home</a
           >
           <a
             href="/products/forge"
-            class={`block link link-hover ${active === "forge" && "font-bold"}`}
+            class={`block link link-hover ${active === "Forge" && "font-bold"}`}
             >Forge</a
           >
           <a
             href="/products"
-            class={`block link link-hover ${active === "products" && "font-bold"}`}
+            class={`block link link-hover ${active === "Products" && "font-bold"}`}
             >Products</a
           >
         </nav>

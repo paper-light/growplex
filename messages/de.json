@@ -1,4 +1,26 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "example_message": "Guten Tag {username}"
+  "example_message": "Guten Tag {username}",
+  "blog_title": "Der Geschmack des Fortschritts: Freude am Weg finden",
+  "blog_description": "Warum der Aufbau eines Startups nicht nur ein Kampf ist, sondern auch eine Quelle tiefer persönlicher Bedeutung und Zufriedenheit.",
+  "mindset_section_title": "Warum die Einstellung wichtiger ist als Geschwindigkeit",
+  "sustainable_pace_label": "Nachhaltiges Tempo",
+  "sustainable_pace_text": "Burnout ist der Feind guter Arbeit. Schnell ist fragil. Langsam ist nachhaltig.",
+  "creative_energy_label": "Kreative Energie",
+  "creative_energy_text": "Fortschritt fühlt sich besser an, wenn man nicht Geistern oder imaginärer Konkurrenz hinterherjagt.",
+  "presence_label": "Präsenz",
+  "presence_text": "Die meiste Zeit als Gründer verbringst du in der Aufbauphase. Wenn du diesen Teil nicht genießen kannst, wirst du auch mit dem nächsten nie zufrieden sein.",
+  "journey_section_title": "Wie du deine Gründerreise mehr genießen kannst",
+  "journey_point_1": "Arbeite an Problemen, die dir wichtig sind, nicht nur dem Markt.",
+  "journey_point_2": "Teile Fortschritte öffentlich — nicht zur Validierung, sondern zur Verbindung.",
+  "journey_point_3": "Nimm dir Momente, um zu reflektieren, wie weit du gekommen bist, auch wenn das Ziel noch weit weg ist.",
+  "rituals_section_title": "Ein paar kleine Rituale:",
+  "ritual_1": "Beginne jeden Tag mit einer Frage: \"Was würde diesen Tag bedeutungsvoll machen?\"",
+  "ritual_2": "Schreibe eine kurze wöchentliche Reflexion, auch wenn sie chaotisch ist.",
+  "ritual_3": "Schalte oft ab. Einsamkeit nährt Klarheit.",
+  "quote_text": "Glück ist nicht etwas, das du für die Zukunft aufschiebst; es ist etwas, das du für die Gegenwart gestaltest.",
+  "quote_author": "Jim Rohn",
+  "conclusion_1": "Gründen geht nicht nur um Exit-Multiples oder Pitch-Decks.",
+  "conclusion_2": "Es geht darum, etwas Reales aufzubauen — und dabei jemand Reales zu werden.",
+  "conclusion_3": "Lass dich auf den Geschmack langsamen Fortschritts ein. Es ist die einzige Art, die haften bleibt."
 }

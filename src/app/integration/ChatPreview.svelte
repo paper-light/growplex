@@ -131,7 +131,7 @@
         type="button"
         class="btn btn-primary btn-sm rounded-xl btn-outline"
         aria-label="Reload chat"
-        onclick={reloadChat}
+        onclick={() => {}}
       >
         Connect!
       </button>

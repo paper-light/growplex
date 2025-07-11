@@ -1,11 +1,8 @@
 ---
-import AppRoot from "../../app/AppRoot.astro";
-import AppDashboard from "../../app/shared/AppDashboard.astro";
+import AppDashboard from "../../shared/ui/layouts/AppDashboard.astro";
 import ProfileCard from "../../app/user/ProfileCard.svelte";
 ---
 
-<AppRoot title="Growplex | Profile" active="profile">
-  <AppDashboard pageName="Profile">
-    <ProfileCard client:only />
-  </AppDashboard>
-</AppRoot>
+<AppDashboard title="Profile">
+  <ProfileCard client:only transition:persist="profile-card" />
+</AppDashboard>

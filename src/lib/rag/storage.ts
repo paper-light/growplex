@@ -4,6 +4,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { getEnv } from "../../shared/helpers/get-env";
 
 const QDRANT_URL = getEnv("QDRANT_URL");
+const QDRANT_API_KEY = getEnv("QDRANT_API_KEY");
 
 export const embeddings = new OpenAIEmbeddings({
   model: "text-embedding-3-small",
@@ -27,7 +28,11 @@ export async function createOrgVectorStore(
 
   const vectorStore = await QdrantVectorStore.fromExistingCollection(
     embeddings,
-    { url: QDRANT_URL, collectionName }
+    {
+      url: QDRANT_URL,
+      collectionName,
+      apiKey: QDRANT_API_KEY,
+    }
   );
 
   if (useCache) {

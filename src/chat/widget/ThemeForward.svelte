@@ -36,17 +36,17 @@
     });
     observer.observe(htmlEl, { attributes: true });
 
-    // const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    // const onChange = (e: MediaQueryListEvent) => {
-    //   if (!htmlEl.hasAttribute("data-theme")) {
-    //     postTheme(e.matches ? "dark" : "light");
-    //   }
-    // };
-    // mql.addEventListener("change", onChange);
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (e: MediaQueryListEvent) => {
+      if (!htmlEl.hasAttribute("data-theme")) {
+        postTheme(e.matches ? "dark" : "light");
+      }
+    };
+    mql.addEventListener("change", onChange);
 
     return () => {
       observer.disconnect();
-      // mql.removeEventListener("change", onChange);
+      mql.removeEventListener("change", onChange);
     };
   });
 </script>

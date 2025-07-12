@@ -4,7 +4,7 @@ import { redisClient } from "../../lib/config/redis";
 export interface RateLimiterConfig {
   keyPrefix: string;
   points: number;
-  duration: number;
+  durationSeconds: number;
 }
 
 export interface RateLimitOptions {
@@ -18,7 +18,7 @@ export function createRateLimiter(config: RateLimiterConfig): RateLimiterRedis {
     storeClient: redisClient,
     keyPrefix: config.keyPrefix,
     points: config.points,
-    duration: config.duration,
+    duration: config.durationSeconds,
   });
 }
 

@@ -33,5 +33,5 @@ data/**/*.mp3
 pb/pb_data
 
 public/scripts/chat-widget.js
-aletheia/data/results.json
+scripts/crawler/data/*
 qdrant/data

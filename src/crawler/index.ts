@@ -1,1 +1,1 @@
-export { crawlDomain } from "./crawl-domain";
+export { crawlDomain } from "./crawl";

@@ -31,6 +31,7 @@ export async function discoverSitemapUrls(domain: string): Promise<string[]> {
     });
   } catch (error) {
     console.error("Error discovering sitemap URLs:", error);
+    return [];
   }
 
   return Array.from(candidates);

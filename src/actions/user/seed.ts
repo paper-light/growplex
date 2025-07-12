@@ -1,4 +1,4 @@
-import { seed } from "../../lib/auth/seed";
+import { seed } from "../../auth/seed-user";
 
 export const seedHandler = async (input: {
   userId: string;

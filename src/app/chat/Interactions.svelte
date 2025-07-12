@@ -1,14 +1,16 @@
 <script lang="ts">
+  import { nanoid } from "nanoid";
+  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { Send } from "@lucide/svelte";
+
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
-  import { nanoid } from "nanoid";
   import { authProvider } from "../auth/auth.svelte";
   import {
     type MessagesRecord,
     MessagesRoleOptions,
   } from "../../shared/models/pocketbase-types";
-  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
+  import { pb } from "../../shared/lib/pb";
 
   const currentRoom = $derived.by(async () => await chatProvider.currentRoom);
   const messages = $derived(chatProvider.messages);
@@ -52,6 +54,9 @@
       visible: true,
       room: room.id,
       sentBy: authProvider.user!.name,
+      metadata: {
+        avatar: pb.files.getURL(authProvider.user!, authProvider.user!.avatar),
+      },
       created: new Date().toISOString().replace("T", " "),
     };
 

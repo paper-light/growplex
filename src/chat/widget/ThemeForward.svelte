@@ -15,11 +15,13 @@
   onMount(() => {
     const htmlEl = document.documentElement;
 
-    const detect = () =>
-      htmlEl.getAttribute("data-theme") ??
-      (window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light");
+    const detect = () => {
+      const theme = htmlEl.getAttribute("data-theme");
+      console.log("detected theme", theme);
+      if (theme) return theme;
+      const mql = window.matchMedia("(prefers-color-scheme: dark)");
+      return mql.matches ? "dark" : "light";
+    };
 
     setTimeout(() => {
       postTheme(detect());
@@ -34,17 +36,17 @@
     });
     observer.observe(htmlEl, { attributes: true });
 
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = (e: MediaQueryListEvent) => {
-      if (!htmlEl.hasAttribute("data-theme")) {
-        postTheme(e.matches ? "dark" : "light");
-      }
-    };
-    mql.addEventListener("change", onChange);
+    // const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    // const onChange = (e: MediaQueryListEvent) => {
+    //   if (!htmlEl.hasAttribute("data-theme")) {
+    //     postTheme(e.matches ? "dark" : "light");
+    //   }
+    // };
+    // mql.addEventListener("change", onChange);
 
     return () => {
       observer.disconnect();
-      mql.removeEventListener("change", onChange);
+      // mql.removeEventListener("change", onChange);
     };
   });
 </script>

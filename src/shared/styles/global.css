@@ -11,13 +11,13 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: var(--color-lime-600);
-  --color-secondary: var(--color-yellow-500);
+  --color-primary: var(--color-lime-700);
+  --color-secondary: var(--color-yellow-600);
 }
 
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
-  --color-primary: var(--color-lime-500);
-  --color-secondary: var(--color-yellow-400);
+  --color-primary: var(--color-lime-600);
+  --color-secondary: var(--color-yellow-500);
 }

@@ -5,8 +5,8 @@ import { pb } from "../../shared/lib/pb";
 import { getChain } from "./llm";
 import { getHistory, updateHistory } from "./history";
 import { logger } from "../config/logger";
-import { extractorService } from "../rag/extractor";
-import { createDocumentIdsFilter } from "../rag/filters";
+import { extractorService } from "../../rag/extractor";
+import { createDocumentIdsFilter } from "../../rag/filters";
 import { Document } from "@langchain/core/documents";
 import {
   MessagesRoleOptions,

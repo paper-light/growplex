@@ -9,7 +9,12 @@ import PortalHost from "../../ui/PortalHost.svelte";
 
 import { getLocale } from "../../paraglide/runtime";
 
-const { title, favicon = "/LOGO.png", needCookies = true } = Astro.props;
+const {
+  title,
+  favicon = "/LOGO.png",
+  needCookies = true,
+  loadTheme = true,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -24,16 +29,17 @@ const { title, favicon = "/LOGO.png", needCookies = true } = Astro.props;
 
     <title>{title}</title>
 
-    <ThemeLoad />
     <ClientRouter />
     <Posthog />
+
+    {loadTheme && <ThemeLoad />}
 
     <slot name="head" />
   </head>
   <body>
     <slot />
 
-    <CookiesAccept client:only initOk={needCookies} />
+    {needCookies && <CookiesAccept client:only />}
 
     <PortalHost client:only />
   </body>

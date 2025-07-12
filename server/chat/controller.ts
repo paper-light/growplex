@@ -6,7 +6,7 @@ import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { processAssistantReply } from "@/lib/chat-ai/service";
 import { getHistory, updateHistory } from "@/lib/chat-ai/history";
-import { globalEncoderService } from "@/lib/chat-ai/encoder";
+import { globalEncoderService } from "@/llm";
 
 import { useMiddlewares } from "./middleware";
 import {

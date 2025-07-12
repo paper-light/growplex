@@ -3,52 +3,60 @@
   import { fade } from "svelte/transition";
   import {
     PUBLIC_MESSAGE_DELAY_SEC,
-    PUBLIC_PB_URL,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onDestroy, onMount, tick } from "svelte";
-  import { io, type Socket } from "socket.io-client";
-  import { nanoid } from "nanoid";
+  import { onMount, tick } from "svelte";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import ChatMessage from "../shared/ui/components/Message.svelte";
-  import Man from "../shared/assets/Man.jpg";
-  import Thalia from "../shared/assets/Thalia.jpg";
+  import ChatMessage from "../../shared/ui/components/Message.svelte";
+  import Man from "../../shared/assets/Man.jpg";
+  import Thalia from "../../shared/assets/Thalia.jpg";
 
-  import { injectTheme } from "./injectTheme";
-  import { parseJwtPayload } from "../auth/parse-jwt";
-  import { ChatWidgetPayloadSchema } from "./models";
+  import { parseJwtPayload } from "../../auth/parse-jwt";
   import {
     type ChatsResponse,
     type AgentsResponse,
     type MessagesResponse,
-    type MessagesRecord,
-    MessagesRoleOptions,
-  } from "../shared/models/pocketbase-types";
+  } from "../../shared/models/pocketbase-types";
+  import { pb } from "../../shared/lib/pb";
+
+  import { widgetSocketProvider } from "../provider/widget-socket.svelte";
+  import { ChatWidgetPayloadSchema } from "../models";
+  import { injectTheme } from "../utils/injectTheme";
 
   interface Props {
     chat: ChatsResponse;
     agent: AgentsResponse;
     token: string;
+    initTheme: string;
     payload?: z.infer<typeof ChatWidgetPayloadSchema>;
   }
 
-  const { chat, agent, token, payload }: Props = $props();
+  const { chat, agent, token, payload, initTheme }: Props = $props();
 
   const { roomId, username } = $derived(
-    payload || ChatWidgetPayloadSchema.parse(parseJwtPayload(token!))
+    payload ||
+      (() => {
+        const parsed = parseJwtPayload(token!);
+        if (!parsed) {
+          throw new Error("Invalid token: unable to parse JWT payload");
+        }
+        return ChatWidgetPayloadSchema.parse(parsed);
+      })()
   );
 
-  const assistantAvatar = chat.avatar
-    ? `${PUBLIC_PB_URL}/api/files/chats/${chat.id}/${chat.avatar}`
+  const chatAvatar = chat.avatar
+    ? pb.files.getURL(chat, chat.avatar)
     : Thalia.src;
 
-  const maxInputChars = PUBLIC_CHAT_MAX_MESSAGE_TOKENS * 0.75 * 4.5;
+  const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
 
-  let socket: Socket | null = $state(null);
+  const messages: MessagesResponse[] = $derived(widgetSocketProvider.history);
+  const online = $derived(widgetSocketProvider.online || false);
 
-  let messages: MessagesResponse[] = $state([]);
+  let root: HTMLDivElement | null = $state(null);
 
+  // INPUT
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
   let canSend = $state(true);
@@ -60,89 +68,61 @@
     if (messageContainer) scrollToBottom();
   });
 
-  onMount(async () => {
-    const theme = document.documentElement.getAttribute("data-theme");
-    injectTheme((chat.theme as any)[theme as "light" | "dark"]);
-
-    window.addEventListener("message", (event) => {
-      if (event.origin !== chat.domain) return;
-      const { type, newTheme } = event.data || {};
-      if (type === "theme-change") {
-        document.documentElement.setAttribute("data-theme", newTheme);
-        injectTheme((chat.theme as any)[newTheme as "light" | "dark"]);
-      }
-    });
-
-    socket = io({
-      auth: {
-        token,
-      },
-    });
-
-    socket.on("connect", () => {
-      console.log("🟢 Connected to server, socket.id =", socket?.id, roomId);
-      socket?.emit("join-room", {
-        roomId,
-      });
-    });
-
-    socket.on("chat-history", (history: MessagesResponse[]) => {
-      console.log("HISTORY");
-      messages = history;
-      tick().then(() => scrollToBottom());
-    });
-
-    socket.on("new-message", (m: MessagesResponse) => {
-      messages.push(m);
-      tick().then(() => scrollToBottom());
-    });
-
-    socket.on("rate-limit", (data: { message: string }) => {
-      console.warn("Rate limit from server:", data.message);
-    });
-  });
-
-  onDestroy(() => {
-    socket?.disconnect();
-  });
-
-  async function sendMessage() {
-    if (!canSend) return;
-    if (inputText.trim().length === 0) return;
-
-    canSend = false;
-
-    const newMsg: MessagesRecord = {
-      id: `temp-${nanoid(12)}`,
-      content: inputText.trim(),
-      role: MessagesRoleOptions.user,
-      visible: true,
-      room: roomId,
-      sentBy: username,
-      created: new Date().toISOString().replace("T", " "),
-    };
-
-    inputText = "";
-
-    socket?.emit("send-message", {
-      roomId: roomId,
-      msgStr: JSON.stringify(newMsg),
-    });
-
+  async function scrollToBottom() {
     await tick();
-    scrollToBottom();
-
-    setTimeout(() => {
-      canSend = true;
-    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
-  }
-
-  function scrollToBottom() {
     if (!messageContainer) return;
     messageContainer.scrollTo({
       top: messageContainer.scrollHeight,
       behavior: "smooth",
     });
+  }
+
+  onMount(() => {
+    // THEME
+    root?.setAttribute("data-theme", initTheme);
+    const themeData = (chat.theme as any)?.[initTheme as any];
+    injectTheme(themeData || {}, root);
+    window.addEventListener("message", (event) => {
+      if (!chat.domain || event.origin !== chat.domain) return;
+
+      const { type, ...payload } = event.data || {};
+
+      // THEME CHANGE
+      if (type === "theme-change") {
+        const { newTheme } = payload;
+        root?.setAttribute("data-theme", newTheme);
+        const themeData = (chat.theme as any)?.[newTheme as any];
+        injectTheme(themeData || {}, root);
+      }
+    });
+
+    // SOCKET
+    if (messageContainer && token && roomId)
+      widgetSocketProvider.init(token, roomId, messageContainer);
+
+    return () => {
+      widgetSocketProvider.destroy();
+    };
+  });
+
+  async function sendMessage() {
+    if (!canSend) return;
+    if (inputText.trim().length === 0) return;
+    if (!roomId || !username) return;
+
+    canSend = false;
+
+    widgetSocketProvider.sendMessage(inputText, roomId, username);
+    inputText = "";
+
+    widgetSocketProvider.scrollToBottom();
+
+    setTimeout(
+      () => {
+        canSend = true;
+      },
+      (PUBLIC_MESSAGE_DELAY_SEC || 1) * 1000
+    );
   }
 
   function onScroll() {
@@ -160,6 +140,7 @@
 </script>
 
 <div
+  bind:this={root}
   class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
   style="height: 100%; max-height: 100%;"
 >
@@ -172,12 +153,20 @@
         <div
           class="w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center"
         >
-          <img alt="avatar" src={assistantAvatar} />
+          <img alt="avatar" src={chatAvatar} />
         </div>
       </div>
       <div class="flex flex-col">
-        <h2 class="text-lg font-semibold text-base-content">{agent.name}</h2>
-        <span class="text-xs text-gray-500">Online</span>
+        <h2 class="text-lg font-semibold text-base-content">
+          {chat.name || "Support Chat"}
+        </h2>
+        <span
+          class="text-xs"
+          class:text-error={!online}
+          class:text-primary={online}
+        >
+          {online ? "Online" : "Offline"}
+        </span>
       </div>
     </div>
     <div class="flex items-center space-x-2"></div>
@@ -191,11 +180,9 @@
   >
     {#each messages as msg (msg.id)}
       {@const avatar =
-        msg.role === "assistant"
-          ? assistantAvatar
-          : msg.role === "user"
-            ? Man.src
-            : Man.src}
+        (msg.metadata as any)?.avatar || msg.role === "assistant"
+          ? chatAvatar
+          : Man.src}
       <ChatMessage {msg} {avatar} />
     {/each}
   </main>

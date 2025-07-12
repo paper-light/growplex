@@ -1,16 +1,14 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  const { initOk = true } = $props();
-
-  let ok = $state(initOk);
+  let accepted = $state(false);
 
   onMount(() => {
-    ok = localStorage.getItem("okCookies") === "true";
+    accepted = localStorage.getItem("okCookies") === "true";
   });
 </script>
 
-{#if !ok}
+{#if !accepted}
   <div class="toast toast-start">
     <div
       class="alert px-4 py-3 shadow-lg border-secondary rounded-xl flex flex-col"
@@ -23,7 +21,7 @@
         class="self-start btn btn-primary btn-lg"
         onclick={() => {
           localStorage.setItem("okCookies", "true");
-          ok = true;
+          accepted = true;
         }}
       >
         Ok

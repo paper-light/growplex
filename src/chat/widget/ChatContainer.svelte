@@ -8,13 +8,21 @@
     isOpen: boolean;
     domain: string;
     onClose: () => void;
+    initTheme?: string;
   }
 
-  let { token, chatId, isOpen, domain, onClose }: Props = $props();
+  let {
+    token,
+    chatId,
+    isOpen,
+    domain,
+    onClose,
+    initTheme = "light",
+  }: Props = $props();
   let iframeEl: HTMLIFrameElement | null = $state(null);
 
   let iframeSrc = $derived(
-    `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}`
+    `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}&theme=${initTheme}`
   );
 </script>
 

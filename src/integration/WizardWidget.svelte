@@ -147,60 +147,6 @@
 
 <div class="h-full flex flex-col p-4">
   <div class="space-y-3 overflow-y-auto flex-1">
-    <!-- Agent Section -->
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title text-xl font-bold mb-4">Agent</h2>
-
-        <div class="space-y-4">
-          <!-- Avatar -->
-          <div class="form-control w-full">
-            <label for="agentAvatar" class="label">
-              <span class="label-text">Avatar</span>
-            </label>
-            <input
-              id="agentAvatar"
-              type="file"
-              accept="image/*"
-              class="file-input file-input-bordered w-full"
-              onchange={handleAgentAvatarChange}
-            />
-          </div>
-
-          <!-- Name -->
-          <div class="form-control w-full">
-            <label for="agentName" class="label">
-              <span class="label-text"
-                >Name <span class="text-error">*</span></span
-              >
-            </label>
-            <input
-              id="agentName"
-              type="text"
-              bind:value={agentName}
-              required
-              class="input input-bordered w-full"
-              placeholder="Agent name"
-            />
-          </div>
-
-          <!-- System Instruction -->
-          <div class="form-control w-full">
-            <label for="systemInstruction" class="label">
-              <span class="label-text">System Instruction</span>
-            </label>
-            <textarea
-              id="systemInstruction"
-              bind:value={systemInstruction}
-              rows="4"
-              class="textarea textarea-bordered w-full resize-none"
-              placeholder="e.g. 'You are a helpful assistant…'"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Chat Section -->
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
@@ -262,6 +208,60 @@
               class="textarea textarea-bordered w-full resize-none"
               rows="5"
               placeholder={'{"light": {}, "dark": {}}'}
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agent Section -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title text-xl font-bold mb-4">Agent</h2>
+
+        <div class="space-y-4">
+          <!-- Avatar -->
+          <div class="form-control w-full">
+            <label for="agentAvatar" class="label">
+              <span class="label-text">Avatar</span>
+            </label>
+            <input
+              id="agentAvatar"
+              type="file"
+              accept="image/*"
+              class="file-input file-input-bordered w-full"
+              onchange={handleAgentAvatarChange}
+            />
+          </div>
+
+          <!-- Name -->
+          <div class="form-control w-full">
+            <label for="agentName" class="label">
+              <span class="label-text"
+                >Name <span class="text-error">*</span></span
+              >
+            </label>
+            <input
+              id="agentName"
+              type="text"
+              bind:value={agentName}
+              required
+              class="input input-bordered w-full"
+              placeholder="Agent name"
+            />
+          </div>
+
+          <!-- System Instruction -->
+          <div class="form-control w-full">
+            <label for="systemInstruction" class="label">
+              <span class="label-text">System Instruction</span>
+            </label>
+            <textarea
+              id="systemInstruction"
+              bind:value={systemInstruction}
+              rows="4"
+              class="textarea textarea-bordered w-full resize-none"
+              placeholder="e.g. 'You are a helpful assistant…'"
             ></textarea>
           </div>
         </div>

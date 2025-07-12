@@ -1,14 +1,21 @@
 import { mount, unmount } from "svelte";
 import ChatWidget from "./ChatWidget.svelte";
 
+type WidgetProps = {
+  chatId: string;
+  domain: string;
+  color?: string;
+  initTheme?: string;
+};
+
 type WidgetAPI = {
   $on?(evt: string, cb: (e: any) => void): () => void;
-  $set?(props: Partial<{ id: string; domain: string; color?: string }>): void;
+  $set?(props: Partial<WidgetProps>): void;
 } & Record<string, any>;
 
 let app: WidgetAPI | null = null;
 
-export function init(opts: { chatId: string; domain: string; color?: string }) {
+export function init(opts: WidgetProps) {
   const target = document.getElementById("chat-widget") || document.body;
   if (!app) {
     app = mount(ChatWidget, {

@@ -6,7 +6,7 @@
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
   import { uiProvider } from "../settings/ui.svelte";
-  import Chat from "../../chat/Chat.svelte";
+  import Chat from "../../chat/ui/Chat.svelte";
   import { pb } from "../../shared/lib/pb";
   import { socketProvider } from "../chat/socket.svelte";
 

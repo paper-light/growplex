@@ -6,7 +6,7 @@ import ChatPreview from "../../app/integration/ChatPreview.svelte";
 import WizardWidget from "../../integration/WizardWidget.svelte";
 ---
 
-<AppDashboard title="Wizard">
+<AppDashboard title="Integration Wizard">
   <div class="w-full h-full relative">
     <!-- Desktop Layout: Grid with flexible main content -->
     <div
@@ -33,18 +33,8 @@ import WizardWidget from "../../integration/WizardWidget.svelte";
     <div class="lg:hidden w-full h-full relative">
       <!-- Main Content -->
       <div class="p-4 h-full">
-        <div
-          class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center h-full"
-        >
-          <div class="text-2xl font-semibold mb-2 opacity-60">
-            Integration Wizard
-          </div>
-          <span class="badge badge-warning badge-outline mb-4">Coming Soon</span
-          >
-          <p class="text-base-content/70 max-w-md">
-            Configure your integrations and test them in real-time with our
-            wizard interface.
-          </p>
+        <div class="h-full overflow-hidden">
+          <WizardWidget client:load />
         </div>
       </div>
 

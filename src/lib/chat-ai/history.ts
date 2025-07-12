@@ -4,7 +4,7 @@ import { getEnv } from "../../shared/helpers/get-env";
 import { pb } from "../../shared/lib/pb";
 import { redisClient } from "../config/redis";
 import { logger } from "../config/logger";
-import { globalEncoderService } from "./encoder";
+import { globalEncoderService } from "../../llm";
 import {
   MessagesRoleOptions,
   type IntegrationsResponse,

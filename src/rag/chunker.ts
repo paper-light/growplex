@@ -1,7 +1,7 @@
 import { RecursiveCharacterTextSplitter } from "langchain/text_splitter";
 import type { Document } from "@langchain/core/documents";
 
-import { globalEncoderService, type TiktokenModel } from "../llm/encoder";
+import { globalEncoderService, type TiktokenModel } from "../llm";
 
 const model: TiktokenModel = "text-embedding-3-small";
 

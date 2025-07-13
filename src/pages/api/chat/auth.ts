@@ -13,9 +13,6 @@ const CORS_HEADERS = {
 export async function POST({ request }: { request: Request }) {
   try {
     let { chatId, roomId, username } = await request.json();
-    console.log("chatId", chatId);
-    console.log("roomId", roomId);
-    console.log("username", username);
 
     if (!chatId)
       return new Response("Missing id", {
@@ -50,7 +47,6 @@ export async function POST({ request }: { request: Request }) {
     const originHost = new URL(origin).hostname;
     const monoHost = new URL(MONO_URL).hostname;
 
-    console.log("Domain check:", chat.domain, origin, MONO_URL);
     if (chat.domain !== origin && originHost !== monoHost) {
       return new Response("Forbidden", {
         status: 403,
@@ -62,7 +58,6 @@ export async function POST({ request }: { request: Request }) {
       username = `Guest-${nanoid(6)}`;
     }
 
-    console.log("ROOM", roomId);
     if (roomId) {
       const room = await pb.collection("rooms").getOne(roomId);
       if (room.chat !== chat.id) {

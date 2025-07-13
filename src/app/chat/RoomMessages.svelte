@@ -4,7 +4,7 @@
   import { ChevronsDown } from "@lucide/svelte";
   import { chatProvider } from "./chat.svelte";
   import { socketProvider } from "./socket.svelte";
-  import ChatMessage from "../../shared/ui/components/Message.svelte";
+  import ChatMessage from "../../chat/ui/Message.svelte";
   import Man from "../../shared/assets/Man.jpg";
   import Thalia from "../../shared/assets/Thalia.jpg";
   import { PUBLIC_PB_URL } from "astro:env/client";

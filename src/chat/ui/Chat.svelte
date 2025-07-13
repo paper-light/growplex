@@ -8,7 +8,7 @@
   import { onMount, tick } from "svelte";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import ChatMessage from "../../shared/ui/components/Message.svelte";
+  import ChatMessage from "./Message.svelte";
   import Man from "../../shared/assets/Man.jpg";
   import Thalia from "../../shared/assets/Thalia.jpg";
 
@@ -162,7 +162,7 @@
         </h2>
         <span
           class="text-xs"
-          class:text-error={!online}
+          class:text-gray-500={!online}
           class:text-primary={online}
         >
           {online ? "Online" : "Offline"}

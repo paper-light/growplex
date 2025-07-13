@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { slide } from "svelte/transition";
   import { X } from "@lucide/svelte";
-  import { onMount, untrack } from "svelte";
+  import { onMount } from "svelte";
 
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
@@ -162,7 +161,7 @@
           <h1 class="text-2xl font-bold text-nowrap">No token found</h1>
         </div>
       {:else}
-        <Chat {chat} {agent} {payload} {token} />
+        <Chat {chat} {agent} {payload} {token} initTheme="" />
       {/if}
     {/key}
   </div>

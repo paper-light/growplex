@@ -17,7 +17,6 @@
 
     const detect = () => {
       const theme = htmlEl.getAttribute("data-theme");
-      console.log("detected theme", theme);
       if (theme) return theme;
       const mql = window.matchMedia("(prefers-color-scheme: dark)");
       return mql.matches ? "dark" : "light";

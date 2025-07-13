@@ -71,7 +71,6 @@ class WidgetSocketProvider {
     this.socket?.disconnect();
     this.online = false;
     this.history = [];
-    this.contentContainer = null;
   }
 
   scrollToBottom() {

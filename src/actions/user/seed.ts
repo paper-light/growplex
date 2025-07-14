@@ -7,6 +7,7 @@ export const SeedUserSchema = z.object({
 });
 
 export const seedHandler = async (input: z.infer<typeof SeedUserSchema>) => {
+  console.log("seedHandler", input);
   try {
     await seed(input.userId, input.provider);
     return { ok: true };

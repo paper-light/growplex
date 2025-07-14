@@ -6,7 +6,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
   if (
     context.url.pathname.startsWith("/app") ||
     context.url.pathname.startsWith("/api") ||
-    context.url.pathname.startsWith("/embed")
+    context.url.pathname.startsWith("/embed") ||
+    context.url.pathname.startsWith("/_actions")
   ) {
     try {
       await ensureAdmin();
@@ -18,7 +19,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  if (context.url.pathname.startsWith("/api")) {
+  if (
+    context.url.pathname.startsWith("/api") ||
+    context.url.pathname.startsWith("/_actions")
+  ) {
     return next();
   }
 

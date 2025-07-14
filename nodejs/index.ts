@@ -1,14 +1,17 @@
+// server.ts
+import "dotenv/config";
+
 import express from "express";
 import http from "http";
 
-import { attachSocketIO } from "./chat/controller";
-import { pbAdminMiddleware } from "./auth/middleware";
+import { handler as astroHandler } from "../dist/server/entry.mjs";
+
+import { attachSocketIO } from "./socket.io/controller";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-export async function main(astroHandler: any) {
-  app.use(pbAdminMiddleware);
+export async function start() {
   app.use(express.static("dist/client"));
   app.use(astroHandler);
 
@@ -19,3 +22,8 @@ export async function main(astroHandler: any) {
     console.log(`🚀 Server (HTTP + WS) listening on http://localhost:${PORT}`);
   });
 }
+
+start().catch((err) => {
+  console.error("Fatal error during startup:", err);
+  process.exit(1);
+});

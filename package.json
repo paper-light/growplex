@@ -10,7 +10,7 @@
     "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && pnpm run build:chat-widget && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "start": "tsx server/server.ts"
+    "start": "tsx nodejs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.0",

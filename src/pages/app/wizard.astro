@@ -27,20 +27,20 @@ import WizardWidget from "../../integration/WizardWidget.svelte";
       <div class="h-full overflow-hidden">
         <ChatPreview block={true} client:load />
       </div>
-    </div>
 
-    <!-- Mobile Layout: Single column with overlays -->
-    <div class="lg:hidden w-full h-full relative">
-      <!-- Main Content -->
-      <div class="p-4 h-full">
-        <div class="h-full overflow-hidden">
-          <WizardWidget client:load />
+      <!-- Mobile Layout: Single column with overlays -->
+      <div class="lg:hidden w-full h-full relative">
+        <!-- Main Content -->
+        <div class="p-4 h-full">
+          <div class="h-full overflow-hidden">
+            <WizardWidget client:load />
+          </div>
         </div>
-      </div>
 
-      <!-- Mobile Overlays -->
-      <Sidebar block={false} client:load />
-      <ChatPreview block={false} client:load />
+        <!-- Mobile Overlays -->
+        <Sidebar block={false} client:load />
+        <ChatPreview block={false} client:load />
+      </div>
     </div>
   </div>
 </AppDashboard>

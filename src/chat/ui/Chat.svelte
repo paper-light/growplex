@@ -5,7 +5,7 @@
     PUBLIC_MESSAGE_DELAY_SEC,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onMount, tick } from "svelte";
+  import { onMount, tick, untrack } from "svelte";
   import { ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "./Message.svelte";
@@ -26,13 +26,13 @@
 
   interface Props {
     chat: ChatsResponse;
-    agent: AgentsResponse;
+    agent: AgentsResponse; // TODO: remove this
     token: string;
     initTheme: string;
     payload?: z.infer<typeof ChatWidgetPayloadSchema>;
   }
 
-  const { chat, agent, token, payload, initTheme }: Props = $props();
+  const { chat, token, payload, initTheme }: Props = $props();
 
   const { roomId, username } = $derived(
     payload ||
@@ -52,6 +52,7 @@
   const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
 
   const messages: MessagesResponse[] = $derived(widgetSocketProvider.history);
+
   const online = $derived(widgetSocketProvider.online || false);
 
   let root: HTMLDivElement | null = $state(null);
@@ -63,19 +64,6 @@
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
-
-  $effect(() => {
-    if (messageContainer) scrollToBottom();
-  });
-
-  async function scrollToBottom() {
-    await tick();
-    if (!messageContainer) return;
-    messageContainer.scrollTo({
-      top: messageContainer.scrollHeight,
-      behavior: "smooth",
-    });
-  }
 
   onMount(() => {
     // THEME
@@ -96,13 +84,16 @@
       }
     });
 
-    // SOCKET
-    if (messageContainer && token && roomId)
-      widgetSocketProvider.init(token, roomId, messageContainer);
+    widgetSocketProvider.init(token, roomId);
 
     return () => {
       widgetSocketProvider.destroy();
     };
+  });
+
+  $effect(() => {
+    console.log("messages", messages.length);
+    scrollToBottom();
   });
 
   async function sendMessage() {
@@ -115,14 +106,21 @@
     widgetSocketProvider.sendMessage(inputText, roomId, username);
     inputText = "";
 
-    widgetSocketProvider.scrollToBottom();
-
     setTimeout(
       () => {
         canSend = true;
       },
       (PUBLIC_MESSAGE_DELAY_SEC || 1) * 1000
     );
+  }
+
+  async function scrollToBottom() {
+    await tick();
+    if (!messageContainer) return;
+    messageContainer.scrollTo({
+      top: messageContainer.scrollHeight,
+      behavior: "smooth",
+    });
   }
 
   function onScroll() {

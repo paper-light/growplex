@@ -13,11 +13,8 @@ class WidgetSocketProvider {
   online = $state(false);
 
   history = $state<MessagesResponse[]>([]);
-  contentContainer: HTMLElement | null = $state(null);
 
-  init(token: string, roomId: string, contentContainer: HTMLElement) {
-    this.contentContainer = contentContainer;
-
+  init(token: string, roomId: string) {
     this.socket = io({
       auth: {
         token,
@@ -33,12 +30,10 @@ class WidgetSocketProvider {
 
     this.socket.on("chat-history", (history: MessagesResponse[]) => {
       this.history = history;
-      this.scrollToBottom();
     });
 
     this.socket.on("new-message", (m: MessagesResponse) => {
       this.history.push(m);
-      this.scrollToBottom();
     });
 
     this.socket.on("rate-limit", (data: { message: string }) => {
@@ -71,15 +66,6 @@ class WidgetSocketProvider {
     this.socket?.disconnect();
     this.online = false;
     this.history = [];
-  }
-
-  scrollToBottom() {
-    tick().then(() => {
-      this.contentContainer?.scrollTo({
-        top: this.contentContainer.scrollHeight,
-        behavior: "smooth",
-      });
-    });
   }
 }
 

@@ -92,7 +92,6 @@
   });
 
   $effect(() => {
-    console.log("messages", messages.length);
     scrollToBottom();
   });
 

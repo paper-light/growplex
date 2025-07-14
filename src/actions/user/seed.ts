@@ -1,9 +1,12 @@
+import { z } from "astro:schema";
 import { seed } from "../../auth/seed-user";
 
-export const seedHandler = async (input: {
-  userId: string;
-  provider: "google" | null;
-}) => {
+export const SeedUserSchema = z.object({
+  userId: z.string(),
+  provider: z.enum(["google"]).nullable(),
+});
+
+export const seedHandler = async (input: z.infer<typeof SeedUserSchema>) => {
   try {
     await seed(input.userId, input.provider);
     return { ok: true };

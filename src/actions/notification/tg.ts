@@ -1,5 +1,5 @@
 import { TG_ID, TG_TOKEN } from "astro:env/server";
-import z from "zod";
+import { z } from "astro:schema";
 
 export const TGSchema = z.object({
   contact: z.string(),

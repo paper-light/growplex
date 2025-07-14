@@ -5,8 +5,7 @@ import Root from "./Root.astro";
 const { title, favicon = "/LOGO.png" } = Astro.props;
 ---
 
-<AppState client:only transition:persist="app-global-state" slot="head" />
-
 <Root title={title} favicon={favicon} slot="head">
   <slot />
+  <AppState client:only transition:persist="app-global-state" />
 </Root>

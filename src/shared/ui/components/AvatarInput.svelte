@@ -1,7 +1,9 @@
 <script lang="ts">
+  import Thalia from "../../assets/Thalia.jpg";
+
   interface Props {
     avatar?: string | null;
-    fallbackIcon?: string;
+    fallbackSrc?: string;
     size?: "sm" | "md" | "lg";
     onChange?: (file: File) => void;
     disabled?: boolean;
@@ -9,17 +11,18 @@
 
   let {
     avatar,
-    fallbackIcon = "👤",
+    fallbackSrc = Thalia.src,
     size = "md",
     onChange,
     disabled = false,
   }: Props = $props();
 
-  let fileInput: HTMLInputElement;
+  let fileInput: HTMLInputElement | null = $state(null);
   let previewUrl: string | null = $state(null);
   let selectedFile: File | null = $state(null);
 
-  // Size classes mapping
+  const avatarSrc = $derived(previewUrl || avatar || fallbackSrc);
+
   const sizeClasses = {
     sm: "w-16 h-16",
     md: "w-24 h-24",
@@ -39,14 +42,12 @@
       selectedFile = file;
       previewUrl = URL.createObjectURL(file);
 
-      // Call the onChange callback if provided
       if (onChange) {
         onChange(file);
       }
     }
   }
 
-  // Clean up preview URL when component unmounts or file changes
   $effect(() => {
     return () => {
       if (previewUrl) {
@@ -62,21 +63,11 @@
       <div
         class="bg-neutral text-neutral-content rounded-lg {sizeClasses[size]}"
       >
-        {#if previewUrl}
-          <img
-            src={previewUrl}
-            alt="Avatar preview"
-            class="w-full h-full object-cover rounded-lg"
-          />
-        {:else if avatar}
-          <img
-            src={avatar}
-            alt="Avatar"
-            class="w-full h-full object-cover rounded-lg"
-          />
-        {:else}
-          <span class="text-2xl">{fallbackIcon}</span>
-        {/if}
+        <img
+          src={avatarSrc}
+          alt="Avatar"
+          class="w-full h-full object-cover rounded-lg"
+        />
       </div>
     </div>
 

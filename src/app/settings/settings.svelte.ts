@@ -1,4 +1,6 @@
 import { authProvider } from "../auth/auth.svelte";
+import type { ProjectsResponse } from "../../shared/models/pocketbase-types";
+import type { ProjectExpand } from "../../shared/models/expands";
 
 const SELECTED_KEY = "settings.selected";
 
@@ -42,7 +44,7 @@ class SettingsProvider {
     return role?.role;
   });
 
-  currentProject = $derived.by(() => {
+  currentProject: ProjectsResponse<ProjectExpand> | null = $derived.by(() => {
     const org = this.currentOrg;
     if (!org) return null;
     const projects = org.expand!.projects!;

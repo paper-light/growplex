@@ -60,6 +60,15 @@
     roomId,
   });
 
+  // Collect all errors before rendering Chat
+  const errors = $derived.by(() => {
+    const errs = [];
+    if (!agent) errs.push("No agent found");
+    if (!chat) errs.push("No chat found");
+    if (!token) errs.push("No token found");
+    return errs;
+  });
+
   function openSidebar() {
     uiProvider.setChatPreviewOpen(true);
   }
@@ -148,19 +157,13 @@
   </div>
   <div class="flex-1 min-h-0 overflow-hidden">
     {#key [roomId, agent, chat, token]}
-      {#if !agent}
-        <div class="flex flex-col items-center justify-center h-full">
-          <h1 class="text-2xl font-bold text-nowrap">No agent found</h1>
+      {#if errors.length > 0}
+        <div class="flex flex-col items-center justify-center h-full gap-5">
+          {#each errors as error}
+            <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
+          {/each}
         </div>
-      {:else if !chat}
-        <div class="flex flex-col items-center justify-center h-full">
-          <h1 class="text-2xl font-bold text-nowrap">No chat found</h1>
-        </div>
-      {:else if !token}
-        <div class="flex flex-col items-center justify-center h-full">
-          <h1 class="text-2xl font-bold text-nowrap">No token found</h1>
-        </div>
-      {:else}
+      {:else if chat && agent && token}
         <Chat {chat} {agent} {payload} {token} initTheme="" />
       {/if}
     {/key}

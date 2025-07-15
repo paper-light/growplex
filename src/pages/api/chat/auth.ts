@@ -59,12 +59,20 @@ export async function POST({ request }: { request: Request }) {
     }
 
     if (roomId) {
-      const room = await pb.collection("rooms").getOne(roomId);
-      if (room.chat !== chat.id) {
-        return new Response("Forbidden: Room does not belong to chat", {
-          status: 403,
-          headers: CORS_HEADERS,
+      try {
+        const room = await pb.collection("rooms").getOne(roomId);
+        if (room.chat !== chat.id) {
+          return new Response("Forbidden: Room does not belong to chat", {
+            status: 403,
+            headers: CORS_HEADERS,
+          });
+        }
+      } catch (err) {
+        const room = await pb.collection("rooms").create({
+          chat: chat.id,
+          status: "seeded",
         });
+        roomId = room.id;
       }
     } else {
       const room = await pb.collection("rooms").create({

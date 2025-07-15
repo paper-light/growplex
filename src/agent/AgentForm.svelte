@@ -5,7 +5,13 @@
   import { pb } from "../shared/lib/pb";
   import AvatarInput from "../shared/ui/components/AvatarInput.svelte";
 
+  import AgentSelect from "./AgentSelect.svelte";
+  import AgentCreate from "./AgentCreate.svelte";
+
   const currentAgent = $derived(settingsProvider.currentAgent);
+  const allAgents = $derived(
+    settingsProvider.currentProject?.expand?.agents || []
+  );
 
   let agentName = $derived(currentAgent?.name ?? "");
   let systemInstruction = $derived(currentAgent?.system ?? "");
@@ -68,52 +74,62 @@
   });
 </script>
 
-<div class="card bg-base-100 shadow-xl">
-  <div class="card-body">
-    <div class="flex gap-6">
-      <!-- Avatar Section -->
-      <AvatarInput
-        avatar={currentAgent?.avatar
-          ? pb.files.getURL(currentAgent, currentAgent.avatar)
-          : null}
-        fallbackIcon="🤖"
-        size="md"
-        onChange={handleAvatarChange}
-      />
+{#if !currentAgent}
+  <div class="flex flex-col items-center justify-center gap-6 py-16">
+    <div class="w-full max-w-xl flex flex-col gap-4">
+      <AgentCreate size="lg" />
+      {#if allAgents.length > 0}
+        <AgentSelect size="lg" />
+      {/if}
+    </div>
+  </div>
+{:else}
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex gap-6">
+        <!-- Avatar Section -->
+        <AvatarInput
+          avatar={currentAgent?.avatar
+            ? pb.files.getURL(currentAgent, currentAgent.avatar)
+            : null}
+          size="md"
+          onChange={handleAvatarChange}
+        />
 
-      <!-- Form Fields -->
-      <div class="flex-1 space-y-4">
-        <!-- Name -->
-        <div class="form-control w-full">
-          <label for="agentName" class="label">
-            <span class="label-text font-medium"
-              >Title <span class="text-error">*</span></span
-            >
-          </label>
-          <input
-            id="agentName"
-            type="text"
-            bind:value={agentName}
-            required
-            class="input input-bordered w-full"
-            placeholder="Agent name"
-          />
-        </div>
+        <!-- Form Fields -->
+        <div class="flex-1 space-y-4">
+          <!-- Name -->
+          <div class="form-control w-full">
+            <label for="agentName" class="label">
+              <span class="label-text font-medium"
+                >Title <span class="text-error">*</span></span
+              >
+            </label>
+            <input
+              id="agentName"
+              type="text"
+              bind:value={agentName}
+              required
+              class="input input-bordered w-full"
+              placeholder="Agent name"
+            />
+          </div>
 
-        <!-- System Instruction -->
-        <div class="form-control w-full">
-          <label for="systemInstruction" class="label">
-            <span class="label-text font-medium">Text</span>
-          </label>
-          <textarea
-            id="systemInstruction"
-            bind:value={systemInstruction}
-            rows="4"
-            class="textarea textarea-bordered w-full resize-none"
-            placeholder="e.g. 'You are a helpful assistant…'"
-          ></textarea>
+          <!-- System Instruction -->
+          <div class="form-control w-full">
+            <label for="systemInstruction" class="label">
+              <span class="label-text font-medium">Text</span>
+            </label>
+            <textarea
+              id="systemInstruction"
+              bind:value={systemInstruction}
+              rows="4"
+              class="textarea textarea-bordered w-full resize-none"
+              placeholder="e.g. 'You are a helpful assistant…'"
+            ></textarea>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+{/if}

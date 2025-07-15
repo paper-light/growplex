@@ -7,7 +7,6 @@
   import ChatMessage from "../../chat/ui/Message.svelte";
   import Man from "../../shared/assets/Man.jpg";
   import Thalia from "../../shared/assets/Thalia.jpg";
-  import { PUBLIC_PB_URL } from "astro:env/client";
   import { settingsProvider } from "../settings/settings.svelte";
   import { authProvider } from "../auth/auth.svelte";
   import { navigate } from "astro:transitions/client";
@@ -15,20 +14,24 @@
     type MessagesRecord,
     MessagesRoleOptions,
   } from "../../shared/models/pocketbase-types";
+  import { pb } from "../../shared/lib/pb";
 
   const { roomId } = $props();
 
   const messages = $derived(chatProvider.messages);
 
-  const avatar = $derived(
+  const operatorAvatar = $derived(
     authProvider.user?.avatar
-      ? `${PUBLIC_PB_URL}/api/files/users/${authProvider.user.id}/${authProvider.user.avatar}`
-      : "https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
+      ? pb.files.getURL(authProvider.user, authProvider.user.avatar)
+      : Man.src
   );
 
-  const assistantAvatar = $derived(
+  const chatAvatar = $derived(
     settingsProvider.currentChat?.avatar
-      ? `${PUBLIC_PB_URL}/api/files/chats/${settingsProvider.currentChat.id}/${settingsProvider.currentChat.avatar}`
+      ? pb.files.getURL(
+          settingsProvider.currentChat,
+          settingsProvider.currentChat.avatar
+        )
       : Thalia.src
   );
 
@@ -69,10 +72,12 @@
 
   // Get avatar for message
   function getAvatar(msg: MessagesRecord) {
+    if ((msg.metadata as any)?.avatar) return (msg.metadata as any).avatar;
+
     if (msg.role === MessagesRoleOptions.assistant) {
-      return assistantAvatar;
+      return chatAvatar;
     } else if (msg.role === MessagesRoleOptions.operator) {
-      return avatar;
+      return operatorAvatar;
     }
     return Man.src;
   }
@@ -98,7 +103,7 @@
     {:else}
       {#each messages as msg (msg.id)}
         {@const avatar = getAvatar(msg)}
-        <ChatMessage {msg} {avatar} />
+        <ChatMessage {msg} {avatar} incoming={msg.role !== "operator"} />
       {/each}
     {/if}
   </main>

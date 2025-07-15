@@ -180,7 +180,7 @@
         (msg.metadata as any)?.avatar || msg.role === "assistant"
           ? chatAvatar
           : Man.src}
-      <ChatMessage {msg} {avatar} />
+      <ChatMessage {msg} {avatar} incoming={msg.role !== "user"} />
     {/each}
   </main>
 

@@ -35,7 +35,7 @@
     try {
       await signUp(email, password, confirmPassword, username);
       await signIn(email, password);
-      await navigate("/app/integrations");
+      await navigate("/app");
       await pb.collection("users").requestVerification(email);
     } catch (err) {
       console.error(err);

@@ -5,11 +5,12 @@
   import type { MessagesResponse } from "../../shared/models/pocketbase-types";
 
   interface Props {
+    incoming: boolean;
     msg: MessagesResponse;
     avatar: string;
   }
 
-  const { msg, avatar }: Props = $props();
+  const { msg, avatar, incoming }: Props = $props();
 
   const finalAvatar = (msg.metadata as any)?.avatar || avatar;
 
@@ -20,8 +21,6 @@
 
   const localTs = utcTs.isValid ? utcTs.toLocal() : utcTs;
   const formattedTime = localTs.isValid ? localTs.toFormat("h:mm a") : "";
-
-  const incoming = $derived(msg.role !== "user");
 
   const rawHtml = marked.parse(msg.content);
   const safeHtml = DOMPurify.sanitize(rawHtml as string, {

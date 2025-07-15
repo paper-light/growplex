@@ -14,6 +14,14 @@ export type ProjectsViaIntegrations = ProjectsResponse<{
   orgs_via_projects: OrgsResponse[];
 }>[];
 
+export type ProjectExpandStrict = {
+  agents: AgentsResponse[];
+  sources: SourcesResponse[];
+  chats: ChatsResponse[];
+  integrations: IntegrationsResponse<IntegrationExpand>[];
+};
+export type ProjectExpand = Partial<ProjectExpandStrict>;
+
 export type IntegrationExpandStrict = {
   agent: AgentsResponse;
   sources: SourcesResponse[];

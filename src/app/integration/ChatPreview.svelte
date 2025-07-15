@@ -30,6 +30,11 @@
       : ""
   );
 
+  const payload = $derived({
+    username: authProvider.user?.name || "",
+    roomId,
+  });
+
   async function createRoom() {
     await socketProvider.isConnectedPromise;
 
@@ -53,11 +58,6 @@
     return () => {
       window.removeEventListener("keydown", handleKeydown);
     };
-  });
-
-  const payload = $derived({
-    username: authProvider.user?.name || "",
-    roomId,
   });
 
   // Collect all errors before rendering Chat

@@ -1,5 +1,6 @@
 import { RateLimiterRedis } from "rate-limiter-flexible";
-import { redisClient } from "../../lib/config/redis";
+
+import { redisClient } from "../lib/redis";
 
 export interface RateLimiterConfig {
   keyPrefix: string;

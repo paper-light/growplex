@@ -2,13 +2,17 @@ import { pb } from "../shared/lib/pb";
 
 type CreateAgentDto = {
   projectId: string;
-  agent?: { name: string; system: string };
+  agent?: { name: string; system: string; provider: string };
   integrationId?: string;
 };
 
 export async function createAgent(dto: CreateAgentDto) {
   if (!dto?.agent) {
-    dto.agent = { name: "New Agent", system: "Add >_< after each message" };
+    dto.agent = {
+      name: "New Agent",
+      system: "Add >_< after each message",
+      provider: "openai",
+    };
   }
 
   const newAgent = await pb.collection("agents").create(dto.agent);

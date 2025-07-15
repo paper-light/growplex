@@ -1,13 +1,9 @@
 import { nanoid } from "nanoid";
 
-import { pb } from "../../shared/lib/pb";
-
-import { getChain } from "./llm";
-import { getHistory, updateHistory } from "./history";
-import { logger } from "../config/logger";
-import { extractorService } from "../../rag/extractor";
-import { createDocumentIdsFilter } from "../../rag/filters";
 import { Document } from "@langchain/core/documents";
+
+import { pb } from "../../shared/lib/pb";
+import { logger } from "../../shared/lib/logger";
 import {
   MessagesRoleOptions,
   type IntegrationsResponse,
@@ -16,9 +12,15 @@ import {
 } from "../../shared/models/pocketbase-types";
 import type { IntegrationExpand } from "../../shared/models/expands";
 
+import { extractorService } from "../../rag/extractor";
+import { createDocumentIdsFilter } from "../../rag/filters";
+
+import { updateHistory, getHistory } from "../history";
+import { getChain } from "../llm";
+
 const log = logger.child({ module: "chat-service" });
 
-export async function processAssistantReply(
+export async function callChatAssistant(
   integrationId: string,
   roomId: string
 ): Promise<MessagesResponse> {
@@ -42,7 +44,7 @@ export async function processAssistantReply(
     throw Error(`Integration ${integrationId} has not agent`);
   }
 
-  const docIds = sources?.map((s) => s.documents).flat() || [];
+  const docIds = sources?.flatMap((s) => s.documents) || [];
 
   // Prepare history
   const history = (await getHistory(integrationId, roomId)).map((m) => {
@@ -92,7 +94,7 @@ export async function processAssistantReply(
 
   const ids = await updateHistory([newAssistantMsg]);
 
-  const msg = await pb.collection("messages").getOne(ids[0]);
+  const newMsg = await pb.collection("messages").getOne(ids[0]);
 
-  return msg;
+  return newMsg;
 }

@@ -2,7 +2,7 @@
   import { onMount } from "svelte";
   import ChatToggle from "./ChatToggle.svelte";
   import ChatContainer from "./ChatContainer.svelte";
-  import { ChatWidgetPayloadSchema } from "../models";
+  import { ChatWidgetPayloadSchema } from "../lib/models";
 
   interface Props {
     chatId: string;

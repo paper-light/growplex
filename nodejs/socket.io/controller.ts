@@ -1,32 +1,17 @@
 import { Server as IOServer, Socket } from "socket.io";
-import type { RateLimiterRes } from "rate-limiter-flexible";
 
 import { pb } from "@/shared/lib/pb";
+import type { RoomExpand } from "@/shared/models/expands";
+import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
-import { processAssistantReply } from "@/lib/chat-ai/service";
-import { getHistory, updateHistory } from "@/lib/chat-ai/history";
 import { globalEncoderService } from "@/llm";
 
-import { useMiddlewares } from "./middleware";
-import {
-  RoomsStatusOptions,
-  type RoomsResponse,
-} from "@/shared/models/pocketbase-types";
-import type { RoomExpand } from "@/shared/models/expands";
+import { joinRoom } from "./join-room";
+import { sendMessage } from "./send-message";
 import { chatRateLimiter } from "./rate-limiter";
-
-interface JoinRoomDTO {
-  chatId: string;
-  roomId: string;
-  username: string;
-}
-
-interface SendMessageDTO {
-  chatId: string;
-  roomId: string;
-  msgStr: string;
-}
+import { useMiddlewares } from "./middleware";
+import type { JoinRoomDTO, SendMessageDTO } from "./types";
 
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
@@ -36,15 +21,16 @@ export function attachSocketIO(httpServer: any) {
   io.on("connection", (socket: Socket) => {
     console.log(`🟢 Socket connected: ${socket.id}`);
 
-    socket.on("join-room", async ({ roomId }: JoinRoomDTO) => {
+    socket.on("join-room", async (dto: JoinRoomDTO) => {
       const room = await pb
         .collection("rooms")
-        .getOne<RoomsResponse<RoomExpand>>(roomId, {
+        .getOne<RoomsResponse<RoomExpand>>(dto.roomId, {
           expand: "chat",
         });
 
+      // Auth check
       if (socket.data.guest) {
-        if (socket.data.guest.roomId !== roomId) {
+        if (socket.data.guest.roomId !== dto.roomId) {
           socket.emit("unauthorized", {
             message: "Unauthorized",
           });
@@ -72,33 +58,20 @@ export function attachSocketIO(httpServer: any) {
         return;
       }
 
-      socket.join(roomId);
-      if (!socket.data.authorizedRooms) socket.data.authorizedRooms = new Set();
-      socket.data.authorizedRooms.add(roomId);
-
-      const integration = await pb
-        .collection("integrations")
-        .getFirstListItem(`chat="${room.chat}"`);
-
-      try {
-        const history = await getHistory(integration.id, roomId);
-        socket.emit("chat-history", history);
-      } catch (err) {
-        console.error("Error in getHistory:", err);
-        socket.emit("chat-history", []);
-      }
+      await joinRoom(socket, room);
     });
 
-    socket.on("send-message", async ({ roomId, msgStr }: SendMessageDTO) => {
+    socket.on("send-message", async (dto: SendMessageDTO) => {
+      // Auth check
       if (
         !socket.data.authorizedRooms ||
-        !socket.data.authorizedRooms.has(roomId)
+        !socket.data.authorizedRooms.has(dto.roomId)
       ) {
         socket.emit("unauthorized", { message: "Unauthorized" });
         return;
       }
 
-      const msg = JSON.parse(msgStr);
+      const msg = JSON.parse(dto.msgStr);
 
       if (
         globalEncoderService.countTokens(msg.content, "gpt-4") >
@@ -110,66 +83,12 @@ export function attachSocketIO(httpServer: any) {
         return;
       }
 
-      // Rate limiting: Use room + user ID for more secure limiting
       const userId = socket.data.user?.id || socket.data.guest?.username;
-      const limiterKey = `room:${roomId}:user:${userId}`;
+      const limiterKey = `room:${dto.roomId}:user:${userId}`;
 
-      try {
-        await rateLimitThrow(chatRateLimiter, limiterKey, 1);
-        await updateHistory([msg]);
+      await rateLimitThrow(chatRateLimiter, limiterKey, 1);
 
-        io.to(roomId).emit("new-message", msg);
-
-        let room = await pb
-          .collection("rooms")
-          .getOne<RoomsResponse<RoomExpand>>(roomId, {
-            expand: "chat",
-          });
-
-        if (socket.data.user && room.status !== RoomsStatusOptions.preview) {
-          return;
-        }
-
-        if (room.status === "seeded") {
-          room = await pb.collection("rooms").update(
-            roomId,
-            {
-              status: RoomsStatusOptions.auto,
-            },
-            {
-              expand: "chat",
-            }
-          );
-        }
-
-        const integration = await pb
-          .collection("integrations")
-          .getFirstListItem(`chat="${room.chat}"`);
-
-        try {
-          if (
-            room.status !== RoomsStatusOptions.auto &&
-            room.status !== RoomsStatusOptions.preview
-          ) {
-            console.log("Room is not auto or preview");
-            return;
-          }
-
-          const newAssistantMsg = await processAssistantReply(
-            integration.id,
-            roomId
-          );
-          io.to(roomId).emit("new-message", newAssistantMsg);
-        } catch (err) {
-          console.error(err);
-        }
-      } catch (err) {
-        const res = err as RateLimiterRes;
-        const retrySec = Math.ceil((res.msBeforeNext || 0) / 1000);
-        socket.emit("rate-limit", {
-          message: `Rate limit exceeded. Try again in ${retrySec} second(s).`,
-        });
-      }
+      sendMessage(socket, io, dto);
     });
 
     socket.on("disconnect", async () => {

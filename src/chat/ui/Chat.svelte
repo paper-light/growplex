@@ -5,7 +5,7 @@
     PUBLIC_MESSAGE_DELAY_SEC,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onMount, tick, untrack } from "svelte";
+  import { onMount, tick } from "svelte";
   import { ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "./Message.svelte";
@@ -21,12 +21,12 @@
   import { pb } from "../../shared/lib/pb";
 
   import { widgetSocketProvider } from "../provider/widget-socket.svelte";
-  import { ChatWidgetPayloadSchema } from "../models";
+  import { ChatWidgetPayloadSchema } from "../lib/models";
   import { injectTheme } from "../utils/injectTheme";
 
   interface Props {
     chat: ChatsResponse;
-    agent: AgentsResponse; // TODO: remove this
+    agent: AgentsResponse;
     token: string;
     initTheme: string;
     payload?: z.infer<typeof ChatWidgetPayloadSchema>;
@@ -74,7 +74,6 @@
       if (!chat.domain || event.origin !== chat.domain) return;
 
       const { type, ...payload } = event.data || {};
-
       // THEME CHANGE
       if (type === "theme-change") {
         const { newTheme } = payload;
@@ -92,7 +91,7 @@
   });
 
   $effect(() => {
-    scrollToBottom();
+    if (messages.length > 0) scrollToBottom();
   });
 
   async function sendMessage() {

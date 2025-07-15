@@ -35,3 +35,5 @@ pb/pb_data
 public/scripts/chat-widget.js
 scripts/crawler/data/*
 qdrant/data
+
+tests/*

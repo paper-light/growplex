@@ -2,9 +2,9 @@ import { nanoid } from "nanoid";
 
 import { getEnv } from "../../shared/helpers/get-env";
 import { pb } from "../../shared/lib/pb";
-import { redisClient } from "../config/redis";
-import { logger } from "../config/logger";
-import { globalEncoderService } from "../../llm";
+import { redisClient } from "../../shared/lib/redis";
+import { logger } from "../../shared/lib/logger";
+
 import {
   MessagesRoleOptions,
   type IntegrationsResponse,
@@ -12,6 +12,8 @@ import {
   type MessagesResponse,
 } from "../../shared/models/pocketbase-types";
 import type { IntegrationExpand } from "../../shared/models/expands";
+
+import { updateHistory } from "./update";
 
 const log = logger.child({ module: "chat-history" });
 log.info("starting getHistory");
@@ -99,59 +101,4 @@ export async function getHistory(
   const ids = await updateHistory([welcome]);
   const msg = await pb.collection("messages").getOne<MessagesResponse>(ids[0]);
   return [msg];
-}
-
-export async function updateHistory(msgs: MessagesRecord[]): Promise<string[]> {
-  if (msgs.length === 0) {
-    log.debug("updateHistory: no messages to persist");
-    return [];
-  }
-
-  const roomId = msgs[0].room;
-  const redisKey = `${REDIS_PREFIX}${roomId}`;
-  log.debug({ roomId, count: msgs.length }, "updateHistory() start");
-
-  // 1) Persist to PocketBase
-  const pbMsgs: MessagesResponse[] = [];
-  for (const msg of msgs) {
-    try {
-      const created = await pb.collection("messages").create({
-        sentBy: msg.sentBy,
-        visible: msg.visible,
-        role: msg.role,
-        content: msg.content,
-        room: msg.room,
-        tokenCount: globalEncoderService.countTokens(msg.content, "gpt-4"),
-      });
-      log.debug(
-        { roomId, tempId: msg.id, newId: created.id },
-        "updateHistory: saved to PB"
-      );
-      pbMsgs.push(created);
-    } catch (pbError) {
-      log.warn(
-        { err: pbError, roomId, tempId: msg.id },
-        "updateHistory: PB save failed"
-      );
-    }
-  }
-
-  // 2) Push into Redis
-  try {
-    const pipeline = redisClient.multi();
-    for (const msg of pbMsgs) {
-      pipeline.rpush(redisKey, JSON.stringify(msg));
-    }
-    pipeline.ltrim(redisKey, -HISTORY_LENGTH, -1);
-    await pipeline.exec();
-    log.debug({ roomId }, "updateHistory: Redis cache updated");
-  } catch (redisErr) {
-    log.error(
-      { err: redisErr, roomId },
-      "updateHistory: failed to write to Redis"
-    );
-  }
-
-  log.info({ roomId, count: msgs.length }, "updateHistory: complete");
-  return pbMsgs.map((m) => m.id);
 }

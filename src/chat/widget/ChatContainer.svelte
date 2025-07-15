@@ -41,7 +41,7 @@
     src={iframeSrc}
     title="Chat"
     allowtransparency={true}
-  />
+  ></iframe>
 </aside>
 
 {#if iframeEl}

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { settingsProvider } from "../../app/settings/settings.svelte";
-  import { authProvider } from "../../app/auth/auth.svelte";
+  import { settingsProvider } from "../../user/settings.svelte";
+  import { authProvider } from "../../user/auth.svelte";
   import { pb } from "../../shared/lib/pb";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
 
   const currentChat = $derived(settingsProvider.currentChat);
 
@@ -85,7 +85,7 @@
 
   $effect(() => {
     if (theme !== JSON.stringify(currentChat?.theme, null, 2)) {
-      debouncedChatUpdate();
+      untrack(debouncedChatUpdate);
     }
   });
 

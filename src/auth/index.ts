@@ -1,1 +1,1 @@
-export { ensureAdmin } from "./ensure-admin";
+export { ensureAdmin } from "./pb/ensure-admin";

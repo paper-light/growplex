@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { settingsProvider } from "../app/settings/settings.svelte";
-  import { authProvider } from "../app/auth/auth.svelte";
+   import { settingsProvider } from "../user/settings.svelte";
+  import { authProvider } from "../user/auth.svelte";
   import { pb } from "../shared/lib/pb";
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();

@@ -89,6 +89,9 @@ export async function callChatAssistant(
     visible: true,
     room: roomId,
     sentBy: agent.name,
+    metadata: {
+      avatar: pb.files.getURL(agent, agent.avatar),
+    },
     created: new Date().toISOString().replace("T", " "),
   };
 

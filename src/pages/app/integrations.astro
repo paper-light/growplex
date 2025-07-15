@@ -1,45 +1,9 @@
 ---
-import { Home } from "@lucide/astro";
-
 import AppDashboard from "../../shared/ui/layouts/AppDashboard.astro";
-
-import ChatPreview from "../../app/integration/ChatPreview.svelte";
-import Sidebar from "../../app/integration/Sidebar.svelte";
-import ConnectIntegration from "../../app/integration/ConnectIntegration.svelte";
-import PickWidget from "../../app/shared/PickWidget.svelte";
 ---
 
 <AppDashboard title="Integrations">
-  <div class="w-full h-full relative overflow-x-hidden">
-    <ConnectIntegration client:only />
-
-    <Sidebar client:only transition:persist="sidebar" />
-
-    <!-- Content grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 h-full w-full">
-      <PickWidget client:only type="agents" />
-
-      <PickWidget client:only type="chats" />
-
-      <!-- <PickWidget client:only type="sources"/> -->
-      <div
-        class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
-      >
-        <div class="text-2xl font-semibold mb-2 opacity-60">Knowledge</div>
-        <span class="badge badge-warning badge-outline mb-4">Coming Soon</span>
-        <div class="text-5xl opacity-60"><Home /></div>
-      </div>
-
-      <!-- <PickWidget client:only type="operators"/> -->
-      <div
-        class="card bg-base-200 border border-base-300 shadow-lg rounded-lg p-6 flex flex-col items-center justify-center text-center"
-      >
-        <div class="text-2xl font-semibold mb-2 opacity-60">Operators</div>
-        <span class="badge badge-warning badge-outline mb-4">Coming Soon</span>
-        <div class="text-5xl opacity-60"><Home /></div>
-      </div>
-    </div>
-
-    <ChatPreview client:only />
+  <div>
+    <h1>Integrations</h1>
   </div>
 </AppDashboard>

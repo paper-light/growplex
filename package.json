@@ -47,7 +47,7 @@
     "juice": "^11.0.1",
     "langchain": "^0.3.29",
     "langfuse-langchain": "^3.38.4",
-    "langsmith": "^0.3.44",
+    "langsmith": "^0.3.45",
     "luxon": "^3.7.1",
     "marked": "^16.0.0",
     "nanoid": "^5.1.5",
@@ -60,7 +60,7 @@
     "sharp": "^0.34.3",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "svelte": "^5.35.6",
+    "svelte": "^5.36.0",
     "tailwindcss": "^4.1.11",
     "theme-change": "^2.5.0",
     "tiktoken": "^1.0.21",
@@ -74,7 +74,7 @@
   },
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
-    "@types/node": "^24.0.13",
+    "@types/node": "^24.0.14",
     "@types/xml2js": "^0.4.14"
   }
 }

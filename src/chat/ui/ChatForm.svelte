@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { settingsProvider } from "../../app/settings/settings.svelte";
-  import { authProvider } from "../../app/auth/auth.svelte";
+  import { onMount, untrack } from "svelte";
+  import { settingsProvider } from "../../user/settings.svelte";
+  import { authProvider } from "../../user/auth.svelte";
   import { pb } from "../../shared/lib/pb";
   import ThemeSelection from "./ThemeSelection.svelte";
   import AvatarInput from "../../shared/ui/components/AvatarInput.svelte";
@@ -69,7 +69,7 @@
       domain !== currentChat?.domain ||
       firstMessage !== currentChat?.firstMessage
     ) {
-      debouncedChatUpdate();
+      untrack(debouncedChatUpdate);
     }
   });
 
@@ -150,7 +150,7 @@
           <!-- First Message -->
           <div class="form-control w-full">
             <label for="firstMessage" class="label">
-              <span class="label-text font-medium">Text</span>
+              <span class="label-text font-medium">First Message</span>
             </label>
             <textarea
               id="firstMessage"
@@ -163,7 +163,6 @@
         </div>
       </div>
 
-      <!-- Theme Selection -->
       <ThemeSelection />
     </div>
   </div>

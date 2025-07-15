@@ -1,5 +1,5 @@
 import { z } from "astro:schema";
-import { seed } from "../../auth/seed-user";
+import { seed } from "../../auth/utils/seed-user";
 
 export const SeedUserSchema = z.object({
   userId: z.string(),

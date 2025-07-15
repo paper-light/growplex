@@ -12,7 +12,7 @@
   import Man from "../../shared/assets/Man.jpg";
   import Thalia from "../../shared/assets/Thalia.jpg";
 
-  import { parseJwtPayload } from "../../auth/parse-jwt";
+  import { parseJwtPayload } from "../../auth/utils/parse-jwt";
   import {
     type ChatsResponse,
     type AgentsResponse,
@@ -20,7 +20,7 @@
   } from "../../shared/models/pocketbase-types";
   import { pb } from "../../shared/lib/pb";
 
-  import { widgetSocketProvider } from "../provider/widget-socket.svelte";
+  import { socketProvider } from "../provider/socket.svelte";
   import { ChatWidgetPayloadSchema } from "../lib/models";
   import { injectTheme } from "../utils/injectTheme";
 
@@ -51,9 +51,9 @@
 
   const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
 
-  const messages: MessagesResponse[] = $derived(widgetSocketProvider.history);
+  const messages: MessagesResponse[] = $derived(socketProvider.history);
 
-  const online = $derived(widgetSocketProvider.online || false);
+  const online = $derived(socketProvider.online || false);
 
   let root: HTMLDivElement | null = $state(null);
 
@@ -83,10 +83,13 @@
       }
     });
 
-    widgetSocketProvider.init(token, roomId);
+    socketProvider.connect(token);
+    socketProvider.onlinePromise.then(() => {
+      socketProvider.joinRoom(roomId);
+    });
 
     return () => {
-      widgetSocketProvider.destroy();
+      socketProvider.disconnect();
     };
   });
 
@@ -95,13 +98,18 @@
   });
 
   async function sendMessage() {
-    if (!canSend) return;
-    if (inputText.trim().length === 0) return;
-    if (!roomId || !username) return;
+    if (
+      !roomId ||
+      !username ||
+      !canSend ||
+      inputText.trim().length > maxInputChars ||
+      inputText.trim().length === 0
+    )
+      return;
 
     canSend = false;
 
-    widgetSocketProvider.sendMessage(inputText, roomId, username);
+    socketProvider.sendMessage(inputText, roomId, username);
     inputText = "";
 
     setTimeout(

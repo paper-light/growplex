@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { settingsProvider } from "../app/settings/settings.svelte";
-  import { authProvider } from "../app/auth/auth.svelte";
+  import { onMount, untrack } from "svelte";
+  import { settingsProvider } from "../user/settings.svelte";
+  import { authProvider } from "../user/auth.svelte";
   import { pb } from "../shared/lib/pb";
   import AvatarInput from "../shared/ui/components/AvatarInput.svelte";
 
@@ -63,7 +63,7 @@
       agentName !== currentAgent?.name ||
       systemInstruction !== currentAgent?.system
     ) {
-      debouncedAgentUpdate();
+      untrack(debouncedAgentUpdate);
     }
   });
 

@@ -1,19 +1,21 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import { ChevronsDown } from "@lucide/svelte";
-  import { socketProvider } from "../provider/socket.svelte";
-  import ChatMessage from "./Message.svelte";
-  import Man from "../../shared/assets/Man.jpg";
-  import Thalia from "../../shared/assets/Thalia.jpg";
-  import { userProvider } from "../../user/user.svelte";
+  import { roomsProvider } from "../../provider/rooms.svelte";
+  import { socketProvider } from "../../provider/socket.svelte";
+  import ChatMessage from "../entities/Message.svelte";
+  import Man from "../../../shared/assets/Man.jpg";
+  import Thalia from "../../../shared/assets/Thalia.jpg";
+  import { userProvider } from "../../../user/user.svelte";
   import {
     type MessagesRecord,
     MessagesRoleOptions,
-  } from "../../shared/models/pocketbase-types";
-  import { pb } from "../../shared/lib/pb";
-  import { scrollToBottom } from "../../shared/actions/scroll-bottom";
+  } from "../../../shared/models/pocketbase-types";
+  import { pb } from "../../../shared/lib/pb";
+  import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
 
-  const messages = $derived(socketProvider.history);
+  const roomId = $derived(roomsProvider.room?.id);
+  const messages = $derived(socketProvider.histories[roomId || ""] || []);
 
   const operatorAvatar = $derived(
     userProvider.user?.avatar
@@ -30,7 +32,8 @@
   let showScrollButton = $state(false);
 
   $effect(() => {
-    if (messages.length > 0) scrollToBottom(messageContainer);
+    if (messages.length > 0)
+      setTimeout(() => scrollToBottom(messageContainer), 100);
   });
 
   function onScroll() {

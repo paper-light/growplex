@@ -97,17 +97,11 @@
 
     <li class="w-full">
       <details class="group block w-full" open={true}>
-        <summary class={classHeader(["Integrations", "Chat Rooms"])}>
+        <summary class={classHeader(["Chat Rooms"])}>
           <span>Messanger</span>
         </summary>
 
         <ul class="mt-2 space-y-1">
-          <li class="w-full">
-            <a href="/app/integrations" class={linkClass("Integrations")}>
-              <Settings size={18} />
-              Configure
-            </a>
-          </li>
           <li class="w-full">
             <a href={`/app/chat`} class={linkClass("Chat Rooms")}>
               <MessageSquare size={18} />

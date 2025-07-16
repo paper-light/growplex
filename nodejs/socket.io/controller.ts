@@ -62,6 +62,8 @@ export function attachSocketIO(httpServer: any) {
     });
 
     socket.on("send-message", async (dto: SendMessageDTO) => {
+      console.log("send-message", dto);
+
       // Auth check
       if (
         !socket.data.authorizedRooms ||

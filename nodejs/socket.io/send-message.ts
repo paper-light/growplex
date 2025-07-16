@@ -34,7 +34,7 @@ export async function sendMessage(
 
     await updateHistory([msg]);
 
-    io.to(room.id).emit("new-message", msg);
+    io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
 
     // SPECIFIC BY ROLE
     if (socket.data.guest) {
@@ -64,9 +64,8 @@ export async function sendMessage(
 
     const newMsg = await callChatAssistant(integration.id, room.id);
 
-    io.to(room.id).emit("new-message", newMsg);
+    io.to(room.id).emit("new-message", { roomId: room.id, message: newMsg });
   } catch (err) {
     console.error(err);
   }
 }
-  

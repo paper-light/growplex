@@ -1,10 +1,10 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
 
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { userProvider } from "../../user/user.svelte";
-  import type { RoomsResponse } from "../../shared/models/pocketbase-types";
-  import { roomsProvider } from "../provider/rooms.svelte";
+  import { settingsProvider } from "../../../user/settings.svelte";
+  import { userProvider } from "../../../user/user.svelte";
+  import type { RoomsResponse } from "../../../shared/models/pocketbase-types";
+  import { roomsProvider } from "../../provider/rooms.svelte";
 
   const roomTypes = [
     { value: "operator", label: "Operator", color: "success" },

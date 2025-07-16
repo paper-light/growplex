@@ -19,37 +19,37 @@ importers:
         version: 3.4.1
       '@astrojs/svelte':
         specifier: ^7.1.0
-        version: 7.1.0(@types/node@24.0.14)(astro@5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(jiti@2.4.2)(lightningcss@1.30.1)(svelte@5.36.0)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
+        version: 7.1.0(@types/node@24.0.14)(astro@5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(jiti@2.4.2)(lightningcss@1.30.1)(svelte@5.36.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
       '@inlang/paraglide-js':
         specifier: 2.2.0
         version: 2.2.0
       '@langchain/anthropic':
         specifier: ^0.3.24
-        version: 0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))
+        version: 0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))
       '@langchain/core':
-        specifier: ^0.3.62
-        version: 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+        specifier: ^0.3.63
+        version: 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       '@langchain/deepseek':
         specifier: ^0.0.2
-        version: 0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
+        version: 0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
       '@langchain/google-genai':
-        specifier: ^0.2.14
-        version: 0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))
+        specifier: ^0.2.15
+        version: 0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))
       '@langchain/openai':
         specifier: ^0.5.18
-        version: 0.5.18(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
+        version: 0.5.18(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
       '@langchain/qdrant':
         specifier: ^0.1.2
-        version: 0.1.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(typescript@5.8.3)
+        version: 0.1.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(typescript@5.8.3)
       '@lucide/astro':
         specifier: ^0.525.0
         version: 0.525.0(astro@5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))
       '@lucide/svelte':
         specifier: ^0.525.0
-        version: 0.525.0(svelte@5.36.0)
+        version: 0.525.0(svelte@5.36.2)
       '@sveltejs/vite-plugin-svelte':
-        specifier: ^6.0.0
-        version: 6.0.0(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+        specifier: ^6.1.0
+        version: 6.1.0(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       '@tailwindcss/forms':
         specifier: ^0.5.10
         version: 0.5.10(tailwindcss@4.1.11)
@@ -105,14 +105,14 @@ importers:
         specifier: ^11.0.1
         version: 11.0.1
       langchain:
-        specifier: ^0.3.29
-        version: 0.3.29(@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.0(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)
+        specifier: ^0.3.30
+        version: 0.3.30(@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.2(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)
       langfuse-langchain:
         specifier: ^3.38.4
-        version: 3.38.4(langchain@0.3.29(@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.0(ws@8.18.1)(zod@4.0.5))(ws@8.18.1))
+        version: 3.38.4(langchain@0.3.30(@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.2(ws@8.18.1)(zod@4.0.5))(ws@8.18.1))
       langsmith:
-        specifier: ^0.3.45
-        version: 0.3.45(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+        specifier: ^0.3.46
+        version: 0.3.46(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       luxon:
         specifier: ^3.7.1
         version: 3.7.1
@@ -150,8 +150,8 @@ importers:
         specifier: ^4.8.1
         version: 4.8.1
       svelte:
-        specifier: ^5.36.0
-        version: 5.36.0
+        specifier: ^5.36.2
+        version: 5.36.2
       tailwindcss:
         specifier: ^4.1.11
         version: 4.1.11
@@ -1183,8 +1183,8 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.3.58 <0.4.0'
 
-  '@langchain/core@0.3.62':
-    resolution: {integrity: sha512-GqRTcoUPnozGRMUcA6QkP7LHL/OvanGdB51Jgb0w7IIPDI3wFugxMHZ4gphnGDtxsD1tQY5ykyEpYNxFK8kl1w==}
+  '@langchain/core@0.3.63':
+    resolution: {integrity: sha512-CQfyu4WgwizUhSc1YsDDzzHga6WVhLqeuAyCD4VpGAPa3k3QI+H0b3ECFr/WjJMw0amMtHtfgPWMa1tS7P7qVg==}
     engines: {node: '>=18'}
 
   '@langchain/deepseek@0.0.2':
@@ -1193,8 +1193,8 @@ packages:
     peerDependencies:
       '@langchain/core': '>=0.3.58 <0.4.0'
 
-  '@langchain/google-genai@0.2.14':
-    resolution: {integrity: sha512-gKe/T2LNh8wSSMJOaFmYd8cwQnDSXKtVtC6a7CFoq5nWuh0bKzhItM/7bue1aMN8mlKfB2G1HCwxhaZoSpS/DA==}
+  '@langchain/google-genai@0.2.15':
+    resolution: {integrity: sha512-fAD3xjzd5TxWQCKlttNeEc+b5tUX43hBqKH3rk3g+wbl1ToLqe3ocWawKRmGotEuI5jhDVmoHjDxoNMifFDgmg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/core': '>=0.3.58 <0.4.0'
@@ -1464,8 +1464,8 @@ packages:
       svelte: ^5.0.0
       vite: ^6.0.0
 
-  '@sveltejs/vite-plugin-svelte@6.0.0':
-    resolution: {integrity: sha512-mma5GJ23pYiWpTNbN//g9XI3Hfob3aAlXPP42qRtvjgTAU6pfJyLyNPTdLjFuj+jfC9JslP4J3AkeiJNhjtLLA==}
+  '@sveltejs/vite-plugin-svelte@6.1.0':
+    resolution: {integrity: sha512-+U6lz1wvGEG/BvQyL4z/flyNdQ9xDNv5vrh+vWBWTHaebqT0c9RNggpZTo/XSPoHsSCWBlYaTlRX8pZ9GATXCw==}
     engines: {node: ^20.19 || ^22.12 || >=24}
     peerDependencies:
       svelte: ^5.0.0
@@ -2305,8 +2305,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.183:
-    resolution: {integrity: sha512-vCrDBYjQCAEefWGjlK3EpoSKfKbT10pR4XXPdn65q7snuNOZnthoVpBfZPykmDapOKfoD+MMIPG8ZjKyyc9oHA==}
+  electron-to-chromium@1.5.185:
+    resolution: {integrity: sha512-dYOZfUk57hSMPePoIQ1fZWl1Fkj+OshhEVuPacNKWzC1efe56OsHY3l/jCfiAgIICOU3VgOIdoq7ahg7r7n6MQ==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -2975,8 +2975,8 @@ packages:
     resolution: {integrity: sha512-FIyV/64EkKhJmjgC0g2hygpBv5RNWVPyNCqSAD7eTCv6eFWNIi4PN1UvdSJGicN/o35bnevgis4Y0UDC0qi8jQ==}
     engines: {node: '>=14.0.0'}
 
-  langchain@0.3.29:
-    resolution: {integrity: sha512-L389pKlApVJPqu4hp58qY6NZAobI+MFPoBjSfjT1z3mcxtB68wLFGhaH4DVsTVg21NYO+0wTEoz24BWrxu9YGw==}
+  langchain@0.3.30:
+    resolution: {integrity: sha512-UyVsfwHDpHbrnWrjWuhJHqi8Non+Zcsf2kdpDTqyJF8NXrHBOpjdHT5LvPuW9fnE7miDTWf5mLcrWAGZgcrznQ==}
     engines: {node: '>=18'}
     peerDependencies:
       '@langchain/anthropic': '*'
@@ -3047,8 +3047,8 @@ packages:
     resolution: {integrity: sha512-2UqMeHLl3DGNX1Nh/cO4jGhk7TzDJ6gjQLlyS9rwFCKVO81xot6b58yeTsTB5YrWupWsOxQtMNoQYIQGOUlH9Q==}
     engines: {node: '>=18'}
 
-  langsmith@0.3.45:
-    resolution: {integrity: sha512-+LNOy/Uv0OWbtcsKHhrVenGLkS8CaM/9Vd2/95QzgQ54YokXlD9sH5LNRNRqxJAMt/NsqoIbZSoXj6rt96e8hw==}
+  langsmith@0.3.46:
+    resolution: {integrity: sha512-Hhi4/cMjhWIGpu0DW5eQrXBbeeKQWPYYQyJCYzhFjod+xinMry4i8QR0gxrrgjGOgfMuU6nyK79YqjGTEPVbDA==}
     peerDependencies:
       '@opentelemetry/api': '*'
       '@opentelemetry/exporter-trace-otlp-proto': '*'
@@ -3551,8 +3551,8 @@ packages:
   oniguruma-to-es@4.3.3:
     resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
 
-  openai@5.9.0:
-    resolution: {integrity: sha512-cmLC0pfqLLhBGxE4aZPyRPjydgYCncppV2ClQkKmW79hNjCvmzkfhz8rN5/YVDmjVQlFV+UsF1JIuNjNgeagyQ==}
+  openai@5.9.2:
+    resolution: {integrity: sha512-d7t/lRkwZpSwIk7GW3EHRSGAlsuoi1WL6VhCO02raEzZO2ahEVAbWn3WmOcpeh9zF6xF9weJXoVeDkWJRz+SHA==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
@@ -3651,8 +3651,8 @@ packages:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
 
-  picomatch@4.0.2:
-    resolution: {integrity: sha512-M7BAV6Rlcy5u+m6oPhAPFgJTzAioX/6B0DxyvDlo9l8+T3nLKbrczg2WLUyzd45L8RqfUMyGPzekbMvX2Ldkwg==}
+  picomatch@4.0.3:
+    resolution: {integrity: sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==}
     engines: {node: '>=12'}
 
   pify@2.3.0:
@@ -4200,8 +4200,8 @@ packages:
       svelte: ^3.55 || ^4.0.0-next.0 || ^4.0 || ^5.0.0-next.0
       typescript: ^4.9.4 || ^5.0.0
 
-  svelte@5.36.0:
-    resolution: {integrity: sha512-mQwp864P/ipJTElwU8L1LzkbzdUHfrn1su/R8mTJrH7M9mSi42hsgfHA0JU0f4OSkiznlWixan5FcUdR85G3BQ==}
+  svelte@5.36.2:
+    resolution: {integrity: sha512-yHthOlJZkB4zRS41JgUSdqpytw88UVr/txXcQKLy0QKwG0HVYP6VDgOEDUWlfTOlA5oYgAcjmk4TtjDuzoQliQ==}
     engines: {node: '>=18'}
 
   tailwindcss@4.1.11:
@@ -4970,12 +4970,12 @@ snapshots:
       stream-replace-string: 2.0.0
       zod: 3.25.76
 
-  '@astrojs/svelte@7.1.0(@types/node@24.0.14)(astro@5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(jiti@2.4.2)(lightningcss@1.30.1)(svelte@5.36.0)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)':
+  '@astrojs/svelte@7.1.0(@types/node@24.0.14)(astro@5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0))(jiti@2.4.2)(lightningcss@1.30.1)(svelte@5.36.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       astro: 5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
-      svelte: 5.36.0
-      svelte2tsx: 0.7.40(svelte@5.36.0)(typescript@5.8.3)
+      svelte: 5.36.2
+      svelte2tsx: 0.7.40(svelte@5.36.2)(typescript@5.8.3)
       typescript: 5.8.3
       vite: 6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
     transitivePeerDependencies:
@@ -5967,20 +5967,20 @@ snapshots:
 
   '@kurkle/color@0.3.4': {}
 
-  '@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))':
+  '@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))':
     dependencies:
       '@anthropic-ai/sdk': 0.56.0
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       fast-xml-parser: 4.5.3
 
-  '@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))':
+  '@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.20
-      langsmith: 0.3.45(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      langsmith: 0.3.46(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -5993,39 +5993,39 @@ snapshots:
       - '@opentelemetry/sdk-trace-base'
       - openai
 
-  '@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)':
+  '@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)':
     dependencies:
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
-      '@langchain/openai': 0.5.18(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
+      '@langchain/openai': 0.5.18(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
     transitivePeerDependencies:
       - ws
 
-  '@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))':
+  '@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))':
     dependencies:
       '@google/generative-ai': 0.24.1
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       uuid: 11.1.0
 
-  '@langchain/openai@0.5.18(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)':
+  '@langchain/openai@0.5.18(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)':
     dependencies:
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       js-tiktoken: 1.0.20
-      openai: 5.9.0(ws@8.18.1)(zod@3.25.76)
+      openai: 5.9.2(ws@8.18.1)(zod@3.25.76)
       zod: 3.25.76
     transitivePeerDependencies:
       - ws
 
-  '@langchain/qdrant@0.1.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(typescript@5.8.3)':
+  '@langchain/qdrant@0.1.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(typescript@5.8.3)':
     dependencies:
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       '@qdrant/js-client-rest': 1.14.1(typescript@5.8.3)
       uuid: 10.0.0
     transitivePeerDependencies:
       - typescript
 
-  '@langchain/textsplitters@0.1.0(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))':
+  '@langchain/textsplitters@0.1.0(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))':
     dependencies:
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       js-tiktoken: 1.0.20
 
   '@lix-js/sdk@0.4.7':
@@ -6046,9 +6046,9 @@ snapshots:
     dependencies:
       astro: 5.11.1(@types/node@24.0.14)(ioredis@5.6.1)(jiti@2.4.2)(lightningcss@1.30.1)(rollup@2.79.2)(terser@5.43.1)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
 
-  '@lucide/svelte@0.525.0(svelte@5.36.0)':
+  '@lucide/svelte@0.525.0(svelte@5.36.2)':
     dependencies:
-      svelte: 5.36.0
+      svelte: 5.36.2
 
   '@mdx-js/mdx@3.1.0(acorn@8.15.0)':
     dependencies:
@@ -6135,7 +6135,7 @@ snapshots:
     dependencies:
       '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.2
+      picomatch: 4.0.3
     optionalDependencies:
       rollup: 2.79.2
 
@@ -6251,45 +6251,45 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
+  '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@sveltejs/vite-plugin-svelte': 5.1.1(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       debug: 4.4.1
-      svelte: 5.36.0
+      svelte: 5.36.2
       vite: 6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte-inspector@5.0.0(@sveltejs/vite-plugin-svelte@6.0.0(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
+  '@sveltejs/vite-plugin-svelte-inspector@5.0.0(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 6.0.0(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@sveltejs/vite-plugin-svelte': 6.1.0(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       debug: 4.4.1
-      svelte: 5.36.0
+      svelte: 5.36.2
       vite: 7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
+  '@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.0)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@sveltejs/vite-plugin-svelte-inspector': 4.0.1(@sveltejs/vite-plugin-svelte@5.1.1(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.2)(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       debug: 4.4.1
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.17
-      svelte: 5.36.0
+      svelte: 5.36.2
       vite: 6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vitefu: 1.1.1(vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@6.0.0(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
+  '@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 5.0.0(@sveltejs/vite-plugin-svelte@6.0.0(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.0)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
+      '@sveltejs/vite-plugin-svelte-inspector': 5.0.0(@sveltejs/vite-plugin-svelte@6.1.0(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)))(svelte@5.36.2)(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
       debug: 4.4.1
       deepmerge: 4.3.1
       kleur: 4.1.5
       magic-string: 0.30.17
-      svelte: 5.36.0
+      svelte: 5.36.2
       vite: 7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0)
       vitefu: 1.1.1(vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))
     transitivePeerDependencies:
@@ -6673,7 +6673,7 @@ snapshots:
       p-limit: 6.2.0
       p-queue: 8.1.0
       package-manager-detector: 1.3.0
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       prompts: 2.4.2
       rehype: 13.0.2
       semver: 7.7.2
@@ -6840,7 +6840,7 @@ snapshots:
   browserslist@4.25.1:
     dependencies:
       caniuse-lite: 1.0.30001727
-      electron-to-chromium: 1.5.183
+      electron-to-chromium: 1.5.185
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.1)
 
@@ -7211,7 +7211,7 @@ snapshots:
     dependencies:
       jake: 10.9.2
 
-  electron-to-chromium@1.5.183: {}
+  electron-to-chromium@1.5.185: {}
 
   emoji-regex@10.4.0: {}
 
@@ -7497,9 +7497,9 @@ snapshots:
     dependencies:
       strnum: 1.1.2
 
-  fdir@6.4.6(picomatch@4.0.2):
+  fdir@6.4.6(picomatch@4.0.3):
     optionalDependencies:
-      picomatch: 4.0.2
+      picomatch: 4.0.3
 
   filelist@1.0.4:
     dependencies:
@@ -8109,24 +8109,24 @@ snapshots:
 
   kysely@0.27.6: {}
 
-  langchain@0.3.29(@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.0(ws@8.18.1)(zod@4.0.5))(ws@8.18.1):
+  langchain@0.3.30(@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.2(ws@8.18.1)(zod@4.0.5))(ws@8.18.1):
     dependencies:
-      '@langchain/core': 0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
-      '@langchain/openai': 0.5.18(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
-      '@langchain/textsplitters': 0.1.0(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))
+      '@langchain/core': 0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
+      '@langchain/openai': 0.5.18(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
+      '@langchain/textsplitters': 0.1.0(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))
       js-tiktoken: 1.0.20
       js-yaml: 4.1.0
       jsonpointer: 5.0.1
-      langsmith: 0.3.45(openai@5.9.0(ws@8.18.1)(zod@4.0.5))
+      langsmith: 0.3.46(openai@5.9.2(ws@8.18.1)(zod@4.0.5))
       openapi-types: 12.1.3
       p-retry: 4.6.2
       uuid: 10.0.0
       yaml: 2.8.0
       zod: 3.25.76
     optionalDependencies:
-      '@langchain/anthropic': 0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))
-      '@langchain/deepseek': 0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
-      '@langchain/google-genai': 0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))
+      '@langchain/anthropic': 0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))
+      '@langchain/deepseek': 0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1)
+      '@langchain/google-genai': 0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))
       cheerio: 1.1.0
     transitivePeerDependencies:
       - '@opentelemetry/api'
@@ -8139,9 +8139,9 @@ snapshots:
     dependencies:
       mustache: 4.2.0
 
-  langfuse-langchain@3.38.4(langchain@0.3.29(@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.0(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)):
+  langfuse-langchain@3.38.4(langchain@0.3.30(@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.2(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)):
     dependencies:
-      langchain: 0.3.29(@langchain/anthropic@0.3.24(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.14(@langchain/core@0.3.62(openai@5.9.0(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.0(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)
+      langchain: 0.3.30(@langchain/anthropic@0.3.24(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(@langchain/deepseek@0.0.2(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5)))(ws@8.18.1))(@langchain/google-genai@0.2.15(@langchain/core@0.3.63(openai@5.9.2(ws@8.18.1)(zod@4.0.5))))(cheerio@1.1.0)(openai@5.9.2(ws@8.18.1)(zod@4.0.5))(ws@8.18.1)
       langfuse: 3.38.4
       langfuse-core: 3.38.4
 
@@ -8149,7 +8149,7 @@ snapshots:
     dependencies:
       langfuse-core: 3.38.4
 
-  langsmith@0.3.45(openai@5.9.0(ws@8.18.1)(zod@4.0.5)):
+  langsmith@0.3.46(openai@5.9.2(ws@8.18.1)(zod@4.0.5)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
@@ -8159,7 +8159,7 @@ snapshots:
       semver: 7.7.2
       uuid: 10.0.0
     optionalDependencies:
-      openai: 5.9.0(ws@8.18.1)(zod@4.0.5)
+      openai: 5.9.2(ws@8.18.1)(zod@4.0.5)
 
   leven@3.1.0: {}
 
@@ -8837,12 +8837,12 @@ snapshots:
       regex: 6.0.1
       regex-recursion: 6.0.2
 
-  openai@5.9.0(ws@8.18.1)(zod@3.25.76):
+  openai@5.9.2(ws@8.18.1)(zod@3.25.76):
     optionalDependencies:
       ws: 8.18.1
       zod: 3.25.76
 
-  openai@5.9.0(ws@8.18.1)(zod@4.0.5):
+  openai@5.9.2(ws@8.18.1)(zod@4.0.5):
     optionalDependencies:
       ws: 8.18.1
       zod: 4.0.5
@@ -8940,7 +8940,7 @@ snapshots:
 
   picomatch@2.3.1: {}
 
-  picomatch@4.0.2: {}
+  picomatch@4.0.3: {}
 
   pify@2.3.0: {}
 
@@ -9712,14 +9712,14 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte2tsx@0.7.40(svelte@5.36.0)(typescript@5.8.3):
+  svelte2tsx@0.7.40(svelte@5.36.2)(typescript@5.8.3):
     dependencies:
       dedent-js: 1.0.1
       pascal-case: 3.1.2
-      svelte: 5.36.0
+      svelte: 5.36.2
       typescript: 5.8.3
 
-  svelte@5.36.0:
+  svelte@5.36.2:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@jridgewell/sourcemap-codec': 1.5.4
@@ -9783,8 +9783,8 @@ snapshots:
 
   tinyglobby@0.2.14:
     dependencies:
-      fdir: 6.4.6(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.4.6(picomatch@4.0.3)
+      picomatch: 4.0.3
 
   tinypool@1.1.1: {}
 
@@ -9979,7 +9979,7 @@ snapshots:
   unplugin@2.3.5:
     dependencies:
       acorn: 8.15.0
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       webpack-virtual-modules: 0.6.2
 
   unstorage@1.16.1(ioredis@5.6.1):
@@ -10065,8 +10065,8 @@ snapshots:
   vite@6.3.5(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.6
-      fdir: 6.4.6(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.4.6(picomatch@4.0.3)
+      picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.45.1
       tinyglobby: 0.2.14
@@ -10082,8 +10082,8 @@ snapshots:
   vite@7.0.4(@types/node@24.0.14)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0):
     dependencies:
       esbuild: 0.25.6
-      fdir: 6.4.6(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.4.6(picomatch@4.0.3)
+      picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.45.1
       tinyglobby: 0.2.14
@@ -10119,7 +10119,7 @@ snapshots:
       expect-type: 1.2.2
       magic-string: 0.30.17
       pathe: 2.0.3
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       std-env: 3.9.0
       tinybench: 2.9.0
       tinyexec: 0.3.2

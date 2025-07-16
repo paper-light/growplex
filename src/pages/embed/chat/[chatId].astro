@@ -1,11 +1,11 @@
 ---
 import { pb } from "../../../shared/lib/pb";
-import Chat from "../../../chat/ui/Chat.svelte";
+import Chat from "../../../chat/ui/widgets/Chat.svelte";
 import type { IntegrationExpand } from "../../../shared/models/expands";
 import type { IntegrationsResponse } from "../../../shared/models/pocketbase-types";
 import Root from "../../../shared/ui/layouts/Root.astro";
 
-const { id } = Astro.params;
+const { chatId } = Astro.params;
 const token = Astro.url.searchParams.get("token");
 
 if (!token) throw new Error("Token is required");
@@ -14,7 +14,9 @@ const theme = Astro.url.searchParams.get("theme") || "light";
 
 const integration = await pb
   .collection("integrations")
-  .getFirstListItem<IntegrationsResponse<IntegrationExpand>>(`chat="${id}"`, {
+  .getFirstListItem<
+    IntegrationsResponse<IntegrationExpand>
+  >(`chat="${chatId}"`, {
     expand: "agent,chat",
   });
 

@@ -8,12 +8,11 @@ import {
 } from "../../shared/models/pocketbase-types";
 
 class SocketProvider {
-  joinedRoomId: string | null = null;
+  joinedRooms: Set<string> = $state(new Set());
+  histories: Record<string, MessagesResponse[]> = $state({});
 
   socket: Socket | null = $state(null);
   online = $state(false);
-
-  history = $state<MessagesResponse[]>([]);
 
   private resolveConnection: ((value: boolean) => void) | null = null;
   onlinePromise = $derived.by(async () => {
@@ -39,17 +38,29 @@ class SocketProvider {
       }
     });
 
-    this.socket.on("chat-history", (history: MessagesResponse[]) => {
-      console.log("chat-history", history.length);
-      this.history = history;
-    });
+    this.socket.on(
+      "chat-history",
+      (data: { roomId: string; history: MessagesResponse[] }) => {
+        const { roomId, history } = data;
+        this.histories[roomId] = history;
+      }
+    );
 
-    this.socket.on("new-message", (m: MessagesResponse) => {
-      this.history.push(m);
-    });
+    this.socket.on(
+      "new-message",
+      (data: { roomId: string; message: MessagesResponse }) => {
+        const { roomId, message } = data;
+        if (!this.histories[roomId]) this.histories[roomId] = [];
+        this.histories[roomId].push(message);
+      }
+    );
 
     this.socket.on("rate-limit", (data: { message: string }) => {
       console.warn("Rate limit from server:", data.message);
+    });
+
+    this.socket.on("unauthorized", (data: { message: string }) => {
+      console.warn("Unauthorized from server:", data.message);
     });
 
     this.socket.on("disconnect", () => {
@@ -59,32 +70,47 @@ class SocketProvider {
 
   joinRoom(roomId: string) {
     if (!this.socket || !this.online) {
-      console.log("socket not connected, skipping joinRoom");
+      console.warn("socket not connected, skipping joinRoom");
+      return;
+    }
+    if (this.joinedRooms.has(roomId)) {
+      console.warn("already joined to roomId, skipping joinRoom");
       return;
     }
 
-    if (this.joinedRoomId === roomId) return;
-    if (this.joinedRoomId) this.leaveRoom(this.joinedRoomId);
-
-    this.joinedRoomId = roomId;
-    this.history = [];
+    this.joinedRooms.add(roomId);
+    this.histories[roomId] = [];
     this.socket.emit("join-room", {
       roomId,
     });
   }
+
   leaveRoom(roomId: string) {
+    if (!this.joinedRooms.has(roomId)) return;
     this.socket?.emit("leave-room", { roomId });
-    this.joinedRoomId = null;
-    this.history = [];
+    this.joinedRooms.delete(roomId);
+    delete this.histories[roomId];
   }
 
   sendMessage(
     content: string,
-    roomId: string,
     username: string,
+    roomId: string,
     metadata: Record<string, any> = {},
     role: MessagesRoleOptions = MessagesRoleOptions.user
   ) {
+    if (!this.socket || !this.online) {
+      console.warn("socket not connected, skipping sendMessage");
+      return;
+    }
+    if (!this.joinedRooms.has(roomId)) {
+      console.warn(
+        "not joined to roomId, skipping sendMessage, roomId:",
+        roomId
+      );
+      return;
+    }
+
     const newMsg: MessagesRecord = {
       id: `temp-${nanoid(12)}`,
       content: content.trim(),
@@ -96,7 +122,7 @@ class SocketProvider {
       created: new Date().toISOString().replace("T", " "),
     };
 
-    this.socket?.emit("send-message", {
+    this.socket.emit("send-message", {
       roomId,
       msgStr: JSON.stringify(newMsg),
     });
@@ -105,7 +131,8 @@ class SocketProvider {
   disconnect() {
     this.socket?.disconnect();
     this.online = false;
-    this.history = [];
+    this.joinedRooms = new Set();
+    this.histories = {};
   }
 }
 

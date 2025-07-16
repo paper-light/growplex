@@ -6,24 +6,24 @@
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
   import { onMount } from "svelte";
-  import { ChevronsRight } from "@lucide/svelte";
+  import { ChevronsDown, ChevronsRight } from "@lucide/svelte";
 
-  import ChatMessage from "./Message.svelte";
-  import Man from "../../shared/assets/Man.jpg";
-  import Thalia from "../../shared/assets/Thalia.jpg";
+  import ChatMessage from "../entities/Message.svelte";
+  import Man from "../../../shared/assets/Man.jpg";
+  import Thalia from "../../../shared/assets/Thalia.jpg";
 
-  import { parseJwtPayload } from "../../auth/utils/parse-jwt";
+  import { parseJwtPayload } from "../../../auth/utils/parse-jwt";
   import {
     type ChatsResponse,
     type AgentsResponse,
     type MessagesResponse,
-  } from "../../shared/models/pocketbase-types";
-  import { pb } from "../../shared/lib/pb";
+  } from "../../../shared/models/pocketbase-types";
+  import { pb } from "../../../shared/lib/pb";
 
-  import { socketProvider } from "../provider/socket.svelte";
-  import { ChatWidgetPayloadSchema } from "../lib/models";
-  import { injectTheme } from "../utils/injectTheme";
-  import { scrollToBottom } from "../../shared/actions/scroll-bottom";
+  import { socketProvider } from "../../provider/socket.svelte";
+  import { ChatWidgetPayloadSchema } from "../../lib/models";
+  import { injectTheme } from "../../utils/injectTheme";
+  import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
 
   interface Props {
     chat: ChatsResponse;
@@ -52,7 +52,9 @@
 
   const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
 
-  const messages: MessagesResponse[] = $derived(socketProvider.history);
+  const messages: MessagesResponse[] = $derived(
+    socketProvider.histories[roomId] || []
+  );
 
   const online = $derived(socketProvider.online || false);
 
@@ -106,7 +108,7 @@
 
     canSend = false;
 
-    socketProvider.sendMessage(inputText, roomId, username);
+    socketProvider.sendMessage(inputText, username, roomId);
     inputText = "";
 
     setTimeout(
@@ -183,27 +185,10 @@
     <button
       transition:fade
       onclick={() => scrollToBottom(messageContainer)}
-      class="
-      p-1 bg-secondary text-secondary-content rounded-full border-2 border-secondary
-      hover:cursor-pointer hover:bg-base-100 hover:text-secondary
-      absolute bottom-49 left-1/2 transform -translate-x-1/2 transition
-      "
+      class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-6 right-1/2 translate-x-1/2 z-10"
       aria-label="Scroll to bottom"
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        class="h-6 w-6"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
+      <ChevronsDown size={20} />
     </button>
   {/if}
 

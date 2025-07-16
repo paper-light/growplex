@@ -2,12 +2,12 @@
   import { X } from "@lucide/svelte";
   import { onMount } from "svelte";
 
-  import { userProvider } from "../../user/user.svelte";
-  import { uiProvider } from "../../user/ui.svelte";
+  import { userProvider } from "../../../user/user.svelte";
+  import { uiProvider } from "../../../user/ui.svelte";
   import Chat from "./Chat.svelte";
-  import { pb } from "../../shared/lib/pb";
-  import { socketProvider } from "../provider/socket.svelte";
-  import { settingsProvider } from "../../user/settings.svelte";
+  import { pb } from "../../../shared/lib/pb";
+  import { socketProvider } from "../../provider/socket.svelte";
+  import { settingsProvider } from "../../../user/settings.svelte";
   interface Props {
     block?: boolean;
   }

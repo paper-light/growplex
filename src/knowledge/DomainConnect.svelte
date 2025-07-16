@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { sourcesProvider } from "../../knowledge/providers/sources.svelte";
+  import { sourcesProvider } from "./providers/sources.svelte";
 
   const source = $derived(sourcesProvider.source);
 

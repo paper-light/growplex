@@ -2,14 +2,13 @@
   import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { Send } from "@lucide/svelte";
 
-  import { socketProvider } from "../provider/socket.svelte";
-  import { userProvider } from "../../user/user.svelte";
-  import { MessagesRoleOptions } from "../../shared/models/pocketbase-types";
-  import { pb } from "../../shared/lib/pb";
-  import { roomsProvider } from "../provider/rooms.svelte";
+  import { userProvider } from "../../../user/user.svelte";
+  import { MessagesRoleOptions } from "../../../shared/models/pocketbase-types";
+  import { pb } from "../../../shared/lib/pb";
+  import { socketProvider } from "../../provider/socket.svelte";
+  import { roomsProvider } from "../../provider/rooms.svelte";
 
-  const currentRoom = $derived(roomsProvider.room);
-  const messages = $derived(socketProvider.history);
+  const roomId = $derived(roomsProvider.room?.id);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
@@ -24,32 +23,21 @@
   async function sendMessage() {
     if (!canSend) return;
     if (inputText.trim().length === 0) return;
-
-    let room = await currentRoom;
-    if (!room && messages.length > 0) {
-      const firstMessage = messages[0];
-      if (firstMessage?.room) {
-        room = { id: firstMessage.room } as any;
-      }
-    }
-
-    if (!room) return;
+    if (!roomId) return;
 
     canSend = false;
 
     socketProvider.sendMessage(
       inputText,
-      room.id,
       userProvider.user!.name,
+      roomId,
       {
         avatar: pb.files.getURL(userProvider.user!, userProvider.user!.avatar),
       },
       MessagesRoleOptions.operator
     );
 
-    console.log("sent message", inputText);
     inputText = "";
-    console.log("after", inputText);
 
     if (inputEl) inputEl.style.height = "auto";
 

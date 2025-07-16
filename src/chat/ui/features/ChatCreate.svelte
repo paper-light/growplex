@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createChat } from "../features/create-chat";
-  import { userProvider } from "../../user/user.svelte";
+  import { createChat } from "../../features/create-chat";
+  import { userProvider } from "../../../user/user.svelte";
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
 

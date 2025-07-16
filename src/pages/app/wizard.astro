@@ -1,9 +1,9 @@
 ---
 import AppDashboard from "../../shared/ui/layouts/AppDashboard.astro";
 import Sidebar from "../../integration/Sidebar.svelte";
-import ChatPreview from "../../chat/ui/ChatPreview.svelte";
-
-import WizardWidget from "../../integration/WizardWidget.svelte";
+import ChatPreview from "../../chat/ui/widgets/ChatPreview.svelte";
+import ChatForm from "../../chat/ui/widgets/ChatForm.svelte";
+import AgentForm from "../../agent/AgentForm.svelte";
 ---
 
 <AppDashboard title="Integration Wizard">
@@ -20,7 +20,13 @@ import WizardWidget from "../../integration/WizardWidget.svelte";
 
       <!-- Main Content -->
       <div class="h-full overflow-hidden">
-        <WizardWidget client:load />
+        <div class="h-full flex flex-col p-4 space-y-6 overflow-y-auto">
+          <!-- Chat Form -->
+          <ChatForm client:load />
+
+          <!-- Agent Form -->
+          <AgentForm client:load />
+        </div>
       </div>
 
       <!-- Chat Preview -->
@@ -33,7 +39,13 @@ import WizardWidget from "../../integration/WizardWidget.svelte";
         <!-- Main Content -->
         <div class="p-4 h-full">
           <div class="h-full overflow-hidden">
-            <WizardWidget client:load />
+            <div class="h-full flex flex-col p-4 space-y-6 overflow-y-auto">
+              <!-- Chat Form -->
+              <ChatForm client:load />
+
+              <!-- Agent Form -->
+              <AgentForm client:load />
+            </div>
           </div>
         </div>
 

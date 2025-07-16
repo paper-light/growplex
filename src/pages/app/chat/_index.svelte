@@ -1,9 +1,9 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { X, Menu } from "@lucide/svelte";
-  import RoomsSidebar from "./RoomsSidebar.svelte";
-  import RoomMessages from "./RoomMessages.svelte";
-  import Interactions from "./Interactions.svelte";
+  import RoomsSidebar from "../../../chat/ui/widgets/RoomsSidebar.svelte";
+  import RoomMessages from "../../../chat/ui/widgets/RoomMessages.svelte";
+  import Interactions from "../../../chat/ui/widgets/Interactions.svelte";
 
   let sidebarOpen = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);

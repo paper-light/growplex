@@ -1,10 +1,11 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
-  import { userProvider } from "../../user/user.svelte";
-  import ThemeSelection from "./ThemeSelection.svelte";
-  import AvatarInput from "../../shared/ui/components/AvatarInput.svelte";
-  import ChatCreate from "./ChatCreate.svelte";
-  import { pb } from "../../shared/lib/pb";
+  import { untrack } from "svelte";
+  import { userProvider } from "../../../user/user.svelte";
+  import ThemeSelection from "../features/ThemeSelection.svelte";
+  import AvatarInput from "../../../shared/ui/components/AvatarInput.svelte";
+  import ChatCreate from "../features/ChatCreate.svelte";
+  import { pb } from "../../../shared/lib/pb";
+  import { debouncedUpdateChat } from "../../features/update-chat";
 
   const currentChat = $derived(userProvider.chat);
   const allChats = $derived(userProvider.project?.expand?.chats || []);
@@ -13,50 +14,44 @@
   let domain = $derived(currentChat?.domain ?? "");
   let firstMessage = $derived(currentChat?.firstMessage ?? "");
   let chatPicture: File | null = $state(null);
-  let chatUpdateTimer: NodeJS.Timeout | null = $state(null);
   let selectedChatId = $state("");
 
-  function debouncedChatUpdate() {
-    if (chatUpdateTimer) {
-      clearTimeout(chatUpdateTimer);
-    }
-    chatUpdateTimer = setTimeout(async () => {
-      if (!currentChat) return;
+  async function updateChat() {
+    if (!currentChat) return;
 
-      try {
-        const formData = new FormData();
-        let hasChanges = false;
+    try {
+      const formData = new FormData();
+      let hasChanges = false;
 
-        if (chatName !== currentChat.name) {
-          formData.append("name", chatName);
-          hasChanges = true;
-        }
-        if (domain !== currentChat.domain) {
-          formData.append("domain", domain);
-          hasChanges = true;
-        }
-        if (firstMessage !== currentChat.firstMessage) {
-          formData.append("firstMessage", firstMessage);
-          hasChanges = true;
-        }
-        if (chatPicture) {
-          formData.append("avatar", chatPicture);
-          hasChanges = true;
-        }
-
-        if (hasChanges) {
-          await userProvider.updateChat(currentChat.id, formData);
-          chatPicture = null; // Reset after upload
-        }
-      } catch (error) {
-        console.error("Error updating chat:", error);
+      if (chatName !== currentChat.name) {
+        formData.append("name", chatName);
+        hasChanges = true;
       }
-    }, 500);
+      if (domain !== currentChat.domain) {
+        formData.append("domain", domain);
+        hasChanges = true;
+      }
+      if (firstMessage !== currentChat.firstMessage) {
+        formData.append("firstMessage", firstMessage);
+        hasChanges = true;
+      }
+      if (chatPicture) {
+        formData.append("avatar", chatPicture);
+        hasChanges = true;
+      }
+
+      if (hasChanges) {
+        await debouncedUpdateChat(currentChat.id, formData);
+        chatPicture = null;
+      }
+    } catch (error) {
+      console.error("Error updating chat:", error);
+    }
   }
 
   function handleAvatarChange(file: File) {
     chatPicture = file;
-    debouncedChatUpdate();
+    updateChat();
   }
 
   $effect(() => {
@@ -65,14 +60,8 @@
       domain !== currentChat?.domain ||
       firstMessage !== currentChat?.firstMessage
     ) {
-      untrack(debouncedChatUpdate);
+      untrack(updateChat);
     }
-  });
-
-  onMount(() => {
-    return () => {
-      if (chatUpdateTimer) clearTimeout(chatUpdateTimer);
-    };
   });
 
   async function handleSelectChat(e: Event) {

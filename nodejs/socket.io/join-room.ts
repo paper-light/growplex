@@ -22,7 +22,7 @@ export async function joinRoom(
 
   try {
     const history = await getHistory(integration.id, room.id);
-    socket.emit("chat-history", history);
+    socket.emit("chat-history", { roomId: room.id, history });
   } catch (err) {
     console.error("Error in getHistory:", err);
     socket.emit("chat-history", []);

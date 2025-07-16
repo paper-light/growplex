@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { userProvider } from "../../user/user.svelte";
+  import { userProvider } from "../../../user/user.svelte";
   import { onMount, untrack } from "svelte";
 
   const currentChat = $derived(userProvider.chat || null);

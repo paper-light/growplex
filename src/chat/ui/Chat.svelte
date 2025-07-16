@@ -5,7 +5,7 @@
     PUBLIC_MESSAGE_DELAY_SEC,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onMount, tick } from "svelte";
+  import { onMount } from "svelte";
   import { ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "./Message.svelte";
@@ -23,6 +23,7 @@
   import { socketProvider } from "../provider/socket.svelte";
   import { ChatWidgetPayloadSchema } from "../lib/models";
   import { injectTheme } from "../utils/injectTheme";
+  import { scrollToBottom } from "../../shared/actions/scroll-bottom";
 
   interface Props {
     chat: ChatsResponse;
@@ -94,7 +95,7 @@
   });
 
   $effect(() => {
-    if (messages.length > 0) scrollToBottom();
+    if (messages.length > 0) scrollToBottom(messageContainer);
   });
 
   async function sendMessage() {
@@ -118,15 +119,6 @@
       },
       (PUBLIC_MESSAGE_DELAY_SEC || 1) * 1000
     );
-  }
-
-  async function scrollToBottom() {
-    await tick();
-    if (!messageContainer) return;
-    messageContainer.scrollTo({
-      top: messageContainer.scrollHeight,
-      behavior: "smooth",
-    });
   }
 
   function onScroll() {
@@ -194,7 +186,7 @@
   {#if showScrollButton}
     <button
       transition:fade
-      onclick={scrollToBottom}
+      onclick={() => scrollToBottom(messageContainer)}
       class="
       p-1 bg-secondary text-secondary-content rounded-full border-2 border-secondary
       hover:cursor-pointer hover:bg-base-100 hover:text-secondary

@@ -41,15 +41,6 @@
     }
     return active === name ? `${base} text-primary` : `${base} `;
   }
-
-  const disabledLinks = [
-    "Agents",
-    "Chats",
-    "Knowledge",
-    "Operators",
-    "Analytics",
-    "Billing",
-  ];
 </script>
 
 <nav class="flex-1 overflow-y-auto">
@@ -128,7 +119,10 @@
             </a>
           </li>
           <li class="w-full">
-            <a href={`/app/chat/${roomId}`} class={linkClass("Chat Rooms")}>
+            <a
+              href={`/app/chat/${roomId || ""}`}
+              class={linkClass("Chat Rooms")}
+            >
               <MessageSquare size={18} />
               Chat Rooms
             </a>

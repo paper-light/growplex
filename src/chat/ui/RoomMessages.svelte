@@ -15,6 +15,7 @@
     MessagesRoleOptions,
   } from "../../shared/models/pocketbase-types";
   import { pb } from "../../shared/lib/pb";
+  import { scrollToBottom } from "../../shared/actions/scroll-bottom";
 
   const { roomId } = $props();
 
@@ -25,7 +26,6 @@
       ? pb.files.getURL(authProvider.user, authProvider.user.avatar)
       : Man.src
   );
-
   const chatAvatar = $derived(
     settingsProvider.currentChat?.avatar
       ? pb.files.getURL(
@@ -44,21 +44,13 @@
     if (room?.id !== roomId) {
       await chatProvider.setCurrentRoom(roomId);
       await navigate(`/app/chat/${roomId}`);
-      scrollToBottom();
     }
+    scrollToBottom(messageContainer);
   });
 
   $effect(() => {
-    if (messages.length > 0) scrollToBottom();
+    if (messages.length > 0) scrollToBottom(messageContainer);
   });
-
-  function scrollToBottom() {
-    if (!messageContainer) return;
-    messageContainer.scrollTo({
-      top: messageContainer.scrollHeight,
-      behavior: "smooth",
-    });
-  }
 
   function onScroll() {
     if (!messageContainer) return;
@@ -90,12 +82,7 @@
     {#if messages.length === 0}
       <div class="flex flex-col items-center justify-center h-full text-center">
         <div class="text-6xl mb-4">💬</div>
-        <p class="text-base-content/70 text-lg font-medium">
-          Start a conversation
-        </p>
-        <p class="text-base-content/50 text-sm mt-2">
-          Messages will appear here once you start chatting
-        </p>
+        <p class="text-base-content/70 text-lg font-medium">No messages yet, waiting...</p>
       </div>
     {:else}
       {#each messages as msg (msg.id)}
@@ -108,7 +95,7 @@
   {#if showScrollButton}
     <button
       transition:fade
-      onclick={scrollToBottom}
+      onclick={() => scrollToBottom(messageContainer)}
       class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-6 right-1/2 translate-x-1/2 z-10"
       aria-label="Scroll to bottom"
     >

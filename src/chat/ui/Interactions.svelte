@@ -78,7 +78,7 @@
       placeholder="Type your message…"
       class="textarea textarea-bordered resize-none w-full max-h-32 overflow-y-auto"
       rows="1"
-    ></textarea>
+    />
 
     <button
       disabled={!canSend || inputText.length === 0}

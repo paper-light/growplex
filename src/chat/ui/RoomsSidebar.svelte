@@ -54,7 +54,9 @@
 
   // Rooms
   const rooms = $derived.by(async () => {
-    const allRooms = await chatProvider.rooms;
+    const rooms = chatProvider.rooms;
+
+    const allRooms = await rooms;
     return allRooms.filter((room) => room.status !== "preview");
   });
 
@@ -105,7 +107,6 @@
 
   // Handle room click
   async function handleRoomClick(room: RoomsResponse) {
-    if (room.id === roomId) return;
     saveScrollPosition();
     await chatProvider.setCurrentRoom(room.id);
     navigate(`/app/chat/${room.id}`);
@@ -238,60 +239,56 @@
           {/if}
         </div>
       {:else}
-        {#await chatProvider.currentRoom}
-          <!-- Loading current room -->
-        {:then currentRoom}
-          {#each rooms as room}
-            {@const statusInfo = getStatusInfo(room.status)}
-            {@const isActive = currentRoom?.id === room.id}
-            <button
-              class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative hover:cursor-pointer"
-              class:border-l-4={isActive}
-              class:border-l-primary={isActive}
-              onclick={() => handleRoomClick(room)}
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3 min-w-0 flex-1">
-                  <!-- Status indicator -->
-                  <div class="flex-shrink-0">
-                    <span class="badge badge-xs {statusInfo.color}"></span>
-                  </div>
-
-                  <!-- Room info -->
-                  <div class="min-w-0 flex-1">
-                    <div
-                      class="font-medium text-sm truncate"
-                      class:text-primary={isActive}
-                    >
-                      {formatRoomId(room.id)}
-                    </div>
-                    <div
-                      class="text-xs truncate"
-                      class:text-primary={isActive}
-                      class:text-base-content={!isActive}
-                    >
-                      {statusInfo.label}
-                    </div>
-                  </div>
+        {#each rooms as room}
+          {@const statusInfo = getStatusInfo(room.status)}
+          {@const isActive = roomId === room.id}
+          <button
+            class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative hover:cursor-pointer"
+            class:border-l-4={isActive}
+            class:border-l-primary={isActive}
+            onclick={() => handleRoomClick(room)}
+          >
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3 min-w-0 flex-1">
+                <!-- Status indicator -->
+                <div class="flex-shrink-0">
+                  <span class="badge badge-xs {statusInfo.color}"></span>
                 </div>
 
-                <!-- Status badge -->
-                <div class="flex-shrink-0">
-                  <span class="badge badge-xs {statusInfo.color}">
+                <!-- Room info -->
+                <div class="min-w-0 flex-1">
+                  <div
+                    class="font-medium text-sm truncate"
+                    class:text-primary={isActive}
+                  >
+                    {formatRoomId(room.id)}
+                  </div>
+                  <div
+                    class="text-xs truncate"
+                    class:text-primary={isActive}
+                    class:text-base-content={!isActive}
+                  >
                     {statusInfo.label}
-                  </span>
+                  </div>
                 </div>
               </div>
 
-              <!-- Active indicator -->
-              {#if isActive}
-                <div class="absolute right-2 top-1/2 -translate-y-1/2">
-                  <div class="w-2 h-2 bg-primary rounded-full"></div>
-                </div>
-              {/if}
-            </button>
-          {/each}
-        {/await}
+              <!-- Status badge -->
+              <div class="flex-shrink-0">
+                <span class="badge badge-xs {statusInfo.color}">
+                  {statusInfo.label}
+                </span>
+              </div>
+            </div>
+
+            <!-- Active indicator -->
+            {#if isActive}
+              <div class="absolute right-2 top-1/2 -translate-y-1/2">
+                <div class="w-2 h-2 bg-primary rounded-full"></div>
+              </div>
+            {/if}
+          </button>
+        {/each}
       {/if}
     {:catch error}
       <div class="flex items-center justify-center p-8 text-center">

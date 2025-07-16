@@ -8,7 +8,7 @@
   import Chat from "./Chat.svelte";
   import { pb } from "../../shared/lib/pb";
   import { socketProvider } from "../provider/socket.svelte";
-
+  import { chatProvider } from "../provider/chat.svelte";
   interface Props {
     block?: boolean;
   }
@@ -43,6 +43,7 @@
       status: "preview",
     });
     roomId = room.id;
+    chatProvider.setCurrentRoom(roomId);
     localStorage.setItem("chatRoomId", roomId);
   }
 

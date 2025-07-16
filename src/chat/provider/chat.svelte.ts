@@ -6,9 +6,11 @@ import { socketProvider } from "./socket.svelte";
 import type { RoomsResponse } from "../../shared/models/pocketbase-types";
 
 class ChatProvider {
+  private subscribed = $state(false);
   private currentChatId: string | null = $state(null);
-  private currentRoomId: string | null = $state(null);
   private cachedRooms: RoomsResponse[] = $state([]);
+
+  currentRoomId: string | null = $state(null);
 
   rooms = $derived.by(async () => {
     const chat = settingsProvider.currentChat;
@@ -31,6 +33,7 @@ class ChatProvider {
       console.log("new chat id");
 
       pb.collection("rooms").unsubscribe();
+      this.subscribed = false;
       this.currentRoomId = null;
 
       const rooms = await pb.collection("rooms").getFullList({
@@ -47,18 +50,18 @@ class ChatProvider {
   });
 
   currentRoom = $derived.by(async () => {
-    if (!this.currentRoomId) return null;
+    const currentRoomId = this.currentRoomId;
+    const roomsPromise = this.rooms;
+    const onlinePromise = socketProvider.onlinePromise;
 
     return await untrack(async () => {
-      const rooms = await this.rooms;
-      await socketProvider.onlinePromise;
+      await onlinePromise;
+      const rooms = await roomsPromise;
 
-      socketProvider.history = [];
-      if (!rooms || !this.currentRoomId) return null;
+      if (!currentRoomId) return null;
+      socketProvider.joinRoom(currentRoomId);
 
-      socketProvider.joinRoom(this.currentRoomId);
-
-      return rooms.find((r) => r.id === this.currentRoomId) || null;
+      return rooms.find((r) => r.id === currentRoomId) || null;
     });
   });
 
@@ -69,6 +72,9 @@ class ChatProvider {
   }
 
   private subscribeRooms(chatId: string) {
+    if (this.subscribed) return;
+    this.subscribed = true;
+
     pb.collection("rooms").subscribe(
       "*",
       async (room) => {

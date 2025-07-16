@@ -11,6 +11,8 @@ class SocketProvider {
   socket: Socket | null = $state(null);
   online = $state(false);
 
+  roomId = $state<string | null>(null);
+
   history = $state<MessagesResponse[]>([]);
 
   // Promise to wait for the connection to be established
@@ -39,6 +41,7 @@ class SocketProvider {
     });
 
     this.socket.on("chat-history", (history: MessagesResponse[]) => {
+      console.log("chat-history", history.length);
       this.history = history;
     });
 
@@ -56,6 +59,9 @@ class SocketProvider {
   }
 
   joinRoom(roomId: string) {
+    if (this.roomId === roomId) return;
+    this.roomId = roomId;
+    this.history = [];
     this.socket?.emit("join-room", {
       roomId,
     });

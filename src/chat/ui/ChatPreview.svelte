@@ -2,24 +2,23 @@
   import { X } from "@lucide/svelte";
   import { onMount } from "svelte";
 
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
+  import { userProvider } from "../../user/user.svelte";
   import { uiProvider } from "../../user/ui.svelte";
   import Chat from "./Chat.svelte";
   import { pb } from "../../shared/lib/pb";
   import { socketProvider } from "../provider/socket.svelte";
-  import { chatProvider } from "../provider/chat.svelte";
+  import { settingsProvider } from "../../user/settings.svelte";
   interface Props {
     block?: boolean;
   }
 
   let { block = false }: Props = $props();
 
-  const currentIntegration = $derived(settingsProvider.currentIntegration);
+  const currentIntegration = $derived(userProvider.integration);
 
   const agent = $derived(currentIntegration?.expand?.agent || null);
   const chat = $derived(currentIntegration?.expand?.chat || null);
-  const token = $derived(authProvider.token);
+  const token = $derived(userProvider.token);
 
   const open = $derived(uiProvider.chatPreviewOpen);
   let sidebarEl: HTMLElement | null = $state(null);
@@ -31,7 +30,7 @@
   );
 
   const payload = $derived({
-    username: authProvider.user?.name || "",
+    username: userProvider.user?.name || "",
     roomId,
   });
 
@@ -43,7 +42,6 @@
       status: "preview",
     });
     roomId = room.id;
-    chatProvider.setCurrentRoom(roomId);
     localStorage.setItem("chatRoomId", roomId);
   }
 
@@ -55,6 +53,8 @@
 
   onMount(() => {
     if (!roomId) createRoom();
+
+    if (roomId) settingsProvider.setRoom(roomId);
 
     return () => {
       window.removeEventListener("keydown", handleKeydown);

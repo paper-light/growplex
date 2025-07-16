@@ -1,8 +1,7 @@
 import { pb } from "../../shared/lib/pb";
-import { authProvider } from "../../user/auth.svelte";
+import { initData } from "../../user/init-data";
 
 export const signIn = async (email: string, password: string) => {
   await pb.collection("users").authWithPassword(email, password);
-  await authProvider.refreshUser();
-  await authProvider.subscribeUser();
+  await initData();
 };

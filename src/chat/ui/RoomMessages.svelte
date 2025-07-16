@@ -1,15 +1,11 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
   import { ChevronsDown } from "@lucide/svelte";
-  import { chatProvider } from "../provider/chat.svelte";
   import { socketProvider } from "../provider/socket.svelte";
   import ChatMessage from "./Message.svelte";
   import Man from "../../shared/assets/Man.jpg";
   import Thalia from "../../shared/assets/Thalia.jpg";
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
-  import { navigate } from "astro:transitions/client";
+  import { userProvider } from "../../user/user.svelte";
   import {
     type MessagesRecord,
     MessagesRoleOptions,
@@ -17,36 +13,21 @@
   import { pb } from "../../shared/lib/pb";
   import { scrollToBottom } from "../../shared/actions/scroll-bottom";
 
-  const { roomId } = $props();
-
   const messages = $derived(socketProvider.history);
 
   const operatorAvatar = $derived(
-    authProvider.user?.avatar
-      ? pb.files.getURL(authProvider.user, authProvider.user.avatar)
+    userProvider.user?.avatar
+      ? pb.files.getURL(userProvider.user, userProvider.user.avatar)
       : Man.src
   );
   const chatAvatar = $derived(
-    settingsProvider.currentChat?.avatar
-      ? pb.files.getURL(
-          settingsProvider.currentChat,
-          settingsProvider.currentChat.avatar
-        )
+    userProvider.chat?.avatar
+      ? pb.files.getURL(userProvider.chat, userProvider.chat.avatar)
       : Thalia.src
   );
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
-
-  onMount(async () => {
-    await socketProvider.onlinePromise;
-    const room = await chatProvider.currentRoom;
-    if (room?.id !== roomId) {
-      await chatProvider.setCurrentRoom(roomId);
-      await navigate(`/app/chat/${roomId}`);
-    }
-    scrollToBottom(messageContainer);
-  });
 
   $effect(() => {
     if (messages.length > 0) scrollToBottom(messageContainer);
@@ -82,7 +63,9 @@
     {#if messages.length === 0}
       <div class="flex flex-col items-center justify-center h-full text-center">
         <div class="text-6xl mb-4">💬</div>
-        <p class="text-base-content/70 text-lg font-medium">No messages yet, waiting...</p>
+        <p class="text-base-content/70 text-lg font-medium">
+          No messages yet, waiting...
+        </p>
       </div>
     {:else}
       {#each messages as msg (msg.id)}

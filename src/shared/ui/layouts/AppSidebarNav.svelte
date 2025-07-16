@@ -11,22 +11,12 @@
     Ticket,
     Rocket,
   } from "@lucide/svelte";
-  import { chatProvider } from "../../../chat/provider/chat.svelte";
 
   interface Props {
     active: string;
   }
 
-  const currentRoom = $derived(chatProvider.currentRoom);
-
   let { active }: Props = $props();
-
-  let roomId = $state("");
-  $effect(() => {
-    currentRoom.then((room) => {
-      if (room) roomId = room.id;
-    });
-  });
 
   function classHeader(names: string[]) {
     const base =
@@ -119,10 +109,7 @@
             </a>
           </li>
           <li class="w-full">
-            <a
-              href={`/app/chat/${roomId || ""}`}
-              class={linkClass("Chat Rooms")}
-            >
+            <a href={`/app/chat`} class={linkClass("Chat Rooms")}>
               <MessageSquare size={18} />
               Chat Rooms
             </a>

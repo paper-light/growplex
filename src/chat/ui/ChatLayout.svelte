@@ -5,8 +5,6 @@
   import RoomMessages from "./RoomMessages.svelte";
   import Interactions from "./Interactions.svelte";
 
-  const { roomId } = $props();
-
   let sidebarOpen = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);
 
@@ -66,7 +64,7 @@
 
     <!-- Sidebar Content -->
     <div class="h-full pt-16 lg:pt-0">
-      <RoomsSidebar {roomId} />
+      <RoomsSidebar />
     </div>
   </aside>
 
@@ -74,7 +72,7 @@
   <div class="flex flex-col flex-1 min-w-0">
     <!-- Messages Area -->
     <div class="flex-1 overflow-hidden">
-      <RoomMessages {roomId} />
+      <RoomMessages />
     </div>
 
     <!-- Interactions Area -->

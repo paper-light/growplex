@@ -50,6 +50,11 @@ class UIProvider {
       console.error("Failed to save UI state:", error);
     }
   }
+
+  clear() {
+    this.state = UIStateSchema.parse({});
+    this.saveState();
+  }
 }
 
 export const uiProvider = new UIProvider();

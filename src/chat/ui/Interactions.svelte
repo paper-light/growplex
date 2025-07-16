@@ -1,18 +1,14 @@
 <script lang="ts">
-  import { nanoid } from "nanoid";
   import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { Send } from "@lucide/svelte";
 
-  import { chatProvider } from "../provider/chat.svelte";
   import { socketProvider } from "../provider/socket.svelte";
-  import { authProvider } from "../../user/auth.svelte";
-  import {
-    type MessagesRecord,
-    MessagesRoleOptions,
-  } from "../../shared/models/pocketbase-types";
+  import { userProvider } from "../../user/user.svelte";
+  import { MessagesRoleOptions } from "../../shared/models/pocketbase-types";
   import { pb } from "../../shared/lib/pb";
+  import { roomsProvider } from "../provider/rooms.svelte";
 
-  const currentRoom = $derived.by(async () => await chatProvider.currentRoom);
+  const currentRoom = $derived(roomsProvider.room);
   const messages = $derived(socketProvider.history);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
@@ -44,9 +40,9 @@
     socketProvider.sendMessage(
       inputText,
       room.id,
-      authProvider.user!.name,
+      userProvider.user!.name,
       {
-        avatar: pb.files.getURL(authProvider.user!, authProvider.user!.avatar),
+        avatar: pb.files.getURL(userProvider.user!, userProvider.user!.avatar),
       },
       MessagesRoleOptions.operator
     );
@@ -78,7 +74,7 @@
       placeholder="Type your message…"
       class="textarea textarea-bordered resize-none w-full max-h-32 overflow-y-auto"
       rows="1"
-    />
+    ></textarea>
 
     <button
       disabled={!canSend || inputText.length === 0}

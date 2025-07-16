@@ -1,16 +1,13 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
-  import { pb } from "../../shared/lib/pb";
+  import { userProvider } from "../../user/user.svelte";
   import ThemeSelection from "./ThemeSelection.svelte";
   import AvatarInput from "../../shared/ui/components/AvatarInput.svelte";
   import ChatCreate from "./ChatCreate.svelte";
+  import { pb } from "../../shared/lib/pb";
 
-  const currentChat = $derived(settingsProvider.currentChat);
-  const allChats = $derived(
-    settingsProvider.currentProject?.expand?.chats || []
-  );
+  const currentChat = $derived(userProvider.chat);
+  const allChats = $derived(userProvider.project?.expand?.chats || []);
 
   let chatName = $derived(currentChat?.name ?? "");
   let domain = $derived(currentChat?.domain ?? "");
@@ -48,8 +45,7 @@
         }
 
         if (hasChanges) {
-          await pb.collection("chats").update(currentChat.id, formData);
-          await authProvider.refreshUser();
+          await userProvider.updateChat(currentChat.id, formData);
           chatPicture = null; // Reset after upload
         }
       } catch (error) {
@@ -81,11 +77,10 @@
 
   async function handleSelectChat(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !settingsProvider.currentIntegration) return;
-    await pb
-      .collection("integrations")
-      .update(settingsProvider.currentIntegration.id, { chat: id });
-    await authProvider.refreshUser();
+    if (!id || !userProvider.integration) return;
+    await userProvider.updateIntegration(userProvider.integration.id, {
+      chat: id,
+    });
   }
 </script>
 

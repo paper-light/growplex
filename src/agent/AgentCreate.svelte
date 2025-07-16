@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { authProvider } from "../user/auth.svelte";
-  import { settingsProvider } from "../user/settings.svelte";
+  import { userProvider } from "../user/user.svelte";
   import { createAgent } from "./create-agent";
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
@@ -12,14 +11,12 @@
   };
 
   async function createGenericAgent() {
-    if (!settingsProvider.currentProject) return;
+    if (!userProvider.project) return;
 
     await createAgent({
-      projectId: settingsProvider.currentProject.id,
-      integrationId: settingsProvider.currentIntegration?.id,
+      projectId: userProvider.project.id,
+      integrationId: userProvider.integration?.id,
     });
-
-    await authProvider.refreshUser();
   }
 </script>
 

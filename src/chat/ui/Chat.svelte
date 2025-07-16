@@ -88,10 +88,6 @@
     socketProvider.onlinePromise.then(() => {
       socketProvider.joinRoom(roomId);
     });
-
-    return () => {
-      socketProvider.disconnect();
-    };
   });
 
   $effect(() => {

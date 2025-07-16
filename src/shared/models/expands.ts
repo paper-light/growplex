@@ -7,6 +7,7 @@ import type {
   SourcesResponse,
   ChatsResponse,
   UsersResponse,
+  RoomsResponse,
 } from "./pocketbase-types";
 
 // INTEGRATIONS
@@ -35,9 +36,7 @@ export type IntegrationExpand = Partial<IntegrationExpandStrict>;
 export type UserExpandStrict = {
   orgMembers: OrgMembersResponse<{
     org: OrgsResponse<{
-      projects: ProjectsResponse<{
-        integrations: IntegrationsResponse<IntegrationExpand>[];
-      }>[];
+      projects: ProjectsResponse<ProjectExpandStrict>[];
     }>;
   }>[];
 };

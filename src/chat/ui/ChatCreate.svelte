@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createChat } from "../features/create-chat";
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
+  import { userProvider } from "../../user/user.svelte";
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
 
@@ -12,14 +11,12 @@
   };
 
   async function createGenericChat() {
-    if (!settingsProvider.currentProject) return;
+    if (!userProvider.project) return;
 
     await createChat({
-      projectId: settingsProvider.currentProject.id,
-      integrationId: settingsProvider.currentIntegration?.id,
+      projectId: userProvider.project.id,
+      integrationId: userProvider.integration?.id,
     });
-
-    await authProvider.refreshUser();
   }
 </script>
 

@@ -3,10 +3,9 @@
   import { slide } from "svelte/transition";
   import { X, Check, Edit, Trash2 } from "@lucide/svelte";
 
-  import { settingsProvider } from "../user/settings.svelte";
   import { uiProvider } from "../user/ui.svelte";
-  import { authProvider } from "../user/auth.svelte";
-  import { pb } from "../shared/lib/pb";
+  import { settingsProvider } from "../user/settings.svelte";
+  import { userProvider } from "../user/user.svelte";
 
   interface Props {
     block?: boolean;
@@ -14,8 +13,8 @@
 
   let { block = false }: Props = $props();
 
-  const currentProject = $derived(settingsProvider.currentProject);
-  const currentIntegration = $derived(settingsProvider.currentIntegration);
+  const currentProject = $derived(userProvider.project);
+  const currentIntegration = $derived(userProvider.integration);
   const integrations = $derived(currentProject?.expand?.integrations || []);
 
   const open = $derived(uiProvider.integrationsSidebarOpen);
@@ -54,16 +53,13 @@
   }
   async function confirmCreate(ci: { id: string; name: string }) {
     if (!currentProject || !ci.name.trim()) return;
-    const newInt = await pb
-      .collection("integrations")
-      .create({ name: ci.name, project: currentProject.id });
+    const newInt = await userProvider.createIntegration({
+      name: ci.name,
+      project: currentProject.id,
+    });
 
-    await pb
-      .collection("projects")
-      .update(currentProject.id, { "integrations+": [newInt.id] });
-    await authProvider.refreshUser();
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);
-    settingsProvider.setCurrentIntegration(newInt.id);
+    settingsProvider.setIntegration(newInt.id);
   }
 
   function startEditIntegration(e: MouseEvent, integrationId: string) {
@@ -80,11 +76,10 @@
   async function confirmEditIntegration(e: MouseEvent, integrationId: string) {
     e.stopPropagation();
     if (!editedIntegrationName.trim()) return;
-    await pb
-      .collection("integrations")
-      .update(integrationId, { name: editedIntegrationName.trim() });
-    settingsProvider.setCurrentIntegration(integrationId);
-    await authProvider.refreshUser();
+    await userProvider.updateIntegration(integrationId, {
+      name: editedIntegrationName.trim(),
+    });
+    settingsProvider.setIntegration(integrationId);
     editingIntegrationId = null;
     editedIntegrationName = "";
   }
@@ -100,8 +95,7 @@
   }
   async function confirmDeleteIntegration() {
     if (!integrationToDeleteId) return;
-    await pb.collection("integrations").delete(integrationToDeleteId);
-    await authProvider.refreshUser();
+    await userProvider.deleteIntegration(integrationToDeleteId);
     showDeleteModal = false;
     integrationToDeleteId = null;
   }
@@ -190,7 +184,7 @@
                   class="flex-1 text-left btn btn-block btn-ghost hover:bg-base-300 truncate p-1"
                   class:text-primary={integration.id === currentIntegration?.id}
                   onclick={() =>
-                    settingsProvider.setCurrentIntegration(integration.id)}
+                    settingsProvider.setIntegration(integration.id)}
                 >
                   {integration.name}
                 </button>

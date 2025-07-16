@@ -1,7 +1,7 @@
 import { actions } from "astro:actions";
 
 import { pb } from "../../shared/lib/pb";
-import { authProvider } from "../../user/auth.svelte";
+import { initData } from "../../user/init-data";
 import type { UsersResponse } from "../../shared/models/pocketbase-types";
 import type { UserExpand } from "../../shared/models/expands";
 
@@ -22,6 +22,5 @@ export const oauth2 = async (provider: string) => {
     });
   }
 
-  await authProvider.refreshUser();
-  await authProvider.subscribeUser();
+  await initData();
 };

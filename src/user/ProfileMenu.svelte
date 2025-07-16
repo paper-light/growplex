@@ -1,10 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { PUBLIC_PB_URL } from "astro:env/client";
+  import { navigate } from "astro:transitions/client";
   import { ChevronDown } from "@lucide/svelte";
 
-  import { authProvider } from "./auth.svelte";
-  import { navigate } from "astro:transitions/client";
+  import { pb } from "../shared/lib/pb";
+
+  import { userProvider } from "./user.svelte";
 
   interface Props {
     active: string;
@@ -12,11 +13,11 @@
 
   let { active = "" }: Props = $props();
 
-  const user = $derived(authProvider.user);
+  const user = $derived(userProvider.user);
 
   const avatar = $derived(
     user?.avatar
-      ? `${PUBLIC_PB_URL}/api/files/users/${user.id}/${user.avatar}`
+      ? pb.files.getURL(user, user.avatar)
       : "https://img.daisyui.com/images/profile/demo/yellingcat@192.webp"
   );
 
@@ -31,7 +32,7 @@
   async function handleLogout() {
     close();
     await navigate("/app/auth/sign-in");
-    await authProvider.logout();
+    pb.authStore.clear();
   }
 
   let rootEl: HTMLElement;

@@ -8,14 +8,13 @@ import {
 } from "../../shared/models/pocketbase-types";
 
 class SocketProvider {
+  joinedRoomId: string | null = null;
+
   socket: Socket | null = $state(null);
   online = $state(false);
 
-  roomId = $state<string | null>(null);
-
   history = $state<MessagesResponse[]>([]);
 
-  // Promise to wait for the connection to be established
   private resolveConnection: ((value: boolean) => void) | null = null;
   onlinePromise = $derived.by(async () => {
     if (this.online) return true;
@@ -59,12 +58,24 @@ class SocketProvider {
   }
 
   joinRoom(roomId: string) {
-    if (this.roomId === roomId) return;
-    this.roomId = roomId;
+    if (!this.socket || !this.online) {
+      console.log("socket not connected, skipping joinRoom");
+      return;
+    }
+
+    if (this.joinedRoomId === roomId) return;
+    if (this.joinedRoomId) this.leaveRoom(this.joinedRoomId);
+
+    this.joinedRoomId = roomId;
     this.history = [];
-    this.socket?.emit("join-room", {
+    this.socket.emit("join-room", {
       roomId,
     });
+  }
+  leaveRoom(roomId: string) {
+    this.socket?.emit("leave-room", { roomId });
+    this.joinedRoomId = null;
+    this.history = [];
   }
 
   sendMessage(

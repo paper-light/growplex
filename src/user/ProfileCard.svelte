@@ -1,18 +1,15 @@
 <script lang="ts">
   import { z } from "zod";
-
-  import { navigate } from "astro:transitions/client";
-  import { PUBLIC_PB_URL } from "astro:env/client";
-
-  import { authProvider } from "./auth.svelte";
-  import { pb } from "../shared/lib/pb";
   import { Check, X, Edit, Upload } from "@lucide/svelte";
+  import { navigate } from "astro:transitions/client";
 
-  const user = $derived(authProvider.user);
+  import { pb } from "../shared/lib/pb";
+
+  import { userProvider } from "./user.svelte";
+
+  const user = $derived(userProvider.user);
   const avatar = $derived(
-    user?.avatar
-      ? `${PUBLIC_PB_URL}/api/files/users/${user.id}/${user.avatar}`
-      : null
+    user?.avatar ? pb.files.getURL(user, user.avatar) : null
   );
 
   // OAuth detection
@@ -39,7 +36,7 @@
   let showPasswordModal = $state(false);
 
   // Form values
-  let nameValue = $state(authProvider.user?.name || "");
+  let nameValue = $state(userProvider.user?.name || "");
   let emailValue = $state(pb.authStore.record?.email || "");
   let passwordValue = $state("");
   let oldPasswordValue = $state("");
@@ -79,12 +76,11 @@
         data[field] = value;
       }
 
-      await pb.collection("users").update(user!.id, data);
-      await authProvider.refreshUser();
+      await userProvider.updateUser(data);
       return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
-        return error.errors[0].message;
+        return error.issues[0].message;
       } else {
         return `Failed to update ${field}`;
       }
@@ -138,7 +134,7 @@
       emailError = "";
     } catch (error) {
       if (error instanceof z.ZodError) {
-        emailError = error.errors[0].message;
+        emailError = error.issues[0].message;
       } else {
         emailError = "Failed to request email change";
       }
@@ -174,13 +170,13 @@
       passwordSchema.parse(passwordValue);
       savingPassword = true;
 
-      const res = await pb.collection("users").update(user!.id, {
+      await userProvider.updateUser({
         password: passwordValue,
         passwordConfirm: passwordValue,
         oldPassword: oldPasswordValue,
       });
 
-      await authProvider.logout();
+      pb.authStore.clear();
       await navigate("/app/auth/sign-in");
 
       showPasswordModal = false;
@@ -190,7 +186,7 @@
       oldPasswordError = "";
     } catch (error) {
       if (error instanceof z.ZodError) {
-        passwordError = error.errors[0].message;
+        passwordError = error.issues[0].message;
       } else {
         passwordError =
           "Failed to update password. Please check your current password.";
@@ -209,8 +205,7 @@
     try {
       const formData = new FormData();
       formData.append("avatar", file);
-      await pb.collection("users").update(user!.id, formData);
-      await authProvider.refreshUser();
+      await userProvider.updateUser(formData);
     } catch (error) {
       console.error("Failed to update avatar:", error);
     }

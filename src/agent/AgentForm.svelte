@@ -1,17 +1,17 @@
 <script lang="ts">
   import { onMount, untrack } from "svelte";
-  import { settingsProvider } from "../user/settings.svelte";
-  import { authProvider } from "../user/auth.svelte";
-  import { pb } from "../shared/lib/pb";
+
   import AvatarInput from "../shared/ui/components/AvatarInput.svelte";
+  import { userProvider } from "../user/user.svelte";
+  import { pb } from "../shared/lib/pb";
 
   import AgentSelect from "./AgentSelect.svelte";
   import AgentCreate from "./AgentCreate.svelte";
 
-  const currentAgent = $derived(settingsProvider.currentAgent);
-  const allAgents = $derived(
-    settingsProvider.currentProject?.expand?.agents || []
+  const currentAgent = $derived(
+    userProvider.integration?.expand?.agent || null
   );
+  const allAgents = $derived(userProvider.project?.expand?.agents || []);
 
   let agentName = $derived(currentAgent?.name ?? "");
   let systemInstruction = $derived(currentAgent?.system ?? "");
@@ -43,8 +43,7 @@
         }
 
         if (hasChanges) {
-          await pb.collection("agents").update(currentAgent.id, formData);
-          await authProvider.refreshUser();
+          await userProvider.updateAgent(currentAgent.id, formData);
           agentAvatar = null; // Reset after upload
         }
       } catch (error) {

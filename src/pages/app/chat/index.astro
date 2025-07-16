@@ -1,8 +1,8 @@
 ---
 import AppDashboard from "../../../shared/ui/layouts/AppDashboard.astro";
-import RoomsSidebar from "../../../chat/ui/RoomsSidebar.svelte";
+import ChatLayout from "../../../chat/ui/ChatLayout.svelte";
 ---
 
 <AppDashboard title="Chat Rooms">
-  <RoomsSidebar client:only transition:persist="rooms-sidebar" />
+  <ChatLayout client:only transition:persist="chat-layout" />
 </AppDashboard>

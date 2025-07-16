@@ -1,8 +1,11 @@
 <script lang="ts">
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
+  import { sourcesProvider } from "../../knowledge/providers/sources.svelte";
+
+  const source = $derived(sourcesProvider.source);
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
 </script>
 
-<button class="btn btn-primary w-full text-2xl">Connect Domain</button>
+<button class="btn btn-primary w-full text-2xl">
+  {source?.name || "Connect Domain"}
+</button>

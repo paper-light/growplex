@@ -91,6 +91,10 @@ export function attachSocketIO(httpServer: any) {
       sendMessage(socket, io, dto);
     });
 
+    socket.on("leave-room", (dto) => {
+      socket.leave(dto.roomId);
+    });
+
     socket.on("disconnect", async () => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);
     });

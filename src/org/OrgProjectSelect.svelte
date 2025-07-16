@@ -1,15 +1,14 @@
 <script lang="ts">
   import { ChevronDown, Check, Edit, X, Trash2 } from "@lucide/svelte";
 
-  import { pb } from "../shared/lib/pb";
   import { clickOutside } from "../shared/actions/click-outside";
   import { settingsProvider } from "../user/settings.svelte";
-  import { authProvider } from "../user/auth.svelte";
+  import { userProvider } from "../user/user.svelte";
 
-  const currentOrg = $derived(settingsProvider.currentOrg);
-  const currentProject = $derived(settingsProvider.currentProject);
+  const currentOrg = $derived(userProvider.org);
+  const currentProject = $derived(userProvider.project);
 
-  const orgs = $derived(authProvider.orgs);
+  const orgs = $derived(userProvider.orgs);
   const projects = $derived(
     orgs.find((o) => o.id === currentOrg?.id)?.expand!.projects!
   );
@@ -36,12 +35,12 @@
   );
 
   function selectOrg(orgId: string) {
-    settingsProvider.setCurrentOrg(orgId);
+    settingsProvider.setOrg(orgId);
     openOrg = false;
   }
 
   function selectProject(projectId: string) {
-    settingsProvider.setCurrentProject(projectId);
+    settingsProvider.setProject(projectId);
     openProject = false;
   }
 
@@ -53,21 +52,19 @@
   async function confirmCreate(cp: { id: string; name: string }) {
     if (!currentOrg) return;
 
-    const integration = await pb.collection("integrations").create({
+    const integration = await userProvider.createIntegration({
       name: "Default Integration",
     });
 
-    const project = await pb
-      .collection("projects")
-      .create({ name: cp.name, integrations: [integration.id] });
+    const project = await userProvider.createProject({
+      name: cp.name,
+      integrations: [integration.id],
+    });
 
-    await pb
-      .collection("orgs")
-      .update(currentOrg.id, { "projects+": project.id });
+    await userProvider.updateOrg(currentOrg.id, { "projects+": project.id });
 
-    settingsProvider.setCurrentProject(project.id);
-    settingsProvider.setCurrentIntegration(integration.id);
-    await authProvider.refreshUser();
+    settingsProvider.setProject(project.id);
+    settingsProvider.setIntegration(integration.id);
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
   }
@@ -87,9 +84,8 @@
   async function confirmEditOrg(e: MouseEvent, orgId: string) {
     e.stopPropagation();
     if (!editedOrgName.trim()) return;
-    await pb.collection("orgs").update(orgId, { name: editedOrgName.trim() });
-    settingsProvider.setCurrentOrg(orgId);
-    await authProvider.refreshUser();
+    await userProvider.updateOrg(orgId, { name: editedOrgName.trim() });
+    settingsProvider.setOrg(orgId);
     editingOrgId = null;
     editedOrgName = "";
   }
@@ -109,11 +105,10 @@
   async function confirmEditProject(e: MouseEvent, projectId: string) {
     e.stopPropagation();
     if (!editedProjectName.trim()) return;
-    await pb
-      .collection("projects")
-      .update(projectId, { name: editedProjectName.trim() });
-    settingsProvider.setCurrentProject(projectId);
-    await authProvider.refreshUser();
+    await userProvider.updateProject(projectId, {
+      name: editedProjectName.trim(),
+    });
+    settingsProvider.setProject(projectId);
     editingProjectId = null;
     editedProjectName = "";
   }
@@ -132,9 +127,7 @@
     if (!projectToDeleteId) return;
 
     // Delete the project
-    await pb.collection("projects").delete(projectToDeleteId);
-
-    await authProvider.refreshUser();
+    await userProvider.deleteProject(projectToDeleteId);
 
     // If we deleted the current project, select the first available project
     if (currentProject?.id === projectToDeleteId) {
@@ -142,7 +135,7 @@
         (p) => p?.id !== projectToDeleteId
       );
       if (remainingProjects.length > 0) {
-        settingsProvider.setCurrentProject(remainingProjects[0]!.id);
+        settingsProvider.setProject(remainingProjects[0]!.id);
       }
     }
 

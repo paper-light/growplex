@@ -1,7 +1,5 @@
 <script lang="ts">
-   import { settingsProvider } from "../user/settings.svelte";
-  import { authProvider } from "../user/auth.svelte";
-  import { pb } from "../shared/lib/pb";
+  import { userProvider } from "../user/user.svelte";
 
   let { size = "md" }: { size?: "sm" | "md" | "lg" } = $props();
 
@@ -11,18 +9,13 @@
     lg: "select-lg",
   };
 
-  const currentIntegration = $derived(settingsProvider.currentIntegration);
-  const allAgents = $derived(
-    settingsProvider.currentProject?.expand?.agents || []
-  );
+  const integration = $derived(userProvider.integration);
+  const allAgents = $derived(userProvider.project?.expand?.agents || []);
 
   async function handleSelectAgent(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !currentIntegration) return;
-    await pb
-      .collection("integrations")
-      .update(currentIntegration.id, { agent: id });
-    await authProvider.refreshUser();
+    if (!id || !integration) return;
+    await userProvider.updateIntegration(integration.id, { agent: id });
   }
 </script>
 

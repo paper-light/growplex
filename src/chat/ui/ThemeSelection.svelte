@@ -1,10 +1,8 @@
 <script lang="ts">
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { authProvider } from "../../user/auth.svelte";
-  import { pb } from "../../shared/lib/pb";
+  import { userProvider } from "../../user/user.svelte";
   import { onMount, untrack } from "svelte";
 
-  const currentChat = $derived(settingsProvider.currentChat);
+  const currentChat = $derived(userProvider.chat || null);
 
   let theme = $derived(
     JSON.stringify(currentChat?.theme ?? { light: {}, dark: {} }, null, 2)
@@ -68,10 +66,7 @@
           hasChanges = true;
         }
 
-        if (hasChanges) {
-          await pb.collection("chats").update(currentChat.id, formData);
-          await authProvider.refreshUser();
-        }
+        if (hasChanges) await userProvider.updateChat(currentChat.id, formData);
       } catch (error) {
         console.error("Error updating chat theme:", error);
       }

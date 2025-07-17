@@ -9,9 +9,7 @@
   const currentProject = $derived(userProvider.project);
 
   const orgs = $derived(userProvider.orgs);
-  const projects = $derived(
-    orgs.find((o) => o.id === currentOrg?.id)?.expand!.projects!
-  );
+  const projects = $derived(userProvider.projects);
 
   let openOrg = $state(false);
   let openProject = $state(false);

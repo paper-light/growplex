@@ -15,7 +15,7 @@
 
   const currentProject = $derived(userProvider.project);
   const currentIntegration = $derived(userProvider.integration);
-  const integrations = $derived(currentProject?.expand?.integrations || []);
+  const integrations = $derived(userProvider.integrations);
 
   const open = $derived(uiProvider.integrationsSidebarOpen);
   let sidebarEl: HTMLElement | null = $state(null);

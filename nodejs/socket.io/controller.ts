@@ -5,6 +5,7 @@ import type { RoomExpand } from "@/shared/models/expands";
 import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
+import { guardRoomAccess } from "@/auth/guards/guard-room-access";
 import { globalEncoderService } from "@/llm";
 
 import { joinRoom } from "./join-room";
@@ -28,50 +29,19 @@ export function attachSocketIO(httpServer: any) {
           expand: "chat",
         });
 
-      // Auth check
-      if (socket.data.guest) {
-        if (socket.data.guest.roomId !== dto.roomId) {
-          socket.emit("unauthorized", {
-            message: "Unauthorized",
-          });
-          return;
-        }
-      } else if (socket.data.user) {
-        const user = socket.data.user;
-        const chat = room.expand!.chat!;
-        const project = await pb
-          .collection("projects")
-          .getFirstListItem(`chats:each ?= '${chat.id}'`);
-        const projects = user.expand!.orgMembers!.flatMap(
-          (m: any) => m.expand!.org!.projects
-        );
-        if (!project || !projects.includes(project.id)) {
-          socket.emit("unauthorized", {
-            message: "Unauthorized",
-          });
-          return;
-        }
-      } else {
-        socket.emit("unauthorized", {
-          message: "Unauthorized",
-        });
-        return;
-      }
+      await guardRoomAccess(socket, room);
 
       await joinRoom(socket, room);
     });
 
     socket.on("send-message", async (dto: SendMessageDTO) => {
-      console.log("send-message", dto);
+      const room = await pb
+        .collection("rooms")
+        .getOne<RoomsResponse<RoomExpand>>(dto.roomId, {
+          expand: "chat",
+        });
 
-      // Auth check
-      if (
-        !socket.data.authorizedRooms ||
-        !socket.data.authorizedRooms.has(dto.roomId)
-      ) {
-        socket.emit("unauthorized", { message: "Unauthorized" });
-        return;
-      }
+      await guardRoomAccess(socket, room);
 
       const msg = JSON.parse(dto.msgStr);
 

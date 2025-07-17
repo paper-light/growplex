@@ -35,7 +35,6 @@
     };
   });
 
-  // SOCKET WITH MESSAGES
   $effect(() => {
     const room = roomsProvider.room;
 
@@ -43,6 +42,10 @@
       await socketProvider.onlinePromise;
       if (room) socketProvider.joinRoom(room.id);
     });
+
+    return () => {
+      if (room) socketProvider.leaveRoom(room.id);
+    };
   });
 
   // SOURCES

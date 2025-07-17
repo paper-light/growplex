@@ -53,7 +53,7 @@
   const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
 
   const messages: MessagesResponse[] = $derived(
-    socketProvider.histories[roomId] || []
+    roomId ? socketProvider.histories[roomId] || [] : []
   );
 
   const online = $derived(socketProvider.online || false);
@@ -90,6 +90,10 @@
     socketProvider.onlinePromise.then(() => {
       socketProvider.joinRoom(roomId);
     });
+
+    return () => {
+      socketProvider.leaveRoom(roomId);
+    };
   });
 
   $effect(() => {

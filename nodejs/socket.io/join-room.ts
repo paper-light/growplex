@@ -11,10 +11,6 @@ export async function joinRoom(
   // Join room
   socket.join(room.id);
 
-  // Add room to authorized rooms
-  if (!socket.data.authorizedRooms) socket.data.authorizedRooms = new Set();
-  socket.data.authorizedRooms.add(room.id);
-
   // Get integration
   const integration = await pb
     .collection("integrations")

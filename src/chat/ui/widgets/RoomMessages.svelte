@@ -14,8 +14,10 @@
   import { pb } from "../../../shared/lib/pb";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
 
-  const roomId = $derived(roomsProvider.room?.id);
-  const messages = $derived(socketProvider.histories[roomId || ""] || []);
+  const room = $derived(roomsProvider.room);
+  const messages = $derived(
+    room ? socketProvider.histories[room.id] || [] : []
+  );
 
   const operatorAvatar = $derived(
     userProvider.user?.avatar

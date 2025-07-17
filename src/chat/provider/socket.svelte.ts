@@ -92,6 +92,14 @@ class SocketProvider {
     delete this.histories[roomId];
   }
 
+  leaveAllRooms() {
+    this.joinedRooms.forEach((roomId) => {
+      this.socket?.emit("leave-room", { roomId });
+    });
+    this.joinedRooms.clear();
+    this.histories = {};
+  }
+
   sendMessage(
     content: string,
     username: string,

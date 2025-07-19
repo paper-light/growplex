@@ -5,7 +5,7 @@
     PUBLIC_MESSAGE_DELAY_SEC,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { ChevronsDown, ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "../entities/Message.svelte";
@@ -25,6 +25,7 @@
   import { injectTheme } from "../../utils/injectTheme";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
 
+  const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
   interface Props {
     chat: ChatsResponse;
     agent: AgentsResponse;
@@ -50,8 +51,6 @@
     ? pb.files.getURL(chat, chat.avatar)
     : Thalia.src;
 
-  const maxInputChars = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
-
   const messages: MessagesResponse[] = $derived(
     roomId ? socketProvider.histories[roomId] || [] : []
   );
@@ -69,10 +68,6 @@
   let showScrollButton = $state(false);
 
   onMount(() => {
-    // THEME
-    root?.setAttribute("data-theme", initTheme);
-    const themeData = (chat.theme as any)?.[initTheme as any];
-    injectTheme(themeData || {}, root);
     window.addEventListener("message", (event) => {
       if (!chat.domain || event.origin !== chat.domain) return;
 
@@ -85,19 +80,27 @@
         injectTheme(themeData || {}, root);
       }
     });
-
-    socketProvider.connect(token);
-    socketProvider.onlinePromise.then(() => {
-      socketProvider.joinRoom(roomId);
-    });
-
-    return () => {
-      socketProvider.leaveRoom(roomId);
-    };
   });
 
   $effect(() => {
     if (messages.length > 0) scrollToBottom(messageContainer);
+  });
+
+  $effect(() => {
+    if (!root || !initTheme) return;
+
+    root.setAttribute("data-theme", initTheme);
+    const themeData = (chat.theme as any)?.[initTheme as any];
+    injectTheme(themeData || {}, root);
+  });
+
+  $effect(() => {
+    if (!roomId) return;
+
+    untrack(async () => {
+      await socketProvider.onlinePromise;
+      socketProvider.joinRoom(roomId);
+    });
   });
 
   async function sendMessage() {
@@ -105,7 +108,7 @@
       !roomId ||
       !username ||
       !canSend ||
-      inputText.trim().length > maxInputChars ||
+      inputText.trim().length > MAX_INPUT_CHARS ||
       inputText.trim().length === 0
     )
       return;
@@ -115,12 +118,9 @@
     socketProvider.sendMessage(inputText, username, roomId);
     inputText = "";
 
-    setTimeout(
-      () => {
-        canSend = true;
-      },
-      (PUBLIC_MESSAGE_DELAY_SEC || 1) * 1000
-    );
+    setTimeout(() => {
+      canSend = true;
+    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
   }
 
   function onScroll() {
@@ -223,8 +223,8 @@
 
       <button
         disabled={!canSend ||
-          inputText.length === 0 ||
-          inputText.length > maxInputChars}
+          inputText.trim().length === 0 ||
+          inputText.trim().length > MAX_INPUT_CHARS}
         onclick={sendMessage}
         class="label btn btn-primary btn-lg btn-block ml-auto w-fit rounded-xl"
       >

@@ -6,6 +6,7 @@ class RoomsProvider {
   private subscribed = false;
 
   rooms: RoomsResponse[] = $state([]);
+  previewRoom: RoomsResponse | null = $state(null);
 
   room = $derived.by(() => {
     if (!this.rooms.length) return null;
@@ -21,6 +22,7 @@ class RoomsProvider {
       filter: `chat = "${chatId}"`,
     });
     this.rooms = rooms;
+    this.previewRoom = rooms.find((r) => r.status === "preview") || null;
   }
 
   subscribe(chatId: string) {
@@ -36,9 +38,11 @@ class RoomsProvider {
           case "create":
             this.rooms.push(room.record);
             break;
+
           case "delete":
             this.rooms = this.rooms.filter((r) => r.id !== room.record.id);
             break;
+
           case "update":
             this.rooms = this.rooms.map((r) =>
               r.id === room.record.id ? room.record : r

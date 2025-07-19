@@ -22,8 +22,8 @@
     </div>
   </div>
 {:else}
-  <Card>
-    <div class="flex gap-6">
+  <Card title="Agent" class="max-w-2xl mx-auto">
+    <div class="flex gap-6 mb-2">
       <AgentAvatarUpdate class="flex-1 max-w-24" />
 
       <AgentNameUpdate class="flex-1" />

@@ -19,4 +19,5 @@ const store = new AsyncAuthStore({
 });
 
 export const pb = new PocketBase(PUBLIC_PB_URL, store) as TypedPocketBase;
-pb.autoCancellation(false);
+
+if (!isBrowser) pb.autoCancellation(false);

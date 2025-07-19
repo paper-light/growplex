@@ -12,7 +12,8 @@
       | "info"
       | "success"
       | "warning"
-      | "error";
+      | "error"
+      | "neutral";
     style?: "solid" | "outline" | "ghost" | "link" | "dash" | "soft";
     size?: "xs" | "sm" | "md" | "lg" | "xl";
     disabled?: boolean;
@@ -47,6 +48,7 @@
     success: "btn-success",
     warning: "btn-warning",
     error: "btn-error",
+    neutral: "btn-neutral",
   };
 
   const styleClasses = {

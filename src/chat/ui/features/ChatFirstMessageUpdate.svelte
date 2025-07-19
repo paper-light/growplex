@@ -1,6 +1,14 @@
 <script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
   import { userProvider } from "../../../user/user.svelte";
   import { debounce } from "../../../shared/helpers/debounce";
+  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
+
+  interface Props {
+    class?: ClassValue;
+  }
+  let { class: className = "" }: Props = $props();
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 
@@ -20,16 +28,15 @@
   }, DEBOUNCE_TIME);
 </script>
 
-<div class="form-control w-full">
-  <label for="firstMessage" class="label">
-    <span class="label-text font-medium">First Message</span>
-  </label>
-  <textarea
-    id="firstMessage"
-    bind:value={firstMessage}
-    class="textarea textarea-bordered w-full resize-none"
-    rows="4"
-    placeholder="Hello! I am your AI assistant! Do you have any questions?"
+<div class={className}>
+  <TextArea
+    class="w-full"
+    color="neutral"
     oninput={updateFirstMessage}
-  ></textarea>
+    bind:value={firstMessage}
+    rows={4}
+    placeholder="Hello! I am your AI assistant! Do you have any questions?"
+  >
+    <span class="font-medium">First Message</span>
+  </TextArea>
 </div>

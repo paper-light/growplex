@@ -3,6 +3,7 @@
 
   import { userProvider } from "../../../user/user.svelte";
   import { debounce } from "../../../shared/helpers/debounce";
+  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
 
   const DEBOUNCE_TIME = 1200;
 
@@ -28,17 +29,14 @@
 </script>
 
 <div class={className}>
-  <div class="form-control w-full">
-    <label for="systemInstruction" class="label">
-      <span class="label-text font-medium">System instruction</span>
-    </label>
-    <textarea
-      id="systemInstruction"
-      oninput={updateSystem}
-      bind:value={systemInstruction}
-      rows="4"
-      class="textarea textarea-bordered w-full resize-none"
-      placeholder="e.g. 'You are a helpful assistant…'"
-    ></textarea>
-  </div>
+  <TextArea
+    class="w-full"
+    color="neutral"
+    oninput={updateSystem}
+    bind:value={systemInstruction}
+    rows={4}
+    placeholder="e.g. 'You are a helpful assistant…'"
+  >
+    <span class="font-medium">System instruction</span>
+  </TextArea>
 </div>

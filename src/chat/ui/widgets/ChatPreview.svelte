@@ -1,13 +1,14 @@
 <script lang="ts">
   import { X } from "@lucide/svelte";
-  import { onMount } from "svelte";
+  import { untrack } from "svelte";
+  import { ClientResponseError } from "pocketbase";
 
   import { userProvider } from "../../../user/user.svelte";
   import { uiProvider } from "../../../user/ui.svelte";
   import Chat from "./Chat.svelte";
   import { pb } from "../../../shared/lib/pb";
-  import { socketProvider } from "../../provider/socket.svelte";
-  import { settingsProvider } from "../../../user/settings.svelte";
+  import { roomsProvider } from "../../provider/rooms.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
   interface Props {
     block?: boolean;
   }
@@ -18,48 +19,63 @@
   const chat = $derived(userProvider.chat || null);
   const token = $derived(userProvider.token);
 
-  const open = $derived(uiProvider.chatPreviewOpen);
-  let sidebarEl: HTMLElement | null = $state(null);
+  const room = $derived(roomsProvider.previewRoom);
 
-  let roomId = $state(
-    typeof window !== "undefined"
-      ? localStorage.getItem("chatRoomId") || ""
-      : ""
-  );
+  const selectedTheme = $derived(uiProvider.selectedChatTheme);
+  const open = $derived(uiProvider.chatPreviewOpen);
+
+  let sidebarEl: HTMLElement | null = $state(null);
 
   const payload = $derived({
     username: userProvider.user?.name || "",
-    roomId,
+    roomId: room?.id || "",
   });
 
-  async function createRoom() {
-    await socketProvider.onlinePromise;
+  async function deleteRoom(roomId: string) {
+    try {
+      await pb.collection("rooms").delete(roomId);
+      if (roomsProvider.previewRoom?.id === roomId)
+        roomsProvider.previewRoom = null;
+    } catch (error) {
+      if (error instanceof ClientResponseError) {
+      } else {
+        console.error(error);
+      }
+    }
+  }
 
-    const room = await pb.collection("rooms").create({
-      chat: chat?.id,
-      status: "preview",
-    });
-    roomId = room.id;
-    localStorage.setItem("chatRoomId", roomId);
+  async function createRoom(chatId: string) {
+    try {
+      const existing = await pb
+        .collection("rooms")
+        .getFirstListItem(`chat = "${chatId}" && status = "preview"`);
+      roomsProvider.previewRoom = existing;
+    } catch (error) {
+      if (error instanceof ClientResponseError) {
+        if (error.status == 404) {
+          const newRoom = await pb.collection("rooms").create({
+            chat: chatId,
+            status: "preview",
+          });
+          roomsProvider.previewRoom = newRoom;
+        } else {
+          console.error(error);
+        }
+      }
+    }
   }
 
   async function reloadChat() {
-    await pb.collection("rooms").delete(roomId);
-    localStorage.removeItem("chatRoomId");
-    await createRoom();
+    if (room) await deleteRoom(room.id);
+    if (chat) await createRoom(chat.id);
   }
 
-  onMount(() => {
-    if (!roomId) createRoom();
+  $effect(() => {
+    if (!chat || !agent) return;
 
-    if (roomId) settingsProvider.setRoom(roomId);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeydown);
-    };
+    untrack(reloadChat);
   });
 
-  // Collect all errors before rendering Chat
   const errors = $derived.by(() => {
     const errs = [];
     if (!agent) errs.push("No agent found");
@@ -68,16 +84,8 @@
     return errs;
   });
 
-  function openSidebar() {
-    uiProvider.setChatPreviewOpen(true);
-  }
-
-  function closeSidebar() {
-    uiProvider.setChatPreviewOpen(false);
-  }
-
   function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape") closeSidebar();
+    if (event.key === "Escape") uiProvider.setChatPreviewOpen(false);
   }
   $effect(() => {
     if (open && !block) {
@@ -94,7 +102,7 @@
     type="button"
     class="absolute top-1/2 -right-1 -translate-y-1/2 rounded-full bg-primary hover:cursor-pointer hover:bg-base-200 transition border border-primary hover:text-primary flex flex-col items-center justify-center px-2 py-3"
     aria-label="Open sidebar"
-    onclick={openSidebar}
+    onclick={() => uiProvider.setChatPreviewOpen(true)}
     style="height: 260px; min-width: 30px;"
   >
     {#each "CHAT-PREVIEW".split("") as letter, i}
@@ -122,49 +130,35 @@
       : undefined}
   onintroend={() => sidebarEl?.focus()}
 >
-  <div
-    class="flex justify-between items-center px-4 py-1 border-b border-base-300 flex-shrink-0"
-  >
-    <div>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm rounded-xl btn-outline"
-        aria-label="Reload chat"
-        onclick={reloadChat}
+  {#if !block}
+    <div
+      class="cursor-pointer z-100 absolute top-2 right-2"
+      data-theme={selectedTheme}
+    >
+      <Button
+        size="sm"
+        circle
+        onclick={() => uiProvider.setChatPreviewOpen(false)}
+        style="soft"
       >
-        Reload Chat
-      </button>
-      <button
-        type="button"
-        class="btn btn-primary btn-sm rounded-xl btn-outline"
-        aria-label="Reload chat"
-        onclick={() => {}}
-      >
-        Connect!
-      </button>
+        <X class="text-neutral" size={24} />
+      </Button>
     </div>
-    {#if !block}
-      <button
-        type="button"
-        class="btn btn-sm btn-ghost btn-circle"
-        aria-label="Close sidebar"
-        onclick={closeSidebar}
-      >
-        <X size={20} />
-      </button>
-    {/if}
-  </div>
+  {/if}
+
   <div class="flex-1 min-h-0 overflow-hidden">
-    {#key [roomId, agent, chat, token]}
-      {#if errors.length > 0}
-        <div class="flex flex-col items-center justify-center h-full gap-5">
-          {#each errors as error}
-            <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
-          {/each}
-        </div>
-      {:else if chat && agent && token}
-        <Chat {chat} {agent} {payload} {token} initTheme="" />
-      {/if}
-    {/key}
+    {#if errors.length > 0}
+      <div class="flex flex-col items-center justify-center h-full gap-5">
+        {#each errors as error}
+          <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
+        {/each}
+      </div>
+    {:else if chat && agent && token && room}
+      <Chat {chat} {agent} {payload} {token} initTheme={selectedTheme} />
+    {:else}
+      <div class="flex flex-col items-center justify-center h-full gap-5">
+        <Button onclick={reloadChat}>RELOAD</Button>
+      </div>
+    {/if}
   </div>
 </aside>

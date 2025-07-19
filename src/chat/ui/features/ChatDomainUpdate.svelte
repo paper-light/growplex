@@ -4,6 +4,7 @@
 
   import { userProvider } from "../../../user/user.svelte";
   import { debounce } from "../../../shared/helpers/debounce";
+  import Input from "../../../shared/ui/lib/Input.svelte";
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 
@@ -33,18 +34,15 @@
 </script>
 
 <div class={className}>
-  <div class="form-control w-full flex items-center gap-2 hover:cursor-pointer">
-    <input
-      {disabled}
-      id="chatDomain"
-      type="text"
-      oninput={updateDomain}
-      bind:value={domain}
-      class="input w-full font-semibold"
-      placeholder="Your domain, https://example.com"
-    />
-    <label for="chatDomain" class="label">
-      <Pencil class="size-4" />
-    </label>
-  </div>
+  <Input
+    ghost
+    size="sm"
+    color="neutral"
+    oninput={updateDomain}
+    bind:value={domain}
+    placeholder="Your domain, https://example.com"
+    labelPosition="right"
+  >
+    <Pencil class="size-4" />
+  </Input>
 </div>

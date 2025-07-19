@@ -58,6 +58,10 @@
       project: currentProject.id,
     });
 
+    await userProvider.updateProject(currentProject.id, {
+      "integrations+": [newInt.id],
+    });
+
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);
     settingsProvider.setIntegration(newInt.id);
   }

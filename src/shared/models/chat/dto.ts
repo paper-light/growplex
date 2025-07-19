@@ -15,3 +15,4 @@ export const CreateChatDTOSchema = z.object({
     }),
   integrationId: z.string().optional(),
 });
+export type CreateChatDTO = z.infer<typeof CreateChatDTOSchema>;

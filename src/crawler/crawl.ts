@@ -8,7 +8,7 @@ const CRAWL4AI_URL = getEnv("CRAWL4AI_URL");
 export async function dummyCrawlUrls(urls: string[]) {
   const results = [];
   for (const url of urls) {
-    const html = await dummyCrawl(url);
+    const html = await dummyFetch(url);
     results.push({
       url,
       html,
@@ -79,7 +79,7 @@ async function crawl(
   return payload.results;
 }
 
-async function dummyCrawl(url: string) {
+async function dummyFetch(url: string) {
   try {
     const res = await fetch(url, {
       method: "GET",

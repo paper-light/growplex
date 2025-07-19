@@ -1,7 +1,10 @@
 <script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
   import Thalia from "../../assets/Thalia.jpg";
 
   interface Props {
+    class?: ClassValue;
     avatar?: string | null;
     fallbackSrc?: string;
     size?: "sm" | "md" | "lg";
@@ -10,6 +13,7 @@
   }
 
   let {
+    class: className = "",
     avatar,
     fallbackSrc = Thalia.src,
     size = "md",
@@ -24,9 +28,9 @@
   const avatarSrc = $derived(previewUrl || avatar || fallbackSrc);
 
   const sizeClasses = {
-    sm: "w-16 h-16",
-    md: "w-24 h-24",
-    lg: "w-32 h-32",
+    sm: "size-16",
+    md: "size-24",
+    lg: "size-32",
   };
 
   function triggerFileInput() {
@@ -57,7 +61,7 @@
   });
 </script>
 
-<div class="flex-shrink-0">
+<div class={className}>
   <div class="relative group">
     <div class="avatar placeholder">
       <div

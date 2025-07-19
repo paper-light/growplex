@@ -14,10 +14,8 @@
 
   let { block = false }: Props = $props();
 
-  const currentIntegration = $derived(userProvider.integration);
-
-  const agent = $derived(currentIntegration?.expand?.agent || null);
-  const chat = $derived(currentIntegration?.expand?.chat || null);
+  const agent = $derived(userProvider.agent || null);
+  const chat = $derived(userProvider.chat || null);
   const token = $derived(userProvider.token);
 
   const open = $derived(uiProvider.chatPreviewOpen);

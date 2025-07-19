@@ -1,5 +1,5 @@
-import { userProvider } from "../user/user.svelte";
-import { CreateAgentDTOSchema } from "../shared/models/agent/dto";
+import { userProvider } from "../../user/user.svelte";
+import { CreateAgentDTOSchema } from "../../shared/models/agent/dto";
 import { z } from "zod";
 
 export async function createAgent(raw: z.input<typeof CreateAgentDTOSchema>) {

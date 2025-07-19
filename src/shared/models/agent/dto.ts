@@ -16,3 +16,4 @@ export const CreateAgentDTOSchema = z.object({
     }),
   integrationId: z.string().optional(),
 });
+export type CreateAgentDTO = z.infer<typeof CreateAgentDTOSchema>;

@@ -65,8 +65,12 @@ class UserProvider {
 
     return this.integrations[0];
   });
-  chat = $derived(this.integration?.expand?.chat || null);
-  agent = $derived(this.integration?.expand?.agent || null);
+  chat = $derived.by(() => {
+    return this.integration?.expand?.chat || null;
+  });
+  agent = $derived.by(() => {
+    return this.integration?.expand?.agent || null;
+  });
 
   // USER MANAGEMENT
   async updateUser(data: Record<string, any>) {
@@ -161,6 +165,9 @@ class UserProvider {
     if (!agent) return;
     const res = await pb.collection("agents").update(id, data);
     this.agents = this.agents.map((a) => (a.id === id ? res : a));
+
+    if (this.agent?.id === id) this.agent = res;
+
     return res;
   }
 
@@ -182,6 +189,9 @@ class UserProvider {
     if (!chat) return;
     const res = await pb.collection("chats").update(id, data);
     this.chats = this.chats.map((c) => (c.id === id ? res : c));
+
+    if (this.chat?.id === id) this.chat = res;
+
     return res;
   }
 }

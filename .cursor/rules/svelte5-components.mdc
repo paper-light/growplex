@@ -3,7 +3,7 @@ description:
 globs: *.svelte,*.svelte.ts
 alwaysApply: false
 ---
-[svelte5.txt](mdc:.cursor/docs/svelte5.txt)
+[svelte5.txt](../docs/svelte5.txt)
 
 use modern svelte 5 syntax
 - Use runes $state, $derived, $effect

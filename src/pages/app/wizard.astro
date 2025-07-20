@@ -13,23 +13,17 @@ import AgentForm from "../../agent/ui/widgets/AgentForm.svelte";
       class="hidden lg:grid h-full w-full"
       style="grid-template-columns: minmax(200px, 320px) minmax(400px, 1fr) minmax(340px, 400px);"
     >
-      <!-- Integrations Sidebar -->
       <div class="h-full overflow-hidden">
         <Sidebar block client:load />
       </div>
 
-      <!-- Main Content -->
       <div class="h-full overflow-hidden">
-        <div class="h-full flex flex-col p-4 space-y-6 overflow-y-auto">
-          <!-- Chat Form -->
+        <div class="h-full flex flex-col p-4 gap-6 overflow-y-auto">
           <ChatForm client:load />
-
-          <!-- Agent Form -->
           <AgentForm client:load />
         </div>
       </div>
 
-      <!-- Chat Preview -->
       <div class="h-full overflow-hidden">
         <ChatPreview block client:load />
       </div>
@@ -37,16 +31,10 @@ import AgentForm from "../../agent/ui/widgets/AgentForm.svelte";
 
     <!-- Mobile Layout: Single column with overlays -->
     <div class="lg:hidden w-full h-full relative">
-      <!-- Main Content -->
-      <div class="h-full flex flex-col p-4 space-y-6 overflow-y-auto">
-        <!-- Chat Form -->
+      <div class="h-full flex flex-col p-4 gap-6 overflow-y-auto">
         <ChatForm client:load />
-
-        <!-- Agent Form -->
         <AgentForm client:load />
       </div>
-
-      <!-- Mobile Overlays -->
       <Sidebar client:load />
       <ChatPreview client:load />
     </div>

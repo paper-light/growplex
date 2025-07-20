@@ -2,15 +2,18 @@
   import { marked } from "marked";
   import DOMPurify from "dompurify";
   import { DateTime } from "luxon";
+  import type { ClassValue } from "svelte/elements";
+
   import type { MessagesResponse } from "../../../shared/models/pocketbase-types";
 
   interface Props {
+    class?: ClassValue;
     incoming: boolean;
     msg: MessagesResponse;
     avatar: string;
   }
 
-  const { msg, avatar, incoming }: Props = $props();
+  const { msg, avatar, incoming, class: className = "" }: Props = $props();
 
   const finalAvatar = (msg.metadata as any)?.avatar || avatar;
 
@@ -28,7 +31,7 @@
   });
 </script>
 
-<div class="chat-group">
+<div class={["chat-group", className]}>
   <div class={incoming ? "chat chat-start" : "chat chat-end"}>
     <div class="chat-image avatar">
       <div class="size-10 rounded-full overflow-hidden">

@@ -1,3 +1,4 @@
+import { SvelteMap } from "svelte/reactivity";
 import { nanoid } from "nanoid";
 import { io, type Socket } from "socket.io-client";
 
@@ -8,8 +9,7 @@ import {
 } from "../../shared/models/pocketbase-types";
 
 class SocketProvider {
-  joinedRooms: Set<string> = $state(new Set());
-  histories: Record<string, MessagesResponse[]> = $state({});
+  histories: Map<string, MessagesResponse[]> = $state(new SvelteMap());
 
   socket: Socket | null = $state(null);
   online = $state(false);
@@ -42,7 +42,7 @@ class SocketProvider {
       "chat-history",
       (data: { roomId: string; history: MessagesResponse[] }) => {
         const { roomId, history } = data;
-        this.histories[roomId] = history;
+        this.histories.set(roomId, history);
       }
     );
 
@@ -50,8 +50,9 @@ class SocketProvider {
       "new-message",
       (data: { roomId: string; message: MessagesResponse }) => {
         const { roomId, message } = data;
-        if (!this.histories[roomId]) this.histories[roomId] = [];
-        this.histories[roomId].push(message);
+        if (!this.histories.has(roomId)) this.histories.set(roomId, []);
+        const history = this.histories.get(roomId)!;
+        this.histories.set(roomId, [...history, message]);
       }
     );
 
@@ -73,31 +74,28 @@ class SocketProvider {
       console.warn("socket not connected, skipping joinRoom");
       return;
     }
-    if (this.joinedRooms.has(roomId)) {
+    if (this.histories.has(roomId)) {
       console.warn("already joined to roomId, skipping joinRoom");
       return;
     }
 
-    this.joinedRooms.add(roomId);
-    this.histories[roomId] = [];
+    this.histories.set(roomId, []);
     this.socket.emit("join-room", {
       roomId,
     });
   }
 
   leaveRoom(roomId: string) {
-    if (!this.joinedRooms.has(roomId)) return;
+    if (!this.histories.has(roomId)) return;
     this.socket?.emit("leave-room", { roomId });
-    this.joinedRooms.delete(roomId);
-    delete this.histories[roomId];
+    this.histories.delete(roomId);
   }
 
   leaveAllRooms() {
-    this.joinedRooms.forEach((roomId) => {
+    this.histories.forEach((_, roomId) => {
       this.socket?.emit("leave-room", { roomId });
     });
-    this.joinedRooms.clear();
-    this.histories = {};
+    this.histories.clear();
   }
 
   sendMessage(
@@ -111,7 +109,7 @@ class SocketProvider {
       console.warn("socket not connected, skipping sendMessage");
       return;
     }
-    if (!this.joinedRooms.has(roomId)) {
+    if (!this.histories.has(roomId)) {
       console.warn(
         "not joined to roomId, skipping sendMessage, roomId:",
         roomId
@@ -139,8 +137,7 @@ class SocketProvider {
   disconnect() {
     this.socket?.disconnect();
     this.online = false;
-    this.joinedRooms = new Set();
-    this.histories = {};
+    this.histories.clear();
   }
 }
 

@@ -51,9 +51,16 @@
     ? pb.files.getURL(chat, chat.avatar)
     : Thalia.src;
 
-  const messages: MessagesResponse[] = $derived(
-    roomId ? socketProvider.histories[roomId] || [] : []
-  );
+  const messages = $derived.by(() => {
+    if (!roomId) return [];
+    const history = socketProvider.histories.get(roomId);
+    return history || [];
+  });
+
+  $effect(() => {
+    console.log("messages", messages.length);
+    console.log("roomId", roomId);
+  });
 
   const online = $derived(socketProvider.online || false);
 
@@ -80,6 +87,8 @@
         injectTheme(themeData || {}, root);
       }
     });
+
+    socketProvider.connect(token);
   });
 
   $effect(() => {
@@ -101,6 +110,10 @@
       await socketProvider.onlinePromise;
       socketProvider.joinRoom(roomId);
     });
+
+    return () => {
+      socketProvider.leaveRoom(roomId);
+    };
   });
 
   async function sendMessage() {

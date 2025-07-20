@@ -15,9 +15,11 @@
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
 
   const room = $derived(roomsProvider.room);
-  const messages = $derived(
-    room ? socketProvider.histories[room.id] || [] : []
-  );
+  const messages = $derived.by(() => {
+    if (!room) return [];
+    const history = socketProvider.histories.get(room.id);
+    return history || [];
+  });
 
   const operatorAvatar = $derived(
     userProvider.user?.avatar

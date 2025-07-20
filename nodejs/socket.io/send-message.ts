@@ -43,12 +43,16 @@ export async function sendMessage(
         room = await pb.collection("rooms").update(
           room.id,
           {
-            status: RoomsStatusOptions.auto,
+            status: "auto",
           },
           {
             expand: "chat",
           }
         );
+        await pb.collection("leads").create({
+          room: room.id,
+          type: "warm",
+        });
       }
     } else if (socket.data.user) {
       // OPERATOR: STOP OF NOT PREVIEW

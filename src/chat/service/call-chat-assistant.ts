@@ -11,7 +11,6 @@ import {
   type LeadsResponse,
   type MessagesRecord,
   type MessagesResponse,
-  type RoomsResponse,
 } from "../../shared/models/pocketbase-types";
 import type { IntegrationExpand } from "../../shared/models/expands";
 

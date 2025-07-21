@@ -24,6 +24,15 @@ export const createTicket = tool(
     payload,
   }: z.infer<typeof CreateTicketSchema>) => {
     const msg = getContextVariable("message");
+    const room = getContextVariable("room");
+
+    if (room.type === "preview") {
+      return {
+        success: true,
+        content: `Ticket is not created in preview mode`,
+      };
+    }
+
     if (!msg)
       throw new Error(
         "Create ticket tool call error: Triggering message is not set"

@@ -37,6 +37,15 @@ export const updateLead = tool(
     payload,
   }: z.infer<typeof UpdateLeadSchema>) => {
     const lead = getContextVariable("lead");
+    const room = getContextVariable("room");
+
+    if (room.type === "preview") {
+      return {
+        success: true,
+        content: `Lead is not updated in preview mode`,
+      };
+    }
+
     if (!lead) {
       log.warn(
         { roomId: getContextVariable("room")?.id },

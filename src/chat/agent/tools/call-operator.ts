@@ -20,7 +20,14 @@ export const callOperator = tool(
     if (!room)
       throw new Error("Call operator tool call error: Room is not set");
 
-    const updRoom = await pb.collection("rooms").update(room.id, {
+    if (room.type === "preview") {
+      return {
+        success: true,
+        content: `Cannot call operator in preview mode`,
+      };
+    }
+
+    await pb.collection("rooms").update(room.id, {
       status: "waitingOperator",
       metadata: {
         ...room.metadata,

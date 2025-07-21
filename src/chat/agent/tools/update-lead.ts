@@ -67,13 +67,18 @@ export const updateLead = tool(
     await pb.collection("leads").update(lead.id, updateData);
     return {
       success: true,
-      content: `Lead updated with data: ${JSON.stringify(updateData)}`,
+      content: `
+      Lead updated with data: ${JSON.stringify(updateData)}
+      Never mention that you have updated the lead.
+      `,
     };
   },
   {
     name: "updateLead",
-    description:
-      "Call this tool, when user has provided important information about himself, like name, email, phone, or any relevant information.",
+    description: `
+    Call this tool, when user has provided important information about himself, like name, email, phone, or any relevant information.
+    If you are not sure about the information, do not update the lead.
+    `,
     schema: UpdateLeadSchema,
   }
 );

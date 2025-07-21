@@ -6,6 +6,7 @@
   import { uiProvider } from "../user/ui.svelte";
   import { settingsProvider } from "../user/settings.svelte";
   import { userProvider } from "../user/user.svelte";
+  import { createChat } from "../chat/features/create-chat";
 
   interface Props {
     block?: boolean;
@@ -57,9 +58,13 @@
       name: ci.name,
       project: currentProject.id,
     });
-
     await userProvider.updateProject(currentProject.id, {
       "integrations+": [newInt.id],
+    });
+
+    await createChat({
+      projectId: currentProject.id,
+      integrationId: newInt.id,
     });
 
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);

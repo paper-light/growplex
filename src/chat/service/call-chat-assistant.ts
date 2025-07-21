@@ -27,11 +27,13 @@ const log = logger.child({ module: "chat-service" });
 export async function callChatAssistant(
   integrationId: string,
   roomId: string
-): Promise<MessagesResponse> {
+): Promise<MessagesResponse[]> {
   // Get integration
   const { integration, org, agent, chat, sources } = await getIntegrationData(
     integrationId
   );
+  const responseMessages: MessagesResponse[] = [];
+
   const { lead, room } = await getLeadData(roomId);
 
   if (!agent || !chat || !integration) {
@@ -77,10 +79,13 @@ export async function callChatAssistant(
   });
 
   // Call LLM
+
+  log.debug({ history }, "Assistant agent history");
+
   const assistantResp = await assistantAgent.invoke({
     history,
     knowledge,
-    additional: agent.system || "<NONE>",
+    additional: agent.system,
   });
   let finalStepResp = assistantResp;
 
@@ -106,8 +111,10 @@ export async function callChatAssistant(
           toolCall.name
         ].invoke(toolCall);
 
+        const visible = ["callOperator"].includes(toolCall.name);
+
         const metadata = {
-          visible: ["callOperator"].includes(toolCall.name),
+          visible,
         };
 
         return {
@@ -208,8 +215,10 @@ export async function callChatAssistant(
       "Successfully persisted all messages"
     );
 
-    // Return the final response message (last one in the array)
-    return newMsgs[newMsgs.length - 1];
+    const visibleMessages = newMsgs.filter((m) => m.visible);
+    for (const msg of visibleMessages) {
+      responseMessages.push(msg);
+    }
   } catch (error) {
     log.error(
       { error, roomId, messageCount: messagesToPersist.length },
@@ -217,6 +226,8 @@ export async function callChatAssistant(
     );
     throw new Error(`Failed to persist chat messages: ${error}`);
   }
+
+  return responseMessages;
 }
 
 // ------------PRIVATE FUNCTIONS---------------

@@ -66,7 +66,7 @@ export function buildLlmHistory(
         const res = JSON.parse(msg.content);
         llmHistory.push(
           new ToolMessage({
-            content: res.content,
+            content: res.content || res.error,
             name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
             tool_call_id: (msg.metadata as any).toolCallId,
             status: res.success ? "success" : "error",

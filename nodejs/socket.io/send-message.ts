@@ -74,9 +74,11 @@ export async function sendMessage(
     )
       return;
 
-    const newMsg = await callChatAssistant(integration.id, room.id);
+    const newMsgs = await callChatAssistant(integration.id, room.id);
 
-    io.to(room.id).emit("new-message", { roomId: room.id, message: newMsg });
+    for (const msg of newMsgs) {
+      io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
+    }
   } catch (err) {
     console.error(err);
   }

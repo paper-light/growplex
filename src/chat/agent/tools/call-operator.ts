@@ -43,8 +43,10 @@ export const callOperator = tool(
   },
   {
     name: "callOperator",
-    description:
-      "Call this tool when user is unable to solve their problem and you can't help them. The operator will be notified and will try to help the user. If you call this tool, you should call createTicket tool after it.",
+    description: `
+    Call this tool when user is unable to solve their problem and you can't help them.
+    The operator will be notified and will try to help the user.
+    `,
     schema: CallOperatorSchema,
   }
 );

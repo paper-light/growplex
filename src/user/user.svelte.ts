@@ -9,6 +9,7 @@ import type {
   ProjectsResponse,
   UsersResponse,
 } from "../shared/models/pocketbase-types";
+import { initData } from "./init-data";
 
 import { settingsProvider } from "./settings.svelte";
 
@@ -66,17 +67,22 @@ class UserProvider {
     return this.integrations[0];
   });
   chat = $derived.by(() => {
-    return this.integration?.expand?.chat || null;
+    const chatId = this.integration?.chat;
+    if (!chatId) return null;
+    return this.chats.find((c) => c.id === chatId) || null;
   });
   agent = $derived.by(() => {
-    return this.integration?.expand?.agent || null;
+    const agentId = this.integration?.agent;
+    if (!agentId) return null;
+    return this.agents.find((a) => a.id === agentId) || null;
   });
 
   // USER MANAGEMENT
   async updateUser(data: Record<string, any>) {
     if (!this.user) return;
     const res = await pb.collection("users").update(this.user.id, data);
-    this.user = { ...res, expand: this.user.expand };
+    const user = await initData();
+    this.user = user;
     return res;
   }
 
@@ -85,9 +91,9 @@ class UserProvider {
     const org = this.orgs.find((o) => o.id === id);
     if (!org) return;
     const res = await pb.collection("orgs").update(id, data);
-    this.orgs = this.orgs.map((o) =>
-      o.id === id ? { ...res, expand: org.expand } : o
-    );
+    const user = await initData();
+    
+    this.user = user;
     return res;
   }
 
@@ -111,10 +117,12 @@ class UserProvider {
   async updateProject(id: string, data: Record<string, any>) {
     const project = this.projects.find((p) => p.id === id);
     if (!project) return;
-    const res = await pb.collection("projects").update(id, data);
-    this.projects = this.projects.map((p) =>
-      p.id === id ? { ...res, expand: project.expand } : p
-    );
+    const res: ProjectsResponse<ProjectExpandStrict> = await pb
+      .collection("projects")
+      .update(id, data, {
+        expand: "integrations,sources,agents,chats,operators",
+      });
+    this.projects = this.projects.map((p) => (p.id === id ? res : p));
     return res;
   }
 

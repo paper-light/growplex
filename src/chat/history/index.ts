@@ -1,2 +1,2 @@
-export { updateHistory } from "./update";
-export { getHistory } from "./get";
+export { updateHistory } from "./update-history";
+export { getHistory } from "./get-history";

@@ -183,6 +183,7 @@ export type LeadsRecord<Tmetadata = unknown> = {
 	email?: string
 	id: string
 	metadata?: null | Tmetadata
+	name?: string
 	phone?: string
 	room?: RecordIdString
 	tg?: string
@@ -199,13 +200,13 @@ export enum MessagesRoleOptions {
 }
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string
+	contentTokensCount?: number
 	created?: IsoDateString
 	id: string
 	metadata?: null | Tmetadata
 	role: MessagesRoleOptions
 	room: RecordIdString
 	sentBy: string
-	tokenCount?: number
 	visible?: boolean
 }
 
@@ -272,12 +273,18 @@ export type SourcesRecord<Tmetadata = unknown> = {
 	updated?: IsoDateString
 }
 
-export type TicketsRecord = {
+export enum TicketsPriorityOptions {
+	"low" = "low",
+	"high" = "high",
+	"medium" = "medium",
+}
+export type TicketsRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
 	description?: string
 	id: string
 	message?: RecordIdString
-	priority?: number
+	metadata?: null | Tmetadata
+	priority?: TicketsPriorityOptions
 	title?: string
 	updated?: IsoDateString
 }
@@ -315,7 +322,7 @@ export type OrgsResponse<Texpand = unknown> = Required<OrgsRecord> & BaseSystemF
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
 export type SourcesResponse<Tmetadata = unknown, Texpand = unknown> = Required<SourcesRecord<Tmetadata>> & BaseSystemFields<Texpand>
-export type TicketsResponse<Texpand = unknown> = Required<TicketsRecord> & BaseSystemFields<Texpand>
+export type TicketsResponse<Tmetadata = unknown, Texpand = unknown> = Required<TicketsRecord<Tmetadata>> & BaseSystemFields<Texpand>
 export type UsersResponse<Tmetadata = unknown, Texpand = unknown> = Required<UsersRecord<Tmetadata>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions

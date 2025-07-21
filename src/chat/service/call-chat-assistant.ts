@@ -1,14 +1,17 @@
-import { nanoid } from "nanoid";
-
 import { Document } from "@langchain/core/documents";
+import { setContextVariable } from "@langchain/core/context";
+import { AIMessage, ToolMessage } from "@langchain/core/messages";
+import { RunnableLambda } from "@langchain/core/runnables";
 
 import { pb } from "../../shared/lib/pb";
 import { logger } from "../../shared/lib/logger";
 import {
   MessagesRoleOptions,
   type IntegrationsResponse,
+  type LeadsResponse,
   type MessagesRecord,
   type MessagesResponse,
+  type RoomsResponse,
 } from "../../shared/models/pocketbase-types";
 import type { IntegrationExpand } from "../../shared/models/expands";
 
@@ -16,7 +19,9 @@ import { extractorService } from "../../rag/extractor";
 import { createDocumentIdsFilter } from "../../rag/filters";
 
 import { updateHistory, getHistory } from "../history";
-import { getChain } from "../llm";
+import { assistantAgent, assistantToolsMap, finalStepAgent } from "../agent";
+import { globalEncoderService } from "@/llm";
+import { buildLlmHistory } from "../history/build-llm-history";
 
 const log = logger.child({ module: "chat-service" });
 
@@ -25,11 +30,204 @@ export async function callChatAssistant(
   roomId: string
 ): Promise<MessagesResponse> {
   // Get integration
+  const { integration, org, agent, chat, sources } = await getIntegrationData(
+    integrationId
+  );
+  const { lead, room } = await getLeadData(roomId);
+
+  if (!agent || !chat || !integration) {
+    log.warn({ integrationId }, `Integration has not agent`);
+    throw Error(`Integration ${integrationId} has not agent`);
+  }
+
+  // Prepare history
+  const rawHistory = await getHistory(integrationId, roomId, false);
+
+  // Check if there are messages in history
+  if (rawHistory.length === 0) {
+    log.warn({ integrationId, roomId }, "No messages in history");
+    throw new Error("No messages in history");
+  }
+
+  const msg = rawHistory.at(-1)!;
+  const history = buildLlmHistory(rawHistory);
+
+  // Get knowledge
+  const docIds = sources?.flatMap((s) => s.documents) || [];
+  let knowledge = "";
+
+  try {
+    const retriever = await extractorService.createRetriever(org.id, {
+      filter: createDocumentIdsFilter(docIds),
+    });
+    knowledge = await retriever
+      .pipe((documents: Document[]) => {
+        return documents.map((document) => document.pageContent).join("\n\n");
+      })
+      .invoke(msg.content);
+  } catch (error) {
+    log.error({ error, orgId: org.id, docIds }, "Failed to retrieve knowledge");
+    // Continue without knowledge if retrieval fails
+    knowledge = "";
+  }
+
+  log.info({
+    knowledge,
+    historyLength: history.length - 1,
+    msg: msg.content,
+  });
+
+  // Call LLM
+  const assistantResp = await assistantAgent.invoke({
+    history,
+    knowledge,
+    additional: agent.system || "<NONE>",
+  });
+  let finalStepResp = assistantResp;
+
+  log.info({ assistantResp }, "Assistant response");
+
+  const toolMessages: ToolMessage[] = [];
+  const toolMetadataArray: { visible: boolean }[] = [];
+  const messagesToPersist: Partial<MessagesRecord>[] = [];
+
+  // Only process tool calls if they exist
+  if (assistantResp.tool_calls && assistantResp.tool_calls.length > 0) {
+    for (const toolCall of assistantResp.tool_calls) {
+      const toolLambda = RunnableLambda.from(async (toolCall: any) => {
+        setContextVariable("message", msg);
+        setContextVariable("lead", lead);
+        setContextVariable("room", room);
+        setContextVariable("integration", integration);
+        setContextVariable("agent", agent);
+        setContextVariable("sources", sources);
+        setContextVariable("chat", chat);
+
+        const toolMsg: ToolMessage = await assistantToolsMap[
+          toolCall.name
+        ].invoke(toolCall);
+
+        const metadata = {
+          visible: ["callOperator"].includes(toolCall.name),
+        };
+
+        return {
+          toolMsg,
+          metadata,
+        };
+      });
+
+      const { toolMsg, metadata } = await toolLambda.invoke(toolCall);
+      toolMessages.push(toolMsg);
+      toolMetadataArray.push(metadata);
+    }
+
+    log.info({ toolMessages, toolMetadataArray }, "ToolMessages array");
+
+    // Add assistant response and tool messages to persist list
+    messagesToPersist.push(
+      {
+        content: "<BLANK>",
+        role: MessagesRoleOptions.assistant,
+        room: roomId,
+        sentBy: agent.name,
+        visible: false,
+        contentTokensCount: globalEncoderService.countTokens(
+          assistantResp.content.toString(),
+          "gpt-4"
+        ),
+        metadata: {
+          avatar: pb.files.getURL(agent, agent.avatar),
+          toolMessages: assistantResp.tool_calls?.map((tool) => {
+            return {
+              id: tool.id, // Include the tool call ID
+              name: tool.name,
+              args: tool.args,
+            };
+          }),
+        },
+      },
+      ...toolMessages.map((msg, index) => {
+        return {
+          content: msg.content.toString(),
+          role: MessagesRoleOptions.tool,
+          room: roomId,
+          sentBy: agent.name,
+          contentTokensCount: globalEncoderService.countTokens(
+            msg.content.toString(),
+            "gpt-4"
+          ),
+          visible: toolMetadataArray[index].visible,
+          metadata: {
+            toolCallId: msg.tool_call_id,
+          },
+        };
+      })
+    );
+
+    try {
+      finalStepResp = await finalStepAgent.invoke({
+        history: [...history, assistantResp, ...toolMessages],
+        knowledge,
+        additional: agent.system,
+      });
+      log.info({ finalStepResp }, "Final step response");
+    } catch (error) {
+      log.error(
+        { error, integrationId, roomId },
+        "Failed to get final step response"
+      );
+      finalStepResp = assistantResp;
+    }
+  }
+
+  const tokenUsage = finalStepResp.response_metadata.tokenUsage;
+  log.info({ tokenUsage }, "Token usage");
+
+  // Add final response to persist list
+  messagesToPersist.push({
+    content: finalStepResp.content.toString(),
+    role: MessagesRoleOptions.assistant,
+    visible: true,
+    room: roomId,
+    sentBy: agent.name,
+    contentTokensCount: globalEncoderService.countTokens(
+      finalStepResp.content.toString(),
+      "gpt-4"
+    ),
+    metadata: {
+      avatar: pb.files.getURL(agent, agent.avatar),
+      tokenUsage,
+    },
+  });
+
+  // Persist all messages in a single update
+  try {
+    const newMsgs = await updateHistory(messagesToPersist);
+    log.info(
+      { roomId, persistedCount: newMsgs.length },
+      "Successfully persisted all messages"
+    );
+
+    // Return the final response message (last one in the array)
+    return newMsgs[newMsgs.length - 1];
+  } catch (error) {
+    log.error(
+      { error, roomId, messageCount: messagesToPersist.length },
+      "Failed to persist messages"
+    );
+    throw new Error(`Failed to persist chat messages: ${error}`);
+  }
+}
+
+// ------------PRIVATE FUNCTIONS---------------
+
+async function getIntegrationData(integrationId: string) {
   const integration = await pb
     .collection("integrations")
     .getOne<IntegrationsResponse<IntegrationExpand>>(integrationId, {
       expand:
-        "agent,sources,projects_via_integrations,projects_via_integrations.orgs_via_projects",
+        "chat,agent,sources,projects_via_integrations,projects_via_integrations.orgs_via_projects",
     });
 
   const org =
@@ -37,67 +235,27 @@ export async function callChatAssistant(
       .orgs_via_projects[0]!;
 
   const agent = integration.expand!.agent;
+  const chat = integration.expand!.chat;
   const sources = integration.expand!.sources;
 
-  if (!agent) {
-    log.warn(`Integration ${integrationId} has not agent`);
-    throw Error(`Integration ${integrationId} has not agent`);
-  }
-
-  const docIds = sources?.flatMap((s) => s.documents) || [];
-
-  // Prepare history
-  const history = (await getHistory(integrationId, roomId)).map((m) => {
-    return {
-      content: m.content,
-      role:
-        m.role === MessagesRoleOptions.operator
-          ? MessagesRoleOptions.user
-          : m.role,
-      name: `${m.role}-${m.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
-    };
-  });
-
-  // Get knowledge
-  const retriever = await extractorService.createRetriever(org.id, {
-    filter: createDocumentIdsFilter(docIds),
-  });
-  const knowledge = await retriever
-    .pipe((documents: Document[]) => {
-      return documents.map((document) => document.pageContent).join("\n\n");
-    })
-    .invoke(history.at(-1)!.content);
-
-  console.log("KNOWLEDGE", knowledge, "MSG", history.at(-1)!.content);
-
-  // Get template + LLM
-  const chain = getChain(agent.provider);
-
-  // Call LLM
-  const llmResp = await chain.invoke({
-    history,
-    knowledge,
-    additional: agent.system || "<NONE>",
-  });
-
-  log.debug(llmResp);
-
-  let newAssistantMsg: MessagesRecord = {
-    id: `temp-${nanoid(12)}`,
-    content: llmResp.content.toString(),
-    role: MessagesRoleOptions.assistant,
-    visible: true,
-    room: roomId,
-    sentBy: agent.name,
-    metadata: {
-      avatar: pb.files.getURL(agent, agent.avatar),
-    },
-    created: new Date().toISOString().replace("T", " "),
+  return {
+    integration,
+    org,
+    agent,
+    chat,
+    sources,
   };
+}
 
-  const ids = await updateHistory([newAssistantMsg]);
+async function getLeadData(roomId: string) {
+  const room = await pb
+    .collection("rooms")
+    .getOne(roomId, { expand: "leads_via_room" });
+  const lead =
+    ((room.expand as any)?.leads_via_room?.[0] as LeadsResponse | null) || null;
 
-  const newMsg = await pb.collection("messages").getOne(ids[0]);
-
-  return newMsg;
+  return {
+    lead,
+    room,
+  };
 }

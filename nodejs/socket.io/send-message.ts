@@ -10,7 +10,8 @@ import {
 import type { RoomExpand } from "@/shared/models/expands";
 
 import { callChatAssistant } from "@/chat/service";
-import { updateHistory } from "@/chat/history/update";
+import { updateHistory } from "@/chat/history/update-history";
+import { globalEncoderService } from "@/llm";
 
 import type { SendMessageDTO } from "./types";
 
@@ -21,7 +22,13 @@ export async function sendMessage(
 ) {
   try {
     // ALWAYS ON SEND MESSAGE
-    const msg = JSON.parse(msgStr);
+    const msg = {
+      ...JSON.parse(msgStr),
+      contentTokensCount: globalEncoderService.countTokens(
+        JSON.parse(msgStr).content,
+        "gpt-4"
+      ),
+    };
 
     let room = await pb
       .collection("rooms")
@@ -32,9 +39,11 @@ export async function sendMessage(
       .collection("integrations")
       .getFirstListItem(`chat="${room.chat}"`);
 
-    await updateHistory([msg]);
-
-    io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
+    const msgs = await updateHistory([msg]);
+    io.to(room.id).emit("new-message", {
+      roomId: room.id,
+      message: msgs[0],
+    });
 
     // SPECIFIC BY ROLE
     if (socket.data.guest) {
@@ -55,7 +64,6 @@ export async function sendMessage(
         });
       }
     } else if (socket.data.user) {
-      // OPERATOR: STOP OF NOT PREVIEW
       if (room.status !== RoomsStatusOptions.preview) return;
     }
 

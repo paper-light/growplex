@@ -1,7 +1,7 @@
 import { type Socket } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
-import { getHistory } from "@/chat/history/get";
+import { getHistory } from "@/chat/history/get-history";
 import type { RoomsResponse, RoomExpand } from "@/shared/models";
 
 export async function joinRoom(

@@ -117,15 +117,13 @@ class SocketProvider {
       return;
     }
 
-    const newMsg: MessagesRecord = {
-      id: `temp-${nanoid(12)}`,
+    const newMsg: Partial<MessagesRecord> = {
       content: content.trim(),
       role,
       visible: true,
       room: roomId,
       sentBy: username,
       metadata,
-      created: new Date().toISOString().replace("T", " "),
     };
 
     this.socket.emit("send-message", {

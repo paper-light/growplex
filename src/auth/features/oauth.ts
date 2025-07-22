@@ -15,12 +15,5 @@ export const oauth2 = async (provider: string) => {
   const user = userResult.record as UsersResponse<unknown, UserExpand>;
   pb.authStore.save(userResult.token, user);
 
-  if (user.orgMembers.length === 0) {
-    await actions.seedUser({
-      userId: user.id,
-      provider: provider as any,
-    });
-  }
-
   await initData();
 };

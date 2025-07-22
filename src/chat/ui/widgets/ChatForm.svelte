@@ -1,6 +1,5 @@
 <script lang="ts">
   import { userProvider } from "../../../user/user.svelte";
-  import ChatCreate from "../features/ChatCreate.svelte";
   import DomainConnect from "../../../knowledge/ui/DomainConnect.svelte";
   import { sourcesProvider } from "../../../knowledge/providers/sources.svelte";
   import ChatAvatarUpdate from "../features/ChatAvatarUpdate.svelte";
@@ -16,7 +15,6 @@
 
   const integartion = $derived(userProvider.integration);
   const currentChat = $derived(userProvider.chat);
-  const allChats = $derived(userProvider.project?.expand?.chats || []);
 
   const sources = $derived(
     sourcesProvider.sources.filter((s) => integartion?.sources?.includes(s.id))
@@ -26,17 +24,10 @@
   let domain = $derived(currentChat?.domain ?? "");
 </script>
 
-{#if !currentChat}
-  <div class="flex flex-col items-center justify-center gap-6 py-16">
-    <div class="w-full max-w-xl flex flex-col gap-4">
-      <ChatCreate size="lg" />
-      {#if allChats.length > 0}
-        <ChatSelect />
-      {/if}
-    </div>
-  </div>
-{:else}
-  <Card title="Chat" class="space-y-4 max-w-2xl mx-auto">
+<Card title="Chat" class="space-y-4 max-w-2xl mx-auto">
+  <div class="space-y-4">
+    <ChatSelect />
+
     <div class="flex gap-6">
       <ChatAvatarUpdate class="flex-1 max-w-24" />
 
@@ -53,5 +44,5 @@
 
     <ChatFirstMessageUpdate />
     <ThemeSelection />
-  </Card>
-{/if}
+  </div>
+</Card>

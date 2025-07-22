@@ -6,8 +6,9 @@
 
   interface Props {
     class?: ClassValue;
+    size?: "sm" | "md" | "lg";
   }
-  let { class: className = "" }: Props = $props();
+  let { class: className = "", size = "md" }: Props = $props();
 
   const integartion = $derived(userProvider.integration);
   const allChats = $derived(userProvider.project?.expand?.chats || []);
@@ -31,7 +32,7 @@
 </script>
 
 <div class={className}>
-  <Select bind:value {onchange} {options} color="neutral">
+  <Select bind:value {onchange} {options} color="neutral" {size}>
     Select from project…
   </Select>
 </div>

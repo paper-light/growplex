@@ -1,5 +1,3 @@
-import { actions } from "astro:actions";
-
 import { pb } from "../../shared/lib/pb";
 
 export const signUp = async (
@@ -14,6 +12,4 @@ export const signUp = async (
     passwordConfirm,
     name,
   });
-
-  await actions.seedUser({ userId: user.id, provider: null });
 };

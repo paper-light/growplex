@@ -92,7 +92,7 @@ class UserProvider {
     if (!org) return;
     const res = await pb.collection("orgs").update(id, data);
     const user = await initData();
-    
+
     this.user = user;
     return res;
   }

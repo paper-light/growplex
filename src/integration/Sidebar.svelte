@@ -7,6 +7,7 @@
   import { settingsProvider } from "../user/settings.svelte";
   import { userProvider } from "../user/user.svelte";
   import { createChat } from "../chat/features/create-chat";
+  import { createAgent } from "../agent/features/create-agent";
 
   interface Props {
     block?: boolean;
@@ -62,10 +63,16 @@
       "integrations+": [newInt.id],
     });
 
-    await createChat({
-      projectId: currentProject.id,
-      integrationId: newInt.id,
-    });
+    await Promise.all([
+      createChat({
+        projectId: currentProject.id,
+        integrationId: newInt.id,
+      }),
+      createAgent({
+        projectId: currentProject.id,
+        integrationId: newInt.id,
+      }),
+    ]);
 
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);
     settingsProvider.setIntegration(newInt.id);

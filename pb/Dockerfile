@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG PB_VERSION=0.27.1
+ARG PB_VERSION=0.29.0
 
 RUN apk add --no-cache \
     unzip \
@@ -10,7 +10,7 @@ ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/po
 RUN unzip /tmp/pb.zip -d /pb/
 
 COPY ./pb_migrations /pb/pb_migrations
-# COPY ./pb_hooks /pb/pb_hooks
+COPY ./pb_hooks /pb/pb_hooks
 
 EXPOSE 8080
 

@@ -19,6 +19,6 @@
 
 <div class={className}>
   <Button color="secondary" size="sm" style="outline" {onclick} {disabled}>
-    Connect site <Rocket class="size-4" />
+    Teach agent about this domain <Rocket class="size-4" />
   </Button>
 </div>

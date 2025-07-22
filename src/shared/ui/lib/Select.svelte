@@ -19,7 +19,7 @@
       | "error";
     ghost?: boolean;
     options?: { value: string; label: string }[];
-    children: Snippet;
+    children?: Snippet;
   }
 
   let {

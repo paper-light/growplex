@@ -147,18 +147,20 @@
   {/if}
 
   <div class="flex-1 min-h-0 overflow-hidden">
-    {#if errors.length > 0}
-      <div class="flex flex-col items-center justify-center h-full gap-5">
-        {#each errors as error}
-          <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
-        {/each}
-      </div>
-    {:else if chat && agent && token && room}
-      <Chat {chat} {agent} {payload} {token} initTheme={selectedTheme} />
-    {:else}
-      <div class="flex flex-col items-center justify-center h-full gap-5">
-        <Button onclick={reloadChat}>RELOAD</Button>
-      </div>
-    {/if}
+    {#key chat}
+      {#if errors.length > 0}
+        <div class="flex flex-col items-center justify-center h-full gap-5">
+          {#each errors as error}
+            <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
+          {/each}
+        </div>
+      {:else if chat && agent && token && room}
+        <Chat {chat} {agent} {payload} {token} initTheme={selectedTheme} />
+      {:else}
+        <div class="flex flex-col items-center justify-center h-full gap-5">
+          <Button onclick={reloadChat}>RELOAD</Button>
+        </div>
+      {/if}
+    {/key}
   </div>
 </aside>

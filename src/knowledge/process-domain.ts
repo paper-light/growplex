@@ -24,10 +24,10 @@ export async function processDomain(
 
   const org = await pb
     .collection("orgs")
-    .getFirstListItem(`project = "${projectId}"`);
+    .getFirstListItem(`projects.id ?= "${projectId}"`);
   const source = await pb.collection("sources").create({
     name: validatedDomain,
-    type: SourcesTypeOptions.web,
+    type: "web",
     metadata: {
       domain,
     },
@@ -38,38 +38,43 @@ export async function processDomain(
 
   const results = await fn(validatedDomain, antiBot);
 
-  const batch = pb.createBatch();
+  const docs: DocumentsResponse[] = [];
   for (const result of results) {
-    batch.collection("documents").create({
-      title: result?.metadata?.title || result?.url,
-      status: result.success
-        ? DocumentsStatusOptions.loaded
-        : DocumentsStatusOptions.error,
-      content: result.success
-        ? result.markdown.fit_markdown
-        : result.error_message,
-      metadata: {
-        ...result?.metadata,
-        source: source.id,
-        status_code: result.status_code,
-      },
-    });
+    docs.push(
+      await pb.collection("documents").create({
+        title: result?.metadata?.title || result?.url,
+        status: result.success
+          ? DocumentsStatusOptions.loaded
+          : DocumentsStatusOptions.error,
+        content: result.success
+          ? result.markdown.fit_markdown
+          : result.error_message,
+        metadata: {
+          ...result?.metadata,
+          source: source.id,
+          status_code: result.status_code,
+        },
+      })
+    );
   }
-  const docs = (await batch.send()) as unknown as DocumentsResponse[];
   await pb.collection("sources").update(source.id, {
     documents: docs.map((d) => d.id),
   });
 
+  const loadedDocs = docs.filter(
+    (d) => d.status === DocumentsStatusOptions.loaded
+  );
+
   await extractorService.addTexts(
     org.id,
-    docs.map((d) => ({
+    loadedDocs.map((d) => ({
       content: d.content,
       metadata: d.metadata as Record<string, any>,
     })),
     projectId
   );
 
-  return docs;
+  return { source, docs, loadedDocs };
 }
 
 // -------------------------PRIVATE-------------------------

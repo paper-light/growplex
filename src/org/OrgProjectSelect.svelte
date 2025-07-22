@@ -50,19 +50,14 @@
   async function confirmCreate(cp: { id: string; name: string }) {
     if (!currentOrg) return;
 
-    const integration = await userProvider.createIntegration({
-      name: "Default Integration",
-    });
-
     const project = await userProvider.createProject({
       name: cp.name,
-      integrations: [integration.id],
     });
 
     await userProvider.updateOrg(currentOrg.id, { "projects+": project.id });
 
     settingsProvider.setProject(project.id);
-    settingsProvider.setIntegration(integration.id);
+    settingsProvider.setIntegration(project.integrations[0]);
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
   }

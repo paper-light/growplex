@@ -11,9 +11,9 @@
   let { class: className = "", size = "md" }: Props = $props();
 
   const integartion = $derived(userProvider.integration);
-  const allChats = $derived(userProvider.project?.expand?.chats || []);
+  const allChats = $derived(userProvider.chats || []);
 
-  let value = $state("");
+  let value = $derived(integartion?.chat || "");
 
   const options = $derived.by(() => {
     return allChats.map((chat) => ({
@@ -32,7 +32,5 @@
 </script>
 
 <div class={className}>
-  <Select bind:value {onchange} {options} color="neutral" {size}>
-    Select from project…
-  </Select>
+  <Select bind:value {onchange} {options} color="neutral" {size} />
 </div>

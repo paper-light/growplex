@@ -32,6 +32,7 @@ class SourcesProvider {
     pb.collection("sources").subscribe(
       "*",
       async (source) => {
+        console.log("source", source);
         switch (source.action) {
           case "create":
             this.sources.push(source.record);

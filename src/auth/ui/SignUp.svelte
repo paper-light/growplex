@@ -148,6 +148,8 @@
 
   <p class="text-center text-sm mt-4">
     Already have an account?
-    <a href="sign-in" class="link link-secondary font-semibold">Sign in!</a>
+    <a href="/app/auth/sign-in" class="link link-secondary font-semibold"
+      >Sign in!</a
+    >
   </p>
 </div>

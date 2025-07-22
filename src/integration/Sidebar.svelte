@@ -63,17 +63,6 @@
       "integrations+": [newInt.id],
     });
 
-    await Promise.all([
-      createChat({
-        projectId: currentProject.id,
-        integrationId: newInt.id,
-      }),
-      createAgent({
-        projectId: currentProject.id,
-        integrationId: newInt.id,
-      }),
-    ]);
-
     creatingIntegrations = creatingIntegrations.filter((i) => i.id !== ci.id);
     settingsProvider.setIntegration(newInt.id);
   }

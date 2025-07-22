@@ -11,9 +11,9 @@
   let { class: className = "", size = "md" }: Props = $props();
 
   const integration = $derived(userProvider.integration);
-  const allAgents = $derived(userProvider.project?.expand?.agents || []);
+  const allAgents = $derived(userProvider.agents || []);
 
-  let value = $state("");
+  let value = $derived(integration?.agent || "");
 
   const options = $derived.by(() => {
     return allAgents.map((agent) => ({
@@ -30,7 +30,5 @@
 </script>
 
 <div class={className}>
-  <Select bind:value {onchange} {options} {size} color="neutral">
-    Select from project…
-  </Select>
+  <Select bind:value {onchange} {options} {size} color="neutral" />
 </div>

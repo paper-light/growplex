@@ -38,6 +38,8 @@
   }
 </script>
 
-<div class={className}>
-  <Select value={agentId} {onchange} {options} {size} color="neutral" />
-</div>
+{#if options.length > 0}
+  <div class={className}>
+    <Select value={agentId} {onchange} {options} {size} color="neutral" />
+  </div>
+{/if}

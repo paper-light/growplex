@@ -105,7 +105,7 @@ export async function getHistory(
   );
 
   const agents = await pb.collection("agents").getFullList({
-    filter: `integrations_via_agents.id = "${integrationId}"`,
+    filter: `integrations_via_agents.id ?= "${integrationId}"`,
   });
   const agent = agents[0];
 

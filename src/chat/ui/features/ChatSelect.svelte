@@ -6,6 +6,7 @@
 
   import { chatsProvider } from "../../providers/chats.svelte";
   import { chatCrud } from "../../repositories/chat-crud";
+
   interface Props {
     class?: ClassValue;
     size?: "sm" | "md" | "lg";
@@ -13,10 +14,14 @@
   let { class: className = "", size = "md" }: Props = $props();
 
   const integartion = $derived(integrationsProvider.selectedIntegration);
-  const allChats = $derived(chatsProvider.chats || []);
   const selectedChat = $derived(chatsProvider.selectedIntegrationChat);
+  const allChats = $derived(
+    chatsProvider.chats?.filter(
+      (c) => !c.integration || c.integration === selectedChat?.integration
+    ) || []
+  );
 
-  let value = $derived(selectedChat?.id || "");
+  let chatId = $derived(selectedChat?.id || "");
 
   const options = $derived.by(() => {
     return allChats.map((chat) => ({
@@ -35,6 +40,8 @@
   }
 </script>
 
-<div class={className}>
-  <Select {value} {onchange} {options} color="neutral" {size} />
-</div>
+{#if options.length > 0}
+  <div class={className}>
+    <Select value={chatId} {onchange} {options} color="neutral" {size} />
+  </div>
+{/if}

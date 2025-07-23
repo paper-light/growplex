@@ -20,7 +20,7 @@
   } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
 
-  import { socketProvider } from "../../provider/socket.svelte";
+  import { socketProvider } from "../../providers/socket.svelte";
   import { ChatWidgetPayloadSchema } from "../../lib/models";
   import { injectTheme } from "../../utils/injectTheme";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
@@ -57,12 +57,7 @@
     return history || [];
   });
 
-  $effect(() => {
-    console.log("messages", messages.length);
-    console.log("roomId", roomId);
-  });
-
-  const online = $derived(socketProvider.online || false);
+  const online = $derived(socketProvider.online);
 
   let root: HTMLDivElement | null = $state(null);
 
@@ -106,8 +101,7 @@
   $effect(() => {
     if (!roomId) return;
 
-    untrack(async () => {
-      await socketProvider.onlinePromise;
+    untrack(() => {
       socketProvider.joinRoom(roomId);
     });
 

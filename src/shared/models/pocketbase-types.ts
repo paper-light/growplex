@@ -18,6 +18,7 @@ export enum Collections {
 	Integrations = "integrations",
 	Leads = "leads",
 	Messages = "messages",
+	Notifications = "notifications",
 	OrgMembers = "orgMembers",
 	Orgs = "orgs",
 	Projects = "projects",
@@ -113,6 +114,7 @@ export type AgentsRecord = {
 	created?: IsoDateString
 	id: string
 	name?: string
+	project?: RecordIdString
 	provider?: AgentsProviderOptions
 	system?: string
 	updated?: IsoDateString
@@ -124,8 +126,10 @@ export type ChatsRecord<Ttheme = unknown> = {
 	domain?: string
 	firstMessage?: string
 	id: string
+	integration?: RecordIdString
 	name?: string
-	tg?: string
+	project?: RecordIdString
+	tgToken?: string
 	theme?: null | Ttheme
 	updated?: IsoDateString
 }
@@ -142,6 +146,7 @@ export type DocumentsRecord<Tmetadata = unknown> = {
 	file?: string
 	id: string
 	metadata?: null | Tmetadata
+	source?: RecordIdString
 	status?: DocumentsStatusOptions
 	title?: string
 	tokenCount?: number
@@ -159,15 +164,16 @@ export type FeedbacksRecord<Tmetadata = unknown> = {
 	metadata?: null | Tmetadata
 	type: FeedbacksTypeOptions
 	updated?: IsoDateString
+	user?: RecordIdString
 }
 
 export type IntegrationsRecord = {
-	agent?: RecordIdString
-	chat?: RecordIdString
+	agents?: RecordIdString[]
 	created?: IsoDateString
 	id: string
 	name?: string
 	operators?: RecordIdString[]
+	project?: RecordIdString
 	sources?: RecordIdString[]
 	updated?: IsoDateString
 }
@@ -185,7 +191,6 @@ export type LeadsRecord<Tmetadata = unknown> = {
 	metadata?: null | Tmetadata
 	name?: string
 	phone?: string
-	room?: RecordIdString
 	tg?: string
 	type?: LeadsTypeOptions
 	updated?: IsoDateString
@@ -210,6 +215,23 @@ export type MessagesRecord<Tmetadata = unknown> = {
 	visible?: boolean
 }
 
+export enum NotificationsTypeOptions {
+	"dummy" = "dummy",
+	"indexing" = "indexing",
+	"orgInvite" = "orgInvite",
+}
+export type NotificationsRecord<Tpayload = unknown> = {
+	created?: IsoDateString
+	hideAfter?: IsoDateString
+	id: string
+	payload?: null | Tpayload
+	read?: IsoDateString
+	type?: NotificationsTypeOptions
+	updated?: IsoDateString
+	user?: RecordIdString
+	visible?: boolean
+}
+
 export enum OrgMembersRoleOptions {
 	"owner" = "owner",
 	"operator" = "operator",
@@ -226,19 +248,14 @@ export type OrgsRecord = {
 	created?: IsoDateString
 	id: string
 	name: string
-	projects?: RecordIdString[]
 	updated?: IsoDateString
 }
 
 export type ProjectsRecord = {
-	agents?: RecordIdString[]
-	chats?: RecordIdString[]
 	created?: IsoDateString
 	id: string
-	integrations?: RecordIdString[]
 	name?: string
-	operators?: RecordIdString[]
-	sources?: RecordIdString[]
+	org?: RecordIdString
 	updated?: IsoDateString
 }
 
@@ -253,6 +270,8 @@ export type RoomsRecord = {
 	chat?: RecordIdString
 	created?: IsoDateString
 	id: string
+	lead?: RecordIdString
+	name?: string
 	status: RoomsStatusOptions
 	updated?: IsoDateString
 }
@@ -263,12 +282,12 @@ export enum SourcesTypeOptions {
 }
 export type SourcesRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
-	documents?: RecordIdString[]
 	frequencyHours?: number
 	id: string
 	indexed?: IsoDateString
 	metadata?: null | Tmetadata
 	name?: string
+	project?: RecordIdString
 	type?: SourcesTypeOptions
 	updated?: IsoDateString
 }
@@ -317,6 +336,7 @@ export type FeedbacksResponse<Tmetadata = unknown, Texpand = unknown> = Required
 export type IntegrationsResponse<Texpand = unknown> = Required<IntegrationsRecord> & BaseSystemFields<Texpand>
 export type LeadsResponse<Tmetadata = unknown, Texpand = unknown> = Required<LeadsRecord<Tmetadata>> & BaseSystemFields<Texpand>
 export type MessagesResponse<Tmetadata = unknown, Texpand = unknown> = Required<MessagesRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type NotificationsResponse<Tpayload = unknown, Texpand = unknown> = Required<NotificationsRecord<Tpayload>> & BaseSystemFields<Texpand>
 export type OrgMembersResponse<Texpand = unknown> = Required<OrgMembersRecord> & BaseSystemFields<Texpand>
 export type OrgsResponse<Texpand = unknown> = Required<OrgsRecord> & BaseSystemFields<Texpand>
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
@@ -340,6 +360,7 @@ export type CollectionRecords = {
 	integrations: IntegrationsRecord
 	leads: LeadsRecord
 	messages: MessagesRecord
+	notifications: NotificationsRecord
 	orgMembers: OrgMembersRecord
 	orgs: OrgsRecord
 	projects: ProjectsRecord
@@ -362,6 +383,7 @@ export type CollectionResponses = {
 	integrations: IntegrationsResponse
 	leads: LeadsResponse
 	messages: MessagesResponse
+	notifications: NotificationsResponse
 	orgMembers: OrgMembersResponse
 	orgs: OrgsResponse
 	projects: ProjectsResponse
@@ -387,6 +409,7 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'integrations'): RecordService<IntegrationsResponse>
 	collection(idOrName: 'leads'): RecordService<LeadsResponse>
 	collection(idOrName: 'messages'): RecordService<MessagesResponse>
+	collection(idOrName: 'notifications'): RecordService<NotificationsResponse>
 	collection(idOrName: 'orgMembers'): RecordService<OrgMembersResponse>
 	collection(idOrName: 'orgs'): RecordService<OrgsResponse>
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>

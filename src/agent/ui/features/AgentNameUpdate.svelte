@@ -2,28 +2,29 @@
   import type { ClassValue } from "svelte/elements";
   import { Pencil } from "@lucide/svelte";
 
-  import { userProvider } from "../../../user/user.svelte";
   import { debounce } from "../../../shared/helpers/debounce";
   import Input from "../../../shared/ui/lib/Input.svelte";
+  import type { AgentsResponse } from "../../../shared/models/pocketbase-types";
+  import { agentCrud } from "../../repositories/agent-crud";
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 
   interface Props {
+    agent: AgentsResponse | null;
     class?: ClassValue;
   }
-  let { class: className = "" }: Props = $props();
+  let { agent, class: className = "" }: Props = $props();
 
-  const currentAgent = $derived(userProvider.agent);
-
-  let agentName = $derived(currentAgent?.name ?? "");
+  let agentName = $derived(agent?.name ?? "");
 
   const updateName = debounce(async (e: Event) => {
     const target = e.target as HTMLInputElement;
     const newName = target.value;
 
-    if (newName === currentAgent?.name) return;
+    if (newName === agent?.name || !agent) return;
 
-    await userProvider.updateAgent(currentAgent!.id, {
+    await agentCrud.update({
+      id: agent.id,
       name: newName,
     });
   }, DEBOUNCE_TIME);

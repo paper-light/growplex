@@ -5,8 +5,8 @@
   import { userProvider } from "../../../user/user.svelte";
   import { MessagesRoleOptions } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
-  import { socketProvider } from "../../provider/socket.svelte";
-  import { roomsProvider } from "../../provider/rooms.svelte";
+  import { socketProvider } from "../../providers/socket.svelte";
+  import { roomsProvider } from "../../providers/rooms.svelte";
 
   const roomId = $derived(roomsProvider.room?.id);
 

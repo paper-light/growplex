@@ -5,34 +5,36 @@
 
   import Button from "../../shared/ui/lib/Button.svelte";
   import Modal from "../../shared/ui/lib/Modal.svelte";
-  import { userProvider } from "../../user/user.svelte";
   import { settingsProvider } from "../../user/settings.svelte";
   import { pb } from "../../shared/lib/pb";
-  import { sourcesProvider } from "../providers/sources.svelte";
 
   interface Props {
+    projectId: string;
     class?: ClassValue;
     domain: string;
     disabled?: boolean;
   }
 
-  const { domain, class: className = "", disabled = false }: Props = $props();
+  const {
+    projectId,
+    domain,
+    class: className = "",
+    disabled = false,
+  }: Props = $props();
 
   let open = $state(false);
 
   async function connect() {
-    if (!userProvider.project) return;
     open = false;
 
     const res = await actions.indexWeb({
-      projectId: userProvider.project.id,
+      projectId,
       url: domain,
     });
     if (!res.data?.ok) return;
 
     const source = await pb.collection("sources").getOne(res.data.sourceId);
-    sourcesProvider.sources.push(source);
-    settingsProvider.setSource(source.id);
+    settingsProvider.selectSource(source.id);
   }
 </script>
 

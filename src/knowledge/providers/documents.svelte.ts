@@ -6,18 +6,18 @@ class DocumentsProvider {
 
   documents: DocumentsResponse[] = $state([]);
 
-  async load(sourceId: string) {
+  async load(projectId: string) {
     const documents = await pb.collection("documents").getFullList({
-      filter: `sources_via_documents.id = "${sourceId}"`,
+      filter: `source.project = "${projectId}"`,
     });
     this.documents = documents;
   }
 
-  async subscribe(sourceId: string) {
+  async subscribe(projectId: string) {
     if (this.subscribed) return;
     this.subscribed = true;
 
-    await this.load(sourceId);
+    await this.load(projectId);
 
     pb.collection("documents").subscribe(
       "*",
@@ -41,7 +41,7 @@ class DocumentsProvider {
         }
       },
       {
-        filter: `sources_via_documents.id = "${sourceId}"`,
+        filter: `source.project = "${projectId}"`,
       }
     );
   }

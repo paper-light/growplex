@@ -1,12 +1,17 @@
 const SELECTED_KEY = "settings.selected";
 
 interface Selected {
-  org: string | null;
-  project: string | null;
-  integration: string | null;
+  selectedOrgId: string | null;
+  selectedProjectId: string | null;
+  selectedAgentId: string | null;
+  selectedChatId: string | null;
 
-  room: string | null;
-  source: string | null;
+  selectedIntegrationId: string | null;
+  selectedIntegrationAgentId: string | null;
+  selectedIntegrationChatId: string | null;
+
+  selectedRoomId: string | null;
+  selectedSourceId: string | null;
 }
 
 function loadSelected(): Selected {
@@ -15,11 +20,17 @@ function loadSelected(): Selected {
     if (raw) return JSON.parse(raw);
   } catch {}
   return {
-    org: null,
-    project: null,
-    integration: null,
-    room: null,
-    source: null,
+    selectedOrgId: null,
+    selectedProjectId: null,
+    selectedAgentId: null,
+    selectedChatId: null,
+
+    selectedIntegrationId: null,
+    selectedIntegrationAgentId: null,
+    selectedIntegrationChatId: null,
+
+    selectedRoomId: null,
+    selectedSourceId: null,
   };
 }
 
@@ -32,55 +43,86 @@ function saveSelected(selected: Selected) {
 class SettingsProvider {
   private selected = $state<Selected>(loadSelected());
 
-  org = $derived(this.selected.org);
-  project = $derived(this.selected.project);
-  integration = $derived(this.selected.integration);
-  room = $derived(this.selected.room);
-  source = $derived(this.selected.source);
+  // Selected values
+  selectedOrgId = $derived(this.selected.selectedOrgId);
+  selectedProjectId = $derived(this.selected.selectedProjectId);
+  selectedAgentId = $derived(this.selected.selectedAgentId);
+  selectedChatId = $derived(this.selected.selectedChatId);
 
-  setOrg(orgId: string) {
-    if (this.selected.org === orgId) return;
-    this.selected.org = orgId;
-    this.selected.project = null;
-    this.selected.integration = null;
-    this.selected.room = null;
-    this.selected.source = null;
+  selectedIntegrationId = $derived(this.selected.selectedIntegrationId);
+  selectedIntegrationAgentId = $derived(
+    this.selected.selectedIntegrationAgentId
+  );
+  selectedIntegrationChatId = $derived(this.selected.selectedIntegrationChatId);
+
+  selectedRoomId = $derived(this.selected.selectedRoomId);
+  selectedSourceId = $derived(this.selected.selectedSourceId);
+
+  // Org context
+  selectOrg(orgId: string) {
+    if (this.selected.selectedOrgId === orgId) return;
+    this.selected.selectedOrgId = orgId;
+    saveSelected(this.selected);
+  }
+  selectProject(projectId: string) {
+    if (this.selected.selectedProjectId === projectId) return;
+    this.selected.selectedProjectId = projectId;
     saveSelected(this.selected);
   }
 
-  setProject(projectId: string) {
-    if (this.selected.project === projectId) return;
-    this.selected.project = projectId;
-    this.selected.integration = null;
-    this.selected.room = null;
-    this.selected.source = null;
+  // Integration context
+  selectIntegration(integrationId: string) {
+    if (this.selected.selectedIntegrationId === integrationId) return;
+    this.selected.selectedIntegrationId = integrationId;
+    saveSelected(this.selected);
+  }
+  selectAgent(agentId: string) {
+    if (this.selected.selectedAgentId === agentId) return;
+    this.selected.selectedAgentId = agentId;
+    saveSelected(this.selected);
+  }
+  selectChat(chatId: string) {
+    if (this.selected.selectedChatId === chatId) return;
+    this.selected.selectedChatId = chatId;
     saveSelected(this.selected);
   }
 
-  setIntegration(integrationId: string) {
-    if (this.selected.integration === integrationId) return;
-    this.selected.integration = integrationId;
+  // Integration context
+  selectIntegrationAgent(agentId: string) {
+    if (this.selected.selectedIntegrationAgentId === agentId) return;
+    this.selected.selectedIntegrationAgentId = agentId;
+    saveSelected(this.selected);
+  }
+  selectIntegrationChat(chatId: string) {
+    if (this.selected.selectedIntegrationChatId === chatId) return;
+    this.selected.selectedIntegrationChatId = chatId;
     saveSelected(this.selected);
   }
 
-  setRoom(roomId: string) {
-    if (this.selected.room === roomId) return;
-    this.selected.room = roomId;
+  // Other
+  selectRoom(roomId: string) {
+    if (this.selected.selectedRoomId === roomId) return;
+    this.selected.selectedRoomId = roomId;
     saveSelected(this.selected);
   }
-
-  setSource(sourceId: string) {
-    if (this.selected.source === sourceId) return;
-    this.selected.source = sourceId;
+  selectSource(sourceId: string) {
+    if (this.selected.selectedSourceId === sourceId) return;
+    this.selected.selectedSourceId = sourceId;
     saveSelected(this.selected);
   }
 
   clear() {
-    this.selected.org = null;
-    this.selected.project = null;
-    this.selected.integration = null;
-    this.selected.room = null;
-    this.selected.source = null;
+    this.selected.selectedOrgId = null;
+    this.selected.selectedProjectId = null;
+    this.selected.selectedAgentId = null;
+    this.selected.selectedChatId = null;
+
+    this.selected.selectedIntegrationId = null;
+    this.selected.selectedIntegrationAgentId = null;
+    this.selected.selectedIntegrationChatId = null;
+
+    this.selected.selectedRoomId = null;
+    this.selected.selectedSourceId = null;
     try {
       localStorage.removeItem(SELECTED_KEY);
     } catch {}

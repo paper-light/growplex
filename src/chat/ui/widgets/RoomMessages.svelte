@@ -1,8 +1,8 @@
 <script lang="ts">
   import { fade } from "svelte/transition";
   import { ChevronsDown } from "@lucide/svelte";
-  import { roomsProvider } from "../../provider/rooms.svelte";
-  import { socketProvider } from "../../provider/socket.svelte";
+  import { roomsProvider } from "../../providers/rooms.svelte";
+  import { socketProvider } from "../../providers/socket.svelte";
   import ChatMessage from "../entities/Message.svelte";
   import Man from "../../../shared/assets/Man.jpg";
   import Thalia from "../../../shared/assets/Thalia.jpg";
@@ -13,8 +13,9 @@
   } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
+  import { chatsProvider } from "../../providers/chats.svelte";
 
-  const room = $derived(roomsProvider.room);
+  const room = $derived(roomsProvider.selectedRoom);
   const messages = $derived.by(() => {
     if (!room) return [];
     const history = socketProvider.histories.get(room.id);
@@ -27,8 +28,11 @@
       : Man.src
   );
   const chatAvatar = $derived(
-    userProvider.chat?.avatar
-      ? pb.files.getURL(userProvider.chat, userProvider.chat.avatar)
+    chatsProvider.selectedChat?.avatar
+      ? pb.files.getURL(
+          chatsProvider.selectedChat,
+          chatsProvider.selectedChat.avatar
+        )
       : Thalia.src
   );
 

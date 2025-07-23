@@ -7,16 +7,20 @@
   import { uiProvider } from "../../../user/ui.svelte";
   import Chat from "./Chat.svelte";
   import { pb } from "../../../shared/lib/pb";
-  import { roomsProvider } from "../../provider/rooms.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import { roomsProvider } from "../../providers/rooms.svelte";
+  import Button from "../../../shared/ui/lib/Button.svelte";
+
+  import { agentsProvider } from "../../../agent/providers/agents.svelte";
+  import { chatsProvider } from "../../providers/chats.svelte";
+
   interface Props {
     block?: boolean;
   }
 
   let { block = false }: Props = $props();
 
-  const agent = $derived(userProvider.agent || null);
-  const chat = $derived(userProvider.chat || null);
+  const agent = $derived(agentsProvider.selectedIntegrationAgent || null);
+  const chat = $derived(chatsProvider.selectedIntegrationChat || null);
   const token = $derived(userProvider.token);
 
   const room = $derived(roomsProvider.previewRoom);

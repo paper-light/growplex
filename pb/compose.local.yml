@@ -6,9 +6,6 @@ services:
     volumes:
       - ./pb_migrations:/pb/pb_migrations
       - ./pb_hooks:/pb/pb_hooks
-      - pb_data_volume:/pb/pb_data
+      - ./pb_data:/pb/pb_data
     ports:
       - "8080:8080"
-
-volumes:
-  pb_data_volume:

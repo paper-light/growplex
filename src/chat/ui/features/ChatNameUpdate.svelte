@@ -2,28 +2,29 @@
   import type { ClassValue } from "svelte/elements";
   import { Pencil } from "@lucide/svelte";
 
-  import { userProvider } from "../../../user/user.svelte";
   import { debounce } from "../../../shared/helpers/debounce";
   import Input from "../../../shared/ui/lib/Input.svelte";
+  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
+  import { chatCrud } from "../../repositories/chat-crud";
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 
   interface Props {
+    chat: ChatsResponse | null;
     className?: ClassValue;
   }
-  let { className = "" }: Props = $props();
+  let { chat, className = "" }: Props = $props();
 
-  const currentChat = $derived(userProvider.chat);
-
-  let chatName = $derived(currentChat?.name ?? "");
+  let chatName = $derived(chat?.name ?? "");
 
   const updateName = debounce(async (e: Event) => {
     const target = e.target as HTMLInputElement;
     const newName = target.value;
 
-    if (newName === currentChat?.name) return;
+    if (newName === chat?.name || !chat) return;
 
-    await userProvider.updateChat(currentChat!.id, {
+    await chatCrud.update({
+      id: chat.id,
       name: newName,
     });
   }, DEBOUNCE_TIME);

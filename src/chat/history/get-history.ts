@@ -103,14 +103,15 @@ export async function getHistory(
     { integrationId, roomId },
     "no history found in PB, seeding firstMessage"
   );
-  const integration = await pb
-    .collection("integrations")
-    .getOne<IntegrationsResponse<IntegrationExpand>>(integrationId, {
-      expand: "agent,chat",
-    });
 
-  const agent = integration.expand!.agent;
-  const chat = integration.expand!.chat;
+  const agents = await pb.collection("agents").getFullList({
+    filter: `integrations_via_agents.id = "${integrationId}"`,
+  });
+  const agent = agents[0];
+
+  const chat = await pb
+    .collection("chats")
+    .getFirstListItem(`integration = "${integrationId}"`);
 
   if (!agent || !chat) {
     log.error({ integrationId, roomId }, "no agent or chat found");

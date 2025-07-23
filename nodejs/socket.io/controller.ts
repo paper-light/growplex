@@ -1,7 +1,6 @@
 import { Server as IOServer, Socket } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
-import type { RoomExpand } from "@/shared/models/expands";
 import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
@@ -23,11 +22,9 @@ export function attachSocketIO(httpServer: any) {
     console.log(`🟢 Socket connected: ${socket.id}`);
 
     socket.on("join-room", async (dto: JoinRoomDTO) => {
-      const room = await pb
-        .collection("rooms")
-        .getOne<RoomsResponse<RoomExpand>>(dto.roomId, {
-          expand: "chat",
-        });
+      const room = await pb.collection("rooms").getOne(dto.roomId, {
+        expand: "chat",
+      });
 
       await guardRoomAccess(socket, room);
 
@@ -35,11 +32,9 @@ export function attachSocketIO(httpServer: any) {
     });
 
     socket.on("send-message", async (dto: SendMessageDTO) => {
-      const room = await pb
-        .collection("rooms")
-        .getOne<RoomsResponse<RoomExpand>>(dto.roomId, {
-          expand: "chat",
-        });
+      const room = await pb.collection("rooms").getOne(dto.roomId, {
+        expand: "chat",
+      });
 
       await guardRoomAccess(socket, room);
 

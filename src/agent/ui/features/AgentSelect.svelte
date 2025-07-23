@@ -1,8 +1,10 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { userProvider } from "../../../user/user.svelte";
   import Select from "../../../shared/ui/lib/Select.svelte";
+  import { agentsProvider } from "../../providers/agents.svelte";
+  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
+  import { integrationsCrud } from "../../../integration/repositories/integration-crud";
 
   interface Props {
     class?: ClassValue;
@@ -10,10 +12,13 @@
   }
   let { class: className = "", size = "md" }: Props = $props();
 
-  const integration = $derived(userProvider.integration);
-  const allAgents = $derived(userProvider.agents || []);
+  const integration = $derived(integrationsProvider.selectedIntegration);
+  const selectedIntegrationAgent = $derived(
+    agentsProvider.selectedIntegrationAgent
+  );
+  const allAgents = $derived(agentsProvider.agents || []);
 
-  let value = $derived(integration?.agent || "");
+  const agentId = $derived(selectedIntegrationAgent?.id || "");
 
   const options = $derived.by(() => {
     return allAgents.map((agent) => ({
@@ -24,11 +29,15 @@
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !integration) return;
-    await userProvider.updateIntegration(integration.id, { agent: id });
+    if (!id || !integration || !agentId) return;
+    await integrationsCrud.update({
+      id: integration.id,
+      addAgents: [id],
+      removeAgents: [agentId],
+    });
   }
 </script>
 
 <div class={className}>
-  <Select bind:value {onchange} {options} {size} color="neutral" />
+  <Select value={agentId} {onchange} {options} {size} color="neutral" />
 </div>

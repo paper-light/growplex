@@ -6,8 +6,8 @@ import { pb } from "@/shared/lib/pb";
 import {
   RoomsStatusOptions,
   type RoomsResponse,
+  type IntegrationsResponse,
 } from "@/shared/models/pocketbase-types";
-import type { RoomExpand } from "@/shared/models/expands";
 
 import { callChatAssistant } from "@/chat/service";
 import { updateHistory } from "@/chat/history/update-history";
@@ -30,14 +30,11 @@ export async function sendMessage(
       ),
     };
 
-    let room = await pb
-      .collection("rooms")
-      .getOne<RoomsResponse<RoomExpand>>(roomId, {
-        expand: "chat",
-      });
-    const integration = await pb
-      .collection("integrations")
-      .getFirstListItem(`chat="${room.chat}"`);
+    let room = await pb.collection("rooms").getOne(roomId, {
+      expand: "chat,chat.integration",
+    });
+    const integration: IntegrationsResponse = (room.expand as any).chat.expand
+      .integration!;
 
     const msgs = await updateHistory([msg]);
     io.to(room.id).emit("new-message", {
@@ -67,12 +64,7 @@ export async function sendMessage(
       if (room.status !== RoomsStatusOptions.preview) return;
     }
 
-    if (
-      ![RoomsStatusOptions.auto, RoomsStatusOptions.preview].includes(
-        room.status
-      )
-    )
-      return;
+    if (room.status === "operator") return;
 
     const newMsgs = await callChatAssistant(integration.id, room.id);
 

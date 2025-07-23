@@ -1,19 +1,21 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { userProvider } from "../../../user/user.svelte";
   import AvatarInput from "../../../shared/ui/components/AvatarInput.svelte";
   import { pb } from "../../../shared/lib/pb";
-
+  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
+  import { chatCrud } from "../../../chat/repositories/chat-crud";
   interface Props {
+    chat: ChatsResponse | null;
     class?: ClassValue;
   }
-  let { class: className = "" }: Props = $props();
-
-  const currentChat = $derived(userProvider.chat);
+  let { chat, class: className = "" }: Props = $props();
 
   async function handleAvatarChange(file: File) {
-    await userProvider.updateChat(currentChat!.id, {
+    if (!chat) return;
+
+    await chatCrud.update({
+      id: chat.id,
       avatar: file,
     });
   }
@@ -21,9 +23,7 @@
 
 <AvatarInput
   class={className}
-  avatar={currentChat?.avatar
-    ? pb.files.getURL(currentChat, currentChat.avatar)
-    : null}
+  avatar={chat?.avatar ? pb.files.getURL(chat, chat.avatar) : null}
   size="md"
   onChange={handleAvatarChange}
 />

@@ -7,12 +7,16 @@ import { pb } from "../../shared/lib/pb";
 import { logger } from "../../shared/lib/logger";
 import {
   MessagesRoleOptions,
+  type AgentsResponse,
+  type SourcesResponse,
   type IntegrationsResponse,
   type LeadsResponse,
   type MessagesRecord,
   type MessagesResponse,
+  type OrgsResponse,
+  type ChatsResponse,
+  type DocumentsResponse,
 } from "../../shared/models/pocketbase-types";
-import type { IntegrationExpand } from "../../shared/models/expands";
 
 import { extractorService } from "../../rag/extractor";
 import { createDocumentIdsFilter } from "../../rag/filters";
@@ -29,9 +33,8 @@ export async function callChatAssistant(
   roomId: string
 ): Promise<MessagesResponse[]> {
   // Get integration
-  const { integration, org, agent, chat, sources } = await getIntegrationData(
-    integrationId
-  );
+  const { integration, org, agent, chat, sources, documents } =
+    await getIntegrationData(integrationId);
   const responseMessages: MessagesResponse[] = [];
 
   const { lead, room } = await getLeadData(roomId);
@@ -54,7 +57,7 @@ export async function callChatAssistant(
   const history = buildLlmHistory(rawHistory);
 
   // Get knowledge
-  const docIds = sources?.flatMap((s) => s.documents) || [];
+  const docIds = documents?.map((d) => d.id) || [];
   let knowledge = "";
 
   try {
@@ -235,37 +238,36 @@ export async function callChatAssistant(
 async function getIntegrationData(integrationId: string) {
   const integration = await pb
     .collection("integrations")
-    .getOne<IntegrationsResponse<IntegrationExpand>>(integrationId, {
+    .getOne(integrationId, {
       expand:
-        "chat,agent,sources,projects_via_integrations,projects_via_integrations.orgs_via_projects",
+        "agents,sources,project,project.org,chats_via_integration,sources.documents_via_sources",
     });
 
-  const org =
-    integration.expand!.projects_via_integrations![0]!.expand!
-      .orgs_via_projects[0]!;
+  const org = (integration.expand as any).project.expand.org;
 
-  const agent = integration.expand!.agent;
-  const chat = integration.expand!.chat;
-  const sources = integration.expand!.sources;
+  const chat = (integration.expand as any).chats_via_integration?.[0];
+  const agent = (integration.expand as any).agents?.[0];
+  const sources = (integration.expand as any).sources;
+  const documents = ((integration.expand as any).sources || []).flatMap(
+    (s: any) => s.expand.documents_via_sources
+  );
 
   return {
-    integration,
-    org,
-    agent,
-    chat,
-    sources,
+    integration: integration as IntegrationsResponse,
+    org: org as OrgsResponse,
+    agent: agent as AgentsResponse,
+    chat: chat as ChatsResponse,
+    sources: sources as SourcesResponse[],
+    documents: documents as DocumentsResponse[],
   };
 }
 
 async function getLeadData(roomId: string) {
-  const room = await pb
-    .collection("rooms")
-    .getOne(roomId, { expand: "leads_via_room" });
-  const lead =
-    ((room.expand as any)?.leads_via_room?.[0] as LeadsResponse | null) || null;
+  const room = await pb.collection("rooms").getOne(roomId, { expand: "lead" });
+  const lead = (room.expand as any).lead || null;
 
   return {
-    lead,
+    lead: lead as LeadsResponse | null,
     room,
   };
 }

@@ -4,6 +4,9 @@
   import AgentNameUpdate from "../features/AgentNameUpdate.svelte";
   import AgentAvatarUpdate from "../features/AgentAvatarUpdate.svelte";
   import AgentSystemUpdate from "../features/AgentSystemUpdate.svelte";
+  import { agentsProvider } from "../../providers/agents.svelte";
+
+  const agent = $derived(agentsProvider.selectedIntegrationAgent);
 </script>
 
 <Card title="Agent" class="max-w-2xl mx-auto">
@@ -11,11 +14,11 @@
     <AgentSelect />
 
     <div class="flex gap-6 mb-2">
-      <AgentAvatarUpdate class="flex-1 max-w-24" />
+      <AgentAvatarUpdate {agent} class="flex-1 max-w-24" />
 
-      <AgentNameUpdate class="flex-1" />
+      <AgentNameUpdate {agent} class="flex-1" />
     </div>
 
-    <AgentSystemUpdate />
+    <AgentSystemUpdate {agent} />
   </div>
 </Card>

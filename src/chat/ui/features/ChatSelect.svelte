@@ -1,19 +1,22 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { userProvider } from "../../../user/user.svelte";
   import Select from "../../../shared/ui/lib/Select.svelte";
+  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
 
+  import { chatsProvider } from "../../providers/chats.svelte";
+  import { chatCrud } from "../../repositories/chat-crud";
   interface Props {
     class?: ClassValue;
     size?: "sm" | "md" | "lg";
   }
   let { class: className = "", size = "md" }: Props = $props();
 
-  const integartion = $derived(userProvider.integration);
-  const allChats = $derived(userProvider.chats || []);
+  const integartion = $derived(integrationsProvider.selectedIntegration);
+  const allChats = $derived(chatsProvider.chats || []);
+  const selectedChat = $derived(chatsProvider.selectedIntegrationChat);
 
-  let value = $derived(integartion?.chat || "");
+  let value = $derived(selectedChat?.id || "");
 
   const options = $derived.by(() => {
     return allChats.map((chat) => ({
@@ -24,13 +27,14 @@
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !integartion) return;
-    await userProvider.updateIntegration(integartion.id, {
-      chat: id,
+    if (!id || !integartion || !selectedChat) return;
+    await chatCrud.update({
+      id: selectedChat.id,
+      integration: integartion.id,
     });
   }
 </script>
 
 <div class={className}>
-  <Select bind:value {onchange} {options} color="neutral" {size} />
+  <Select {value} {onchange} {options} color="neutral" {size} />
 </div>

@@ -1,19 +1,21 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { userProvider } from "../../../user/user.svelte";
   import AvatarInput from "../../../shared/ui/components/AvatarInput.svelte";
   import { pb } from "../../../shared/lib/pb";
-
+  import type { AgentsResponse } from "../../../shared/models/pocketbase-types";
+  import { agentCrud } from "../../repositories/agent-crud";
   interface Props {
+    agent: AgentsResponse | null;
     class?: ClassValue;
   }
-  let { class: className = "" }: Props = $props();
-
-  const currentAgent = $derived(userProvider.agent);
+  let { agent, class: className = "" }: Props = $props();
 
   async function handleAvatarChange(file: File) {
-    await userProvider.updateAgent(currentAgent!.id, {
+    if (!agent) return;
+
+    await agentCrud.update({
+      id: agent.id,
       avatar: file,
     });
   }
@@ -21,9 +23,7 @@
 
 <AvatarInput
   class={className}
-  avatar={currentAgent?.avatar
-    ? pb.files.getURL(currentAgent, currentAgent.avatar)
-    : null}
+  avatar={agent?.avatar ? pb.files.getURL(agent, agent.avatar) : null}
   size="md"
   onChange={handleAvatarChange}
 />

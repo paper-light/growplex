@@ -7,10 +7,12 @@ class SourcesProvider {
 
   sources: SourcesResponse[] = $state([]);
 
-  source = $derived.by(() => {
+  selectedSource = $derived.by(() => {
     if (!this.sources.length) return null;
-    if (settingsProvider.source) {
-      const found = this.sources.find((r) => r.id === settingsProvider.source);
+    if (settingsProvider.selectedSourceId) {
+      const found = this.sources.find(
+        (r) => r.id === settingsProvider.selectedSourceId
+      );
       if (found) return found;
     }
     return this.sources[0];
@@ -18,7 +20,7 @@ class SourcesProvider {
 
   async load(projectId: string) {
     const sources = await pb.collection("sources").getFullList({
-      filter: `projects_via_sources.id="${projectId}"`,
+      filter: `project = "${projectId}"`,
     });
     this.sources = sources;
   }
@@ -52,13 +54,13 @@ class SourcesProvider {
         }
       },
       {
-        filter: `projects_via_sources.id = "${projectId}"`,
+        filter: `project = "${projectId}"`,
       }
     );
   }
 
   unsubscribe() {
-    pb.collection("rooms").unsubscribe();
+    pb.collection("sources").unsubscribe();
     this.subscribed = false;
   }
 }

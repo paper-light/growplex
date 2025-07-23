@@ -2,19 +2,21 @@ import { type Socket } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
 import { getHistory } from "@/chat/history/get-history";
-import type { RoomsResponse, RoomExpand } from "@/shared/models";
+import type {
+  RoomsResponse,
+  IntegrationsResponse,
+  ChatsResponse,
+} from "@/shared/models/pocketbase-types";
 
-export async function joinRoom(
-  socket: Socket,
-  room: RoomsResponse<RoomExpand>
-) {
+export async function joinRoom(socket: Socket, room: RoomsResponse) {
   // Join room
   socket.join(room.id);
 
   // Get integration
-  const integration = await pb
-    .collection("integrations")
-    .getFirstListItem(`chat="${room.chat}"`);
+  const chat = await pb.collection("chats").getOne(room.chat, {
+    expand: "integration",
+  });
+  const integration: IntegrationsResponse = (chat.expand as any).integration!;
 
   try {
     const history = await getHistory(integration.id, room.id);

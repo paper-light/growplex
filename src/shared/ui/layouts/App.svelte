@@ -4,75 +4,88 @@
   import { onMount, untrack } from "svelte";
 
   import { pb } from "../../lib/pb";
-  import { initData } from "../../../user/init-data";
   import { userProvider } from "../../../user/user.svelte";
-  import { socketProvider } from "../../../chat/provider/socket.svelte";
-  import { roomsProvider } from "../../../chat/provider/rooms.svelte";
+  import { socketProvider } from "../../../chat/providers/socket.svelte";
   import { sourcesProvider } from "../../../knowledge/providers/sources.svelte";
   import { documentsProvider } from "../../../knowledge/providers/documents.svelte";
+  import { projectsProvider } from "../../../control/providers/projects.svelte";
+  import { agentsProvider } from "../../../agent/providers/agents.svelte";
+  import { chatsProvider } from "../../../chat/providers/chats.svelte";
+  import { roomsProvider } from "../../../chat/providers/rooms.svelte";
+  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
 
   // GLOBAL
   onMount(() => {
-    initData();
-    socketProvider.connect(pb.authStore.token);
+    if (pb.authStore.record) userProvider.subscribe(pb.authStore.record.id);
+
+    return () => {
+      userProvider.unsubscribe();
+    };
+  });
+
+  // USER AUTH EFFECT
+  $effect(() => {
+    const token = userProvider.token;
+    if (!token) return;
+
+    untrack(() => {
+      socketProvider.connect(token);
+    });
 
     return () => {
       socketProvider.disconnect();
     };
   });
 
-  // ROOMS
+  // ORG CHANGE EFFECT
   $effect(() => {
-    const chat = userProvider.chat;
-    console.log("subscribe rooms with chat:", chat?.id);
+    const org = userProvider.selectedOrg;
+    if (!org) return;
 
     untrack(() => {
-      if (chat) roomsProvider.subscribe(chat.id);
+      projectsProvider.subscribe(org.id);
     });
 
     return () => {
+      projectsProvider.unsubscribe();
+    };
+  });
+
+  // PROJECT CHANGE EFFECT
+  $effect(() => {
+    const project = projectsProvider.selectedProject;
+    if (!project) return;
+
+    untrack(() => {
+      integrationsProvider.subscribe(project.id);
+      agentsProvider.subscribe(project.id);
+      chatsProvider.subscribe(project.id);
+      sourcesProvider.subscribe(project.id);
+      documentsProvider.subscribe(project.id);
+      roomsProvider.subscribe(project.id);
+    });
+
+    return () => {
+      integrationsProvider.unsubscribe();
+      agentsProvider.unsubscribe();
+      chatsProvider.unsubscribe();
+      sourcesProvider.unsubscribe();
+      documentsProvider.unsubscribe();
       roomsProvider.unsubscribe();
     };
   });
 
+  // ROOM CHANGE EFFECT
   $effect(() => {
-    const room = roomsProvider.room;
-
-    untrack(async () => {
-      await socketProvider.onlinePromise;
-      if (room) socketProvider.joinRoom(room.id);
-    });
-
-    return () => {
-      if (room) socketProvider.leaveRoom(room.id);
-    };
-  });
-
-  // SOURCES
-  $effect(() => {
-    const project = userProvider.project;
-    console.log("subscribe sources with project:", project?.id);
+    const room = roomsProvider.selectedRoom;
+    if (!room || !socketProvider.online) return;
 
     untrack(() => {
-      if (project) sourcesProvider.subscribe(project.id);
+      socketProvider.joinRoom(room.id);
     });
 
     return () => {
-      sourcesProvider.unsubscribe();
-    };
-  });
-
-  // DOCUMENTS
-  $effect(() => {
-    const source = sourcesProvider.source;
-    console.log("subscribe documents with source:", source?.id);
-
-    untrack(() => {
-      if (source) documentsProvider.subscribe(source.id);
-    });
-
-    return () => {
-      documentsProvider.unsubscribe();
+      socketProvider.leaveRoom(room.id);
     };
   });
 </script>

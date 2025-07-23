@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
   import { createChat } from "../../features/create-chat";
@@ -26,4 +26,4 @@
   <Button onclick={createGenericChat} {size} color="primary">
     + Create New Chat
   </Button>
-</div>
+</div> -->

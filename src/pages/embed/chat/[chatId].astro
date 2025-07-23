@@ -1,34 +1,26 @@
 ---
 import { pb } from "../../../shared/lib/pb";
 import Chat from "../../../chat/ui/widgets/Chat.svelte";
-import type { IntegrationExpand } from "../../../shared/models/expands";
-import type { IntegrationsResponse } from "../../../shared/models/pocketbase-types";
 import Root from "../../../shared/ui/layouts/Root.astro";
 
 const { chatId } = Astro.params;
 const token = Astro.url.searchParams.get("token");
 
 if (!token) throw new Error("Token is required");
+if (!chatId) throw new Error("Chat ID is required");
 
 const theme = Astro.url.searchParams.get("theme") || "light";
 
-const integration = await pb
-  .collection("integrations")
-  .getFirstListItem<
-    IntegrationsResponse<IntegrationExpand>
-  >(`chat="${chatId}"`, {
-    expand: "agent,chat",
-  });
+const chat = await pb.collection("chats").getOne(chatId, {
+  expand: "integration,integration.agents",
+});
+const agent = (chat.expand as any)?.integration.expand.agents[0];
 
-if (!integration.expand?.chat || !integration.expand?.agent) {
+if (!chat || !agent) {
   throw new Error("Integration not properly configured");
 }
 
-if (!integration.expand.chat.domain)
-  throw new Error("Chat domain not configured");
-
-const chat = integration.expand.chat;
-const agent = integration.expand.agent;
+if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>

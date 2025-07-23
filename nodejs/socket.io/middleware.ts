@@ -15,7 +15,7 @@ export function useMiddlewares(io: any) {
           const authPb = new PocketBase(process.env.PUBLIC_PB_URL!);
           authPb.authStore.save(token);
           const res = await authPb.collection("users").authRefresh({
-            expand: "orgMembers,orgMembers.org,orgMembers.org.projects",
+            expand: "orgMembers,orgMembers.org",
           });
           const user = res.record as UsersResponse;
           socket.data.user = user;

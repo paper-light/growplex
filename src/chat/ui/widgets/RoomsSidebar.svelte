@@ -2,9 +2,9 @@
   import { navigate } from "astro:transitions/client";
 
   import { settingsProvider } from "../../../user/settings.svelte";
-  import { userProvider } from "../../../user/user.svelte";
+  import { roomsProvider } from "../../providers/rooms.svelte";
+  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
   import type { RoomsResponse } from "../../../shared/models/pocketbase-types";
-  import { roomsProvider } from "../../provider/rooms.svelte";
 
   const roomTypes = [
     { value: "operator", label: "Operator", color: "success" },
@@ -13,8 +13,8 @@
     { value: "seeded", label: "Seeded", color: "secondary" },
   ];
 
-  const integrations = $derived(userProvider.integrations || []);
-  const currentIntegration = $derived(userProvider.integration);
+  const integrations = $derived(integrationsProvider.integrations || []);
+  const currentIntegration = $derived(integrationsProvider.selectedIntegration);
 
   const rooms = $derived(roomsProvider.rooms);
   const filteredRooms = $derived.by(() => {
@@ -68,13 +68,13 @@
 
   async function handleRoomClick(room: RoomsResponse) {
     saveScrollPosition();
-    settingsProvider.setRoom(room.id);
+    settingsProvider.selectRoom(room.id);
     navigate(`/app/chat`);
   }
 
   async function handleIntegrationChange(e: Event) {
     const target = e.target as HTMLSelectElement;
-    settingsProvider.setIntegration(target.value);
+    settingsProvider.selectIntegration(target.value);
   }
 
   function toggleTypeFilter(type: string) {
@@ -186,7 +186,7 @@
     {:else}
       {#each filteredRooms as room}
         {@const statusInfo = getStatusInfo(room.status)}
-        {@const isActive = roomsProvider.room?.id === room.id}
+        {@const isActive = roomsProvider.selectedRoom?.id === room.id}
         <button
           class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative hover:cursor-pointer"
           class:border-l-4={isActive}

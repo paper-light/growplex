@@ -94,6 +94,8 @@
 
   <p class="text-center text-sm mt-4">
     Don’t have an account?
-    <a href="/app/auth/sign-up" class="link link-primary font-semibold">Create one</a>
+    <a href="/app/auth/sign-up" class="link link-primary font-semibold"
+      >Create one</a
+    >
   </p>
 </div>

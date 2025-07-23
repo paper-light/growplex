@@ -1,0 +1,28 @@
+/// <reference path="../pb_data/types.d.ts" />
+migrate((app) => {
+  const collection = app.findCollectionByNameOrId("pbc_733358252")
+
+  // update collection data
+  unmarshal({
+    "createRule": "(@request.auth.orgMembers.org ?= project.org) && (project.org.orgMembers_via_org.role = 'owner')",
+    "deleteRule": "(@request.auth.orgMembers.org ?= project.org) && (project.org.orgMembers_via_org.role = 'owner')",
+    "listRule": "(@request.auth.orgMembers.org ?= project.org) && (project.org.orgMembers_via_org.role = 'owner' || @request.auth.id ?= operators)",
+    "updateRule": "(@request.auth.orgMembers.org ?= project.org) && (project.org.orgMembers_via_org.role = 'owner')",
+    "viewRule": "(@request.auth.orgMembers.org ?= project.org) && (project.org.orgMembers_via_org.role = 'owner' || @request.auth.id ?= operators)"
+  }, collection)
+
+  return app.save(collection)
+}, (app) => {
+  const collection = app.findCollectionByNameOrId("pbc_733358252")
+
+  // update collection data
+  unmarshal({
+    "createRule": null,
+    "deleteRule": null,
+    "listRule": "(@request.auth.orgMembers.org ?= project.org)",
+    "updateRule": null,
+    "viewRule": "(@request.auth.orgMembers.org ?= project.org)"
+  }, collection)
+
+  return app.save(collection)
+})

@@ -58,12 +58,6 @@ class RoomsProvider {
 
           case "delete":
             this.rooms = this.rooms.filter((r) => r.id !== room.record.id);
-            if (room.record.status === "preview") {
-              roomCrud.create({
-                chat: room.record.chat,
-                status: room.record.status,
-              });
-            }
             break;
 
           case "update":

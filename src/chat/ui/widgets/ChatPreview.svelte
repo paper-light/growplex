@@ -11,18 +11,12 @@
   import { agentsProvider } from "../../../agent/providers/agents.svelte";
   import { chatsProvider } from "../../providers/chats.svelte";
   import { roomCrud } from "../../repositories/room-crud";
-  import { RoomsStatusOptions } from "../../../shared/models/pocketbase-types";
-  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
-
   interface Props {
     block?: boolean;
   }
 
   let { block = false }: Props = $props();
 
-  const integration = $derived(
-    integrationsProvider.selectedIntegration || null
-  );
   const agent = $derived(agentsProvider.selectedIntegrationAgent || null);
   const chat = $derived(chatsProvider.selectedIntegrationChat || null);
   const token = $derived(userProvider.token);
@@ -42,26 +36,12 @@
   });
 
   $effect(() => {
-    if (!integration) return;
-
-    untrack(() => {
-      if (chat && !room) {
-        roomCrud.create({
-          chat: chat.id,
-          status: RoomsStatusOptions.preview,
-        });
-      }
-    });
-  });
-
-  $effect(() => {
     if (!chat || !agent) return;
 
     untrack(async () => {
       if (room) await roomCrud.delete(room.id);
     });
   });
-
   const errors = $derived.by(() => {
     const errs = [];
     if (!agent) errs.push("No agent found");

@@ -22,6 +22,10 @@ export const UpdateIntegrationDTOSchema = z.object({
   addOperators: z.array(z.string()).default([]),
   removeOperators: z.array(z.string()).default([]),
 
+  agents: z.array(z.string()).optional(),
+  sources: z.array(z.string()).optional(),
+  operators: z.array(z.string()).optional(),
+
   // addChats: z.array(z.string()).default([]),
   // removeChats: z.array(z.string()).default([]),
 });

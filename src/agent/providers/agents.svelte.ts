@@ -19,7 +19,7 @@ class AgentsProvider {
   });
 
   selectedAgent = $derived.by(() => {
-    if (!this.agents.length) return null;
+    if (this.agents.length == 0) return null;
 
     if (settingsProvider.selectedAgentId) {
       const found = this.agents.find(
@@ -35,7 +35,7 @@ class AgentsProvider {
     if (this.integrationAgents.length == 0) return null;
 
     if (settingsProvider.selectedIntegrationAgentId) {
-      const found = this.agents.find(
+      const found = this.integrationAgents.find(
         (r) => r.id === settingsProvider.selectedIntegrationAgentId
       );
       if (found) return found;

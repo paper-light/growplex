@@ -14,29 +14,35 @@
   let { class: className = "", size = "md" }: Props = $props();
 
   const integration = $derived(integrationsProvider.selectedIntegration);
-  const selectedIntegrationAgent = $derived(
-    agentsProvider.selectedIntegrationAgent
+  const selectedAgent = $derived(agentsProvider.selectedIntegrationAgent);
+  const allAgents = $derived(
+    agentsProvider.agents?.filter(
+      (a) => !integration?.agents.includes(a.id) || a.id === selectedAgent?.id
+    ) || []
   );
-  const allAgents = $derived(agentsProvider.agents || []);
 
-  const agentId = $derived(selectedIntegrationAgent?.id || "");
+  const agentId = $derived(selectedAgent?.id || "");
 
-  const options = $derived.by(() => {
-    return allAgents.map((agent) => ({
+  const options = $derived(
+    allAgents.map((agent) => ({
       value: agent.id,
       label: agent.name || agent.id,
-    }));
-  });
+    }))
+  );
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
     if (!id || !integration || !agentId) return;
-    await integrationsCrud.update({
+
+    const updated = await integrationsCrud.update({
       id: integration.id,
-      addAgents: [id],
-      removeAgents: [agentId],
+      agents: [id],
     });
+
     settingsProvider.selectIntegrationAgent(id);
+
+    console.log("integration", integration.agents);
+    console.log("updated", updated.agents);
   }
 </script>
 

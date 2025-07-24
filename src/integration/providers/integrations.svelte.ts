@@ -2,12 +2,6 @@ import { pb } from "../../shared/lib/pb";
 import { settingsProvider } from "../../user/settings.svelte";
 
 import type { IntegrationsResponse } from "../../shared/models/pocketbase-types";
-import {
-  CreateIntegrationDTOSchema,
-  UpdateIntegrationDTOSchema,
-  type UpdateIntegrationDTO,
-  type CreateIntegrationDTO,
-} from "../../shared/models/dto/integration";
 
 class IntegrationsProvider {
   // STATE
@@ -17,12 +11,14 @@ class IntegrationsProvider {
 
   selectedIntegration = $derived.by(() => {
     if (!this.integrations.length) return null;
+
     if (settingsProvider.selectedIntegrationId) {
       const found = this.integrations.find(
         (r) => r.id === settingsProvider.selectedIntegrationId
       );
       if (found) return found;
     }
+    
     return this.integrations[0];
   });
 

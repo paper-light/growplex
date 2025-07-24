@@ -24,14 +24,14 @@
     ) || []
   );
 
-  let chatId = $derived(selectedChat?.id || "");
+  const chatId = $derived(selectedChat?.id || "");
 
-  const options = $derived.by(() => {
-    return allChats.map((chat) => ({
+  const options = $derived(
+    allChats.map((chat) => ({
       value: chat.id,
       label: chat.name || chat.id,
-    }));
-  });
+    }))
+  );
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;

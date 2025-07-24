@@ -19,6 +19,8 @@ export const integrationsCrud = {
     const body = {
       ...(dto.name && { name: dto.name }),
 
+      ...(dto.agents && { agents: dto.agents }),
+
       "agents+": dto.addAgents,
       "agents-": dto.removeAgents,
       "sources+": dto.addSources,

@@ -30,11 +30,15 @@
     chat: ChatsResponse;
     agent: AgentsResponse;
     token: string;
-    initTheme: string;
+    initTheme?: string;
     payload?: z.infer<typeof ChatWidgetPayloadSchema>;
   }
 
   const { chat, token, payload, initTheme }: Props = $props();
+
+  const theme = $derived(
+    initTheme || (chat.theme as any)?.production || "light"
+  );
 
   const { roomId, username } = $derived(
     payload ||
@@ -78,7 +82,7 @@
       if (type === "theme-change") {
         const { newTheme } = payload;
         root?.setAttribute("data-theme", newTheme);
-        const themeData = (chat.theme as any)?.[newTheme as any];
+        const themeData = (chat.theme as any)?.config[newTheme as any];
         injectTheme(themeData || {}, root);
       }
     });
@@ -91,10 +95,10 @@
   });
 
   $effect(() => {
-    if (!root || !initTheme) return;
+    if (!root || !theme) return;
 
-    root.setAttribute("data-theme", initTheme);
-    const themeData = (chat.theme as any)?.[initTheme as any];
+    root.setAttribute("data-theme", theme);
+    const themeData = (chat.theme as any)?.config[theme as any];
     injectTheme(themeData || {}, root);
   });
 

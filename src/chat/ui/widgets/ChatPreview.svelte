@@ -27,8 +27,9 @@
     chat ? roomsProvider.previewRoomMap.get(chat.id) : null
   );
 
-  const selectedTheme = $derived(uiProvider.selectedChatTheme);
   const open = $derived(uiProvider.chatPreviewOpen);
+
+  const previewTheme = $derived((chat?.theme as any)?.preview || "light");
 
   let sidebarEl: HTMLElement | null = $state(null);
 
@@ -105,7 +106,7 @@
   {#if !block}
     <div
       class="cursor-pointer z-100 absolute top-2 right-2"
-      data-theme={selectedTheme}
+      data-theme={previewTheme}
     >
       <Button
         size="sm"
@@ -127,7 +128,7 @@
           {/each}
         </div>
       {:else if chat && agent && token && room}
-        <Chat {chat} {agent} {payload} {token} initTheme={selectedTheme} />
+        <Chat {chat} {agent} {payload} {token} initTheme={previewTheme} />
       {:else}
         <div class="flex flex-col items-center justify-center h-full gap-5">
           WoW

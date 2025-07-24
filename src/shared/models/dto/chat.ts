@@ -18,6 +18,13 @@ export const UpdateChatDTOSchema = z.object({
   name: z.string().optional(),
   domain: z.url().optional(),
   firstMessage: z.string().optional(),
+  theme: z
+    .object({
+      preview: z.string().optional(),
+      production: z.string().optional(),
+      config: z.any(),
+    })
+    .optional(),
   avatar: z.instanceof(File).optional(),
 });
 export type UpdateChatDTO = z.infer<typeof UpdateChatDTOSchema>;

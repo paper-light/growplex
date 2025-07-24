@@ -1,26 +1,35 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { uiProvider } from "../../../user/ui.svelte";
+  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
   import { themes } from "../../../shared/styles/themes";
   import Button from "../../../shared/ui/lib/Button.svelte";
+  import { chatCrud } from "../../repositories/chat-crud";
 
   interface Props {
+    chat: ChatsResponse;
     class?: ClassValue;
   }
 
-  let { class: className = "" }: Props = $props();
+  let { chat, class: className = "" }: Props = $props();
 
-  let initialChatTheme = $derived(uiProvider.initialChatTheme);
+  const theme = $derived(chat.theme as any);
+  const previewTheme = $derived(theme?.preview || "light");
+  const productionTheme = $derived(theme?.production || "light");
 
-  let selectedTheme = $derived(uiProvider.selectedChatTheme);
+  function savePreviewTheme(themeName: string) {
+    if (!chat) return;
 
-  function selectTheme(themeName: string) {
-    uiProvider.setSelectedChatTheme(themeName);
+    chatCrud.update({ id: chat.id, theme: { ...theme, preview: themeName } });
   }
 
-  function saveTheme() {
-    uiProvider.setInitialChatTheme(selectedTheme);
+  function saveProductionTheme(themeName: string) {
+    if (!chat) return;
+
+    chatCrud.update({
+      id: chat.id,
+      theme: { ...theme, production: themeName },
+    });
   }
 </script>
 
@@ -33,13 +42,13 @@
       <li
         class={[
           "cursor-pointer rounded-lg transition-all hover:scale-105 border-2",
-          initialChatTheme === theme
+          productionTheme === theme
             ? "border-primary bg-primary/10"
-            : selectedTheme === theme
+            : previewTheme === theme
               ? "border-info bg-info/10"
               : "border-base-300",
         ]}
-        onclick={() => selectTheme(theme)}
+        onclick={() => savePreviewTheme(theme)}
       >
         <div data-theme={theme} class="flex items-center gap-3">
           <div class="flex gap-1 p-3">
@@ -51,7 +60,7 @@
           <span
             class={[
               "text-sm font-medium capitalize bg-base-100",
-              selectedTheme === theme && "text-primary",
+              previewTheme === theme && "text-primary",
             ]}
           >
             {theme}
@@ -62,7 +71,12 @@
   </ul>
 
   <div class="flex gap-2 mt-4">
-    <Button style="soft" class="grow" color="primary" onclick={saveTheme}>
+    <Button
+      style="soft"
+      class="grow"
+      color="primary"
+      onclick={() => saveProductionTheme(previewTheme)}
+    >
       Save for web-site connection
     </Button>
     <Button size="sm" class="grow hidden" color="neutral">Edit</Button>

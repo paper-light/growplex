@@ -7,7 +7,6 @@
   import { projectsProvider } from "../providers/projects.svelte";
   import { orgCrud } from "../repositories/org-crud";
   import { projectCrud } from "../repositories/project-crud";
-  import { pb } from "../../shared/lib/pb";
 
   const currentOrg = $derived(userProvider.selectedOrg);
   const currentProject = $derived(projectsProvider.selectedProject);
@@ -58,12 +57,7 @@
       org: currentOrg.id,
       name: cp.name,
     });
-    const integration = await pb
-      .collection("integrations")
-      .getFirstListItem(`project = "${project.id}"`);
-
     settingsProvider.selectProject(project.id);
-    settingsProvider.selectIntegration(integration.id);
 
     creatingProjects = creatingProjects.filter((p) => p.id !== cp.id);
   }

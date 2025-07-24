@@ -22,6 +22,7 @@ onRecordCreate((e) => {
       const col = txApp.findCollectionByNameOrId("integrations");
       const integration = new Record(col);
       integration.set("project", e.record.id);
+      txApp.save(integration);
     }
 
     txApp.save(e.record);

@@ -51,7 +51,7 @@
       </div>
 
       <ChatFirstMessageUpdate {chat} />
-      <ThemeSelection />
+      <ThemeSelection {chat} />
     {/if}
   </div>
 </Card>

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const CreateProjectDTOSchema = z.object({
   org: z.string().min(1),
-  name: z.string().default("New Project"),
+  name: z.string().optional(),
 });
 export type CreateProjectDTO = z.infer<typeof CreateProjectDTOSchema>;
 

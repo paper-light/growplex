@@ -11,21 +11,20 @@ onRecordCreate((e) => {
       `integration = "${e.record.id}"`
     );
 
+    if (!e.record.get("name"))
+      e.record.set("name", `Integration ${e.record.id.slice(0, 4)}`);
+
     if (agents.length === 0) {
       console.log("No agent found for integration, creating default agent...");
 
       const collection = txApp.findCollectionByNameOrId("agents");
       const agent = new Record(collection);
-      agent.set("name", `Agent ${e.record.id.slice(0, 4)}`);
-      agent.set("system", "Add >_< after each message");
-      agent.set("provider", "openai");
       agent.set("project", projectId);
       txApp.save(agent);
 
       console.log("Created agent with id:", agent.id);
 
       e.record.set("agents", [agent.id]);
-      txApp.save(e.record);
     }
 
     if (chats.length === 0) {
@@ -33,20 +32,14 @@ onRecordCreate((e) => {
       const collection = txApp.findCollectionByNameOrId("chats");
       const chat = new Record(collection);
 
-      chat.set("name", `Chat ${e.record.id.slice(0, 4)}`);
-      chat.set(
-        "firstMessage",
-        "Hello! I am your support agent. You can ask me anything."
-      );
-      chat.set("theme", "{}");
       chat.set("project", projectId);
       chat.set("integration", e.record.id);
       txApp.save(chat);
 
       e.record.set("chats", [chat.id]);
-      txApp.save(e.record);
     }
 
+    txApp.save(e.record);
     console.log("Integration record setup complete. Proceeding to next.");
   });
 }, "integrations");

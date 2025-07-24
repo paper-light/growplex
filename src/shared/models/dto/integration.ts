@@ -3,7 +3,7 @@ import { z } from "zod";
 export const CreateIntegrationDTOSchema = z.object({
   project: z.string().min(1),
 
-  name: z.string().default("New Integration"),
+  name: z.string().optional(),
   agents: z.array(z.string()).default([]),
   sources: z.array(z.string()).default([]),
   operators: z.array(z.string()).default([]),

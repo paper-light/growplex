@@ -5,7 +5,6 @@
     MessageSquare,
     BookOpen,
     Users,
-    Settings,
     ChartBar,
     CreditCard,
     Ticket,

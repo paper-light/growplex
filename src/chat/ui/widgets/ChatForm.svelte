@@ -31,25 +31,27 @@
   <div class="space-y-4">
     <ChatSelect />
 
-    <div class="flex gap-6">
-      <ChatAvatarUpdate {chat} class="flex-1 max-w-24" />
+    {#if chat}
+      <div class="flex gap-6">
+        <ChatAvatarUpdate {chat} class="flex-1 max-w-24" />
 
-      <div class="flex-1 space-y-2">
-        <ChatNameUpdate {chat} />
+        <div class="flex-1 space-y-2">
+          <ChatNameUpdate {chat} />
 
-        <ChatDomainUpdate {chat} disabled={!!webSource} />
-        <DomainConnect
-          projectId={project?.id || ""}
-          {domain}
-          disabled={!!webSource || !domain.trim()}
-        />
-        {#if webSource}
-          <SourceStatus sourceId={webSource.id} />
-        {/if}
+          <ChatDomainUpdate {chat} disabled={!!webSource} />
+          <DomainConnect
+            projectId={project?.id || ""}
+            {domain}
+            disabled={!!webSource || !domain.trim()}
+          />
+          {#if webSource}
+            <SourceStatus sourceId={webSource.id} />
+          {/if}
+        </div>
       </div>
-    </div>
 
-    <ChatFirstMessageUpdate {chat} />
-    <ThemeSelection />
+      <ChatFirstMessageUpdate {chat} />
+      <ThemeSelection />
+    {/if}
   </div>
 </Card>

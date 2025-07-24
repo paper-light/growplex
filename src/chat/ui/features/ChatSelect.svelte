@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { X } from "@lucide/svelte";
   import type { ClassValue } from "svelte/elements";
 
   import Select from "../../../shared/ui/lib/Select.svelte";
+  import Button from "../../../shared/ui/lib/Button.svelte";
   import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
 
   import { chatsProvider } from "../../providers/chats.svelte";
   import { chatCrud } from "../../repositories/chat-crud";
+  import { settingsProvider } from "../../../user/settings.svelte";
 
   interface Props {
     class?: ClassValue;
@@ -32,16 +35,32 @@
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !integartion || !selectedChat) return;
+    if (!id || !integartion) return;
+
+    await chatCrud.update({
+      id,
+      integration: integartion.id,
+    });
+
+    settingsProvider.selectIntegrationChat(id);
+  }
+
+  async function onclick() {
+    if (!selectedChat) return;
+
     await chatCrud.update({
       id: selectedChat.id,
-      integration: integartion.id,
+      integration: "",
     });
   }
 </script>
 
 {#if options.length > 0}
-  <div class={className}>
+  <div class={[className, "flex gap-2 items-center"]}>
     <Select value={chatId} {onchange} {options} color="neutral" {size} />
+
+    {#if selectedChat}
+      <Button color="neutral" style="outline" square {onclick}><X /></Button>
+    {/if}
   </div>
 {/if}

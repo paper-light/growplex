@@ -1,17 +1,18 @@
 <script lang="ts">
   import { X } from "@lucide/svelte";
   import { untrack } from "svelte";
-  import { ClientResponseError } from "pocketbase";
 
   import { userProvider } from "../../../user/user.svelte";
   import { uiProvider } from "../../../user/ui.svelte";
   import Chat from "./Chat.svelte";
-  import { pb } from "../../../shared/lib/pb";
   import { roomsProvider } from "../../providers/rooms.svelte";
   import Button from "../../../shared/ui/lib/Button.svelte";
 
   import { agentsProvider } from "../../../agent/providers/agents.svelte";
   import { chatsProvider } from "../../providers/chats.svelte";
+  import { roomCrud } from "../../repositories/room-crud";
+  import { RoomsStatusOptions } from "../../../shared/models/pocketbase-types";
+  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
 
   interface Props {
     block?: boolean;
@@ -19,11 +20,16 @@
 
   let { block = false }: Props = $props();
 
+  const integration = $derived(
+    integrationsProvider.selectedIntegration || null
+  );
   const agent = $derived(agentsProvider.selectedIntegrationAgent || null);
   const chat = $derived(chatsProvider.selectedIntegrationChat || null);
   const token = $derived(userProvider.token);
 
-  const room = $derived(roomsProvider.previewRoom);
+  const room = $derived(
+    chat ? roomsProvider.previewRoomMap.get(chat.id) : null
+  );
 
   const selectedTheme = $derived(uiProvider.selectedChatTheme);
   const open = $derived(uiProvider.chatPreviewOpen);
@@ -35,49 +41,25 @@
     roomId: room?.id || "",
   });
 
-  async function deleteRoom(roomId: string) {
-    try {
-      await pb.collection("rooms").delete(roomId);
-      if (roomsProvider.previewRoom?.id === roomId)
-        roomsProvider.previewRoom = null;
-    } catch (error) {
-      if (error instanceof ClientResponseError) {
-      } else {
-        console.error(error);
-      }
-    }
-  }
+  $effect(() => {
+    if (!integration) return;
 
-  async function createRoom(chatId: string) {
-    try {
-      const existing = await pb
-        .collection("rooms")
-        .getFirstListItem(`chat = "${chatId}" && status = "preview"`);
-      roomsProvider.previewRoom = existing;
-    } catch (error) {
-      if (error instanceof ClientResponseError) {
-        if (error.status == 404) {
-          const newRoom = await pb.collection("rooms").create({
-            chat: chatId,
-            status: "preview",
-          });
-          roomsProvider.previewRoom = newRoom;
-        } else {
-          console.error(error);
-        }
+    untrack(() => {
+      if (chat && !room) {
+        roomCrud.create({
+          chat: chat.id,
+          status: RoomsStatusOptions.preview,
+        });
       }
-    }
-  }
-
-  async function reloadChat() {
-    if (room) await deleteRoom(room.id);
-    if (chat) await createRoom(chat.id);
-  }
+    });
+  });
 
   $effect(() => {
     if (!chat || !agent) return;
 
-    untrack(reloadChat);
+    untrack(async () => {
+      if (room) await roomCrud.delete(room.id);
+    });
   });
 
   const errors = $derived.by(() => {
@@ -85,6 +67,7 @@
     if (!agent) errs.push("No agent found");
     if (!chat) errs.push("No chat found");
     if (!token) errs.push("No token found");
+    if (!room) errs.push("No room found");
     return errs;
   });
 
@@ -162,7 +145,7 @@
         <Chat {chat} {agent} {payload} {token} initTheme={selectedTheme} />
       {:else}
         <div class="flex flex-col items-center justify-center h-full gap-5">
-          <Button onclick={reloadChat}>RELOAD</Button>
+          WoW
         </div>
       {/if}
     {/key}

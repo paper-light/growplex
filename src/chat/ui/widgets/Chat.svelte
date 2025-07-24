@@ -104,10 +104,6 @@
     untrack(() => {
       socketProvider.joinRoom(roomId);
     });
-
-    return () => {
-      socketProvider.leaveRoom(roomId);
-    };
   });
 
   async function sendMessage() {

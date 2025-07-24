@@ -1,13 +1,28 @@
+import { SvelteMap } from "svelte/reactivity";
+
 import { pb } from "../../shared/lib/pb";
 import { settingsProvider } from "../../user/settings.svelte";
 import type { RoomsResponse } from "../../shared/models/pocketbase-types";
+import { roomCrud } from "../repositories/room-crud";
 
 class RoomsProvider {
   // STATE
   private subscribed = false;
 
   rooms: RoomsResponse[] = $state([]);
-  previewRoom: RoomsResponse | null = $state(null);
+
+  previewRoomMap = $derived.by(() => {
+    const map: SvelteMap<string, RoomsResponse> = new SvelteMap();
+    if (this.rooms.length == 0) return map;
+
+    const previewRooms = this.rooms.filter((r) => r.status === "preview");
+
+    previewRooms.forEach((r) => {
+      map.set(r.chat, r);
+    });
+
+    return map;
+  });
 
   selectedRoom = $derived.by(() => {
     if (!this.rooms.length) return null;
@@ -25,7 +40,6 @@ class RoomsProvider {
       filter: `chat.project = "${projectId}"`,
     });
     this.rooms = rooms;
-    this.previewRoom = rooms.find((r) => r.status === "preview") || null;
   }
 
   subscribe(projectId: string) {
@@ -44,6 +58,12 @@ class RoomsProvider {
 
           case "delete":
             this.rooms = this.rooms.filter((r) => r.id !== room.record.id);
+            if (room.record.status === "preview") {
+              roomCrud.create({
+                chat: room.record.chat,
+                status: room.record.status,
+              });
+            }
             break;
 
           case "update":

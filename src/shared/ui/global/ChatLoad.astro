@@ -17,16 +17,20 @@ import {
   (function () {
     const { chatId, domain } = document.currentScript.dataset;
 
+    function init() {
+      window.ChatWidget.init({
+        chatId,
+        domain,
+        initTheme: "light",
+        listenTheme: true,
+        color: "var(--color-yellow-500)",
+      });
+    }
+
     function boot() {
       if (!window.ChatWidget._loaded) {
         console.log("CHAT WIDGET INIT");
-        window.ChatWidget.init({
-          chatId,
-          domain,
-          initTheme: "light",
-          listenTheme: true,
-          color: "var(--color-yellow-500)",
-        });
+        init();
       } else if (window.ChatWidget._loaded) {
         window.ChatWidget.reload({
           color: "var(--color-yellow-500)",

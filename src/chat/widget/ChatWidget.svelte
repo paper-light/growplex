@@ -15,7 +15,7 @@
 
   let token = $state("");
 
-  let isOpen = $state(sessionStorage.getItem("chat-widget-open") === "true");
+  let isOpen = $state(false);
 
   function toggle(state: boolean) {
     isOpen = state;
@@ -23,6 +23,8 @@
   }
 
   onMount(async () => {
+    const target = document.getElementById("chat-widget-root") || document.body;
+
     const payloadStr = localStorage.getItem("chat-widget-payload");
     const payload = payloadStr
       ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
@@ -35,6 +37,7 @@
     });
     console.log(payload, body);
 
+    // Auth for guest users
     const response = await fetch(`${domain}/api/chat/auth`, {
       method: "POST",
       body,
@@ -42,22 +45,18 @@
         "Content-Type": "application/json",
       },
     });
-
     if (response.status !== 200) {
       console.error("Failed to authenticate chat widget");
       return;
     }
 
-    const { token: t, payload: p } = await response.json();
-    localStorage.setItem("chat-widget-payload", JSON.stringify(p));
-    token = t;
+    const res = await response.json();
+    localStorage.setItem("chat-widget-payload", JSON.stringify(res.payload));
+    token = res.token;
 
     if (sessionStorage.getItem("chat-widget-open") === "true") isOpen = true;
 
-    document.documentElement.style.setProperty(
-      "--chat-widget-primary",
-      color || "#007aff"
-    );
+    target.style.setProperty("--chat-widget-primary", color || "#007aff");
   });
 </script>
 
@@ -67,5 +66,6 @@
   {isOpen}
   {chatId}
   {domain}
+  {listenTheme}
   onClose={() => toggle(false)}
 />

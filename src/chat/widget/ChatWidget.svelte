@@ -8,9 +8,10 @@
     chatId: string;
     domain: string;
     color?: string;
+    listenTheme?: boolean;
   }
 
-  let { chatId, domain, color }: Props = $props();
+  let { chatId, domain, color, listenTheme = false }: Props = $props();
 
   let token = $state("");
 

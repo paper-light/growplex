@@ -28,14 +28,7 @@ import {
           chatId,
           domain,
           initTheme: "light",
-          color: "var(--color-yellow-500)",
-        });
-      } else {
-        console.log("window.ChatWidget._loaded");
-        window.ChatWidget.reload({
-          chatId,
-          domain,
-          initTheme: "light",
+          listenTheme: true,
           color: "var(--color-yellow-500)",
         });
       }

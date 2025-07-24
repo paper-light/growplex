@@ -1,6 +1,6 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
-  
+
   import type { AuthError } from "../lib/models";
   import { oauth2 } from "../features/oauth";
 

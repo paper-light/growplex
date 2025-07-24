@@ -46,19 +46,19 @@ export async function sendMessage(
     if (socket.data.guest) {
       // GUEST: SEEDED -> AUTO
       if (room.status === "seeded") {
+        const lead = await pb.collection("leads").create({
+          type: "warm",
+        });
         room = await pb.collection("rooms").update(
           room.id,
           {
             status: "auto",
+            lead: lead.id,
           },
           {
             expand: "chat",
           }
         );
-        await pb.collection("leads").create({
-          room: room.id,
-          type: "warm",
-        });
       }
     } else if (socket.data.user) {
       if (room.status !== RoomsStatusOptions.preview) return;

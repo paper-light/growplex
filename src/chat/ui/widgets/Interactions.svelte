@@ -8,7 +8,7 @@
   import { socketProvider } from "../../providers/socket.svelte";
   import { roomsProvider } from "../../providers/rooms.svelte";
 
-  const roomId = $derived(roomsProvider.room?.id);
+  const roomId = $derived(roomsProvider.selectedRoom?.id);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");

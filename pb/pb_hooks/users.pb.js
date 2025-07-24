@@ -12,7 +12,6 @@ onRecordCreate((e) => {
 
     const projectCol = txApp.findCollectionByNameOrId("projects");
     const project = new Record(projectCol);
-    project.set("name", "Default");
     project.set("org", org.id);
     txApp.save(project);
     console.log("Created project with id:", project.id);

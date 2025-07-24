@@ -16,7 +16,8 @@
   const integrations = $derived(integrationsProvider.integrations || []);
   const currentIntegration = $derived(integrationsProvider.selectedIntegration);
 
-  const rooms = $derived(roomsProvider.rooms);
+  const rooms = $derived(roomsProvider.integrationRooms);
+
   const filteredRooms = $derived.by(() => {
     if (!rooms.length) return [];
 

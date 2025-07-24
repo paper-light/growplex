@@ -1,7 +1,12 @@
 <script lang="ts">
-  import { onMount, onDestroy } from "svelte";
+  import { onMount } from "svelte";
 
-  export let iframeEl: HTMLIFrameElement;
+  interface Props {
+    iframeEl: HTMLIFrameElement;
+    listenTheme?: boolean;
+  }
+
+  let { iframeEl, listenTheme = false }: Props = $props();
 
   function postTheme(theme: string) {
     if (iframeEl?.contentWindow) {
@@ -18,13 +23,14 @@
     const detect = () => {
       const theme = htmlEl.getAttribute("data-theme");
       if (theme) return theme;
-      const mql = window.matchMedia("(prefers-color-scheme: dark)");
-      return mql.matches ? "dark" : "light";
     };
 
     setTimeout(() => {
-      postTheme(detect());
+      const theme = detect();
+      if (theme) postTheme(theme);
     }, 1000);
+
+    if (!listenTheme) return;
 
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {

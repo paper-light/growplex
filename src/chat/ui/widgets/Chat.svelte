@@ -103,7 +103,7 @@
   });
 
   $effect(() => {
-    if (!roomId) return;
+    if (!roomId || !socketProvider.online) return;
 
     untrack(() => {
       socketProvider.joinRoom(roomId);
@@ -231,7 +231,8 @@
       <button
         disabled={!canSend ||
           inputText.trim().length === 0 ||
-          inputText.trim().length > MAX_INPUT_CHARS}
+          inputText.trim().length > MAX_INPUT_CHARS ||
+          !socketProvider.online}
         onclick={sendMessage}
         class="label btn btn-primary btn-lg btn-block ml-auto w-fit rounded-xl"
       >

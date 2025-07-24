@@ -54,6 +54,7 @@ class SocketProvider {
     this.socket.on("disconnect", () => {
       console.log("DISCONNECTED from socket");
       this.online = false;
+      this.leaveAllRooms();
     });
   }
 

@@ -9,6 +9,7 @@
     domain: string;
     onClose: () => void;
     initTheme?: string;
+    listenTheme?: boolean;
   }
 
   let {
@@ -18,6 +19,7 @@
     domain,
     onClose,
     initTheme = "light",
+    listenTheme = false,
   }: Props = $props();
   let iframeEl: HTMLIFrameElement | null = $state(null);
 
@@ -45,7 +47,7 @@
 </aside>
 
 {#if iframeEl}
-  <ThemeForward {iframeEl} />
+  <ThemeForward {iframeEl} {listenTheme} />
 {/if}
 
 <style>

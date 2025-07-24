@@ -3,13 +3,22 @@ import { SvelteMap } from "svelte/reactivity";
 import { pb } from "../../shared/lib/pb";
 import { settingsProvider } from "../../user/settings.svelte";
 import type { RoomsResponse } from "../../shared/models/pocketbase-types";
-import { roomCrud } from "../repositories/room-crud";
+import { integrationsProvider } from "../../integration/providers/integrations.svelte";
 
 class RoomsProvider {
   // STATE
   private subscribed = false;
 
   rooms: RoomsResponse[] = $state([]);
+
+  integrationRooms = $derived.by(() => {
+    const integration = integrationsProvider.selectedIntegration;
+    if (!integration) return [];
+
+    return this.rooms.filter(
+      (r) => (r.expand as any)?.chat?.integration === integration.id
+    );
+  });
 
   previewRoomMap = $derived.by(() => {
     const map: SvelteMap<string, RoomsResponse> = new SvelteMap();
@@ -26,18 +35,22 @@ class RoomsProvider {
 
   selectedRoom = $derived.by(() => {
     if (!this.rooms.length) return null;
+
     if (settingsProvider.selectedRoomId) {
       const found = this.rooms.find(
         (r) => r.id === settingsProvider.selectedRoomId
       );
       if (found) return found;
     }
+
     return this.rooms[0];
   });
 
   async load(projectId: string) {
     const rooms = await pb.collection("rooms").getFullList({
+      sort: "created",
       filter: `chat.project = "${projectId}"`,
+      expand: "chat",
     });
     this.rooms = rooms;
   }
@@ -70,7 +83,9 @@ class RoomsProvider {
         }
       },
       {
+        sort: "created",
         filter: `chat.project = "${projectId}"`,
+        expand: "chat",
       }
     );
   }

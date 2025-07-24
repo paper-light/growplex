@@ -6,6 +6,7 @@ type WidgetProps = {
   domain: string;
   color?: string;
   initTheme?: string;
+  listenTheme?: boolean;
 };
 
 type WidgetAPI = {
@@ -35,13 +36,13 @@ export function init(opts: WidgetProps) {
   }
 }
 
-export function reload(opts?: {
-  chatId: string;
-  domain: string;
-  color?: string;
-}) {
-  init(opts ?? (app as any));
-}
+// export function reload(opts?: {
+//   chatId: string;
+//   domain: string;
+//   color?: string;
+// }) {
+//   init(opts ?? (app as any));
+// }
 
 export async function destroy() {
   if (app) {
@@ -52,4 +53,4 @@ export async function destroy() {
 }
 
 // finally, wire it up on window
-(window as any).ChatWidget = { init, reload, destroy };
+(window as any).ChatWidget = { init, destroy };

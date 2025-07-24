@@ -11,6 +11,8 @@
   import { agentsProvider } from "../../../agent/providers/agents.svelte";
   import { chatsProvider } from "../../providers/chats.svelte";
   import { roomCrud } from "../../repositories/room-crud";
+  import { socketProvider } from "../../providers/socket.svelte";
+
   interface Props {
     block?: boolean;
   }
@@ -39,7 +41,10 @@
     if (!chat || !agent) return;
 
     untrack(async () => {
-      if (room) await roomCrud.delete(room.id);
+      if (room) {
+        socketProvider.leaveRoom(room.id);
+        await roomCrud.delete(room.id);
+      }
     });
   });
   const errors = $derived.by(() => {

@@ -5,9 +5,8 @@ import {
 } from "astro:env/client";
 ---
 
-<script
-  src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}
-  data-chat-id={PUBLIC_CHAT_WIDGET_ID}></script>
+<script is:inline src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}
+></script>
 
 <script
   is:inline
@@ -17,13 +16,10 @@ import {
 >
   (function () {
     const { chatId, domain } = document.currentScript.dataset;
+
     function boot() {
-      if (!window.ChatWidget) {
-        console.log("no window.ChatWidget");
-        return;
-      }
       if (!window.ChatWidget._loaded) {
-        console.log("no window.ChatWidget._loaded");
+        console.log("CHAT WIDGET INIT");
         window.ChatWidget.init({
           chatId,
           domain,
@@ -31,8 +27,32 @@ import {
           listenTheme: true,
           color: "var(--color-yellow-500)",
         });
+      } else if (window.ChatWidget._loaded) {
+        window.ChatWidget.reload({
+          color: "var(--color-yellow-500)",
+        });
       }
     }
+
     boot();
+
+    // --- Svelte style persistence logic ---
+    let svelteStyles = [];
+    document.addEventListener("astro:before-swap", () => {
+      svelteStyles = Array.from(
+        document.querySelectorAll('style[id^="svelte-"]')
+      ).map((style) => style.outerHTML);
+    });
+
+    document.addEventListener("astro:after-swap", () => {
+      const head = document.head;
+      svelteStyles.forEach((styleHTML) => {
+        if (!head.innerHTML.includes(styleHTML)) {
+          const temp = document.createElement("div");
+          temp.innerHTML = styleHTML;
+          head.appendChild(temp.firstChild);
+        }
+      });
+    });
   })();
 </script>

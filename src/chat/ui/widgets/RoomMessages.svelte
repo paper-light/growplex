@@ -73,7 +73,7 @@
   <main
     bind:this={messageContainer}
     onscroll={onScroll}
-    class="flex-1 overflow-y-auto space-y-2 py-4 px-12 overscroll-contain max-w-4xl md:w-4xl md:mx-auto border-x border-base-300"
+    class="flex-1 overflow-y-auto space-y-2 py-4 px-12 overscroll-contain max-w-4xl md:w-full md:mx-auto border-x border-base-300"
   >
     {#if messages.length === 0}
       <div class="flex flex-col items-center justify-center h-full text-center">

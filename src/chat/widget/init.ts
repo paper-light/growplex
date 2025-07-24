@@ -17,7 +17,7 @@ type WidgetAPI = {
 let app: WidgetAPI | null = null;
 
 export function init(opts: WidgetProps) {
-  const target = document.getElementById("chat-widget") || document.body;
+  const target = document.getElementById("chat-widget-root") || document.body;
   if (!app) {
     app = mount(ChatWidget, {
       target,
@@ -36,13 +36,10 @@ export function init(opts: WidgetProps) {
   }
 }
 
-// export function reload(opts?: {
-//   chatId: string;
-//   domain: string;
-//   color?: string;
-// }) {
-//   init(opts ?? (app as any));
-// }
+export function reload(opts?: { color: string }) {
+  const target = document.getElementById("chat-widget-root") || document.body;
+  target.style.setProperty("--chat-widget-primary", opts?.color || "#007aff");
+}
 
 export async function destroy() {
   if (app) {
@@ -53,4 +50,4 @@ export async function destroy() {
 }
 
 // finally, wire it up on window
-(window as any).ChatWidget = { init, destroy };
+(window as any).ChatWidget = { init, reload, destroy };

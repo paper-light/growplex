@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import { X } from "@lucide/svelte";
+
   import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
@@ -21,15 +23,29 @@
     initTheme = "light",
     listenTheme = false,
   }: Props = $props();
+
   let iframeEl: HTMLIFrameElement | null = $state(null);
+
+  let mounted = $state(false);
+  onMount(() => {
+    console.log("mounted");
+    mounted = true;
+  });
 
   let iframeSrc = $derived(
     `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}&theme=${initTheme}`
   );
+
+  $effect(() => {
+    console.log("open", isOpen);
+  });
 </script>
 
 <aside
-  class="container {isOpen ? 'open' : ''}"
+  style="transform: translateX({isOpen
+    ? 0
+    : 100}%); transition: transform 300ms ease;"
+  class="container"
   onclick={(e) => e.stopPropagation()}
 >
   <!-- always-visible close button -->
@@ -63,13 +79,6 @@
     background: #fff;
     overflow: hidden;
     z-index: 9999;
-    /* start hidden off-screen */
-    transform: translateX(100%);
-    transition: transform 300ms ease;
-  }
-  .container.open {
-    /* slide into view */
-    transform: translateX(0);
   }
   @media (max-width: 767px) {
     .container {

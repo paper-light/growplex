@@ -196,7 +196,7 @@
     <button
       transition:fade
       onclick={() => scrollToBottom(messageContainer)}
-      class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-6 right-1/2 translate-x-1/2 z-10"
+      class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-46 right-1/2 translate-x-1/2 z-10"
       aria-label="Scroll to bottom"
     >
       <ChevronsDown size={20} />

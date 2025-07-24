@@ -35,10 +35,11 @@ const {
     <slot name="head" />
   </head>
   <body>
+    <div transition:persist="chat-widget-root" id="chat-widget-root"></div>
+
     <slot />
 
-    {needCookies && <CookiesAccept client:only />}
-
     <PortalHost client:only />
+    {needCookies && <CookiesAccept client:only />}
   </body>
 </html>

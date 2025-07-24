@@ -15,7 +15,7 @@
 
   let token = $state("");
 
-  let isOpen = $state(false);
+  let isOpen = $state(sessionStorage.getItem("chat-widget-open") === "true");
 
   function toggle(state: boolean) {
     isOpen = state;
@@ -61,13 +61,11 @@
   });
 </script>
 
-{#if token}
-  <ChatToggle {isOpen} onToggle={() => toggle(true)} />
-  <ChatContainer
-    {token}
-    {isOpen}
-    {chatId}
-    {domain}
-    onClose={() => toggle(false)}
-  />
-{/if}
+<ChatToggle {isOpen} onToggle={() => toggle(true)} />
+<ChatContainer
+  {token}
+  {isOpen}
+  {chatId}
+  {domain}
+  onClose={() => toggle(false)}
+/>

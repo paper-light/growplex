@@ -26,7 +26,7 @@ class UserProvider {
   );
 
   selectedOrg = $derived.by(() => {
-    if (!this.orgs.length) return null;
+    if (this.orgs.length == 0) return null;
     if (settingsProvider.selectedOrgId) {
       const found = this.orgs.find(
         (o) => o && o.id === settingsProvider.selectedOrgId

@@ -90,6 +90,7 @@
     userProvider.orgs = userProvider.orgs.map((o) =>
       o.id === orgId ? newOrg : o
     );
+
     settingsProvider.selectOrg(orgId);
     editingOrgId = null;
     editedOrgName = "";

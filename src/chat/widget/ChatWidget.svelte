@@ -60,12 +60,14 @@
   });
 </script>
 
-<ChatToggle {isOpen} onToggle={() => toggle(true)} />
-<ChatContainer
-  {token}
-  {isOpen}
-  {chatId}
-  {domain}
-  {listenTheme}
-  onClose={() => toggle(false)}
-/>
+{#if token}
+  <ChatToggle {isOpen} onToggle={() => toggle(true)} />
+  <ChatContainer
+    {token}
+    {isOpen}
+    {chatId}
+    {domain}
+    {listenTheme}
+    onClose={() => toggle(false)}
+  />
+{/if}

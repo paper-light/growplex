@@ -6,11 +6,11 @@ import {
   type MessagesRecord,
   type MessagesResponse,
 } from "../../shared/models/pocketbase-types";
+import { REDIS_PREFIX } from "./config";
 
 const log = logger.child({ module: "chat-history" });
 log.info("starting getHistory");
 
-const REDIS_PREFIX = getEnv("CHAT_REDIS_PREFIX");
 const HISTORY_LENGTH = parseInt(getEnv("CHAT_HISTORY_LENGTH"), 10);
 
 export async function updateHistory(

@@ -4,11 +4,7 @@ import Embed from "../../../chat/ui/widgets/Embed.svelte";
 import Root from "../../../shared/ui/layouts/Root.astro";
 
 const { chatId } = Astro.params;
-const token = Astro.url.searchParams.get("token");
-const open = Astro.url.searchParams.get("open") === "true";
-const theme = Astro.url.searchParams.get("theme") || "light";
 
-if (!token) throw new Error("Token is required");
 if (!chatId) throw new Error("Chat ID is required");
 
 const chat = await pb.collection("chats").getOne(chatId, {
@@ -24,20 +20,20 @@ if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>
-  <Embed
-    chat={chat}
-    agent={agent}
-    token={token}
-    initTheme={theme}
-    open={open}
-    client:only
-  />
+  <Embed chat={chat} agent={agent} client:only />
 </Root>
 
 <style>
+  :root #chat-widget-root {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+  }
+
   html,
   body {
     background: transparent !important;
     background-color: transparent !important;
+    border: none !important;
   }
 </style>

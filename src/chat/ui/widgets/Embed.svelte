@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onDestroy, onMount, untrack } from "svelte";
   import { MessageCircle, X } from "@lucide/svelte";
-  import { fade } from "svelte/transition";
 
   import type {
     ChatsResponse,
@@ -17,87 +16,125 @@
   interface Props {
     agent: AgentsResponse;
     chat: ChatsResponse;
-    token: string;
-    open?: boolean;
-    initTheme?: string;
   }
 
-  let { open = false, chat, agent, token, initTheme }: Props = $props();
+  let { chat, agent }: Props = $props();
+
+  let token: string | null = $state(null);
+  let open = $state(false);
+  let theme = $state((chat.theme as any)?.production || "light");
 
   const { roomId, username } = $derived.by(() => {
+    if (!token) return { roomId: null, username: null };
     const parsed = parseJwtPayload(token);
-    if (!parsed) {
-      throw new Error("Invalid token: unable to parse JWT payload");
-    }
+    if (!parsed) throw new Error("Invalid token: unable to parse JWT payload");
     return ChatWidgetPayloadSchema.parse(parsed);
   });
 
   let root: HTMLElement | null = $state(null);
 
-  let theme = $state(initTheme || (chat.theme as any)?.production || "light");
+  $effect(() => {
+    if (!token) return;
 
-  onMount(() => {
+    untrack(() => {
+      socketProvider.connect(token!);
+    });
+  });
+
+  onMount(async () => {
     console.log("onMount EMBED");
 
     window.addEventListener("message", (event) => {
-      // if (!chat.domain || event.origin !== chat.domain) return;
-
       const { type, ...payload } = event.data || {};
       if (type === "theme-change") {
         theme = payload.newTheme;
+      } else if (type === "chat:open") {
+        open = true;
+      } else if (type === "chat:close") {
+        open = false;
       }
     });
 
-    socketProvider.connect(token);
-    return () => {
-      socketProvider.disconnect();
-    };
+    // AUTH GUEST USER
+    const payloadStr = localStorage.getItem("chat-widget-payload");
+    const payload = payloadStr
+      ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
+      : null;
+
+    const body = JSON.stringify({
+      chatId: chat.id,
+      roomId: payload?.roomId,
+      username: payload?.username,
+    });
+
+    // Auth for guest users
+    const response = await fetch(`/api/chat/auth`, {
+      method: "POST",
+      body,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status !== 200) {
+      console.error("Failed to authenticate chat widget");
+      return;
+    }
+
+    const res = await response.json();
+    localStorage.setItem("chat-widget-payload", JSON.stringify(res.payload));
+    token = res.token;
   });
 
-  function openChat() {
-    open = true;
+  onDestroy(() => {
+    socketProvider.disconnect();
+  });
+
+  async function openChat() {
     window.parent.postMessage({ type: "chat:open" }, "*");
+    open = true;
   }
 
-  function closeChat() {
+  async function closeChat() {
     open = false;
+    await new Promise((resolve) => setTimeout(resolve, 300));
     window.parent.postMessage({ type: "chat:close" }, "*");
   }
 </script>
 
 <div
   data-theme={theme}
-  class="absolute inset-0 w-full h-full bg-transparent"
-  style="background: transparent;"
+  class="absolute w-full h-full z-20 bg-transparent"
   bind:this={root}
 >
-  {#if !open}
-    <div
-      class="w-full h-full flex items-center justify-center bg-transparent"
-      style="background: transparent;"
-      transition:fade={{ duration: 100 }}
-    >
-      <Button size="lg" color="primary" onclick={openChat} circle>
-        <MessageCircle size={36} />
-      </Button>
-    </div>
-  {:else}
-    <div
-      class="relative w-full h-full bg-transparent"
-      style="background: transparent;"
-    >
-      <Button
-        class="absolute top-2 right-2 z-10"
-        onclick={closeChat}
-        style="ghost"
-        color="neutral"
-        size="sm"
-        circle
-      >
-        <X size={22} />
-      </Button>
+  <!-- FAB Button -->
+  <div
+    class="fixed bottom-0 right-0 transition-all duration-300 bg-transparent"
+    style={`${open ? "opacity: 0;" : "opacity: 1;"}`}
+  >
+    <Button size="xl" color="primary" onclick={openChat} circle>
+      <MessageCircle size={32} />
+    </Button>
+  </div>
 
+  <!-- Slide-In Chat Panel -->
+  <div
+    class="fixed top-0 right-0 h-full w-full z-10 shadow-lg transform transition-transform duration-300 ease-in-out overflow-hidden inset-0 bg-transparent"
+    style={`${open ? "transform: translateX(0);" : "transform: translateX(100%);"}`}
+  >
+    <!-- Close Button -->
+    <Button
+      class="absolute top-2 right-2 z-20"
+      onclick={closeChat}
+      style="ghost"
+      color="neutral"
+      size="sm"
+      circle
+    >
+      <X size={22} />
+    </Button>
+
+    {#if token && roomId && username}
       <Chat {chat} {agent} {theme} {root} {roomId} {username} />
-    </div>
-  {/if}
+    {/if}
+  </div>
 </div>

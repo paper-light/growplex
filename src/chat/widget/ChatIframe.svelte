@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
 
   import ThemeForward from "./ThemeForward.svelte";
-  import { ChatWidgetPayloadSchema } from "../lib/models";
 
   interface Props {
     chatId: string;
@@ -16,15 +15,18 @@
 
   let open = $state(initOpen);
   let iframeEl: HTMLIFrameElement | null = $state(null);
-  let token: string | null = $state(null);
+  let iframeLoaded = $state(false);
 
-  let iframeSrc = $derived(
-    token
-      ? `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}&theme=${initTheme}&open=${open}`
-      : `${domain}/embed/chat/${chatId}?theme=${initTheme}&open=${open}`
-  );
+  let isMobile = $state(false);
+
+  const iframeSrc = $derived(`${domain}/embed/chat/${chatId}`);
 
   onMount(async () => {
+    const checkMobile = () => {
+      isMobile = window.matchMedia("(max-width: 640px)").matches;
+    };
+    checkMobile();
+
     window.addEventListener("message", (event) => {
       if (event.data.type === "chat:open") {
         open = true;
@@ -35,48 +37,72 @@
         localStorage.setItem("chat-widget-open", "false");
       }
     });
+  });
 
-    const payloadStr = localStorage.getItem("chat-widget-payload");
-    const payload = payloadStr
-      ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
-      : null;
-
-    const body = JSON.stringify({
-      chatId,
-      roomId: payload?.roomId,
-      username: payload?.username,
-    });
-
-    // Auth for guest users
-    const response = await fetch(`${domain}/api/chat/auth`, {
-      method: "POST",
-      body,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (response.status !== 200) {
-      console.error("Failed to authenticate chat widget");
-      return;
+  // STYLES
+  const base = `
+      z-index: 9999;
+      position: fixed;
+      background: transparent;
+      background-color: transparent;
+      border: none;
+      bottom: 0;
+      right: 0;
+    `;
+  const iframeStyle = $derived.by(() => {
+    if (!open) {
+      return `
+      ${base}
+      width: 64px;
+      height: 64px;
+    `;
     }
 
-    const res = await response.json();
-    localStorage.setItem("chat-widget-payload", JSON.stringify(res.payload));
-    token = res.token;
+    if (isMobile) {
+      return `
+      ${base}
+      width: 100vw;
+      height: 100vh;
+    `;
+    }
+
+    return `
+    ${base}
+    width: 400px;
+    height: 100vh;
+  `;
+  });
+
+  $effect(() => {
+    if (!iframeLoaded) return;
+
+    untrack(() => {
+      // INIT THEME
+      iframeEl!.contentWindow?.postMessage(
+        { type: "theme-change", newTheme: initTheme },
+        "*"
+      );
+
+      // INIT OPEN STATE
+      if (open) {
+        iframeEl!.contentWindow?.postMessage({ type: "chat:open" }, "*");
+      } else {
+        iframeEl!.contentWindow?.postMessage({ type: "chat:close" }, "*");
+      }
+    });
   });
 </script>
 
-{#if token}
-  <iframe
-    allowtransparency
-    title="Chat Widget"
-    bind:this={iframeEl}
-    style={`z-index: 9999; background-color: transparent; background: transparent; position: fixed; bottom: 0; right: 0; ${open ? "width: 400px; height: 100vh;" : "width: 64px; height: 64px;"}`}
-    src={iframeSrc}
-    frameborder="0"
-  ></iframe>
+<iframe
+  onload={() => (iframeLoaded = true)}
+  allowtransparency
+  title="Chat Widget"
+  bind:this={iframeEl}
+  style={iframeStyle}
+  src={iframeSrc}
+  frameborder="0"
+></iframe>
 
-  {#if iframeEl}
-    <ThemeForward {iframeEl} {listenTheme} />
-  {/if}
+{#if iframeEl && listenTheme}
+  <ThemeForward {iframeEl} {listenTheme} />
 {/if}

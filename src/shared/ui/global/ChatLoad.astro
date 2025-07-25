@@ -10,19 +10,22 @@ import {
 
 <script
   is:inline
+  data-astro-rerun
   data-domain={PUBLIC_CHAT_WIDGET_DOMAIN}
   data-chat-id={PUBLIC_CHAT_WIDGET_ID}
 >
   (function () {
     const { chatId, domain } = document.currentScript.dataset;
 
+    const theme = document.documentElement.getAttribute("data-theme");
     const open = localStorage.getItem("chat-widget-open") === "true";
 
+    if (!window.ChatWidget) return;
     window.ChatWidget.init({
       chatId,
       domain,
-      initTheme: "light",
-      listenTheme: false,
+      listenTheme: true,
+      initTheme: theme || "light",
       initOpen: open,
     });
   })();

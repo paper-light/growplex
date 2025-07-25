@@ -20,18 +20,6 @@
   onMount(() => {
     const htmlEl = document.documentElement;
 
-    const detect = () => {
-      const theme = htmlEl.getAttribute("data-theme");
-      if (theme) return theme;
-    };
-
-    setTimeout(() => {
-      const theme = detect();
-      if (theme) postTheme(theme);
-    }, 1000);
-
-    if (!listenTheme) return;
-
     const observer = new MutationObserver((mutations) => {
       for (const m of mutations) {
         if (m.type === "attributes" && m.attributeName === "data-theme") {

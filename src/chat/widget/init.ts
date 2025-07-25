@@ -32,6 +32,7 @@ export function init(opts: WidgetProps) {
     app = mount(ChatIframe, {
       target,
       props: opts,
+      intro: false,
     });
   }
 }

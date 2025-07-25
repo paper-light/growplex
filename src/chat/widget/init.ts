@@ -1,10 +1,10 @@
 import { mount, unmount } from "svelte";
-import ChatWidget from "./ChatWidget.svelte";
+import ChatIframe from "./ChatIframe.svelte";
 
 type WidgetProps = {
   chatId: string;
   domain: string;
-  color?: string;
+  initOpen?: boolean;
   initTheme?: string;
   listenTheme?: boolean;
 };
@@ -19,7 +19,7 @@ let app: WidgetAPI | null = null;
 export function init(opts: WidgetProps) {
   const target = document.getElementById("chat-widget-root") || document.body;
   if (!app) {
-    app = mount(ChatWidget, {
+    app = mount(ChatIframe, {
       target,
       props: opts,
       intro: true,
@@ -29,16 +29,11 @@ export function init(opts: WidgetProps) {
     app.$set!(opts);
   } else {
     unmount(app, { outro: false });
-    app = mount(ChatWidget, {
+    app = mount(ChatIframe, {
       target,
       props: opts,
     });
   }
-}
-
-export function reload(opts?: { color: string }) {
-  const target = document.getElementById("chat-widget-root") || document.body;
-  target.style.setProperty("--chat-widget-primary", opts?.color || "#007aff");
 }
 
 export async function destroy() {
@@ -50,4 +45,4 @@ export async function destroy() {
 }
 
 // finally, wire it up on window
-(window as any).ChatWidget = { init, reload, destroy };
+(window as any).ChatWidget = { init, destroy };

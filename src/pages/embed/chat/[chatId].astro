@@ -1,15 +1,15 @@
 ---
 import { pb } from "../../../shared/lib/pb";
-import Chat from "../../../chat/ui/widgets/Chat.svelte";
+import Embed from "../../../chat/ui/widgets/Embed.svelte";
 import Root from "../../../shared/ui/layouts/Root.astro";
 
 const { chatId } = Astro.params;
 const token = Astro.url.searchParams.get("token");
+const open = Astro.url.searchParams.get("open") === "true";
+const theme = Astro.url.searchParams.get("theme") || "light";
 
 if (!token) throw new Error("Token is required");
 if (!chatId) throw new Error("Chat ID is required");
-
-const theme = Astro.url.searchParams.get("theme") || "light";
 
 const chat = await pb.collection("chats").getOne(chatId, {
   expand: "integration,integration.agents",
@@ -24,14 +24,20 @@ if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>
-  <Chat chat={chat} agent={agent} token={token} initTheme={theme} client:only />
+  <Embed
+    chat={chat}
+    agent={agent}
+    token={token}
+    initTheme={theme}
+    open={open}
+    client:only
+  />
 </Root>
 
 <style>
   html,
   body {
-    background-color: transparent;
-    height: 100vh;
-    width: 100vw;
+    background: transparent !important;
+    background-color: transparent !important;
   }
 </style>

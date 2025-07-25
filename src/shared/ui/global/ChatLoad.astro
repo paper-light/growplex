@@ -10,53 +10,20 @@ import {
 
 <script
   is:inline
-  data-astro-rerun
   data-domain={PUBLIC_CHAT_WIDGET_DOMAIN}
   data-chat-id={PUBLIC_CHAT_WIDGET_ID}
 >
   (function () {
     const { chatId, domain } = document.currentScript.dataset;
 
-    function init() {
-      window.ChatWidget.init({
-        chatId,
-        domain,
-        initTheme: "light",
-        listenTheme: true,
-        color: "var(--color-yellow-500)",
-      });
-    }
+    const open = localStorage.getItem("chat-widget-open") === "true";
 
-    function boot() {
-      if (!window.ChatWidget._loaded) {
-        console.log("CHAT WIDGET INIT");
-        init();
-      } else if (window.ChatWidget._loaded) {
-        window.ChatWidget.reload({
-          color: "var(--color-yellow-500)",
-        });
-      }
-    }
-
-    boot();
-
-    // --- Svelte style persistence logic ---
-    let svelteStyles = [];
-    document.addEventListener("astro:before-swap", () => {
-      svelteStyles = Array.from(
-        document.querySelectorAll('style[id^="svelte-"]')
-      ).map((style) => style.outerHTML);
-    });
-
-    document.addEventListener("astro:after-swap", () => {
-      const head = document.head;
-      svelteStyles.forEach((styleHTML) => {
-        if (!head.innerHTML.includes(styleHTML)) {
-          const temp = document.createElement("div");
-          temp.innerHTML = styleHTML;
-          head.appendChild(temp.firstChild);
-        }
-      });
+    window.ChatWidget.init({
+      chatId,
+      domain,
+      initTheme: "light",
+      listenTheme: false,
+      initOpen: open,
     });
   })();
 </script>

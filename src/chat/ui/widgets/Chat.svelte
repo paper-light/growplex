@@ -5,18 +5,16 @@
     PUBLIC_MESSAGE_DELAY_SEC,
     PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
   } from "astro:env/client";
-  import { onMount, untrack } from "svelte";
+  import { untrack } from "svelte";
   import { ChevronsDown, ChevronsRight } from "@lucide/svelte";
 
   import ChatMessage from "../entities/Message.svelte";
   import Man from "../../../shared/assets/Man.jpg";
   import Thalia from "../../../shared/assets/Thalia.jpg";
 
-  import { parseJwtPayload } from "../../../auth/utils/parse-jwt";
   import {
     type ChatsResponse,
     type AgentsResponse,
-    type MessagesResponse,
   } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
 
@@ -29,27 +27,13 @@
   interface Props {
     chat: ChatsResponse;
     agent: AgentsResponse;
-    token: string;
-    initTheme?: string;
-    payload?: z.infer<typeof ChatWidgetPayloadSchema>;
+    root: HTMLElement;
+    roomId: string;
+    username: string;
+    theme?: string;
   }
 
-  const { chat, token, payload, initTheme }: Props = $props();
-
-  const theme = $derived(
-    initTheme || (chat.theme as any)?.production || "light"
-  );
-
-  const { roomId, username } = $derived(
-    payload ||
-      (() => {
-        const parsed = parseJwtPayload(token!);
-        if (!parsed) {
-          throw new Error("Invalid token: unable to parse JWT payload");
-        }
-        return ChatWidgetPayloadSchema.parse(parsed);
-      })()
-  );
+  const { chat, theme, root, roomId, username }: Props = $props();
 
   const chatAvatar = chat.avatar
     ? pb.files.getURL(chat, chat.avatar)
@@ -63,8 +47,6 @@
 
   const online = $derived(socketProvider.online);
 
-  let root: HTMLDivElement | null = $state(null);
-
   // INPUT
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
@@ -73,33 +55,18 @@
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
 
-  onMount(() => {
-    window.addEventListener("message", (event) => {
-      if (!chat.domain || event.origin !== chat.domain) return;
+  $effect(() => {
+    if (!theme || !root) return;
 
-      const { type, ...payload } = event.data || {};
-      // THEME CHANGE
-      if (type === "theme-change") {
-        const { newTheme } = payload;
-        root?.setAttribute("data-theme", newTheme);
-        const themeData = (chat.theme as any)?.config[newTheme as any];
-        injectTheme(themeData || {}, root);
-      }
-    });
+    root.setAttribute("data-theme", theme);
 
-    socketProvider.connect(token);
+    // Config theme
+    const themeData = (chat.theme as any)?.config[theme as any];
+    injectTheme(themeData || {}, root);
   });
 
   $effect(() => {
     if (messages.length > 0) scrollToBottom(messageContainer);
-  });
-
-  $effect(() => {
-    if (!root || !theme) return;
-
-    root.setAttribute("data-theme", theme);
-    const themeData = (chat.theme as any)?.config[theme as any];
-    injectTheme(themeData || {}, root);
   });
 
   $effect(() => {
@@ -145,7 +112,6 @@
 </script>
 
 <div
-  bind:this={root}
   class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
   style="height: 100%; max-height: 100%;"
 >

@@ -33,10 +33,8 @@
 
   let sidebarEl: HTMLElement | null = $state(null);
 
-  const payload = $derived({
-    username: userProvider.user?.name || "",
-    roomId: room?.id || "",
-  });
+  const roomId = $derived(room?.id || "");
+  const username = $derived(userProvider.user?.name || "");
 
   $effect(() => {
     if (!chat || !agent) return;
@@ -127,8 +125,15 @@
             <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
           {/each}
         </div>
-      {:else if chat && agent && token && room}
-        <Chat {chat} {agent} {payload} {token} initTheme={previewTheme} />
+      {:else if chat && agent && room && username && sidebarEl}
+        <Chat
+          {chat}
+          {agent}
+          theme={previewTheme}
+          root={sidebarEl}
+          {roomId}
+          {username}
+        />
       {:else}
         <div class="flex flex-col items-center justify-center h-full gap-5">
           WoW

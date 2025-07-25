@@ -35,10 +35,6 @@
   let iframeSrc = $derived(
     `${domain}/embed/chat/${chatId}?token=${encodeURIComponent(token)}&theme=${initTheme}`
   );
-
-  $effect(() => {
-    console.log("open", isOpen);
-  });
 </script>
 
 <aside

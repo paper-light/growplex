@@ -22,6 +22,10 @@
 
   let token: string | null = $state(null);
   let open = $state(false);
+
+  let closing = $state(false);
+  let opening = $state(false);
+
   let theme = $state((chat.theme as any)?.production || "light");
 
   const { roomId, username } = $derived.by(() => {
@@ -90,14 +94,23 @@
   });
 
   async function openChat() {
+    opening = true;
     window.parent.postMessage({ type: "chat:open" }, "*");
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     open = true;
+    opening = false;
   }
 
   async function closeChat() {
-    open = false;
-    await new Promise((resolve) => setTimeout(resolve, 300));
+    closing = true;
     window.parent.postMessage({ type: "chat:close" }, "*");
+
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    open = false;
+    closing = false;
   }
 </script>
 
@@ -106,22 +119,9 @@
   class="absolute w-full h-full z-20 bg-transparent"
   bind:this={root}
 >
-  <!-- FAB Button -->
   <div
-    class="fixed bottom-0 right-0 transition-all duration-300 bg-transparent"
-    style={`${open ? "opacity: 0;" : "opacity: 1;"}`}
+    class="fixed top-0 right-0 h-full w-full shadow-lg overflow-hidden inset-0 bg-transparent"
   >
-    <Button size="xl" color="primary" onclick={openChat} circle>
-      <MessageCircle size={32} />
-    </Button>
-  </div>
-
-  <!-- Slide-In Chat Panel -->
-  <div
-    class="fixed top-0 right-0 h-full w-full z-10 shadow-lg transform transition-transform duration-300 ease-in-out overflow-hidden inset-0 bg-transparent"
-    style={`${open ? "transform: translateX(0);" : "transform: translateX(100%);"}`}
-  >
-    <!-- Close Button -->
     <Button
       class="absolute top-2 right-2 z-20"
       onclick={closeChat}
@@ -137,4 +137,13 @@
       <Chat {chat} {agent} {theme} {root} {roomId} {username} />
     {/if}
   </div>
+
+  <!-- FAB Button -->
+  {#if !open && !opening && !closing}
+    <div class="fixed bottom-0 right-0 bg-transparent">
+      <Button class="size-16" color="primary" onclick={openChat} circle>
+        <MessageCircle size={32} />
+      </Button>
+    </div>
+  {/if}
 </div>

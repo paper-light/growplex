@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, untrack } from "svelte";
+  import { onMount, tick, untrack } from "svelte";
 
   import ThemeForward from "./ThemeForward.svelte";
 
@@ -13,7 +13,9 @@
 
   const { listenTheme, chatId, domain, initTheme, initOpen }: Props = $props();
 
-  let open = $state(initOpen);
+  type ChatState = "closed" | "opening" | "open" | "closing";
+  let openState: ChatState = $state(initOpen ? "open" : "closed");
+
   let iframeEl: HTMLIFrameElement | null = $state(null);
   let iframeLoaded = $state(false);
 
@@ -28,49 +30,77 @@
     checkMobile();
 
     window.addEventListener("message", (event) => {
+      // ON OPEN
       if (event.data.type === "chat:open") {
-        open = true;
-        localStorage.setItem("chat-widget-open", "true");
+        openState = "opening";
+        tick().then(() => {
+          setTimeout(() => {
+            openState = "open";
+          }, 20);
+
+          setTimeout(() => {
+            localStorage.setItem("chat-widget-open", "true");
+          }, 300);
+        });
       }
+
+      // ON CLOSE
       if (event.data.type === "chat:close") {
-        open = false;
-        localStorage.setItem("chat-widget-open", "false");
+        openState = "closing";
+        setTimeout(() => {
+          openState = "closed";
+          localStorage.setItem("chat-widget-open", "false");
+        }, 300);
       }
     });
   });
 
   // STYLES
-  const base = `
-      z-index: 9999;
-      position: fixed;
-      background: transparent;
-      background-color: transparent;
-      border: none;
-      bottom: 0;
-      right: 0;
-    `;
   const iframeStyle = $derived.by(() => {
-    if (!open) {
-      return `
-      ${base}
+    let transition =
+      openState === "opening" ? "none" : "transform 0.3s ease-in-out";
+    let styles = `
+    z-index: 9999;
+    position: fixed;
+    background-color: transparent;
+    border: none;
+    bottom: 0;
+    right: 0;
+    border-radius: 0;
+    transition: ${transition};
+  `;
+
+    if (openState === "closed") {
+      // Small circle button visible on bottom-right
+      styles += `
       width: 64px;
       height: 64px;
+      bottom: 1.25rem;
+      right: 1.25rem;
+      border-radius: 100%;
+      transform: translateX(0);
     `;
+      return styles;
     }
 
-    if (isMobile) {
-      return `
-      ${base}
-      width: 100vw;
-      height: 100vh;
-    `;
-    }
-
-    return `
-    ${base}
-    width: 400px;
+    // For opening, open, closing states — full height + width immediately
+    styles += `
     height: 100vh;
+    width: ${isMobile ? "100vw" : "400px"};
   `;
+
+    if (openState === "opening") {
+      // Start fully offscreen right, then transition in (handled by onMount)
+      styles += `transform: translateX(100%);`;
+    } else if (openState === "closing") {
+      // Slide out to the right
+      styles += `transform: translateX(100%);`;
+    } else {
+      // openState === "open"
+      styles += `transform: translateX(0);`;
+    }
+
+    return styles;
   });
 
   $effect(() => {
@@ -84,7 +114,7 @@
       );
 
       // INIT OPEN STATE
-      if (open) {
+      if (initOpen) {
         iframeEl!.contentWindow?.postMessage({ type: "chat:open" }, "*");
       } else {
         iframeEl!.contentWindow?.postMessage({ type: "chat:close" }, "*");

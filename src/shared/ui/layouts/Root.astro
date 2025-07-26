@@ -34,8 +34,12 @@ const {
 
     <slot name="head" />
   </head>
-  <body>
-    <div transition:persist="chat-widget-root" id="chat-widget-root"></div>
+  <body class="bg-transparent">
+    <div
+      class="bg-transparent"
+      transition:persist="chat-widget-root"
+      id="chat-widget-root"
+    ></div>
 
     <slot />
 

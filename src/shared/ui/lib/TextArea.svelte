@@ -3,6 +3,7 @@
   import type { Snippet } from "svelte";
 
   interface Props {
+    el?: HTMLTextAreaElement;
     class?: ClassValue;
     disabled?: boolean;
     ghost?: boolean;
@@ -31,6 +32,7 @@
     children?: Snippet;
   }
   let {
+    el = $bindable(),
     class: className = "",
     ghost = false,
     grow = false,
@@ -84,6 +86,7 @@
   {/if}
 
   <textarea
+    bind:this={el}
     class={[
       "textarea",
       ghost && "textarea-ghost",

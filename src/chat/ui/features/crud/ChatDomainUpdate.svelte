@@ -2,10 +2,10 @@
   import type { ClassValue } from "svelte/elements";
   import { Pencil } from "@lucide/svelte";
 
-  import { debounce } from "../../../shared/helpers/debounce";
-  import Input from "../../../shared/ui/lib/Input.svelte";
-  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
-  import { chatCrud } from "../../repositories/chat-crud";
+  import { debounce } from "../../../../shared/helpers/debounce";
+  import Input from "../../../../shared/ui/lib/Input.svelte";
+  import type { ChatsResponse } from "../../../../shared/models/pocketbase-types";
+  import { chatCrud } from "../../../repositories/chat-crud";
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 

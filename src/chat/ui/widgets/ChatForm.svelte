@@ -1,10 +1,10 @@
 <script lang="ts">
   import DomainConnect from "../../../knowledge/ui/DomainConnect.svelte";
-  import ChatAvatarUpdate from "../features/ChatAvatarUpdate.svelte";
-  import ChatNameUpdate from "../features/ChatNameUpdate.svelte";
-  import ChatDomainUpdate from "../features/ChatDomainUpdate.svelte";
-  import ChatFirstMessageUpdate from "../features/ChatFirstMessageUpdate.svelte";
-  import ChatSelect from "../features/ChatSelect.svelte";
+  import ChatAvatarUpdate from "../features/crud/ChatAvatarUpdate.svelte";
+  import ChatNameUpdate from "../features/crud/ChatNameUpdate.svelte";
+  import ChatDomainUpdate from "../features/crud/ChatDomainUpdate.svelte";
+  import ChatFirstMessageUpdate from "../features/crud/ChatFirstMessageUpdate.svelte";
+  import ChatSelect from "../features/crud/ChatSelect.svelte";
 
   import Card from "../../../shared/ui/lib/Card.svelte";
   import SourceStatus from "../../../knowledge/ui/SourceStatus.svelte";

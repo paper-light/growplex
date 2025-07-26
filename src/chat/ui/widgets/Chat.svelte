@@ -1,12 +1,7 @@
 <script lang="ts">
-  import type { z } from "zod";
   import { fade } from "svelte/transition";
-  import {
-    PUBLIC_MESSAGE_DELAY_SEC,
-    PUBLIC_CHAT_MAX_MESSAGE_TOKENS,
-  } from "astro:env/client";
   import { untrack } from "svelte";
-  import { ChevronsDown, ChevronsRight } from "@lucide/svelte";
+  import { ChevronsDown } from "@lucide/svelte";
 
   import ChatMessage from "../entities/Message.svelte";
   import Man from "../../../shared/assets/Man.jpg";
@@ -19,12 +14,11 @@
   import { pb } from "../../../shared/lib/pb";
 
   import { socketProvider } from "../../providers/socket.svelte";
-  import { ChatWidgetPayloadSchema } from "../../lib/models";
   import { injectTheme } from "../../utils/injectTheme";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
   import ToolMessage from "../entities/ToolMessage.svelte";
+  import Interactions from "./Interactions.svelte";
 
-  const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
   interface Props {
     chat: ChatsResponse;
     agent: AgentsResponse;
@@ -34,7 +28,7 @@
     theme?: string;
   }
 
-  const { chat, theme, root, roomId, username }: Props = $props();
+  const { root, chat, theme, roomId, username }: Props = $props();
 
   const chatAvatar = chat.avatar
     ? pb.files.getURL(chat, chat.avatar)
@@ -47,11 +41,6 @@
   });
 
   const online = $derived(socketProvider.online);
-
-  // INPUT
-  let inputEl: HTMLTextAreaElement | null = $state(null);
-  let inputText = $state("");
-  let canSend = $state(true);
 
   let messageContainer: HTMLElement | null = $state(null);
   let showScrollButton = $state(false);
@@ -78,37 +67,11 @@
     });
   });
 
-  async function sendMessage() {
-    if (
-      !roomId ||
-      !username ||
-      !canSend ||
-      inputText.trim().length > MAX_INPUT_CHARS ||
-      inputText.trim().length === 0
-    )
-      return;
-
-    canSend = false;
-
-    socketProvider.sendMessage(inputText, username, roomId);
-    inputText = "";
-
-    setTimeout(() => {
-      canSend = true;
-    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
-  }
-
   function onScroll() {
     if (!messageContainer) return;
     const { scrollTop, clientHeight, scrollHeight } = messageContainer;
     const atBottom = scrollTop + clientHeight >= scrollHeight - 5;
     showScrollButton = !atBottom;
-  }
-
-  function autoGrow() {
-    if (!inputEl) return;
-    inputEl.style.height = "auto";
-    inputEl.style.height = `${inputEl.scrollHeight}px`;
   }
 </script>
 
@@ -159,7 +122,7 @@
       {#if msg.role === "tool"}
         <ToolMessage type="waitingOperator" />
       {:else}
-        <ChatMessage {msg} {avatar} incoming={msg.role !== "operator"} />
+        <ChatMessage {msg} {avatar} incoming={msg.role !== "user"} />
       {/if}
     {/each}
   </main>
@@ -181,44 +144,12 @@
       flex-shrink-0
       border-t border-base-300
       bg-base-100
-      px-3 py-1
     "
   >
-    <fieldset class="fieldset">
-      <textarea
-        bind:this={inputEl}
-        bind:value={inputText}
-        oninput={autoGrow}
-        onkeydown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-          }
-        }}
-        placeholder="Type your message…"
-        class="textarea textarea-bordered resize-none w-full max-h-40 overflow-y-auto"
-        rows="1"
-      ></textarea>
-
-      <button
-        disabled={!canSend ||
-          inputText.trim().length === 0 ||
-          inputText.trim().length > MAX_INPUT_CHARS ||
-          !socketProvider.online}
-        onclick={sendMessage}
-        class="label btn btn-primary btn-lg btn-block ml-auto w-fit rounded-xl"
-      >
-        <ChevronsRight size={32} />
-      </button>
-    </fieldset>
-
-    <div class="text-xs text-center mt-2">
-      Made by
-      <a
-        class="link link-hover font-semibold"
-        target="_blank"
-        href="https://growplex.dev/">Growplex</a
-      >
-    </div>
+    <Interactions
+      parentRoom={{ id: roomId }}
+      parentUser={{ name: username }}
+      mode="widget"
+    />
   </footer>
 </div>

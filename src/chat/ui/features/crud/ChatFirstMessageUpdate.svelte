@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { debounce } from "../../../shared/helpers/debounce";
-  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
-  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
-  import { chatCrud } from "../../repositories/chat-crud";
+  import { debounce } from "../../../../shared/helpers/debounce";
+  import TextArea from "../../../../shared/ui/lib/TextArea.svelte";
+  import type { ChatsResponse } from "../../../../shared/models/pocketbase-types";
+  import { chatCrud } from "../../../repositories/chat-crud";
   interface Props {
     chat: ChatsResponse | null;
     class?: ClassValue;

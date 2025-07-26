@@ -203,10 +203,17 @@ export enum MessagesRoleOptions {
 	"system" = "system",
 	"tool" = "tool",
 }
+
+export enum MessagesEventOptions {
+	"msg" = "msg",
+	"wailtingOperator" = "wailtingOperator",
+	"operatorConnected" = "operatorConnected",
+}
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string
 	contentTokensCount?: number
 	created?: IsoDateString
+	event?: MessagesEventOptions
 	id: string
 	metadata?: null | Tmetadata
 	role: MessagesRoleOptions

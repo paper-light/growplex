@@ -70,14 +70,12 @@
 
   <!-- Main Content Area -->
   <div class="flex flex-col flex-1 min-w-0">
-    <!-- Messages Area -->
     <div class="flex-1 overflow-hidden">
       <RoomMessages />
     </div>
 
-    <!-- Interactions Area -->
     <div class="flex-shrink-0">
-      <Interactions />
+      <Interactions mode="admin" />
     </div>
   </div>
 

@@ -2,8 +2,8 @@
   import type { ClassValue } from "svelte/elements";
   import { Rocket } from "@lucide/svelte";
 
-  import Button from "../../../shared/ui/lib/Button.svelte";
-  import { userProvider } from "../../../user/user.svelte";
+  import Button from "../../../../shared/ui/lib/Button.svelte";
+  import { chatsProvider } from "../../../providers/chats.svelte";
 
   interface Props {
     class?: ClassValue;
@@ -11,7 +11,7 @@
 
   let { class: className = "" }: Props = $props();
 
-  const currentChat = $derived(userProvider.chat);
+  const currentChat = $derived(chatsProvider.selectedChat);
 
   const instruction = $derived.by(() => {
     return `<script

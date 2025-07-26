@@ -1,28 +1,41 @@
 ---
+import { JWT_SECRET } from "astro:env/server";
+import jwt from "jsonwebtoken";
+
 import { pb } from "../../../shared/lib/pb";
-import Embed from "../../../chat/ui/widgets/Embed.svelte";
 import Root from "../../../shared/ui/layouts/Root.astro";
+
+import Embed from "./_chat.svelte";
+import { ChatWidgetPayloadSchema } from "../../../chat/lib/models";
 
 const { chatId } = Astro.params;
 
 if (!chatId) throw new Error("Chat ID is required");
 const initTheme = Astro.url.searchParams.get("theme");
 const initOpen = Astro.url.searchParams.get("open") === "true";
+const token = Astro.url.searchParams.get("token");
+
+if (!token) throw new Error("Token is required");
+const decoded = jwt.verify(token, JWT_SECRET);
+console.log("GUEST JWT:", decoded);
+const { roomId, username } = ChatWidgetPayloadSchema.parse(decoded);
+
+const room = await pb.collection("rooms").getOne(roomId);
 
 const chat = await pb.collection("chats").getOne(chatId, {
   expand: "integration,integration.agents",
 });
 const agent = (chat.expand as any)?.integration.expand.agents[0];
 
-if (!chat || !agent) {
-  throw new Error("Integration not properly configured");
-}
-
+if (!chat || !agent) throw new Error("Integration not properly configured");
 if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>
   <Embed
+    token={token}
+    user={{ name: username }}
+    room={room}
     chat={chat}
     agent={agent}
     client:only

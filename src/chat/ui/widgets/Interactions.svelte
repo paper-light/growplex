@@ -15,10 +15,8 @@
 
   const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
   interface Props {
-    parentRoom?: RoomsResponse | { id: string; status?: string };
-    parentUser?:
-      | UsersResponse
-      | { name: string; role?: string; avatar?: string };
+    parentRoom?: RoomsResponse;
+    parentUser?: UsersResponse | { name: string };
     mode?: "widget" | "admin";
   }
 

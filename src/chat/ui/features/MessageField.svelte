@@ -12,7 +12,7 @@
 
   type Props = {
     user: UsersResponse | { name: string; avatar?: string };
-    room: RoomsResponse | { id: string };
+    room: RoomsResponse;
     role?: "operator" | "user";
     inputText?: string;
     inputEl?: any;
@@ -42,9 +42,11 @@
         inputText,
         user.name,
         room.id,
-        {
-          avatar: user?.avatar ? pb.files.getURL(user, user.avatar) : "",
-        },
+        user.avatar
+          ? {
+              avatar: pb.files.getURL(user, user.avatar),
+            }
+          : {},
         role === "operator"
           ? MessagesRoleOptions.operator
           : MessagesRoleOptions.user

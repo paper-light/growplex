@@ -9,7 +9,7 @@
   import Card from "../../../shared/ui/lib/Card.svelte";
   import SourceStatus from "../../../knowledge/ui/SourceStatus.svelte";
 
-  import ThemeSelection from "./ThemeSelection.svelte";
+  import ThemeSelection from "../features/crud/ThemeSelection.svelte";
   import { projectsProvider } from "../../../control/providers/projects.svelte";
   import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
   import { sourcesProvider } from "../../../knowledge/providers/sources.svelte";

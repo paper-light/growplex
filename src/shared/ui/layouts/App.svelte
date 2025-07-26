@@ -1,5 +1,5 @@
 <script lang="ts">
-  import "../../../auth/pb/pb-on-change";
+  import "../../../user/pb-on-change";
 
   import { onMount, untrack } from "svelte";
 

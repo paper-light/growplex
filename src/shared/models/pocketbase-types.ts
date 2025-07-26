@@ -205,9 +205,10 @@ export enum MessagesRoleOptions {
 }
 
 export enum MessagesEventOptions {
-	"msg" = "msg",
 	"wailtingOperator" = "wailtingOperator",
 	"operatorConnected" = "operatorConnected",
+	"operatorDisconnected" = "operatorDisconnected",
+	"message" = "message",
 }
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string

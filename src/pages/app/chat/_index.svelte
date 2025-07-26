@@ -1,33 +1,30 @@
 <script lang="ts">
   import { slide } from "svelte/transition";
   import { X, Menu } from "@lucide/svelte";
+
   import RoomsSidebar from "../../../chat/ui/widgets/RoomsSidebar.svelte";
-  import RoomMessages from "../../../chat/ui/widgets/RoomMessages.svelte";
   import Interactions from "../../../chat/ui/widgets/Interactions.svelte";
+  import Messages from "../../../chat/ui/widgets/Messages.svelte";
+  import { roomsProvider } from "../../../chat/providers/rooms.svelte";
+  import { socketProvider } from "../../../chat/providers/socket.svelte";
+  import RegisterKeydown from "../../../shared/ui/lib/RegisterKeydown.svelte";
 
   let sidebarOpen = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);
 
-  function openSidebar() {
-    sidebarOpen = true;
-  }
-
-  function closeSidebar() {
-    sidebarOpen = false;
-  }
-
-  function handleKeydown(event: KeyboardEvent) {
-    if (event.key === "Escape") closeSidebar();
-  }
-
-  $effect(() => {
-    if (sidebarOpen) {
-      window.addEventListener("keydown", handleKeydown);
-    } else {
-      window.removeEventListener("keydown", handleKeydown);
-    }
+  const room = $derived(
+    roomsProvider.integrationRooms.find(
+      (r) => r.id === roomsProvider.selectedRoom?.id
+    ) || null
+  );
+  const messages = $derived.by(() => {
+    if (!room) return [];
+    const history = socketProvider.histories.get(room.id);
+    return history || [];
   });
 </script>
+
+<RegisterKeydown keys={["Escape"]} onkeydown={() => (sidebarOpen = false)} />
 
 <div class="flex h-full w-full">
   <!-- Mobile Sidebar Toggle Button -->
@@ -35,7 +32,7 @@
     type="button"
     class="lg:hidden fixed top-4 left-4 z-50 btn btn-primary btn-circle"
     aria-label="Open sidebar"
-    onclick={openSidebar}
+    onclick={() => (sidebarOpen = true)}
   >
     <Menu size={20} />
   </button>
@@ -57,7 +54,7 @@
       type="button"
       class="lg:hidden btn btn-sm btn-ghost btn-circle absolute top-4 right-4 z-10"
       aria-label="Close sidebar"
-      onclick={closeSidebar}
+      onclick={() => (sidebarOpen = false)}
     >
       <X size={20} />
     </button>
@@ -70,20 +67,20 @@
 
   <!-- Main Content Area -->
   <div class="flex flex-col flex-1 min-w-0">
-    <div class="flex-1 overflow-hidden">
-      <RoomMessages />
-    </div>
+    <main class="flex-1 overflow-hidden">
+      <Messages class="px-12 py-4" {messages} mode="operator" />
+    </main>
 
-    <div class="flex-shrink-0">
+    <footer class="flex-shrink-0">
       <Interactions mode="admin" />
-    </div>
+    </footer>
   </div>
 
   <!-- Mobile Overlay -->
   {#if sidebarOpen}
     <div
       class="fixed inset-0 bg-black/40 z-30 lg:hidden"
-      onclick={closeSidebar}
+      onclick={() => (sidebarOpen = false)}
       aria-hidden="true"
     ></div>
   {/if}

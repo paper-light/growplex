@@ -60,6 +60,7 @@ class SocketProvider {
   }
 
   joinRoom(roomId: string) {
+    console.log("JOINING ROOM:", roomId);
     if (!this.socket || !this.online) {
       console.warn("socket not connected, skipping joinRoom");
       return;

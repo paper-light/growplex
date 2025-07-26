@@ -1,8 +1,8 @@
-import { pb } from "../../shared/lib/pb";
-import { settingsProvider } from "../../user/settings.svelte";
-import type { UsersResponse } from "../../shared/models/pocketbase-types";
-import { userProvider } from "../../user/user.svelte";
-import { uiProvider } from "../../user/ui.svelte";
+import { pb } from "../shared/lib/pb";
+import { settingsProvider } from "./settings.svelte";
+import type { UsersResponse } from "../shared/models/pocketbase-types";
+import { userProvider } from "./user.svelte";
+import { uiProvider } from "./ui.svelte";
 
 pb.authStore.onChange((_, rec) => {
   if (rec && pb.authStore.isValid) {

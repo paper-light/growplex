@@ -131,8 +131,8 @@
           {agent}
           theme={previewTheme}
           root={sidebarEl}
-          {roomId}
-          {username}
+          {room}
+          user={{ name: username }}
         />
       {:else}
         <div class="flex flex-col items-center justify-center h-full gap-5">

@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
 
+  import { authGuest } from "../../auth/utils/auth-guest";
+
   import ThemeForward from "./ThemeForward.svelte";
 
   interface Props {
@@ -17,10 +19,14 @@
   let openState: ChatState = $state(initOpen ? "open" : "closed");
 
   let iframeEl: HTMLIFrameElement | null = $state(null);
+  let token: string | null = $state(null);
 
   let isMobile = $state(false);
 
-  const iframeSrc = `${domain}/embed/chat/${chatId}?theme=${initTheme}&open=${initOpen}`;
+  const iframeSrc = $derived.by(() => {
+    if (!token) return null;
+    return `${domain}/embed/chat/${chatId}?theme=${initTheme}&open=${initOpen}&token=${token}`;
+  });
 
   onMount(async () => {
     const checkMobile = () => {
@@ -52,6 +58,18 @@
         }, 300);
       }
     });
+
+    // AUTH GUEST USER
+    const payloadStr = localStorage.getItem("chat-widget-payload");
+    const res = await authGuest(chatId, payloadStr || "");
+    if (!res) {
+      console.error("Failed to authenticate chat widget");
+      localStorage.removeItem("chat-widget-payload");
+      return;
+    }
+
+    localStorage.setItem("chat-widget-payload", JSON.stringify(res.payload));
+    token = res.token;
   });
 
   // STYLES

@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import type { ChatsResponse } from "../../../shared/models/pocketbase-types";
-  import { themes } from "../../../shared/styles/themes";
-  import Button from "../../../shared/ui/lib/Button.svelte";
-  import { chatCrud } from "../../repositories/chat-crud";
+  import type { ChatsResponse } from "../../../../shared/models/pocketbase-types";
+  import { themes } from "../../../../shared/styles/themes";
+  import Button from "../../../../shared/ui/lib/Button.svelte";
+  import { chatCrud } from "../../../repositories/chat-crud";
 
   interface Props {
     chat: ChatsResponse;

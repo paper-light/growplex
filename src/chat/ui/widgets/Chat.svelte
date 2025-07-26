@@ -1,49 +1,42 @@
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import { untrack } from "svelte";
-  import { ChevronsDown } from "@lucide/svelte";
 
-  import ChatMessage from "../entities/Message.svelte";
-  import Man from "../../../shared/assets/Man.jpg";
-  import Thalia from "../../../shared/assets/Thalia.jpg";
-
+  import Thalia from "../../../shared/assets/thalia.jpg";
   import {
     type ChatsResponse,
     type AgentsResponse,
+    type RoomsResponse,
+    type UsersResponse,
   } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
 
   import { socketProvider } from "../../providers/socket.svelte";
   import { injectTheme } from "../../utils/injectTheme";
-  import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
-  import ToolMessage from "../entities/ToolMessage.svelte";
-  import Interactions from "./Interactions.svelte";
 
+  import Interactions from "./Interactions.svelte";
+  import Messages from "./Messages.svelte";
   interface Props {
     chat: ChatsResponse;
     agent: AgentsResponse;
     root: HTMLElement;
-    roomId: string;
-    username: string;
+    room: RoomsResponse;
+    user: UsersResponse | { name: string };
     theme?: string;
   }
 
-  const { root, chat, theme, roomId, username }: Props = $props();
+  const { root, chat, theme, room, user }: Props = $props();
 
   const chatAvatar = chat.avatar
     ? pb.files.getURL(chat, chat.avatar)
     : Thalia.src;
 
   const messages = $derived.by(() => {
-    if (!roomId) return [];
-    const history = socketProvider.histories.get(roomId);
+    if (!room) return [];
+    const history = socketProvider.histories.get(room.id);
     return history || [];
   });
 
   const online = $derived(socketProvider.online);
-
-  let messageContainer: HTMLElement | null = $state(null);
-  let showScrollButton = $state(false);
 
   $effect(() => {
     if (!theme || !root) return;
@@ -56,30 +49,18 @@
   });
 
   $effect(() => {
-    if (messages.length > 0) scrollToBottom(messageContainer);
-  });
-
-  $effect(() => {
-    if (!roomId || !socketProvider.online) return;
+    if (!room || !socketProvider.online) return;
 
     untrack(() => {
-      socketProvider.joinRoom(roomId);
+      socketProvider.joinRoom(room.id);
     });
   });
-
-  function onScroll() {
-    if (!messageContainer) return;
-    const { scrollTop, clientHeight, scrollHeight } = messageContainer;
-    const atBottom = scrollTop + clientHeight >= scrollHeight - 5;
-    showScrollButton = !atBottom;
-  }
 </script>
 
 <div
   class="w-full h-full flex flex-col bg-base-100 shadow-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
   style="height: 100%; max-height: 100%;"
 >
-  <!-- Header -->
   <header
     class="flex items-center justify-between border-b border-base-300 px-4 py-3 flex-shrink-0"
   >
@@ -107,38 +88,10 @@
     <div class="flex items-center space-x-2"></div>
   </header>
 
-  <!-- Messages Area -->
-  <main
-    bind:this={messageContainer}
-    onscroll={onScroll}
-    class="flex-1 min-h-0 overflow-y-auto space-y-2 p-2 overscroll-contain"
-  >
-    {#each messages as msg (msg.id)}
-      {@const avatar =
-        (msg.metadata as any)?.avatar || msg.role === "assistant"
-          ? chatAvatar
-          : Man.src}
-
-      {#if msg.role === "tool"}
-        <ToolMessage type="waitingOperator" />
-      {:else}
-        <ChatMessage {msg} {avatar} incoming={msg.role !== "user"} />
-      {/if}
-    {/each}
+  <main class="flex-1 overflow-hidden">
+    <Messages {messages} mode="guest" />
   </main>
 
-  {#if showScrollButton}
-    <button
-      transition:fade
-      onclick={() => scrollToBottom(messageContainer)}
-      class="p-2 rounded-full hover:cursor-pointer bg-secondary absolute bottom-46 right-1/2 translate-x-1/2 z-10"
-      aria-label="Scroll to bottom"
-    >
-      <ChevronsDown size={20} />
-    </button>
-  {/if}
-
-  <!-- Footer with Input + Send Button -->
   <footer
     class="
       flex-shrink-0
@@ -146,10 +99,6 @@
       bg-base-100
     "
   >
-    <Interactions
-      parentRoom={{ id: roomId }}
-      parentUser={{ name: username }}
-      mode="widget"
-    />
+    <Interactions parentRoom={room} parentUser={user} mode="widget" />
   </footer>
 </div>

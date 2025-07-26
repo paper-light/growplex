@@ -22,6 +22,7 @@
   import { ChatWidgetPayloadSchema } from "../../lib/models";
   import { injectTheme } from "../../utils/injectTheme";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
+  import ToolMessage from "../entities/ToolMessage.svelte";
 
   const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
   interface Props {
@@ -112,7 +113,7 @@
 </script>
 
 <div
-  class="w-full h-full flex flex-col bg-base-100 shadow-lg rounded-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
+  class="w-full h-full flex flex-col bg-base-100 shadow-lg px-4 pt-4 relative min-h-0 overflow-hidden max-h-full"
   style="height: 100%; max-height: 100%;"
 >
   <!-- Header -->
@@ -154,7 +155,12 @@
         (msg.metadata as any)?.avatar || msg.role === "assistant"
           ? chatAvatar
           : Man.src}
-      <ChatMessage {msg} {avatar} incoming={msg.role !== "user"} />
+
+      {#if msg.role === "tool"}
+        <ToolMessage type="waitingOperator" />
+      {:else}
+        <ChatMessage {msg} {avatar} incoming={msg.role !== "operator"} />
+      {/if}
     {/each}
   </main>
 

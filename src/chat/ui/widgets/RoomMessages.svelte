@@ -14,6 +14,7 @@
   import { pb } from "../../../shared/lib/pb";
   import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
   import { chatsProvider } from "../../providers/chats.svelte";
+  import ToolMessage from "../entities/ToolMessage.svelte";
 
   const room = $derived(
     roomsProvider.integrationRooms.find(
@@ -85,7 +86,12 @@
     {:else}
       {#each messages as msg (msg.id)}
         {@const avatar = getAvatar(msg)}
-        <ChatMessage {msg} {avatar} incoming={msg.role !== "operator"} />
+
+        {#if msg.role === "tool"}
+          <ToolMessage type="waitingOperator" />
+        {:else}
+          <ChatMessage {msg} {avatar} incoming={msg.role !== "operator"} />
+        {/if}
       {/each}
     {/if}
   </main>

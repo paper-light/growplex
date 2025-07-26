@@ -66,7 +66,7 @@
         class="chat-footer text-xs opacity-50"
         class:text-base-content={incoming}
         class:text-primary-content={!incoming}
-      >
+  
         {msg.status}
       </div>
     {/if} -->

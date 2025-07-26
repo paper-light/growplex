@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, tick, untrack } from "svelte";
+  import { onMount, tick } from "svelte";
 
   import ThemeForward from "./ThemeForward.svelte";
 
@@ -17,11 +17,10 @@
   let openState: ChatState = $state(initOpen ? "open" : "closed");
 
   let iframeEl: HTMLIFrameElement | null = $state(null);
-  let iframeLoaded = $state(false);
 
   let isMobile = $state(false);
 
-  const iframeSrc = $derived(`${domain}/embed/chat/${chatId}`);
+  const iframeSrc = `${domain}/embed/chat/${chatId}?theme=${initTheme}&open=${initOpen}`;
 
   onMount(async () => {
     const checkMobile = () => {
@@ -62,8 +61,6 @@
     let styles = `
     z-index: 9999;
     position: fixed;
-    background-color: transparent;
-    border: none;
     bottom: 0;
     right: 0;
     border-radius: 0;
@@ -102,29 +99,9 @@
 
     return styles;
   });
-
-  $effect(() => {
-    if (!iframeLoaded) return;
-
-    untrack(() => {
-      // INIT THEME
-      iframeEl!.contentWindow?.postMessage(
-        { type: "theme-change", newTheme: initTheme },
-        "*"
-      );
-
-      // INIT OPEN STATE
-      if (initOpen) {
-        iframeEl!.contentWindow?.postMessage({ type: "chat:open" }, "*");
-      } else {
-        iframeEl!.contentWindow?.postMessage({ type: "chat:close" }, "*");
-      }
-    });
-  });
 </script>
 
 <iframe
-  onload={() => (iframeLoaded = true)}
   allowtransparency
   title="Chat Widget"
   bind:this={iframeEl}

@@ -1,4 +1,4 @@
-import { SvelteMap } from "svelte/reactivity";
+import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { io, type Socket } from "socket.io-client";
 
 import {
@@ -10,6 +10,7 @@ import {
 class SocketProvider {
   socket: Socket | null = null;
 
+  joinedRooms = $state(new SvelteSet<string>());
   histories: Map<string, MessagesResponse[]> = $state(new SvelteMap());
   online = $state(false);
 
@@ -63,12 +64,13 @@ class SocketProvider {
       console.warn("socket not connected, skipping joinRoom");
       return;
     }
-    if (this.histories.has(roomId)) {
+    if (this.joinedRooms.has(roomId)) {
       console.warn("already joined to roomId, skipping joinRoom");
       return;
     }
 
     this.histories.set(roomId, []);
+    this.joinedRooms.add(roomId);
     this.socket.emit("join-room", {
       roomId,
     });
@@ -77,14 +79,14 @@ class SocketProvider {
   leaveRoom(roomId: string) {
     if (!this.histories.has(roomId)) return;
     this.socket?.emit("leave-room", { roomId });
-    this.histories.delete(roomId);
+    this.joinedRooms.delete(roomId);
   }
 
   leaveAllRooms() {
-    this.histories.forEach((_, roomId) => {
+    this.joinedRooms.forEach((roomId) => {
       this.socket?.emit("leave-room", { roomId });
     });
-    this.histories.clear();
+    this.joinedRooms.clear();
   }
 
   sendMessage(
@@ -98,7 +100,7 @@ class SocketProvider {
       console.warn("socket not connected, skipping sendMessage");
       return;
     }
-    if (!this.histories.has(roomId)) {
+    if (!this.joinedRooms.has(roomId)) {
       console.warn(
         "not joined to roomId, skipping sendMessage, roomId:",
         roomId
@@ -123,8 +125,6 @@ class SocketProvider {
 
   disconnect() {
     this.socket?.disconnect();
-    this.online = false;
-    this.histories.clear();
   }
 }
 

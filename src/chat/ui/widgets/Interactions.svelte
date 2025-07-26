@@ -1,14 +1,15 @@
 <script lang="ts">
   import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
-  import { Send } from "@lucide/svelte";
+  import { ChevronsRight, Send } from "@lucide/svelte";
 
   import { userProvider } from "../../../user/user.svelte";
   import { MessagesRoleOptions } from "../../../shared/models/pocketbase-types";
   import { pb } from "../../../shared/lib/pb";
   import { socketProvider } from "../../providers/socket.svelte";
   import { roomsProvider } from "../../providers/rooms.svelte";
+  import Button from "../../../shared/ui/lib/Button.svelte";
 
-  const roomId = $derived(roomsProvider.selectedRoom?.id);
+  const room = $derived(roomsProvider.selectedRoom);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
@@ -23,14 +24,14 @@
   async function sendMessage() {
     if (!canSend) return;
     if (inputText.trim().length === 0) return;
-    if (!roomId) return;
+    if (!room) return;
 
     canSend = false;
 
     socketProvider.sendMessage(
       inputText,
       userProvider.user!.name,
-      roomId,
+      room.id,
       {
         avatar: pb.files.getURL(userProvider.user!, userProvider.user!.avatar),
       },
@@ -64,13 +65,21 @@
       rows="1"
     ></textarea>
 
-    <button
-      disabled={!canSend || inputText.length === 0}
-      onclick={sendMessage}
-      class="btn btn-primary btn-lg btn-circle ml-2"
-      aria-label="Send message"
-    >
-      <Send size={20} />
-    </button>
+    <div class="flex items-center justify-end gap-4">
+      {#if room?.status !== "operator"}
+        <Button style="outline" onclick={() => {}}>Switch to operator</Button>
+      {:else}
+        <Button style="outline" onclick={() => {}}>Switch to assistant</Button>
+      {/if}
+
+      <Button
+        disabled={!canSend ||
+          inputText.trim().length === 0 ||
+          !socketProvider.online}
+        onclick={sendMessage}
+      >
+        <ChevronsRight size={32} />
+      </Button>
+    </div>
   </fieldset>
 </div>

@@ -6,6 +6,8 @@ import Root from "../../../shared/ui/layouts/Root.astro";
 const { chatId } = Astro.params;
 
 if (!chatId) throw new Error("Chat ID is required");
+const initTheme = Astro.url.searchParams.get("theme");
+const initOpen = Astro.url.searchParams.get("open") === "true";
 
 const chat = await pb.collection("chats").getOne(chatId, {
   expand: "integration,integration.agents",
@@ -20,7 +22,13 @@ if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>
-  <Embed chat={chat} agent={agent} client:only />
+  <Embed
+    chat={chat}
+    agent={agent}
+    client:only
+    initTheme={initTheme}
+    initOpen={initOpen}
+  />
 </Root>
 
 <style>

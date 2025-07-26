@@ -16,17 +16,20 @@
   interface Props {
     agent: AgentsResponse;
     chat: ChatsResponse;
+
+    initTheme?: string;
+    initOpen?: boolean;
   }
 
-  let { chat, agent }: Props = $props();
+  let { chat, agent, initTheme, initOpen }: Props = $props();
 
   let token: string | null = $state(null);
-  let open = $state(false);
+  let open = $state(initOpen || false);
 
   let closing = $state(false);
   let opening = $state(false);
 
-  let theme = $state((chat.theme as any)?.production || "light");
+  let theme = $state(initTheme || (chat.theme as any)?.production || "light");
 
   const { roomId, username } = $derived.by(() => {
     if (!token) return { roomId: null, username: null };
@@ -52,10 +55,6 @@
       const { type, ...payload } = event.data || {};
       if (type === "theme-change") {
         theme = payload.newTheme;
-      } else if (type === "chat:open") {
-        open = true;
-      } else if (type === "chat:close") {
-        open = false;
       }
     });
 
@@ -120,7 +119,7 @@
   bind:this={root}
 >
   <div
-    class="fixed top-0 right-0 h-full w-full shadow-lg overflow-hidden inset-0 bg-transparent"
+    class="fixed top-0 right-0 h-full w-full shadow-lg overflow-hidden inset-0 border border-base-300 bg-transparent"
   >
     <Button
       class="absolute top-2 right-2 z-20"
@@ -140,7 +139,7 @@
 
   <!-- FAB Button -->
   {#if !open && !opening && !closing}
-    <div class="fixed bottom-0 right-0 bg-transparent">
+    <div class="fixed bottom-0 right-0">
       <Button class="size-16" color="primary" onclick={openChat} circle>
         <MessageCircle size={32} />
       </Button>

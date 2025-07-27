@@ -5,3 +5,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./pb_data:/pb/pb_data
+    environment:
+      - QDRANT_URL=${QDRANT_URL}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - ENV=${ENV}

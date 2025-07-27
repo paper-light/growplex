@@ -1,7 +1,9 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 onBootstrap((e) => {
-  e.next();
-
   console.log("Growplex initialized!");
+  console.log("ENV:", $os.getenv("ENV"));
+  console.log("QDRANT_URL:", $os.getenv("QDRANT_URL"));
+
+  e.next();
 });

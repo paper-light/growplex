@@ -2,6 +2,7 @@ import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { io, type Socket } from "socket.io-client";
 
 import {
+  MessagesEventOptions,
   MessagesRoleOptions,
   type MessagesRecord,
   type MessagesResponse,

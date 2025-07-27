@@ -16,10 +16,11 @@ import {
   type OrgsResponse,
   type ChatsResponse,
   type DocumentsResponse,
+  MessagesEventOptions,
 } from "../../shared/models/pocketbase-types";
 
 import { extractorService } from "../../rag/extractor";
-import { createDocumentIdsFilter } from "../../rag/filters";
+import { createSourcesFilter } from "../../rag/filters";
 
 import { updateHistory, getHistory } from "../history";
 import { assistantAgent, assistantToolsMap, finalStepAgent } from "../agent";
@@ -33,8 +34,9 @@ export async function callChatAssistant(
   roomId: string
 ): Promise<MessagesResponse[]> {
   // Get integration
-  const { integration, org, agent, chat, sources, documents } =
-    await getIntegrationData(integrationId);
+  const { integration, org, agent, chat, sources } = await getIntegrationData(
+    integrationId
+  );
   const responseMessages: MessagesResponse[] = [];
 
   const { lead, room } = await getLeadData(roomId);
@@ -57,12 +59,13 @@ export async function callChatAssistant(
   const history = buildLlmHistory(rawHistory);
 
   // Get knowledge
-  const docIds = documents?.map((d) => d.id) || [];
-  let knowledge = "";
+  const sourceIds = sources?.map((s) => s.id) || [];
 
+  let knowledge = "";
   try {
     const retriever = await extractorService.createRetriever(org.id, {
-      filter: createDocumentIdsFilter(docIds),
+      filter: createSourcesFilter(sourceIds),
+      k: 100,
     });
     knowledge = await retriever
       .pipe((documents: Document[]) => {
@@ -70,7 +73,10 @@ export async function callChatAssistant(
       })
       .invoke(msg.content);
   } catch (error) {
-    log.error({ error, orgId: org.id, docIds }, "Failed to retrieve knowledge");
+    log.error(
+      { error, orgId: org.id, sourceIds },
+      "Failed to retrieve knowledge"
+    );
     // Continue without knowledge if retrieval fails
     knowledge = "";
   }
@@ -162,6 +168,10 @@ export async function callChatAssistant(
           role: MessagesRoleOptions.tool,
           room: roomId,
           sentBy: agent.name,
+          event:
+            msg.name === "callOperator"
+              ? MessagesEventOptions.wailtingOperator
+              : undefined,
           contentTokensCount: globalEncoderService.countTokens(
             msg.content.toString(),
             "gpt-4"
@@ -257,8 +267,8 @@ async function getIntegrationData(integrationId: string) {
     org: org as OrgsResponse,
     agent: agent as AgentsResponse,
     chat: chat as ChatsResponse,
-    sources: sources as SourcesResponse[],
-    documents: documents as DocumentsResponse[],
+    sources: sources as SourcesResponse[] | null,
+    documents: documents as DocumentsResponse[] | null,
   };
 }
 

@@ -43,36 +43,45 @@ export async function processDomain(
   const results = await fn(validatedDomain, antiBot);
 
   const docs: DocumentsResponse[] = [];
+  const uniqueURLs = new Set<string>();
   for (const result of results) {
-    docs.push(
-      await pb.collection("documents").create({
-        source: source.id,
-        title: result?.metadata?.title || result?.url,
-        status:
-          result.success && result.status_code === 200
-            ? DocumentsStatusOptions.loaded
-            : DocumentsStatusOptions.error,
-        content: result.success
-          ? result.markdown.fit_markdown
-          : result.error_message,
-        metadata: {
-          ...result?.metadata,
-          source: source.id,
-          status_code: result.status_code,
-          success: result.success,
-        },
-      })
-    );
+    if (uniqueURLs.has(result.url)) continue;
+
+    const doc = await pb.collection("documents").create({
+      source: source.id,
+      title: result?.metadata?.title || result?.url,
+      status:
+        result.success && result.status_code === 200
+          ? DocumentsStatusOptions.loaded
+          : DocumentsStatusOptions.error,
+      content: result.success
+        ? result.markdown.fit_markdown
+        : result.error_message,
+      metadata: {
+        ...result?.metadata,
+        sourceId: source.id,
+        status_code: result.status_code,
+        success: result.success,
+        url: result.url,
+      },
+    });
+
+    docs.push(doc);
+    uniqueURLs.add(result.url);
   }
 
   const loadedDocs = docs.filter(
     (d) => d.status === DocumentsStatusOptions.loaded
   );
+
   const metrics = await extractorService.addTexts(
     org.id,
     loadedDocs.map((d) => ({
       content: d.content,
-      metadata: d.metadata as Record<string, any>,
+      metadata: {
+        ...(d.metadata as Record<string, any>),
+        documentId: d.id,
+      },
     })),
     projectId
   );

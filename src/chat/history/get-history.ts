@@ -4,6 +4,7 @@ import { redisClient } from "../../shared/lib/redis";
 import { logger } from "../../shared/lib/logger";
 
 import {
+  MessagesEventOptions,
   MessagesRoleOptions,
   type MessagesRecord,
   type MessagesResponse,

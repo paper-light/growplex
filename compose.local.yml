@@ -1,0 +1,44 @@
+services:
+  pb:
+    build:
+      context: ./pb
+      dockerfile: Dockerfile
+    volumes:
+      - ./pb/pb_migrations:/pb/pb_migrations
+      - ./pb/pb_hooks:/pb/pb_hooks
+      - ./pb/pb_data:/pb/pb_data
+    ports:
+      - "8080:8080"
+    environment:
+      - QDRANT_URL=${PB_QDRANT_URL}
+      - ENV=${ENV}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+    env_file:
+      - .env
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - 6333:6333
+    volumes:
+      - ./qdrant/data:/qdrant/storage
+    environment:
+      QDRANT__AUTH__ENABLE: true
+      QDRANT__AUTH__API_KEY: ${QDRANT_API_KEY}
+      QDRANT__STORAGE__PATH: /qdrant/storage
+      QDRANT__STORAGE__VECTOR_CACHE_SIZE: 1000000000
+      QDRANT__STORAGE__VECTOR_CACHE_TTL: 604800
+    env_file:
+      - .env
+
+  redis:
+    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    ports:
+      - "6389:6379"
+    volumes:
+      - ./redis/data:/redis/data
+
+  crawl4ai:
+    image: unclecode/crawl4ai:0.6.0-r2
+    ports:
+      - "11235:11235"

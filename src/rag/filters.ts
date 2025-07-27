@@ -18,7 +18,7 @@ export function createSourcesFilter(sources: string[]) {
 
   return {
     must: sources.map((source) => ({
-      key: "metadata.source",
+      key: "metadata.sourceId",
       match: { value: source },
     })),
   };

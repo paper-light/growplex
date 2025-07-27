@@ -6,10 +6,10 @@
   import Button from "../../shared/ui/lib/Button.svelte";
   import Modal from "../../shared/ui/lib/Modal.svelte";
   import { settingsProvider } from "../../user/settings.svelte";
-  import { pb } from "../../shared/lib/pb";
 
   interface Props {
     projectId: string;
+    integrationId?: string;
     class?: ClassValue;
     domain: string;
     disabled?: boolean;
@@ -17,6 +17,7 @@
 
   const {
     projectId,
+    integrationId,
     domain,
     class: className = "",
     disabled = false,
@@ -30,11 +31,11 @@
     const res = await actions.indexWeb({
       projectId,
       url: domain,
+      integrationId,
     });
     if (!res.data?.ok) return;
 
-    const source = await pb.collection("sources").getOne(res.data.sourceId);
-    settingsProvider.selectSource(source.id);
+    settingsProvider.selectSource(res.data.sourceId);
   }
 </script>
 

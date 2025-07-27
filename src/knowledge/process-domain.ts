@@ -3,7 +3,6 @@ import { dummyCrawlUrls, crawlRawHTMLs, deepCrawlUrls } from "../crawler/crawl";
 import { parseSitemaps } from "../crawler/parse-sitemaps";
 import { validateDomain } from "../crawler/utils";
 import {
-  SourcesTypeOptions,
   type DocumentsResponse,
   DocumentsStatusOptions,
 } from "../shared/models/pocketbase-types";
@@ -16,6 +15,7 @@ import type { ProcessMode } from "./types";
 export async function processDomain(
   projectId: string,
   domain: string,
+  integrationId?: string,
   mode: ProcessMode = "auto",
   antiBot = false
 ) {
@@ -24,17 +24,21 @@ export async function processDomain(
 
   const org = await pb
     .collection("orgs")
-    .getFirstListItem(`projects.id ?= "${projectId}"`);
+    .getFirstListItem(`projects_via_org.id ?= "${projectId}"`);
   const source = await pb.collection("sources").create({
     name: validatedDomain,
     type: "web",
+    project: projectId,
     metadata: {
       domain,
     },
   });
-  await pb.collection("projects").update(projectId, {
-    "sources+": [source.id],
-  });
+
+  if (integrationId) {
+    await pb.collection("integrations").update(integrationId, {
+      "sources+": [source.id],
+    });
+  }
 
   const results = await fn(validatedDomain, antiBot);
 
@@ -42,10 +46,12 @@ export async function processDomain(
   for (const result of results) {
     docs.push(
       await pb.collection("documents").create({
+        source: source.id,
         title: result?.metadata?.title || result?.url,
-        status: result.success
-          ? DocumentsStatusOptions.loaded
-          : DocumentsStatusOptions.error,
+        status:
+          result.success && result.status_code === 200
+            ? DocumentsStatusOptions.loaded
+            : DocumentsStatusOptions.error,
         content: result.success
           ? result.markdown.fit_markdown
           : result.error_message,
@@ -53,19 +59,16 @@ export async function processDomain(
           ...result?.metadata,
           source: source.id,
           status_code: result.status_code,
+          success: result.success,
         },
       })
     );
   }
-  await pb.collection("sources").update(source.id, {
-    documents: docs.map((d) => d.id),
-  });
 
   const loadedDocs = docs.filter(
     (d) => d.status === DocumentsStatusOptions.loaded
   );
-
-  await extractorService.addTexts(
+  const metrics = await extractorService.addTexts(
     org.id,
     loadedDocs.map((d) => ({
       content: d.content,
@@ -73,6 +76,17 @@ export async function processDomain(
     })),
     projectId
   );
+
+  for (const [index, doc] of loadedDocs.entries()) {
+    await pb.collection("documents").update(doc.id, {
+      chunkCount: metrics.documentMetrics[index].chunkCount,
+      tokenCount: metrics.documentMetrics[index].tokenCount,
+    });
+  }
+
+  await pb.collection("sources").update(source.id, {
+    indexed: new Date().toISOString(),
+  });
 
   return { source, docs, loadedDocs };
 }

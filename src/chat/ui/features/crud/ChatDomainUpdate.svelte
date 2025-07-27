@@ -33,6 +33,7 @@
 
 <div class={className}>
   <Input
+    {disabled}
     ghost
     size="sm"
     color="neutral"

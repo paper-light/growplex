@@ -1,28 +1,61 @@
 import type { Document } from "@langchain/core/documents";
 
-import { splitTextIntoDocuments } from "./chunker";
+import { splitTextIntoDocuments, getTotalTokenCount } from "./chunker";
 import { createMultiProjectFilter } from "./filters";
 import { createOrgVectorStore } from "./storage";
 
 // -------------------------PUBLIC-------------------------
+
+export interface DocumentMetrics {
+  chunkCount: number;
+  tokenCount: number;
+}
+
+export interface AddTextsResult {
+  documentMetrics: DocumentMetrics[];
+  totalChunks: number;
+  totalTokens: number;
+}
 
 export const extractorService = {
   async addTexts(
     orgId: string,
     textObjs: Array<{ content: string; metadata?: Record<string, any> }>,
     projectId?: string
-  ) {
+  ): Promise<AddTextsResult> {
     const allDocuments: Document[] = [];
+    const documentMetrics: DocumentMetrics[] = [];
 
     for (const textObj of textObjs) {
       const documents = await splitTextIntoDocuments(
         textObj.content,
         textObj.metadata || {}
       );
+
+      // Calculate metrics for this document
+      const chunkCount = documents.length;
+      const tokenCount = getTotalTokenCount(documents);
+
+      documentMetrics.push({
+        chunkCount,
+        tokenCount,
+      });
+
       allDocuments.push(...documents);
     }
 
-    return await this.addDocuments(orgId, allDocuments, projectId);
+    // Add documents to vector store
+    await this.addDocuments(orgId, allDocuments, projectId);
+
+    // Calculate totals
+    const totalChunks = allDocuments.length;
+    const totalTokens = getTotalTokenCount(allDocuments);
+
+    return {
+      documentMetrics,
+      totalChunks,
+      totalTokens,
+    };
   },
 
   async addDocuments(orgId: string, documents: Document[], projectId?: string) {

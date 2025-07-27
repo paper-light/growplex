@@ -24,7 +24,7 @@
   );
   const webSource = $derived(sources.find((s) => s.type === "web") || null);
 
-  let domain = $derived(chat?.domain ?? "");
+  const domain = $derived(chat?.domain ?? "");
 </script>
 
 <Card title="Chat" class="space-y-4 max-w-2xl mx-auto">
@@ -42,6 +42,7 @@
           <DomainConnect
             projectId={project?.id || ""}
             {domain}
+            integrationId={integartion?.id}
             disabled={!!webSource || !domain.trim()}
           />
           {#if webSource}

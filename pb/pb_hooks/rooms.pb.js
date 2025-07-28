@@ -2,7 +2,8 @@
 
 onRecordDelete((e) => {
   $app.runInTransaction((txApp) => {
-    if (e.record.get("status") !== "preview") return;
+    if (e.record.get("status") !== "preview" || e.record.get("chat") === "")
+      return;
 
     const col = txApp.findCollectionByNameOrId("rooms");
     const room = new Record(col);

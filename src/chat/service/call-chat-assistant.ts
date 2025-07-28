@@ -59,30 +59,31 @@ export async function callChatAssistant(
   const history = buildLlmHistory(rawHistory);
 
   // Get knowledge
-  const sourceIds = sources?.map((s) => s.id) || [];
-
   let knowledge = "";
-  try {
-    const retriever = await extractorService.createRetriever(org.id, {
-      filter: createSourcesFilter(sourceIds),
-      k: 100,
-    });
-    knowledge = await retriever
-      .pipe((documents: Document[]) => {
-        return documents.map((document) => document.pageContent).join("\n\n");
-      })
-      .invoke(msg.content);
-  } catch (error) {
-    log.error(
-      { error, orgId: org.id, sourceIds },
-      "Failed to retrieve knowledge"
-    );
-    // Continue without knowledge if retrieval fails
-    knowledge = "";
+  const sourceIds = sources?.map((s) => s.id) || [];
+  console.log("sourceIds", sourceIds);
+
+  if (sourceIds.length > 0) {
+    try {
+      const retriever = await extractorService.createRetriever(org.id, {
+        filter: createSourcesFilter(sourceIds),
+        k: 100,
+      });
+      knowledge = await retriever
+        .pipe((documents: Document[]) => {
+          return documents.map((document) => document.pageContent).join("\n\n");
+        })
+        .invoke(msg.content);
+    } catch (error) {
+      log.error(
+        { error, orgId: org.id, sourceIds },
+        "Failed to retrieve knowledge"
+      );
+    }
   }
 
   log.info({
-    knowledge,
+    knowledgeLength: knowledge.length,
     historyLength: history.length - 1,
     msg: msg.content,
   });
@@ -250,7 +251,7 @@ async function getIntegrationData(integrationId: string) {
     .collection("integrations")
     .getOne(integrationId, {
       expand:
-        "agents,sources,project,project.org,chats_via_integration,sources.documents_via_sources",
+        "agents,sources,project,project.org,chats_via_integration,sources.documents_via_source",
     });
 
   const org = (integration.expand as any).project.expand.org;

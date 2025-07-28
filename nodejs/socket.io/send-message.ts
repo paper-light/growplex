@@ -42,7 +42,6 @@ export async function sendMessage(
       message: msgs[0],
     });
 
-    // SPECIFIC BY ROLE
     if (socket.data.guest) {
       // GUEST: SEEDED -> AUTO
       if (room.status === "seeded") {

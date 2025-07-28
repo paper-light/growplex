@@ -10,6 +10,7 @@
     id?: string;
     class?: ClassValue;
     children?: any;
+    onclose?: () => void;
   }
 
   let {
@@ -17,6 +18,7 @@
     class: className = "",
     open = $bindable(false),
     children,
+    onclose,
   }: Props = $props();
 </script>
 
@@ -28,7 +30,10 @@
         <Button
           color="neutral"
           style="ghost"
-          onclick={() => (open = false)}
+          onclick={() => {
+            open = false;
+            onclose?.();
+          }}
           circle
         >
           <X size={24} />

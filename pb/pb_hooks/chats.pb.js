@@ -5,6 +5,8 @@ onRecordCreate((e) => {
 
   $app.runInTransaction((txApp) => {
     // Set default values
+    if (!e.record.get("type")) e.record.set("type", "web");
+
     if (!e.record.get("name"))
       e.record.set("name", `Chat ${e.record.id.slice(0, 4)}`);
 

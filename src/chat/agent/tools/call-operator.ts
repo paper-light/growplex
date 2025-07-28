@@ -20,7 +20,7 @@ export const callOperator = tool(
     if (!room)
       throw new Error("Call operator tool call error: Room is not set");
 
-    if (room.type === "preview") {
+    if (room.status === "preview") {
       return {
         success: true,
         content: `Cannot call operator in preview mode`,

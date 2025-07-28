@@ -18,13 +18,13 @@ onRecordDelete((e) => {
     const res = $http.send({
       url: `${$os.getenv(
         "QDRANT_URL"
-      )}/collections/${collectionName}/points/delete`,
+      )}/collections/${collectionName}/points/delete?wait=true`,
       headers: {
         "Content-Type": "application/json",
         "api-key": $os.getenv("QDRANT_API_KEY"),
       },
       method: "POST",
-      body: {
+      body: JSON.stringify({
         filter: {
           must: [
             {
@@ -33,10 +33,10 @@ onRecordDelete((e) => {
             },
           ],
         },
-      },
+      }),
     });
 
-    if (res.statusCode != 200) {
+    if (res.statusCode !== 200) {
       throw new Error("Failed to delete document from Qdrant");
     }
   });

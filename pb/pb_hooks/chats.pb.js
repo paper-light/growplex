@@ -2,7 +2,9 @@
 
 onRecordCreate((e) => {
   e.next();
+
   $app.runInTransaction((txApp) => {
+    // Set default values
     if (!e.record.get("name"))
       e.record.set("name", `Chat ${e.record.id.slice(0, 4)}`);
 
@@ -22,7 +24,6 @@ onRecordCreate((e) => {
       console.log("Creating default theme for chat", e.record.id, initTheme);
       e.record.set("theme", JSON.stringify(initTheme));
     }
-
     txApp.save(e.record);
 
     // Create a preview room for the chat
@@ -32,4 +33,35 @@ onRecordCreate((e) => {
     room.set("status", "preview");
     txApp.save(room);
   });
+}, "chats");
+
+onRecordUpdate((e) => {
+  $app.runInTransaction((txApp) => {
+    const domain = e.record.get("domain");
+    const tgToken = e.record.get("tgToken");
+    if (domain) {
+      console.log("Checking domain", domain);
+      const allChats = txApp.findRecordsByFilter(
+        "chats",
+        `domain = "${domain}"`
+      );
+      const selfUpdate =
+        allChats.length === 1 && allChats[0].id === e.record.id;
+      if (!selfUpdate && allChats.length > 0)
+        throw new Error("Domain already in use");
+    }
+    if (tgToken) {
+      console.log("Checking telegram token", tgToken);
+      const allChats = txApp.findRecordsByFilter(
+        "chats",
+        `tgToken = "${tgToken}"`
+      );
+      const selfUpdate =
+        allChats.length === 1 && allChats[0].id === e.record.id;
+      if (!selfUpdate && allChats.length > 0)
+        throw new Error("Telegram token already in use");
+    }
+  });
+
+  e.next();
 }, "chats");

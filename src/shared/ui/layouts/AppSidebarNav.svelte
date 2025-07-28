@@ -9,6 +9,7 @@
     CreditCard,
     Ticket,
     Rocket,
+    Blocks,
   } from "@lucide/svelte";
 
   interface Props {
@@ -52,11 +53,26 @@
 
     <li class="w-full">
       <details class="group block w-full" open={true}>
-        <summary class={classHeader(["Agents", "Chats", "Knowledge"])}>
+        <summary
+          class={classHeader([
+            "Integrations",
+            "Agents",
+            "Chats",
+            "Knowledge",
+            "Operators",
+          ])}
+        >
           <span>Resources</span>
         </summary>
 
         <ul class="mt-2 space-y-1">
+          <li class="w-full">
+            <a href={`/app/integrations`} class={linkClass("Integrations")}>
+              <Blocks size={18} />
+              Integrations
+            </a>
+          </li>
+
           <li class="w-full">
             <span
               class={["text-left", linkClass("Agents", true)]}

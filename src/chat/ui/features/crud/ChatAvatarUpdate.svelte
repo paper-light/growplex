@@ -10,8 +10,12 @@
     chat: ChatsResponse | null;
     class?: ClassValue;
   }
-  
+
   let { chat, class: className = "" }: Props = $props();
+
+  const avatar = $derived(
+    chat?.avatar ? pb.files.getURL(chat, chat.avatar) : null
+  );  
 
   async function handleAvatarChange(file: File) {
     if (!chat) return;
@@ -25,7 +29,7 @@
 
 <AvatarInput
   class={className}
-  avatar={chat?.avatar ? pb.files.getURL(chat, chat.avatar) : null}
+  {avatar}
   size="md"
   onChange={handleAvatarChange}
 />

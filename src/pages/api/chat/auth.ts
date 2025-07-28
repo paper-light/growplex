@@ -34,20 +34,20 @@ export async function POST({ request }: { request: Request }) {
         headers: CORS_HEADERS,
       });
 
-    try {
-      new URL(chat.domain);
-      new URL(origin);
-    } catch {
-      return new Response("Invalid domain format", {
-        status: 400,
-        headers: CORS_HEADERS,
-      });
-    }
+    // try {
+    //   new URL(chat.domain);
+    //   new URL(origin);
+    // } catch {
+    //   return new Response("Invalid domain format", {
+    //     status: 400,
+    //     headers: CORS_HEADERS,
+    //   });
+    // }
 
-    const originHost = new URL(origin).hostname;
-    const monoHost = new URL(MONO_URL).hostname;
+    // const originHost = new URL(origin).hostname;
+    // const monoHost = new URL(MONO_URL).hostname;
 
-    if (chat.domain !== origin && originHost !== monoHost) {
+    if (chat.domain !== origin) {
       return new Response("Forbidden", {
         status: 403,
         headers: CORS_HEADERS,

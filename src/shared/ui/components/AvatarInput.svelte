@@ -43,8 +43,8 @@
     const input = e.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      selectedFile = file;
-      previewUrl = URL.createObjectURL(file);
+      // selectedFile = file;
+      // previewUrl = URL.createObjectURL(file);
 
       if (onChange) {
         onChange(file);

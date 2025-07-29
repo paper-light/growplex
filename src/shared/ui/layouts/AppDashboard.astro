@@ -77,6 +77,19 @@ const { title, favicon = "/LOGO.png" } = Astro.props;
       <aside
         class="w-72 lg:w-64 bg-base-100 border-r border-base-300 p-4 flex flex-col h-screen"
       >
+        <div
+          class="flex items-center justify-center gap-2 mb-4 select-none relative"
+        >
+          <img src="/LOGO.png" alt="Logo" class="size-8" />
+          <h1 class="text-xl font-semibold text-primary">Growplex</h1>
+
+          <div
+            class="absolute -top-2 right-2 badge badge-info badge-sm font-semibold"
+          >
+            Beta
+          </div>
+        </div>
+
         <OrgProjectSelect client:only transition:persist="org-project-select" />
 
         <!-- <div class="divider w-full"></div> -->

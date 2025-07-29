@@ -70,7 +70,7 @@
     Connect <Rocket class="size-4" />
   </Button>
   {#if !domain}
-    <p class="text-sm text-error">
+    <p class="text-sm text-error text-center">
       You need to set domain, where your agent will be hosted.
     </p>
   {/if}

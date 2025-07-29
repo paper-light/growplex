@@ -12,6 +12,7 @@
     image?: {
       src: string;
       alt: string;
+      styles?: string;
       mode?: "default" | "side" | "full";
     };
   }
@@ -58,7 +59,7 @@
 >
   {#if image}
     <figure>
-      <img src={image.src} alt={image.alt} />
+      <img src={image.src} alt={image.alt} class={image.styles} />
     </figure>
   {/if}
   <div class="card-body">

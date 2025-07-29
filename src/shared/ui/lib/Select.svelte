@@ -4,7 +4,7 @@
 
   interface Props {
     class?: ClassValue;
-    onchange: (e: Event) => void;
+    onchange?: (e: Event) => void;
     value?: string;
     disabled?: boolean;
     size?: "xs" | "sm" | "md" | "lg" | "xl";

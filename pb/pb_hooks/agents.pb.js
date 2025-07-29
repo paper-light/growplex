@@ -1,6 +1,8 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 onRecordCreate((e) => {
+  e.next();
+
   $app.runInTransaction((txApp) => {
     if (!e.record.get("name"))
       e.record.set("name", `Agent ${e.record.id.slice(0, 4)}`);
@@ -9,7 +11,7 @@ onRecordCreate((e) => {
       e.record.set("system", "Add >_< after each message");
 
     if (!e.record.get("provider")) e.record.set("provider", "openai");
-  });
 
-  e.next();
+    txApp.save(e.record);
+  });
 }, "agents");

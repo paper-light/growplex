@@ -74,31 +74,22 @@
           </li>
 
           <li class="w-full">
-            <span
-              class={["text-left", linkClass("Agents", true)]}
-              title="Coming soon"
-            >
+            <a href={`/app/agents`} class={linkClass("Agents")}>
               <Bot size={18} />
               Agents
-            </span>
+            </a>
           </li>
           <li class="w-full">
-            <span
-              class={["text-left", linkClass("Chats", true)]}
-              title="Coming soon"
-            >
+            <a href={`/app/chats`} class={linkClass("Chats")}>
               <MessageSquare size={18} />
               Chats
-            </span>
+            </a>
           </li>
           <li class="w-full">
-            <span
-              class={["text-left", linkClass("Knowledge", true)]}
-              title="Coming soon"
-            >
+            <a href={`/app/knowledge`} class={linkClass("Knowledge")}>
               <BookOpen size={18} />
               Knowledge
-            </span>
+            </a>
           </li>
           <li class="w-full">
             <span
@@ -144,16 +135,16 @@
 
         <ul class="mt-2 space-y-1">
           <li class="w-full">
-            <span class={linkClass("Analytics", true)} title="Coming soon">
+            <a href={`/app/analytics`} class={linkClass("Analytics")}>
               <ChartBar size={18} />
               Analytics
-            </span>
+            </a>
           </li>
           <li class="w-full">
-            <span class={linkClass("Billing", true)} title="Coming soon">
+            <a href={`/app/billing`} class={linkClass("Billing")}>
               <CreditCard size={18} />
               Billing
-            </span>
+            </a>
           </li>
         </ul>
       </details>

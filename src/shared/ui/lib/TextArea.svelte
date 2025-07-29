@@ -5,6 +5,7 @@
   interface Props {
     el?: HTMLTextAreaElement;
     class?: ClassValue;
+    name?: string;
     disabled?: boolean;
     ghost?: boolean;
     grow?: boolean;
@@ -43,6 +44,7 @@
     rows = 4,
     placeholder = "",
     resize = "none",
+    name,
     oninput,
     onblur,
     onfocus,
@@ -95,6 +97,7 @@
       resizeClasses[resize],
       className,
     ]}
+    {name}
     {disabled}
     {placeholder}
     bind:value

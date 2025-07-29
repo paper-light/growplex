@@ -13,12 +13,14 @@
   <div class="space-y-4">
     <AgentSelect />
 
-    <div class="flex gap-6 mb-2">
-      <AgentAvatarUpdate {agent} class="flex-1 max-w-24" />
+    {#if agent}
+      <div class="flex gap-6 mb-2">
+        <AgentAvatarUpdate {agent} class="flex-1 max-w-24" />
 
-      <AgentNameUpdate {agent} class="flex-1" />
-    </div>
+        <AgentNameUpdate {agent} class="flex-1" />
+      </div>
 
-    <AgentSystemUpdate {agent} />
+      <AgentSystemUpdate {agent} />
+    {/if}
   </div>
 </Card>

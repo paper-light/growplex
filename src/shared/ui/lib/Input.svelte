@@ -8,6 +8,7 @@
     placeholder?: string;
     ghost?: boolean;
     required?: boolean;
+    name?: string;
     color?:
       | "primary"
       | "secondary"
@@ -36,6 +37,7 @@
     class: className = "",
     ghost = false,
     required = false,
+    name,
     color = "primary",
     size = "md",
     type = "text",
@@ -96,6 +98,7 @@
 
     <input
       class="grow outline-none ring-0"
+      {name}
       {type}
       {required}
       {disabled}

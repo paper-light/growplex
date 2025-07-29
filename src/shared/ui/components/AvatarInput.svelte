@@ -46,9 +46,7 @@
       // selectedFile = file;
       // previewUrl = URL.createObjectURL(file);
 
-      if (onChange) {
-        onChange(file);
-      }
+      onChange?.(file);
     }
   }
 
@@ -78,6 +76,7 @@
     <!-- Edit Icon Overlay -->
     {#if !disabled}
       <button
+        type="button"
         aria-label="Edit avatar"
         onclick={triggerFileInput}
         class="hover:cursor-pointer absolute inset-0 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"

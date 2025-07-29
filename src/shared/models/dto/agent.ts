@@ -2,7 +2,7 @@ import { z } from "zod";
 import { AgentsProviderOptions } from "../pocketbase-types";
 
 export const CreateAgentDTOSchema = z.object({
-  projectId: z.string().min(1),
+  project: z.string().min(1),
 
   name: z.string().optional(),
   system: z.string().optional(),

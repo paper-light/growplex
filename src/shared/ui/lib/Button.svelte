@@ -16,6 +16,7 @@
       | "neutral";
     style?: "solid" | "outline" | "ghost" | "link" | "dash" | "soft";
     size?: "xs" | "sm" | "md" | "lg" | "xl";
+    type?: "button" | "submit" | "reset";
     disabled?: boolean;
     active?: boolean;
     block?: boolean;
@@ -31,6 +32,7 @@
     color = "primary",
     style = "solid",
     size = "md",
+    type = "button",
     disabled = false,
     active = false,
     block = false,
@@ -70,6 +72,7 @@
 </script>
 
 <button
+  {type}
   {onclick}
   {disabled}
   class={[

@@ -2,10 +2,10 @@
   import type { ClassValue } from "svelte/elements";
   import { Pencil } from "@lucide/svelte";
 
-  import { debounce } from "../../../shared/helpers/debounce";
-  import Input from "../../../shared/ui/lib/Input.svelte";
-  import type { AgentsResponse } from "../../../shared/models/pocketbase-types";
-  import { agentCrud } from "../../repositories/agent-crud";
+  import { debounce } from "@/shared/helpers/debounce";
+  import Input from "@/shared/ui/lib/Input.svelte";
+  import type { AgentsResponse } from "@/shared/models/pocketbase-types";
+  import { agentCrud } from "@/agent/repositories/agent-crud";
 
   const DEBOUNCE_TIME = 1.2 * 1000;
 

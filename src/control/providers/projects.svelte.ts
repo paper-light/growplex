@@ -1,6 +1,6 @@
-import { pb } from "../../shared/lib/pb";
-import { settingsProvider } from "../../user/settings.svelte";
-import type { ProjectsResponse } from "../../shared/models/pocketbase-types";
+import { pb } from "@/shared/lib/pb";
+import { settingsProvider } from "@/user/settings.svelte";
+import type { ProjectsResponse } from "@/shared/models/pocketbase-types";
 
 class ProjectsProvider {
   private subscribed = false;

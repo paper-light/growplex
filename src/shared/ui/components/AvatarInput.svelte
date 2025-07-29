@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import Thalia from "../../assets/Thalia.jpg";
+  import Thalia from "@/shared/assets/Thalia.jpg";
 
   interface Props {
     class?: ClassValue;
@@ -10,6 +10,7 @@
     size?: "sm" | "md" | "lg";
     onChange?: (file: File) => void;
     disabled?: boolean;
+    mode?: "form" | "action";
   }
 
   let {
@@ -19,6 +20,7 @@
     size = "md",
     onChange,
     disabled = false,
+    mode = "action",
   }: Props = $props();
 
   let fileInput: HTMLInputElement | null = $state(null);
@@ -34,9 +36,7 @@
   };
 
   function triggerFileInput() {
-    if (!disabled) {
-      fileInput?.click();
-    }
+    if (!disabled) fileInput?.click();
   }
 
   function handleFileChange(e: Event) {
@@ -44,19 +44,14 @@
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       // selectedFile = file;
-      // previewUrl = URL.createObjectURL(file);
 
-      onChange?.(file);
+      if (mode === "form") {
+        previewUrl = URL.createObjectURL(file);
+      } else {
+        onChange?.(file);
+      }
     }
   }
-
-  $effect(() => {
-    return () => {
-      if (previewUrl) {
-        URL.revokeObjectURL(previewUrl);
-      }
-    };
-  });
 </script>
 
 <div class={className}>
@@ -101,6 +96,7 @@
   <!-- Hidden File Input -->
   <input
     bind:this={fileInput}
+    name="avatar"
     type="file"
     accept="image/*"
     class="hidden"

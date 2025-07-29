@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy, onMount, untrack } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import { MessageCircle, X } from "@lucide/svelte";
 
   import type {
@@ -7,11 +7,11 @@
     AgentsResponse,
     RoomsResponse,
     UsersResponse,
-  } from "../../../shared/models/pocketbase-types.ts";
-  import { socketProvider } from "../../../chat/providers/socket.svelte";
-  import Button from "../../../shared/ui/lib/Button.svelte";
+  } from "@/shared/models/pocketbase-types.ts";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
 
-  import Chat from "../../../chat/ui/widgets/Chat.svelte";
+  import Chat from "@/chat/ui/widgets/Chat.svelte";
 
   interface Props {
     user: UsersResponse | { name: string };

@@ -3,9 +3,9 @@
   import type { ClassValue } from "svelte/elements";
   import { Rocket } from "@lucide/svelte";
 
-  import Button from "../../shared/ui/lib/Button.svelte";
-  import Modal from "../../shared/ui/lib/Modal.svelte";
-  import { settingsProvider } from "../../user/settings.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import Modal from "@/shared/ui/lib/Modal.svelte";
+  import { settingsProvider } from "@/user/settings.svelte";
 
   interface Props {
     projectId: string;

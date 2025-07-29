@@ -1,17 +1,18 @@
 <script lang="ts">
-  import Thalia from "../../../shared/assets/thalia.jpg";
-  import Input from "../../../shared/ui/lib/Input.svelte";
-  import { agentsProvider } from "../../../agent/providers/agents.svelte";
-  import Select from "../../../shared/ui/lib/Select.svelte";
-  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
-  import Card from "../../../shared/ui/lib/Card.svelte";
-  import Modal from "../../../shared/ui/lib/Modal.svelte";
-  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
-  import AvatarInput from "../../../shared/ui/components/AvatarInput.svelte";
-  import { agentCrud } from "../../../agent/repositories/agent-crud";
-  import { pb } from "../../../shared/lib/pb";
-  import Button from "../../../shared/ui/lib/Button.svelte";
-  import { projectsProvider } from "../../../control/providers/projects.svelte";
+  import Thalia from "@/shared/assets/thalia.jpg";
+  import Input from "@/shared/ui/lib/Input.svelte";
+  import { agentsProvider } from "@/agent/providers/agents.svelte";
+  import Select from "@/shared/ui/lib/Select.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
+  import Card from "@/shared/ui/lib/Card.svelte";
+  import Modal from "@/shared/ui/lib/Modal.svelte";
+  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import { agentCrud } from "@/agent/repositories/agent-crud";
+  import { pb } from "@/shared/lib/pb";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import AgentCreate from "@/agent/ui/features/AgentCreate.svelte";
+  import AgentAvatarUpdate from "@/agent/ui/features/AgentAvatarUpdate.svelte";
 
   let filterIntegrationId = $state("");
   let filterName = $state("");
@@ -62,6 +63,7 @@
         bind:value={filterName}
         placeholder="Search Agents"
       />
+
       <Select
         class="w-fit max-w-64"
         bind:value={filterIntegrationId}
@@ -70,6 +72,7 @@
       >
         All integrations
       </Select>
+
       <Button
         onclick={() => {
           filterName = "";
@@ -78,19 +81,13 @@
         color="neutral"
         style="outline">Clear</Button
       >
-      <Button
-        onclick={async () => {
-          if (!project) return;
 
-          const newAgent = await agentCrud.create({
-            project: project.id,
-          });
-
-          editAgentId = newAgent.id;
+      <AgentCreate
+        projectId={project?.id || ""}
+        afterCreate={(agent) => {
+          editAgentId = agent.id;
         }}
-        color="primary"
-        style="outline">+ New Agent</Button
-      >
+      />
     </div>
   </div>
 
@@ -126,13 +123,15 @@
       if (!editAgent) return;
       e.preventDefault();
 
+      const inputAvatar = (e.currentTarget as any).avatar.files?.[0] || null;
       const inputName = (e.currentTarget as any).name.value;
       const inputSystem = (e.currentTarget as any).system.value;
 
-      console.log(inputName, inputSystem);
+      console.log(inputAvatar, inputName, inputSystem);
 
       await agentCrud.update({
         id: editAgent.id,
+        avatar: inputAvatar,
         name: inputName,
         system: inputSystem,
       });
@@ -141,21 +140,7 @@
     }}
   >
     <div class="flex gap-4">
-      <AvatarInput
-        onChange={(file) => {
-          if (!file || !editAgent) return;
-
-          agentCrud.update({
-            id: editAgent.id,
-            avatar: file,
-          });
-
-          editAgentEnd();
-        }}
-        avatar={editAgent
-          ? pb.files.getURL(editAgent, editAgent?.avatar)
-          : undefined}
-      />
+      <AgentAvatarUpdate mode="form" agent={editAgent} />
 
       <div class="flex-1 space-y-4">
         <Input

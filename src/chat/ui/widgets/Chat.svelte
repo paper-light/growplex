@@ -1,17 +1,17 @@
 <script lang="ts">
   import { untrack } from "svelte";
 
-  import Thalia from "../../../shared/assets/thalia.jpg";
+  import Thalia from "@/shared/assets/thalia.jpg";
   import {
     type ChatsResponse,
     type AgentsResponse,
     type RoomsResponse,
     type UsersResponse,
-  } from "../../../shared/models/pocketbase-types";
-  import { pb } from "../../../shared/lib/pb";
+  } from "@/shared/models/pocketbase-types";
+  import { pb } from "@/shared/lib/pb";
 
-  import { socketProvider } from "../../providers/socket.svelte";
-  import { injectTheme } from "../../utils/injectTheme";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { injectTheme } from "@/chat/utils/injectTheme";
 
   import Interactions from "./Interactions.svelte";
   import Messages from "./Messages.svelte";

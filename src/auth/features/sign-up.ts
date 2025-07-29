@@ -1,4 +1,4 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 
 export const signUp = async (
   email: string,

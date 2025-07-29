@@ -1,10 +1,10 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   CreateChatDTOSchema,
   type CreateChatDTO,
   UpdateChatDTOSchema,
   type UpdateChatDTO,
-} from "../../shared/models/dto/chat";
+} from "@/shared/models/dto/chat";
 
 export const chatCrud = {
   async create(raw: CreateChatDTO) {

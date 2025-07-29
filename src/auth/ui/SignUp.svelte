@@ -1,11 +1,12 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
-  
-  import { signIn } from "../features/sign-in";
-  import { signUp } from "../features/sign-up";
-  import Oauth from "./Oauth.svelte";
-  import type { AuthError } from "../lib/models";
-  import { pb } from "../../shared/lib/pb";
+
+  import { pb } from "@/shared/lib/pb";
+
+  import { signIn } from "@/auth/features/sign-in";
+  import { signUp } from "@/auth/features/sign-up";
+  import Oauth from "@/auth/ui/Oauth.svelte";
+  import type { AuthError } from "@/auth/lib/models";
 
   let username = $state("");
   let email = $state("");

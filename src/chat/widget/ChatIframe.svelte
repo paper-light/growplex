@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount, tick } from "svelte";
 
-  import { authGuest } from "../../auth/utils/auth-guest";
+  import { authGuest } from "@/auth/utils/auth-guest";
 
   import ThemeForward from "./ThemeForward.svelte";
 

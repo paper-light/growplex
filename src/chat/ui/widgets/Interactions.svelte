@@ -4,14 +4,14 @@
   import type {
     RoomsResponse,
     UsersResponse,
-  } from "../../../shared/models/pocketbase-types";
-  import { userProvider } from "../../../user/user.svelte";
-  import { roomsProvider } from "../../providers/rooms.svelte";
-  import Button from "../../../shared/ui/lib/Button.svelte";
+  } from "@/shared/models/pocketbase-types";
+  import { userProvider } from "@/user/user.svelte";
+  import { roomsProvider } from "@/chat/providers/rooms.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
 
-  import SendMessage from "../features/SendMessage.svelte";
-  import MessageField from "../features/MessageField.svelte";
-  import { socketProvider } from "../../providers/socket.svelte";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import SendMessage from "@/chat/ui/features/SendMessage.svelte";
+  import MessageField from "@/chat/ui/features/MessageField.svelte";
 
   const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
   interface Props {

@@ -1,10 +1,10 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import AvatarInput from "../../../../shared/ui/components/AvatarInput.svelte";
-  import { pb } from "../../../../shared/lib/pb";
-  import type { ChatsResponse } from "../../../../shared/models/pocketbase-types";
-  import { chatCrud } from "../../../repositories/chat-crud";
+  import AvatarInput from "@/shared/ui/components/AvatarInput.svelte";
+  import { pb } from "@/shared/lib/pb";
+  import type { ChatsResponse } from "@/shared/models/pocketbase-types";
+  import { chatCrud } from "@/chat/repositories/chat-crud";
 
   interface Props {
     chat: ChatsResponse | null;
@@ -15,7 +15,7 @@
 
   const avatar = $derived(
     chat?.avatar ? pb.files.getURL(chat, chat.avatar) : null
-  );  
+  );
 
   async function handleAvatarChange(file: File) {
     if (!chat) return;

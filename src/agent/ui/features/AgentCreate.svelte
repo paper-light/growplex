@@ -1,33 +1,43 @@
-<!-- <script lang="ts">
+<script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import Button from "../../../shared/ui/lib/Button.svelte";
-
-  import { agentCrud } from "../../repositories/agent-crud";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { agentCrud } from "@/agent/repositories/agent-crud";
+  import type { AgentsResponse } from "@/shared/models/pocketbase-types";
 
   interface Props {
     projectId: string;
-    integrationId: string;
     class?: ClassValue;
     size?: "sm" | "md" | "lg";
+    color?: "primary" | "neutral" | "error";
+    style?: "outline" | "ghost";
+    afterCreate?: (agent: AgentsResponse) => void;
   }
+
   let {
     projectId,
-    integrationId,
     class: className = "",
     size = "md",
+    afterCreate,
+    color = "primary",
+    style = "outline",
   }: Props = $props();
-
-  async function createGenericAgent() {
-    await agentCrud.create({
-      projectId,
-      integrationId,
-    });
-  }
 </script>
 
-<div class={className}>
-  <Button onclick={createGenericAgent} {size} color="primary">
-    + Create New Agent
-  </Button>
-</div> -->
+<Button
+  class={className}
+  onclick={async () => {
+    if (!projectId) return;
+
+    const newAgent = await agentCrud.create({
+      project: projectId,
+    });
+
+    afterCreate?.(newAgent);
+  }}
+  {size}
+  {color}
+  {style}
+>
+  + New Agent
+</Button>

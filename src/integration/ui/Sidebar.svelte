@@ -3,11 +3,11 @@
   import { slide } from "svelte/transition";
   import { X, Check, Edit, Trash2 } from "@lucide/svelte";
 
-  import { uiProvider } from "../../user/ui.svelte";
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { projectsProvider } from "../../control/providers/projects.svelte";
-  import { integrationsProvider } from "../providers/integrations.svelte";
-  import { integrationsCrud } from "../repositories/integration-crud";
+  import { uiProvider } from "@/user/ui.svelte";
+  import { settingsProvider } from "@/user/settings.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
+  import { integrationsCrud } from "@/integration/repositories/integration-crud";
 
   interface Props {
     block?: boolean;

@@ -2,7 +2,7 @@ import * as hub from "langchain/hub/node";
 import { ChatOpenAI } from "@langchain/openai";
 import type { StructuredTool } from "@langchain/core/tools";
 
-import { getEnv } from "../../shared/helpers/get-env";
+import { getEnv } from "@/shared/helpers/get-env";
 
 import { updateLead, createTicket, callOperator } from "./tools";
 

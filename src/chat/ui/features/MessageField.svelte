@@ -5,10 +5,11 @@
     MessagesRoleOptions,
     type RoomsResponse,
     type UsersResponse,
-  } from "../../../shared/models/pocketbase-types";
-  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
-  import { socketProvider } from "../../providers/socket.svelte";
-  import { pb } from "../../../shared/lib/pb";
+  } from "@/shared/models/pocketbase-types";
+  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import { pb } from "@/shared/lib/pb";
+
+  import { socketProvider } from "@/chat/providers/socket.svelte";
 
   type Props = {
     user: UsersResponse | { name: string; avatar?: string };

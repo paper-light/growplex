@@ -3,18 +3,18 @@
   import { fade } from "svelte/transition";
   import { ChevronsDown } from "@lucide/svelte";
 
-  import Thalia from "../../../shared/assets/thalia.jpg";
-  import Man from "../../../shared/assets/man.jpg";
-
+  import Thalia from "@/shared/assets/thalia.jpg";
+  import Man from "@/shared/assets/man.jpg";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import {
     MessagesEventOptions,
     MessagesRoleOptions,
     type MessagesResponse,
-  } from "../../../shared/models/pocketbase-types";
-  import EventMessage from "../entities/EventMessage.svelte";
-  import ChatMessage from "../entities/Message.svelte";
-  import { scrollToBottom } from "../../../shared/actions/scroll-bottom";
-  import Button from "../../../shared/ui/lib/Button.svelte";
+  } from "@/shared/models/pocketbase-types";
+
+  import EventMessage from "@/chat/ui/entities/EventMessage.svelte";
+  import ChatMessage from "@/chat/ui/entities/Message.svelte";
 
   interface Props {
     class?: ClassValue;

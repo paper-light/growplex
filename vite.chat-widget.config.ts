@@ -13,6 +13,12 @@ export default defineConfig({
     }),
   ],
 
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
+
   build: {
     lib: {
       entry: resolve(__dirname, "src/chat/widget/init.ts"),

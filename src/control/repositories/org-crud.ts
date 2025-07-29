@@ -1,8 +1,5 @@
-import { pb } from "../../shared/lib/pb";
-import {
-  UpdateOrgDTOSchema,
-  type UpdateOrgDTO,
-} from "../../shared/models/dto/org";
+import { pb } from "@/shared/lib/pb";
+import { UpdateOrgDTOSchema, type UpdateOrgDTO } from "@/shared/models/dto/org";
 
 export const orgCrud = {
   async update(raw: UpdateOrgDTO) {

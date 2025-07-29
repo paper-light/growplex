@@ -1,10 +1,10 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   CreateProjectDTOSchema,
   UpdateProjectDTOSchema,
   type CreateProjectDTO,
   type UpdateProjectDTO,
-} from "../../shared/models/dto/project";
+} from "@/shared/models/dto/project";
 
 export const projectCrud = {
   async create(raw: CreateProjectDTO) {

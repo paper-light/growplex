@@ -3,7 +3,7 @@ import "dotenv/config";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { processDomain } from "../../src/knowledge/process-domain.ts";
+import { processDomain } from "@/knowledge/process-domain";
 
 import { saveResults } from "./save-results.js";
 

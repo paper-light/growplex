@@ -2,7 +2,8 @@
   import { X } from "@lucide/svelte";
   import type { ClassValue } from "svelte/elements";
 
-  import { portal } from "../../../shared/actions/portal";
+  import { portal } from "@/shared/actions/portal";
+
   import Button from "./Button.svelte";
 
   interface Props {

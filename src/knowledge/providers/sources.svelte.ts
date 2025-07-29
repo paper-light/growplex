@@ -1,6 +1,6 @@
-import { pb } from "../../shared/lib/pb";
-import { settingsProvider } from "../../user/settings.svelte";
-import type { SourcesResponse } from "../../shared/models/pocketbase-types";
+import { pb } from "@/shared/lib/pb";
+import { settingsProvider } from "@/user/settings.svelte";
+import type { SourcesResponse } from "@/shared/models/pocketbase-types";
 
 class SourcesProvider {
   private subscribed = $state(false);

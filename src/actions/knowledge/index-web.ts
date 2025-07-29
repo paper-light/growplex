@@ -1,6 +1,6 @@
 import { z } from "astro:schema";
 
-import { processDomain } from "../../knowledge/process-domain";
+import { processDomain } from "@/knowledge/process-domain";
 
 export const IndexWebSchema = z.object({
   projectId: z.string(),

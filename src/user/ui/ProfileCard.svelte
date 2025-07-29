@@ -3,10 +3,10 @@
   import { Check, X, Edit, Upload } from "@lucide/svelte";
   import { navigate } from "astro:transitions/client";
 
-  import { pb } from "../../shared/lib/pb";
+  import { pb } from "@/shared/lib/pb";
 
-  import { userProvider } from "../user.svelte";
-  import { userCrud } from "../repositories/user-crud";
+  import { userProvider } from "@/user/user.svelte";
+  import { userCrud } from "@/user/repositories/user-crud";
 
   const user = $derived(userProvider.user);
   const avatar = $derived(

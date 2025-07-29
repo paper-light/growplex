@@ -2,12 +2,12 @@
   import { slide } from "svelte/transition";
   import { X, Menu } from "@lucide/svelte";
 
-  import RoomsSidebar from "../../../chat/ui/widgets/RoomsSidebar.svelte";
-  import Interactions from "../../../chat/ui/widgets/Interactions.svelte";
-  import Messages from "../../../chat/ui/widgets/Messages.svelte";
-  import { roomsProvider } from "../../../chat/providers/rooms.svelte";
-  import { socketProvider } from "../../../chat/providers/socket.svelte";
-  import RegisterKeydown from "../../../shared/ui/lib/RegisterKeydown.svelte";
+  import RoomsSidebar from "@/chat/ui/widgets/RoomsSidebar.svelte";
+  import Interactions from "@/chat/ui/widgets/Interactions.svelte";
+  import Messages from "@/chat/ui/widgets/Messages.svelte";
+  import { roomsProvider } from "@/chat/providers/rooms.svelte";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import RegisterKeydown from "@/shared/ui/lib/RegisterKeydown.svelte";
 
   let sidebarOpen = $state(false);
   let sidebarEl: HTMLElement | null = $state(null);

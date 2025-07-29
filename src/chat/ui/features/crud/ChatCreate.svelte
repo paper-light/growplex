@@ -1,29 +1,44 @@
-<!-- <script lang="ts">
+<script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import { createChat } from "../../features/create-chat";
-  import { userProvider } from "../../../user/user.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import type { ChatsResponse } from "@/shared/models/pocketbase-types";
 
-  import Button from "../../../shared/ui/lib/Button.svelte";
+  import { chatCrud } from "@/chat/repositories/chat-crud";
 
   interface Props {
+    projectId: string;
     class?: ClassValue;
     size?: "sm" | "md" | "lg";
+    color?: "primary" | "neutral" | "error";
+    style?: "outline" | "ghost";
+    afterCreate?: (chat: ChatsResponse) => void;
   }
-  let { class: className = "", size = "md" }: Props = $props();
 
-  async function createGenericChat() {
-    if (!userProvider.project) return;
-
-    await createChat({
-      projectId: userProvider.project.id,
-      integrationId: userProvider.integration?.id,
-    });
-  }
+  let {
+    projectId,
+    class: className = "",
+    size = "md",
+    afterCreate,
+    color = "primary",
+    style = "outline",
+  }: Props = $props();
 </script>
 
-<div class={className}>
-  <Button onclick={createGenericChat} {size} color="primary">
-    + Create New Chat
-  </Button>
-</div> -->
+<Button
+  class={className}
+  onclick={async () => {
+    if (!projectId) return;
+
+    const newchat = await chatCrud.create({
+      project: projectId,
+    });
+
+    afterCreate?.(newchat);
+  }}
+  {size}
+  {color}
+  {style}
+>
+  + New chat
+</Button>

@@ -1,8 +1,8 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   UpdateUserDTOSchema,
   type UpdateUserDTO,
-} from "../../shared/models/dto/user";
+} from "@/shared/models/dto/user";
 
 export const userCrud = {
   async update(raw: UpdateUserDTO) {

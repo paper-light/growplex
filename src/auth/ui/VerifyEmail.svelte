@@ -1,7 +1,7 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
 
-  import { pb } from "../../shared/lib/pb";
+  import { pb } from "@/shared/lib/pb";
 </script>
 
 <div class="flex flex-col items-center justify-center min-h-[60vh] gap-6">

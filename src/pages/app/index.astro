@@ -1,66 +1,67 @@
 ---
-import AppDashboard from "../../shared/ui/layouts/AppDashboard.astro";
 import { Wand } from "@lucide/astro";
+
+import AppDashboard from "@/shared/ui/layouts/AppDashboard.astro";
 ---
 
 <AppDashboard title="Home">
-    <div class="container mx-auto px-4 py-8 max-w-4xl">
-      <!-- Welcome Section -->
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold mb-4">Welcome to Growplex</h1>
-        <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
-          Your AI-powered platform for creating intelligent integrations and
-          chatbots
-        </p>
-      </div>
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Welcome Section -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-bold mb-4">Welcome to Growplex</h1>
+      <p class="text-lg text-base-content/70 max-w-2xl mx-auto">
+        Your AI-powered platform for creating intelligent integrations and
+        chatbots
+      </p>
+    </div>
 
-      <!-- Wizard Card -->
-      <div class="flex justify-center mb-12">
-        <a href="/app/wizard" class="block group">
-          <div
-            class="card border border-base-300 bg-base-100 max-w-lg shadow-sm hover:shadow-md transition rounded-xl overflow-hidden"
-          >
-            <div class="card-body text-center p-8">
-              <div class="flex justify-center mb-6">
-                <div
-                  class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors"
-                >
-                  <Wand class="w-10 h-10 text-primary" />
-                </div>
-              </div>
-              <h4 class="card-title text-2xl justify-center mb-4">
-                Integration Wizard
-              </h4>
-              <p class="text-base-content/70 mb-4">
-                Create and test your integration with our step-by-step wizard
-              </p>
-              <p class="text-sm text-base-content/60 mb-6">
-                Build custom AI integrations in minutes
-              </p>
-              <div class="card-actions justify-center">
-                <button
-                  class="btn btn-primary group-hover:btn-secondary transition-all"
-                >
-                  Get Started
-                </button>
+    <!-- Wizard Card -->
+    <div class="flex justify-center mb-12">
+      <a href="/app/wizard" class="block group">
+        <div
+          class="card border border-base-300 bg-base-100 max-w-lg shadow-sm hover:shadow-md transition rounded-xl overflow-hidden"
+        >
+          <div class="card-body text-center p-8">
+            <div class="flex justify-center mb-6">
+              <div
+                class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center group-hover:bg-primary/20 transition-colors"
+              >
+                <Wand class="w-10 h-10 text-primary" />
               </div>
             </div>
+            <h4 class="card-title text-2xl justify-center mb-4">
+              Integration Wizard
+            </h4>
+            <p class="text-base-content/70 mb-4">
+              Create and test your integration with our step-by-step wizard
+            </p>
+            <p class="text-sm text-base-content/60 mb-6">
+              Build custom AI integrations in minutes
+            </p>
+            <div class="card-actions justify-center">
+              <button
+                class="btn btn-primary group-hover:btn-secondary transition-all"
+              >
+                Get Started
+              </button>
+            </div>
           </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-base-200 rounded-xl p-8 max-w-2xl mx-auto">
+      <h2 class="text-2xl font-semibold mb-6 text-center">Quick Actions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="/app/wizard" class="btn btn-primary w-full">
+          <Wand class="w-5 h-5 mr-2" />
+          Create Integration
+        </a>
+        <a href="/app/profile" class="btn btn-outline w-full">
+          Profile Settings
         </a>
       </div>
-
-      <!-- Quick Actions -->
-      <div class="bg-base-200 rounded-xl p-8 max-w-2xl mx-auto">
-        <h2 class="text-2xl font-semibold mb-6 text-center">Quick Actions</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <a href="/app/wizard" class="btn btn-primary w-full">
-            <Wand class="w-5 h-5 mr-2" />
-            Create Integration
-          </a>
-          <a href="/app/profile" class="btn btn-outline w-full">
-            Profile Settings
-          </a>
-        </div>
-      </div>
     </div>
+  </div>
 </AppDashboard>

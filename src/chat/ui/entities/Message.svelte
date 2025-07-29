@@ -4,7 +4,7 @@
   import { DateTime } from "luxon";
   import type { ClassValue } from "svelte/elements";
 
-  import type { MessagesResponse } from "../../../shared/models/pocketbase-types";
+  import type { MessagesResponse } from "@/shared/models/pocketbase-types";
 
   interface Props {
     class?: ClassValue;

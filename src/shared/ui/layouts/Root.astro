@@ -1,11 +1,11 @@
 ---
-import "../../styles/global.css";
+import "@/shared/styles/global.css";
 import { ClientRouter } from "astro:transitions";
 
-import Posthog from "../global/Posthog.astro";
-import ThemeLoad from "../global/ThemeLoad.astro";
-import CookiesAccept from "../global/CookiesAccept.svelte";
-import PortalHost from "../global/PortalHost.svelte";
+import Posthog from "@/shared/ui/global/Posthog.astro";
+import ThemeLoad from "@/shared/ui/global/ThemeLoad.astro";
+import CookiesAccept from "@/shared/ui/global/CookiesAccept.svelte";
+import PortalHost from "@/shared/ui/global/PortalHost.svelte";
 
 const {
   title,
@@ -35,15 +35,17 @@ const {
     <slot name="head" />
   </head>
   <body class="bg-transparent">
+    <PortalHost client:only />
+
     <div
       class="bg-transparent"
       transition:persist="chat-widget-root"
       id="chat-widget-root"
-    ></div>
+    >
+    </div>
 
     <slot />
 
-    <PortalHost client:only />
     {needCookies && <CookiesAccept client:only />}
   </body>
 </html>

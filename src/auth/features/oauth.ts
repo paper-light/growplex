@@ -1,4 +1,4 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 
 export const oauth2 = async (provider: string) => {
   await pb.collection("users").authWithOAuth2({

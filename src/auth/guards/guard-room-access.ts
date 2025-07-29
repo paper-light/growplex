@@ -1,7 +1,7 @@
 import type { Socket } from "socket.io";
 
-import { pb } from "../../shared/lib/pb";
-import type { RoomsResponse } from "../../shared/models/pocketbase-types";
+import { pb } from "@/shared/lib/pb";
+import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 
 export async function guardRoomAccess(socket: Socket, room: RoomsResponse) {
   if (socket.data.guest) {

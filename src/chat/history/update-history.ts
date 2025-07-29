@@ -1,11 +1,12 @@
-import { logger } from "../../shared/lib/logger";
-import { getEnv } from "../../shared/helpers/get-env";
-import { pb } from "../../shared/lib/pb";
-import { redisClient } from "../../shared/lib/redis";
+import { logger } from "@/shared/lib/logger";
+import { getEnv } from "@/shared/helpers/get-env";
+import { pb } from "@/shared/lib/pb";
+import { redisClient } from "@/shared/lib/redis";
 import {
   type MessagesRecord,
   type MessagesResponse,
-} from "../../shared/models/pocketbase-types";
+} from "@/shared/models/pocketbase-types";
+
 import { REDIS_PREFIX } from "./config";
 
 const log = logger.child({ module: "chat-history" });

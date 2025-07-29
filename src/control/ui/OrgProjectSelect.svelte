@@ -1,12 +1,12 @@
 <script lang="ts">
   import { ChevronDown, Check, Edit, X, Trash2 } from "@lucide/svelte";
 
-  import { clickOutside } from "../../shared/actions/click-outside";
-  import { settingsProvider } from "../../user/settings.svelte";
-  import { userProvider } from "../../user/user.svelte";
-  import { projectsProvider } from "../providers/projects.svelte";
-  import { orgCrud } from "../repositories/org-crud";
-  import { projectCrud } from "../repositories/project-crud";
+  import { clickOutside } from "@/shared/actions/click-outside";
+  import { settingsProvider } from "@/user/settings.svelte";
+  import { userProvider } from "@/user/user.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { orgCrud } from "@/control/repositories/org-crud";
+  import { projectCrud } from "@/control/repositories/project-crud";
 
   const currentOrg = $derived(userProvider.selectedOrg);
   const currentProject = $derived(projectsProvider.selectedProject);

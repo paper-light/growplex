@@ -2,14 +2,14 @@
   import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { ChevronsRight } from "@lucide/svelte";
 
-  import { socketProvider } from "../../providers/socket.svelte";
-  import Button from "../../../shared/ui/lib/Button.svelte";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
   import {
     MessagesRoleOptions,
     type RoomsResponse,
     type UsersResponse,
-  } from "../../../shared/models/pocketbase-types";
-  import { pb } from "../../../shared/lib/pb";
+  } from "@/shared/models/pocketbase-types";
+  import { pb } from "@/shared/lib/pb";
 
   type Props = {
     user: UsersResponse | { name: string; avatar?: string };

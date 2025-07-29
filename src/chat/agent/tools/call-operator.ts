@@ -2,7 +2,7 @@ import { z } from "zod";
 import { tool } from "@langchain/core/tools";
 import { getContextVariable } from "@langchain/core/context";
 
-import { pb } from "../../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 
 const CallOperatorSchema = z.object({
   description: z.string().describe("The description of the problem"),

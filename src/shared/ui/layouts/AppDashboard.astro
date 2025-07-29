@@ -1,12 +1,12 @@
 ---
 import { House, Mail, User, Menu } from "@lucide/astro";
 
-import ProfileMenu from "../../../user/ui/ProfileMenu.svelte";
-import OrgProjectSelect from "../../../control/ui/OrgProjectSelect.svelte";
-import SidebarNav from "./AppSidebarNav.svelte";
-import ThemeController from "../components/ThemeController.svelte";
+import ProfileMenu from "@/user/ui/ProfileMenu.svelte";
+import OrgProjectSelect from "@/control/ui/OrgProjectSelect.svelte";
 
-import App from "./App.astro";
+import ThemeController from "@/shared/ui/components/ThemeController.svelte";
+import SidebarNav from "@/shared/ui/layouts/AppSidebarNav.svelte";
+import App from "@/shared/ui/layouts/App.astro";
 
 const { title, favicon = "/LOGO.png" } = Astro.props;
 ---

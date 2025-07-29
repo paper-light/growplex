@@ -2,8 +2,8 @@ import { z } from "zod";
 import { tool } from "@langchain/core/tools";
 import { getContextVariable } from "@langchain/core/context";
 
-import { pb } from "../../../shared/lib/pb";
-import { logger } from "../../../shared/lib/logger";
+import { pb } from "@/shared/lib/pb";
+import { logger } from "@/shared/lib/logger";
 
 const log = logger.child({
   module: "chat-service:agent:tools",

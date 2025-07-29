@@ -1,9 +1,9 @@
 import { SvelteMap } from "svelte/reactivity";
 
-import { pb } from "../../shared/lib/pb";
-import { settingsProvider } from "../../user/settings.svelte";
-import type { RoomsResponse } from "../../shared/models/pocketbase-types";
-import { integrationsProvider } from "../../integration/providers/integrations.svelte";
+import { pb } from "@/shared/lib/pb";
+import { settingsProvider } from "@/user/settings.svelte";
+import type { RoomsResponse } from "@/shared/models/pocketbase-types";
+import { integrationsProvider } from "@/integration/providers/integrations.svelte";
 
 class RoomsProvider {
   // STATE

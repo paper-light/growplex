@@ -1,4 +1,4 @@
-import { ChatWidgetPayloadSchema } from "../../chat/lib/models";
+import { ChatWidgetPayloadSchema } from "@/chat/lib/models";
 
 export async function authGuest(chatId: string, payloadStr: string) {
   const payload = payloadStr

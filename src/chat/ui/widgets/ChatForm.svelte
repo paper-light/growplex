@@ -1,19 +1,19 @@
 <script lang="ts">
-  import DomainConnect from "../../../knowledge/ui/DomainConnect.svelte";
-  import ChatAvatarUpdate from "../features/crud/ChatAvatarUpdate.svelte";
-  import ChatNameUpdate from "../features/crud/ChatNameUpdate.svelte";
-  import ChatDomainUpdate from "../features/crud/ChatDomainUpdate.svelte";
-  import ChatFirstMessageUpdate from "../features/crud/ChatFirstMessageUpdate.svelte";
-  import ChatSelect from "../features/crud/ChatSelect.svelte";
+  import DomainConnect from "@/knowledge/ui/DomainConnect.svelte";
 
-  import Card from "../../../shared/ui/lib/Card.svelte";
-  import SourceStatus from "../../../knowledge/ui/SourceStatus.svelte";
+  import Card from "@/shared/ui/lib/Card.svelte";
+  import SourceStatus from "@/knowledge/ui/SourceStatus.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
+  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
 
-  import ThemeSelection from "../features/crud/ThemeSelection.svelte";
-  import { projectsProvider } from "../../../control/providers/projects.svelte";
-  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
-  import { sourcesProvider } from "../../../knowledge/providers/sources.svelte";
-  import { chatsProvider } from "../../providers/chats.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import ChatSelect from "@/chat/ui/features/crud/ChatSelect.svelte";
+  import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";
+  import ChatNameUpdate from "@/chat/ui/features/crud/ChatNameUpdate.svelte";
+  import ChatDomainUpdate from "@/chat/ui/features/crud/ChatDomainUpdate.svelte";
+  import ChatFirstMessageUpdate from "@/chat/ui/features/crud/ChatFirstMessageUpdate.svelte";
+  import ThemeSelection from "@/chat/ui/features/crud/ThemeSelection.svelte";
 
   const project = $derived(projectsProvider.selectedProject);
   const integartion = $derived(integrationsProvider.selectedIntegration);

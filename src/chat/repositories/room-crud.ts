@@ -1,8 +1,8 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   CreateRoomDTOSchema,
   type CreateRoomDTO,
-} from "../../shared/models/dto/room";
+} from "@/shared/models/dto/room";
 
 export const roomCrud = {
   create: async (raw: CreateRoomDTO) => {

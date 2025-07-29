@@ -2,16 +2,15 @@
   import { X } from "@lucide/svelte";
   import { untrack } from "svelte";
 
-  import { userProvider } from "../../../user/user.svelte";
-  import { uiProvider } from "../../../user/ui.svelte";
-  import Chat from "./Chat.svelte";
-  import { roomsProvider } from "../../providers/rooms.svelte";
-  import Button from "../../../shared/ui/lib/Button.svelte";
-
-  import { agentsProvider } from "../../../agent/providers/agents.svelte";
-  import { chatsProvider } from "../../providers/chats.svelte";
-  import { roomCrud } from "../../repositories/room-crud";
-  import { socketProvider } from "../../providers/socket.svelte";
+  import { userProvider } from "@/user/user.svelte";
+  import { uiProvider } from "@/user/ui.svelte";
+  import { roomsProvider } from "@/chat/providers/rooms.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { agentsProvider } from "@/agent/providers/agents.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import { roomCrud } from "@/chat/repositories/room-crud";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import Chat from "@/chat/ui/widgets/Chat.svelte";
 
   interface Props {
     block?: boolean;

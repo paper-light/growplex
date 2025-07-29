@@ -2,13 +2,13 @@
   import { X } from "@lucide/svelte";
   import type { ClassValue } from "svelte/elements";
 
-  import Select from "../../../../shared/ui/lib/Select.svelte";
-  import Button from "../../../../shared/ui/lib/Button.svelte";
-  import { integrationsProvider } from "../../../../integration/providers/integrations.svelte";
+  import Select from "@/shared/ui/lib/Select.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
 
-  import { chatsProvider } from "../../../providers/chats.svelte";
-  import { chatCrud } from "../../../repositories/chat-crud";
-  import { settingsProvider } from "../../../../user/settings.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import { chatCrud } from "@/chat/repositories/chat-crud";
+  import { settingsProvider } from "@/user/settings.svelte";
 
   interface Props {
     class?: ClassValue;

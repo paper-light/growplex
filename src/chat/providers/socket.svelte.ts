@@ -2,11 +2,10 @@ import { SvelteMap, SvelteSet } from "svelte/reactivity";
 import { io, type Socket } from "socket.io-client";
 
 import {
-  MessagesEventOptions,
   MessagesRoleOptions,
   type MessagesRecord,
   type MessagesResponse,
-} from "../../shared/models/pocketbase-types";
+} from "@/shared/models/pocketbase-types";
 
 class SocketProvider {
   socket: Socket | null = null;

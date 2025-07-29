@@ -1,5 +1,9 @@
-import { getEnv } from "../shared/helpers/get-env";
-import { buildCrawlerConfig, buildBrowserConfig, undiciAgent } from "./config";
+import { getEnv } from "@/shared/helpers/get-env";
+import {
+  buildCrawlerConfig,
+  buildBrowserConfig,
+  undiciAgent,
+} from "@/crawler/config";
 
 const CRAWL4AI_URL = getEnv("CRAWL4AI_URL");
 

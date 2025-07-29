@@ -3,9 +3,9 @@
   import { navigate } from "astro:transitions/client";
   import { ChevronDown } from "@lucide/svelte";
 
-  import { pb } from "../../shared/lib/pb";
+  import { pb } from "@/shared/lib/pb";
 
-  import { userProvider } from "../user.svelte";
+  import { userProvider } from "@/user/user.svelte";
 
   interface Props {
     active: string;

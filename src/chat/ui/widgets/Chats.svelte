@@ -1,17 +1,17 @@
 <script lang="ts">
-  import Thalia from "../../../shared/assets/thalia.jpg";
-  import Input from "../../../shared/ui/lib/Input.svelte";
-  import { chatsProvider } from "../../../chat/providers/chats.svelte";
-  import Select from "../../../shared/ui/lib/Select.svelte";
-  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
-  import Card from "../../../shared/ui/lib/Card.svelte";
-  import Modal from "../../../shared/ui/lib/Modal.svelte";
-  import TextArea from "../../../shared/ui/lib/TextArea.svelte";
-  import AvatarInput from "../../../shared/ui/components/AvatarInput.svelte";
-  import { chatCrud } from "../../../chat/repositories/chat-crud";
-  import { pb } from "../../../shared/lib/pb";
-  import Button from "../../../shared/ui/lib/Button.svelte";
-  import { projectsProvider } from "../../../control/providers/projects.svelte";
+  import Thalia from "@/shared/assets/thalia.jpg";
+  import Input from "@/shared/ui/lib/Input.svelte";
+  import Select from "@/shared/ui/lib/Select.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
+  import Card from "@/shared/ui/lib/Card.svelte";
+  import Modal from "@/shared/ui/lib/Modal.svelte";
+  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import AvatarInput from "@/shared/ui/components/AvatarInput.svelte";
+  import { chatCrud } from "@/chat/repositories/chat-crud";
+  import { pb } from "@/shared/lib/pb";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
 
   let filterIntegrationId = $state("");
   let filterName = $state("");

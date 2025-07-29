@@ -1,8 +1,8 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
 
-  import type { AuthError } from "../lib/models";
-  import { oauth2 } from "../features/oauth";
+  import type { AuthError } from "@/auth/lib/models";
+  import { oauth2 } from "@/auth/features/oauth";
 
   interface Props {
     error?: AuthError | null;

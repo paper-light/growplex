@@ -1,5 +1,5 @@
-import { pb } from "../../shared/lib/pb";
-import type { DocumentsResponse } from "../../shared/models/pocketbase-types";
+import { pb } from "@/shared/lib/pb";
+import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
 
 class DocumentsProvider {
   private subscribed = $state(false);

@@ -1,10 +1,10 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   CreateAgentDTOSchema,
   type CreateAgentDTO,
   UpdateAgentDTOSchema,
   type UpdateAgentDTO,
-} from "../../shared/models/dto/agent";
+} from "@/shared/models/dto/agent";
 
 export const agentCrud = {
   async create(raw: CreateAgentDTO) {

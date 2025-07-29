@@ -2,9 +2,9 @@
   import type { ClassValue } from "svelte/elements";
   import { Copy, Rocket, X, Check } from "@lucide/svelte";
 
-  import Button from "../../../../shared/ui/lib/Button.svelte";
-  import { chatsProvider } from "../../../providers/chats.svelte";
-  import Modal from "../../../../shared/ui/lib/Modal.svelte";
+  import Button from "@/shared/ui/lib/Button.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import Modal from "@/shared/ui/lib/Modal.svelte";
 
   interface Props {
     class?: ClassValue;

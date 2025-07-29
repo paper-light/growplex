@@ -1,10 +1,10 @@
-import { pb } from "../../shared/lib/pb";
+import { pb } from "@/shared/lib/pb";
 import {
   CreateIntegrationDTOSchema,
   UpdateIntegrationDTOSchema,
   type CreateIntegrationDTO,
   type UpdateIntegrationDTO,
-} from "../../shared/models/dto/integration";
+} from "@/shared/models/dto/integration";
 
 export const integrationsCrud = {
   async create(raw: CreateIntegrationDTO) {

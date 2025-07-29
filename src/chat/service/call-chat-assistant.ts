@@ -3,8 +3,8 @@ import { setContextVariable } from "@langchain/core/context";
 import { AIMessage, ToolMessage } from "@langchain/core/messages";
 import { RunnableLambda } from "@langchain/core/runnables";
 
-import { pb } from "../../shared/lib/pb";
-import { logger } from "../../shared/lib/logger";
+import { pb } from "@/shared/lib/pb";
+import { logger } from "@/shared/lib/logger";
 import {
   MessagesRoleOptions,
   type AgentsResponse,
@@ -17,14 +17,15 @@ import {
   type ChatsResponse,
   type DocumentsResponse,
   MessagesEventOptions,
-} from "../../shared/models/pocketbase-types";
+} from "@/shared/models/pocketbase-types";
 
-import { extractorService } from "../../rag/extractor";
-import { createSourcesFilter } from "../../rag/filters";
+import { extractorService } from "@/rag/extractor";
+import { createSourcesFilter } from "@/rag/filters";
+
+import { encoderService } from "@/llm";
 
 import { updateHistory, getHistory } from "../history";
 import { assistantAgent, assistantToolsMap, finalStepAgent } from "../agent";
-import { encoderService } from "@/llm";
 import { buildLlmHistory } from "../history/build-llm-history";
 
 const log = logger.child({ module: "chat-service" });

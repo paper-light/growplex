@@ -1,18 +1,18 @@
 <script lang="ts">
-  import "../../../user/pb-on-change";
+  import "@/user/pb-on-change";
 
   import { onMount, untrack } from "svelte";
 
-  import { pb } from "../../lib/pb";
-  import { userProvider } from "../../../user/user.svelte";
-  import { socketProvider } from "../../../chat/providers/socket.svelte";
-  import { sourcesProvider } from "../../../knowledge/providers/sources.svelte";
-  import { documentsProvider } from "../../../knowledge/providers/documents.svelte";
-  import { projectsProvider } from "../../../control/providers/projects.svelte";
-  import { agentsProvider } from "../../../agent/providers/agents.svelte";
-  import { chatsProvider } from "../../../chat/providers/chats.svelte";
-  import { roomsProvider } from "../../../chat/providers/rooms.svelte";
-  import { integrationsProvider } from "../../../integration/providers/integrations.svelte";
+  import { pb } from "@/shared/lib/pb";
+  import { userProvider } from "@/user/user.svelte";
+  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
+  import { documentsProvider } from "@/knowledge/providers/documents.svelte";
+  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { agentsProvider } from "@/agent/providers/agents.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
+  import { roomsProvider } from "@/chat/providers/rooms.svelte";
+  import { integrationsProvider } from "@/integration/providers/integrations.svelte";
 
   // GLOBAL
   onMount(() => {

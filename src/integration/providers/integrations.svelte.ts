@@ -1,7 +1,7 @@
-import { pb } from "../../shared/lib/pb";
-import { settingsProvider } from "../../user/settings.svelte";
+import { pb } from "@/shared/lib/pb";
+import { settingsProvider } from "@/user/settings.svelte";
 
-import type { IntegrationsResponse } from "../../shared/models/pocketbase-types";
+import type { IntegrationsResponse } from "@/shared/models/pocketbase-types";
 
 class IntegrationsProvider {
   // STATE
@@ -18,7 +18,7 @@ class IntegrationsProvider {
       );
       if (found) return found;
     }
-    
+
     return this.integrations[0];
   });
 

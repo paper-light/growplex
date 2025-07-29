@@ -1,7 +1,7 @@
 ---
 import { getCollection } from "astro:content";
-import Content from "../../shared/ui/layouts/Content.astro";
-import Card from "../../shared/ui/components/Card.astro";
+import Content from "@/shared/ui/layouts/Content.astro";
+import Card from "@/shared/ui/components/Card.astro";
 
 const searchParams = new URLSearchParams(Astro.request.url.split("?")[1]);
 const category = searchParams.get("category");

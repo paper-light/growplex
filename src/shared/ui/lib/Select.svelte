@@ -65,7 +65,9 @@
     className,
   ]}
   {disabled}
-  {onchange}
+  onchange={(e) => {
+    onchange?.(e);
+  }}
 >
   {#if children}
     <option value="">{@render children()}</option>

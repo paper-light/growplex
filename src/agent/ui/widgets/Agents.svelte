@@ -63,6 +63,7 @@
         placeholder="Search Agents"
       />
       <Select
+        class="w-fit max-w-64"
         bind:value={filterIntegrationId}
         color="neutral"
         options={integrations.map((i) => ({ label: i.name, value: i.id }))}

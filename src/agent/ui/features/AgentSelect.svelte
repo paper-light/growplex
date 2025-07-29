@@ -32,7 +32,7 @@
 
   async function onchange(e: Event) {
     const id = (e.target as HTMLSelectElement).value;
-    if (!id || !integration || !agentId) return;
+    if (!id || !integration) return;
 
     const updated = await integrationsCrud.update({
       id: integration.id,

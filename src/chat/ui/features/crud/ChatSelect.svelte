@@ -37,6 +37,13 @@
     const id = (e.target as HTMLSelectElement).value;
     if (!id || !integartion) return;
 
+    if (selectedChat) {
+      await chatCrud.update({
+        id: selectedChat.id,
+        integration: "",
+      });
+    }
+
     await chatCrud.update({
       id,
       integration: integartion.id,

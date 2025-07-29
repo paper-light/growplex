@@ -43,7 +43,7 @@
   });
 
   async function onclose() {
-    showModal = true;
+    showModal = false;
     copied = false;
   }
 
@@ -65,7 +65,6 @@
     size="xl"
     color="primary"
     block
-    style="outline"
     onclick={() => (showModal = true)}
   >
     Connect <Rocket class="size-4" />

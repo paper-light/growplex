@@ -1,5 +1,1 @@
-export {
-  globalEncoderService,
-  encoderUtils,
-  type TiktokenModel,
-} from "./encoder";
+export { encoderService, type TiktokenModel } from "./encoder";

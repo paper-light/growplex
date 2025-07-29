@@ -60,6 +60,7 @@ export async function processDomain(
       metadata: {
         ...result?.metadata,
         sourceId: source.id,
+        projectId,
         status_code: result.status_code,
         success: result.success,
         url: result.url,
@@ -82,8 +83,7 @@ export async function processDomain(
         ...(d.metadata as Record<string, any>),
         documentId: d.id,
       },
-    })),
-    projectId
+    }))
   );
 
   for (const [index, doc] of loadedDocs.entries()) {

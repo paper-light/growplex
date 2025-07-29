@@ -11,7 +11,7 @@ import {
 
 import { callChatAssistant } from "@/chat/service";
 import { updateHistory } from "@/chat/history/update-history";
-import { globalEncoderService } from "@/llm";
+import { encoderService } from "@/llm";
 
 import type { SendMessageDTO } from "./types";
 
@@ -24,7 +24,7 @@ export async function sendMessage(
     // ALWAYS ON SEND MESSAGE
     const msg = {
       ...JSON.parse(msgStr),
-      contentTokensCount: globalEncoderService.countTokens(
+      contentTokensCount: encoderService.countTokens(
         JSON.parse(msgStr).content,
         "gpt-4"
       ),

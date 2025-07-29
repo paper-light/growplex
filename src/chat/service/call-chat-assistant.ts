@@ -24,7 +24,7 @@ import { createSourcesFilter } from "../../rag/filters";
 
 import { updateHistory, getHistory } from "../history";
 import { assistantAgent, assistantToolsMap, finalStepAgent } from "../agent";
-import { globalEncoderService } from "@/llm";
+import { encoderService } from "@/llm";
 import { buildLlmHistory } from "../history/build-llm-history";
 
 const log = logger.child({ module: "chat-service" });
@@ -61,7 +61,7 @@ export async function callChatAssistant(
   // Get knowledge
   let knowledge = "";
   const sourceIds = sources?.map((s) => s.id) || [];
-  console.log("sourceIds", sourceIds);
+  log.info({ sourceIds }, "Source IDs");
 
   if (sourceIds.length > 0) {
     try {
@@ -148,7 +148,7 @@ export async function callChatAssistant(
         room: roomId,
         sentBy: agent.name,
         visible: false,
-        contentTokensCount: globalEncoderService.countTokens(
+        contentTokensCount: encoderService.countTokens(
           assistantResp.content.toString(),
           "gpt-4"
         ),
@@ -173,7 +173,7 @@ export async function callChatAssistant(
             msg.name === "callOperator"
               ? MessagesEventOptions.wailtingOperator
               : undefined,
-          contentTokensCount: globalEncoderService.countTokens(
+          contentTokensCount: encoderService.countTokens(
             msg.content.toString(),
             "gpt-4"
           ),
@@ -211,7 +211,7 @@ export async function callChatAssistant(
     visible: true,
     room: roomId,
     sentBy: agent.name,
-    contentTokensCount: globalEncoderService.countTokens(
+    contentTokensCount: encoderService.countTokens(
       finalStepResp.content.toString(),
       "gpt-4"
     ),

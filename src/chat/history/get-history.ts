@@ -9,7 +9,7 @@ import {
   type MessagesRecord,
   type MessagesResponse,
 } from "../../shared/models/pocketbase-types";
-import { globalEncoderService } from "../../llm";
+import { encoderService } from "../../llm";
 
 import { updateHistory } from "./update-history";
 import { REDIS_PREFIX } from "./config";
@@ -123,7 +123,7 @@ export async function getHistory(
     visible: true,
     room: roomId,
     sentBy: agent.name,
-    contentTokensCount: globalEncoderService.countTokens(
+    contentTokensCount: encoderService.countTokens(
       chat.firstMessage,
       "gpt-4"
     ),

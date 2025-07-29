@@ -12,9 +12,7 @@ const embeddings = new OpenAIEmbeddings({
 
 const vectorStoreCache = new Map<string, QdrantVectorStore>();
 
-function getOrgCollectionName(orgId: string): string {
-  return `org_${orgId}`;
-}
+// -------------------------PUBLIC-------------------------
 
 export async function createOrgVectorStore(
   orgId: string,
@@ -44,4 +42,10 @@ export function clearOrgCache(orgId: string) {
 
 export function clearAllCache() {
   vectorStoreCache.clear();
+}
+
+// -------------------------PRIVATE-------------------------
+
+function getOrgCollectionName(orgId: string): string {
+  return `org_${orgId}`;
 }

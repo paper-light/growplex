@@ -5,7 +5,7 @@ import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { guardRoomAccess } from "@/auth/guards/guard-room-access";
-import { globalEncoderService } from "@/llm";
+import { encoderService } from "@/llm";
 
 import { joinRoom } from "./join-room";
 import { sendMessage } from "./send-message";
@@ -41,7 +41,7 @@ export function attachSocketIO(httpServer: any) {
       const msg = JSON.parse(dto.msgStr);
 
       if (
-        globalEncoderService.countTokens(msg.content, "gpt-4") >
+        encoderService.countTokens(msg.content, "gpt-4") >
         parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!)
       ) {
         socket.emit("msg-length-limit", {

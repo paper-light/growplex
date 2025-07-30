@@ -64,5 +64,8 @@ export const createTicket = tool(
     Call this tool when user is unable to solve their problem and you can't help them.
     `,
     schema: CreateTicketSchema,
+    metadata: {
+      visible: false,
+    },
   }
 );

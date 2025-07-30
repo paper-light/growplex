@@ -49,5 +49,8 @@ export const callOperator = tool(
     The operator will be notified and will try to help the user.
     `,
     schema: CallOperatorSchema,
+    metadata: {
+      visible: true,
+    },
   }
 );

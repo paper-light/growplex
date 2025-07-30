@@ -1,7 +1,6 @@
 import { Server as IOServer, Socket } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
-import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { guardRoomAccess } from "@/auth/guards/guard-room-access";

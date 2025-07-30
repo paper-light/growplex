@@ -1,6 +1,39 @@
+import { RunnableLambda } from "@langchain/core/runnables";
+
 import { qdrantStorage } from "../storages/qdrant";
+import { getContextVariable } from "@langchain/core/context";
+import type {
+  OrgsResponse,
+  SourcesResponse,
+} from "@/shared/models/pocketbase-types";
+import { langfuseHandler } from "@/shared/lib/langfuse";
+
+import { createSourcesFilter } from "../filters";
 
 export class VectorRetriever {
+  asLambda() {
+    return RunnableLambda.from(async (input: string) => {
+      const org: OrgsResponse | undefined = getContextVariable("org");
+      const sources: SourcesResponse[] | undefined =
+        getContextVariable("sources");
+
+      if (!org || !sources) {
+        throw new Error("org or sources is not defined");
+      }
+
+      const retriever = await vectorRetriever.createRetriever(org.id, {
+        k: 200,
+        filter: createSourcesFilter(sources.map((s) => s.id)),
+      });
+
+      const docs = await retriever.invoke(input, {
+        callbacks: [langfuseHandler],
+      });
+
+      return docs;
+    });
+  }
+
   async createRetriever(
     orgId: string,
     options: { filter?: any; k?: number } = {}

@@ -120,6 +120,10 @@ export type AgentsRecord = {
 	updated?: IsoDateString
 }
 
+export enum ChatsTypeOptions {
+	"web" = "web",
+	"tg" = "tg",
+}
 export type ChatsRecord<Ttheme = unknown> = {
 	avatar?: string
 	created?: IsoDateString
@@ -131,6 +135,7 @@ export type ChatsRecord<Ttheme = unknown> = {
 	project?: RecordIdString
 	tgToken?: string
 	theme?: null | Ttheme
+	type?: ChatsTypeOptions
 	updated?: IsoDateString
 }
 
@@ -186,6 +191,7 @@ export enum LeadsTypeOptions {
 }
 export type LeadsRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
+	description?: string
 	email?: string
 	id: string
 	metadata?: null | Tmetadata
@@ -205,10 +211,13 @@ export enum MessagesRoleOptions {
 }
 
 export enum MessagesEventOptions {
-	"wailtingOperator" = "wailtingOperator",
 	"operatorConnected" = "operatorConnected",
 	"operatorDisconnected" = "operatorDisconnected",
 	"message" = "message",
+	"updateLead" = "updateLead",
+	"createTicket" = "createTicket",
+	"callSearchAgent" = "callSearchAgent",
+	"callOperator" = "callOperator",
 }
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string

@@ -11,13 +11,15 @@ You are an summary agent. You need to create a summary of the search results.
 Return summary of the search results.
 Return queryFullfilled if the query was fullfilled by the search results.
 
+Query: {query}
+
 Search results: {results}
 
 Search summary:
 `;
 
-const ReturnSchema = z.object({
-  summary: z.string(),
+export const SummaryReturnSchema = z.object({
+  searchResult: z.string(),
   queryFullfilled: z.boolean(),
 });
 
@@ -30,10 +32,5 @@ const summaryBaseModel = new ChatOpenAI({
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(
-  summaryBaseModel.withStructuredOutput(ReturnSchema)
+  summaryBaseModel.withStructuredOutput(SummaryReturnSchema)
 );
-
-export async function callSummary(results: string) {
-  const result = await summaryChain.invoke({ results });
-  return result;
-}

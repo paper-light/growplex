@@ -24,7 +24,6 @@ import { createSourcesFilter } from "@/search/filters";
 import { embedder } from "@/search/embedder";
 
 import { updateHistory, getHistory } from "../history";
-import { assistantAgent, assistantToolsMap, finalStepAgent } from "../ai";
 import { buildLlmHistory } from "../history/build-llm-history";
 
 const log = logger.child({ module: "chat-service" });
@@ -33,19 +32,6 @@ export async function callChatAssistant(
   integrationId: string,
   roomId: string
 ): Promise<MessagesResponse[]> {
-  // Get integration
-  const { integration, org, agent, chat, sources } = await getIntegrationData(
-    integrationId
-  );
-  const responseMessages: MessagesResponse[] = [];
-
-  const { lead, room } = await getLeadData(roomId);
-
-  if (!agent || !chat || !integration) {
-    log.warn({ integrationId }, `Integration has not agent`);
-    throw Error(`Integration ${integrationId} has not agent`);
-  }
-
   // Prepare history
   const rawHistory = await getHistory(integrationId, roomId, false);
 
@@ -242,43 +228,4 @@ export async function callChatAssistant(
   }
 
   return responseMessages;
-}
-
-// ------------PRIVATE FUNCTIONS---------------
-
-async function getIntegrationData(integrationId: string) {
-  const integration = await pb
-    .collection("integrations")
-    .getOne(integrationId, {
-      expand:
-        "agents,sources,project,project.org,chats_via_integration,sources.documents_via_source",
-    });
-
-  const org = (integration.expand as any).project.expand.org;
-
-  const chat = (integration.expand as any).chats_via_integration?.[0];
-  const agent = (integration.expand as any).agents?.[0];
-  const sources = (integration.expand as any).sources;
-  const documents = ((integration.expand as any).sources || []).flatMap(
-    (s: any) => s.expand.documents_via_sources
-  );
-
-  return {
-    integration: integration as IntegrationsResponse,
-    org: org as OrgsResponse,
-    agent: agent as AgentsResponse,
-    chat: chat as ChatsResponse,
-    sources: sources as SourcesResponse[] | null,
-    documents: documents as DocumentsResponse[] | null,
-  };
-}
-
-async function getLeadData(roomId: string) {
-  const room = await pb.collection("rooms").getOne(roomId, { expand: "lead" });
-  const lead = (room.expand as any).lead || null;
-
-  return {
-    lead: lead as LeadsResponse | null,
-    room,
-  };
 }

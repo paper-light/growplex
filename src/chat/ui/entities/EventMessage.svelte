@@ -17,7 +17,7 @@
     "text-sm text-base-content/70",
   ]}
 >
-  {#if type === MessagesEventOptions.wailtingOperator}
+  {#if type === MessagesEventOptions.callOperator}
     <p>Waiting for operator...</p>
   {:else if type === MessagesEventOptions.operatorConnected}
     <p>Operator connected</p>

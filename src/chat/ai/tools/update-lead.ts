@@ -80,5 +80,8 @@ export const updateLead = tool(
     If you are not sure about the information, do not update the lead.
     `,
     schema: UpdateLeadSchema,
+    metadata: {
+      visible: false,
+    },
   }
 );

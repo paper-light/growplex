@@ -1,17 +1,17 @@
 import { type Socket, type Server } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
-
-import {
-  RoomsStatusOptions,
-  type IntegrationsResponse,
-} from "@/shared/models/pocketbase-types";
-
-import { callChatAssistant } from "@/chat/service";
-import { updateHistory } from "@/chat/history/update-history";
+import { RoomsStatusOptions } from "@/shared/models/pocketbase-types";
 import { embedder } from "@/search/embedder";
+import { runChatWorkflow } from "@/chat/ai/workflow";
+import { historyRepository } from "@/messages/history/repository";
+import { logger } from "@/shared/lib/logger";
 
 import type { SendMessageDTO } from "./types";
+
+const log = logger.child({
+  module: "socket.io:send-message",
+});
 
 export async function sendMessage(
   socket: Socket,
@@ -28,13 +28,11 @@ export async function sendMessage(
       ),
     };
 
-    let room = await pb.collection("rooms").getOne(roomId, {
-      expand: "chat,chat.integration",
-    });
-    const integration: IntegrationsResponse = (room.expand as any).chat.expand
-      .integration!;
+    let room = await pb.collection("rooms").getOne(roomId);
 
-    const msgs = await updateHistory([msg]);
+    const msgs = await historyRepository.updateHistory([msg]);
+    log.debug({ msgs }, "updated history");
+
     io.to(room.id).emit("new-message", {
       roomId: room.id,
       message: msgs[0],
@@ -63,7 +61,7 @@ export async function sendMessage(
 
     if (room.status === "operator") return;
 
-    const newMsgs = await callChatAssistant(integration.id, room.id);
+    const newMsgs = await runChatWorkflow(room.id, msg.content);
 
     for (const msg of newMsgs) {
       io.to(room.id).emit("new-message", { roomId: room.id, message: msg });

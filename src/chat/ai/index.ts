@@ -1,1 +1,1 @@
-export * from "./assistant";
+export * from "./consulter";

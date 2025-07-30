@@ -3,6 +3,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { PromptTemplate } from "@langchain/core/prompts";
 
 import { getEnv } from "@/shared/helpers/get-env";
+import { RunnableLambda } from "@langchain/core/runnables";
 
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
@@ -19,7 +20,7 @@ Original query: {query}
 Enhanced query:
 `;
 
-const ReturnSchema = z.object({
+export const EnhancerReturnSchema = z.object({
   enhancedQuery: z.string(),
   keywords: z.array(z.string()),
   entities: z.array(z.string()),
@@ -34,10 +35,15 @@ const enhancerBaseModel = new ChatOpenAI({
 });
 
 export const enhancerChain = enhancerPromptTemplate.pipe(
-  enhancerBaseModel.withStructuredOutput(ReturnSchema)
+  enhancerBaseModel.withStructuredOutput(EnhancerReturnSchema)
 );
 
-export async function callEnhancer(query: string, history: string) {
-  const result = await enhancerChain.invoke({ query, history });
-  return result;
-}
+export const enhancerResultToString = RunnableLambda.from(
+  async (input: z.infer<typeof EnhancerReturnSchema>) => {
+    return `
+    Enhanced query: ${input.enhancedQuery}
+    Keywords: ${input.keywords.join(", ")}
+    Entities: ${input.entities.join(", ")}
+    `;
+  }
+);

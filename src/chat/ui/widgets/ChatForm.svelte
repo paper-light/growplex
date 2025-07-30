@@ -33,7 +33,7 @@
 
     {#if chat}
       <div class="flex gap-6">
-        <ChatAvatarUpdate {chat} class="flex-1 max-w-24" />
+        <ChatAvatarUpdate {chat} class="flex-1 max-w-24" mode="action" />
 
         <div class="flex-1 space-y-2">
           <ChatNameUpdate {chat} />

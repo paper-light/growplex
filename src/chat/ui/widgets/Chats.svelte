@@ -7,11 +7,12 @@
   import Card from "@/shared/ui/lib/Card.svelte";
   import Modal from "@/shared/ui/lib/Modal.svelte";
   import TextArea from "@/shared/ui/lib/TextArea.svelte";
-  import AvatarInput from "@/shared/ui/components/AvatarInput.svelte";
   import { chatCrud } from "@/chat/repositories/chat-crud";
   import { pb } from "@/shared/lib/pb";
   import Button from "@/shared/ui/lib/Button.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
+  import ChatCreate from "@/chat/ui/features/crud/ChatCreate.svelte";
+  import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";
 
   let filterIntegrationId = $state("");
   let filterName = $state("");
@@ -69,27 +70,24 @@
       >
         All integrations
       </Select>
-      <Button
-        onclick={() => {
-          filterName = "";
-          filterIntegrationId = "";
-        }}
-        color="neutral"
-        style="outline">Clear</Button
-      >
-      <Button
-        onclick={async () => {
-          if (!project) return;
 
-          const newChat = await chatCrud.create({
-            project: project.id,
-          });
+      {#if filterName || filterIntegrationId}
+        <Button
+          onclick={() => {
+            filterName = "";
+            filterIntegrationId = "";
+          }}
+          color="neutral"
+          style="outline">Clear</Button
+        >
+      {/if}
 
-          editChatId = newChat.id;
+      <ChatCreate
+        projectId={project?.id || ""}
+        afterCreate={(chat) => {
+          editChatId = chat.id;
         }}
-        color="primary"
-        style="outline">+ New Chat</Button
-      >
+      />
     </div>
   </div>
 
@@ -137,6 +135,7 @@
       if (!editChat) return;
       e.preventDefault();
 
+      const inputAvatar = (e.currentTarget as any).avatar.files?.[0] || null;
       const inputName = (e.currentTarget as any).name.value;
       const inputDomain = (e.currentTarget as any).domain.value;
       const inputFirstMessage = (e.currentTarget as any).firstMessage.value;
@@ -146,26 +145,19 @@
         name: inputName,
         domain: inputDomain,
         firstMessage: inputFirstMessage,
+        avatar: inputAvatar,
       });
 
       editChatEnd();
     }}
   >
     <div class="flex gap-4">
-      <AvatarInput
-        onChange={(file) => {
-          if (!file || !editChat) return;
-
-          chatCrud.update({
-            id: editChat.id,
-            avatar: file,
-          });
-
+      <ChatAvatarUpdate
+        chat={editChat || null}
+        mode="form"
+        afterUpdate={() => {
           editChatEnd();
         }}
-        avatar={editChat
-          ? pb.files.getURL(editChat, editChat?.avatar)
-          : undefined}
       />
 
       <div class="flex-1 space-y-4">

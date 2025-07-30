@@ -1,8 +1,8 @@
 <script lang="ts">
   import { navigate } from "astro:transitions/client";
 
-  import { signIn } from "@/auth/features/sign-in";
   import type { AuthError } from "@/auth/lib/models";
+  import { pb } from "@/shared/lib/pb";
   import Oauth from "@/auth/ui/Oauth.svelte";
 
   let email = $state("");
@@ -19,7 +19,9 @@
     loading = true;
 
     try {
-      await signIn(email, password);
+      await pb.collection("users").authWithPassword(email, password, {
+        expand: "orgMembers,orgMembers.org",
+      });
       await navigate("/app");
     } catch (err) {
       console.error(err);

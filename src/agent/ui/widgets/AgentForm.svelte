@@ -15,7 +15,7 @@
 
     {#if agent}
       <div class="flex gap-6 mb-2">
-        <AgentAvatarUpdate {agent} class="flex-1 max-w-24" />
+        <AgentAvatarUpdate {agent} class="flex-1 max-w-24" mode="action" />
 
         <AgentNameUpdate {agent} class="flex-1" />
       </div>

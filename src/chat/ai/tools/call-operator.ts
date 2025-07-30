@@ -6,6 +6,7 @@ import { pb } from "@/shared/lib/pb";
 
 const CallOperatorSchema = z.object({
   description: z.string().describe("The description of the problem"),
+  // OPTIONAL
   payload: z
     .any()
     .optional()

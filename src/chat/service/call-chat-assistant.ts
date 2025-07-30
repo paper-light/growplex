@@ -1,6 +1,6 @@
 import { Document } from "@langchain/core/documents";
 import { setContextVariable } from "@langchain/core/context";
-import { AIMessage, ToolMessage } from "@langchain/core/messages";
+import { ToolMessage } from "@langchain/core/messages";
 import { RunnableLambda } from "@langchain/core/runnables";
 
 import { pb } from "@/shared/lib/pb";
@@ -19,13 +19,12 @@ import {
   MessagesEventOptions,
 } from "@/shared/models/pocketbase-types";
 
-import { extractorService } from "@/rag/extractor";
-import { createSourcesFilter } from "@/rag/filters";
-
-import { encoderService } from "@/llm";
+import { vectorRetriever } from "@/search/retrievers";
+import { createSourcesFilter } from "@/search/filters";
+import { embedder } from "@/search/embedder";
 
 import { updateHistory, getHistory } from "../history";
-import { assistantAgent, assistantToolsMap, finalStepAgent } from "../agent";
+import { assistantAgent, assistantToolsMap, finalStepAgent } from "../ai";
 import { buildLlmHistory } from "../history/build-llm-history";
 
 const log = logger.child({ module: "chat-service" });
@@ -66,7 +65,7 @@ export async function callChatAssistant(
 
   if (sourceIds.length > 0) {
     try {
-      const retriever = await extractorService.createRetriever(org.id, {
+      const retriever = await vectorRetriever.createRetriever(org.id, {
         filter: createSourcesFilter(sourceIds),
         k: 100,
       });
@@ -149,7 +148,7 @@ export async function callChatAssistant(
         room: roomId,
         sentBy: agent.name,
         visible: false,
-        contentTokensCount: encoderService.countTokens(
+        contentTokensCount: embedder.countTokens(
           assistantResp.content.toString(),
           "gpt-4"
         ),
@@ -174,7 +173,7 @@ export async function callChatAssistant(
             msg.name === "callOperator"
               ? MessagesEventOptions.wailtingOperator
               : undefined,
-          contentTokensCount: encoderService.countTokens(
+          contentTokensCount: embedder.countTokens(
             msg.content.toString(),
             "gpt-4"
           ),
@@ -212,7 +211,7 @@ export async function callChatAssistant(
     visible: true,
     room: roomId,
     sentBy: agent.name,
-    contentTokensCount: encoderService.countTokens(
+    contentTokensCount: embedder.countTokens(
       finalStepResp.content.toString(),
       "gpt-4"
     ),

@@ -2,7 +2,7 @@
   import { navigate } from "astro:transitions/client";
 
   import type { AuthError } from "@/auth/lib/models";
-  import { oauth2 } from "@/auth/features/oauth";
+  import { pb } from "@/shared/lib/pb";
 
   interface Props {
     error?: AuthError | null;
@@ -22,7 +22,15 @@
     loading = true;
     try {
       const target = e.currentTarget as HTMLElement;
-      await oauth2(target.dataset.provider!);
+      await pb.collection("users").authWithOAuth2({
+        provider: target.dataset.provider!,
+        query: { expand: "orgMembers,orgMembers.org" },
+        createData: {
+          metadata: {
+            provider: target.dataset.provider!,
+          },
+        },
+      });
       await navigate("/app");
     } catch (e) {
       console.error("Error during OAuth2 flow:", e);

@@ -9,9 +9,16 @@
   interface Props {
     chat: ChatsResponse | null;
     class?: ClassValue;
+    mode?: "form" | "action";
+    afterUpdate?: (chat: ChatsResponse) => void;
   }
 
-  let { chat, class: className = "" }: Props = $props();
+  let {
+    chat,
+    class: className = "",
+    mode = "form",
+    afterUpdate,
+  }: Props = $props();
 
   const avatar = $derived(
     chat?.avatar ? pb.files.getURL(chat, chat.avatar) : null
@@ -20,16 +27,21 @@
   async function handleAvatarChange(file: File) {
     if (!chat) return;
 
-    await chatCrud.update({
+    const updatedChat = await chatCrud.update({
       id: chat.id,
       avatar: file,
     });
+
+    afterUpdate?.(updatedChat);
   }
 </script>
 
-<AvatarInput
-  class={className}
-  {avatar}
-  size="md"
-  onChange={handleAvatarChange}
-/>
+{#key chat?.id}
+  <AvatarInput
+    {mode}
+    class={className}
+    {avatar}
+    size="md"
+    onChange={handleAvatarChange}
+  />
+{/key}

@@ -1,17 +1,15 @@
 import { type Socket, type Server } from "socket.io";
-import { RateLimiterRes } from "rate-limiter-flexible";
 
 import { pb } from "@/shared/lib/pb";
 
 import {
   RoomsStatusOptions,
-  type RoomsResponse,
   type IntegrationsResponse,
 } from "@/shared/models/pocketbase-types";
 
 import { callChatAssistant } from "@/chat/service";
 import { updateHistory } from "@/chat/history/update-history";
-import { encoderService } from "@/llm";
+import { embedder } from "@/search/embedder";
 
 import type { SendMessageDTO } from "./types";
 
@@ -24,7 +22,7 @@ export async function sendMessage(
     // ALWAYS ON SEND MESSAGE
     const msg = {
       ...JSON.parse(msgStr),
-      contentTokensCount: encoderService.countTokens(
+      contentTokensCount: embedder.countTokens(
         JSON.parse(msgStr).content,
         "gpt-4"
       ),

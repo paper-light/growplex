@@ -10,16 +10,14 @@ const log = logger.child({
 });
 
 const UpdateLeadSchema = z.object({
-  name: z.string().optional().describe("The name of the user, if provided"),
-  email: z.string().optional().describe("The email of the user, if provided"),
-  tg: z
+  description: z
     .string()
-    .optional()
-    .describe("The Telegram ID or username of the user, if provided"),
-  phone: z
-    .string()
-    .optional()
-    .describe("The phone number of the user, if provided"),
+    .describe("The description of the conversation with the user"),
+  // OPTIONAL
+  name: z.string().optional().describe("The name of the user"),
+  email: z.string().optional().describe("The email of the user"),
+  tg: z.string().optional().describe("The Telegram ID or username of the user"),
+  phone: z.string().optional().describe("The phone number of the user"),
   payload: z
     .any()
     .optional()
@@ -30,6 +28,7 @@ const UpdateLeadSchema = z.object({
 
 export const updateLead = tool(
   async ({
+    description,
     name,
     email,
     phone,
@@ -58,6 +57,7 @@ export const updateLead = tool(
     }
 
     let updateData: Record<string, any> = {};
+    if (description) updateData.description = description;
     if (name) updateData.name = name;
     if (email) updateData.email = email;
     if (phone) updateData.phone = phone;
@@ -76,7 +76,7 @@ export const updateLead = tool(
   {
     name: "updateLead",
     description: `
-    Call this tool, when user has provided important information about himself, like name, email, phone, or any relevant information.
+    Call this tool, when user has provided important information about himself, like name, email, phone, or any relevant information, that can be used to address company value to him.
     If you are not sure about the information, do not update the lead.
     `,
     schema: UpdateLeadSchema,

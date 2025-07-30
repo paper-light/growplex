@@ -3,8 +3,6 @@
 
   import { pb } from "@/shared/lib/pb";
 
-  import { signIn } from "@/auth/features/sign-in";
-  import { signUp } from "@/auth/features/sign-up";
   import Oauth from "@/auth/ui/Oauth.svelte";
   import type { AuthError } from "@/auth/lib/models";
 
@@ -35,8 +33,15 @@
     }
 
     try {
-      await signUp(email, password, confirmPassword, username);
-      await signIn(email, password);
+      await pb.collection("users").create({
+        email,
+        password,
+        confirmPassword,
+        name: username,
+      });
+      await pb.collection("users").authWithPassword(email, password, {
+        expand: "orgMembers,orgMembers.org",
+      });
       await navigate("/app");
       await pb.collection("users").requestVerification(email);
     } catch (err) {

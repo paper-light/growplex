@@ -8,7 +8,6 @@ export default defineConfig({
 
   plugins: [
     svelte({
-      compilerOptions: { accessors: true },
       emitCss: false,
     }),
   ],

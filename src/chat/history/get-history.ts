@@ -8,7 +8,7 @@ import {
   type MessagesRecord,
   type MessagesResponse,
 } from "@/shared/models/pocketbase-types";
-import { encoderService } from "@/llm";
+import { embedder } from "@/search/embedder";
 
 import { updateHistory } from "./update-history";
 import { REDIS_PREFIX } from "./config";
@@ -122,7 +122,7 @@ export async function getHistory(
     visible: true,
     room: roomId,
     sentBy: agent.name,
-    contentTokensCount: encoderService.countTokens(chat.firstMessage, "gpt-4"),
+    contentTokensCount: embedder.countTokens(chat.firstMessage, "gpt-4"),
     metadata: {
       avatar: pb.files.getURL(agent, agent.avatar),
     },

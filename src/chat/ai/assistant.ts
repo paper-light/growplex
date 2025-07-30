@@ -7,7 +7,6 @@ import { getEnv } from "@/shared/helpers/get-env";
 import { updateLead, createTicket, callOperator } from "./tools";
 
 const ENV = getEnv("ENV");
-const MAX_TOKENS = parseInt(getEnv("PUBLIC_CHAT_MAX_MESSAGE_TOKENS"));
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
 const assistantPromptTemplate = await hub.pull(`chat-system:${ENV}`, {
@@ -28,14 +27,14 @@ export const assistantToolsMap = assistantTools.reduce((acc, tool) => {
 const openaiToolsModel = new ChatOpenAI({
   model: "gpt-4.1-mini",
   temperature: 1,
-  maxTokens: MAX_TOKENS,
+  // maxTokens: MAX_TOKENS,
   apiKey: OPENAI_API_KEY,
 }).bindTools(assistantTools);
 
 const openaiModel = new ChatOpenAI({
   model: "gpt-4.1-mini",
   temperature: 1,
-  maxTokens: MAX_TOKENS,
+  // maxTokens: MAX_TOKENS,
   apiKey: OPENAI_API_KEY,
 });
 

@@ -9,7 +9,10 @@ const CreateTicketSchema = z.object({
   description: z.string().describe("The detailed description of the ticket"),
   priority: z
     .enum(["low", "medium", "high"])
-    .describe("The priority of the ticket"),
+    .describe(
+      "The priority of the ticket. High if user is angry and unsatisfied, medium you couldn't help him, low if user is neutral"
+    ),
+  // OPTIONAL
   payload: z
     .any()
     .optional()
@@ -23,8 +26,13 @@ export const createTicket = tool(
     priority,
     payload,
   }: z.infer<typeof CreateTicketSchema>) => {
+    // RUNNABLE DYNAMIC CONTEXT
     const msg = getContextVariable("message");
     const room = getContextVariable("room");
+    if (!room || !msg)
+      throw new Error(
+        "Create ticket tool call error: Room or message is not set"
+      );
 
     if (room.type === "preview") {
       return {
@@ -32,11 +40,6 @@ export const createTicket = tool(
         content: `Ticket is not created in preview mode`,
       };
     }
-
-    if (!msg)
-      throw new Error(
-        "Create ticket tool call error: Triggering message is not set"
-      );
 
     const ticket = await pb.collection("tickets").create({
       message: msg.id,

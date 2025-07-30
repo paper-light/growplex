@@ -6,7 +6,7 @@ import {
   type DocumentsResponse,
   DocumentsStatusOptions,
 } from "../shared/models/pocketbase-types";
-import { extractorService } from "../rag/extractor";
+import { embedder } from "../search/embedder";
 
 import type { ProcessMode } from "./types";
 
@@ -75,7 +75,7 @@ export async function processDomain(
     (d) => d.status === DocumentsStatusOptions.loaded
   );
 
-  const metrics = await extractorService.addTexts(
+  const metrics = await embedder.addTexts(
     org.id,
     loadedDocs.map((d) => ({
       content: d.content,

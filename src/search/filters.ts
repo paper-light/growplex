@@ -1,3 +1,5 @@
+// QDRANT FILTERS
+
 export function createMultiProjectFilter(projectIds: string[]) {
   if (projectIds.length === 0) {
     return { must: [] };
@@ -43,6 +45,19 @@ export function createChunksFilter(
           match: { value: chunkIndex },
         },
       ],
+    })),
+  };
+}
+
+export function createChunksFilterIds(chunkIds: string[]) {
+  if (chunkIds.length === 0) {
+    return { must: [] };
+  }
+
+  return {
+    should: chunkIds.map((chunkId) => ({
+      key: "metadata.id",
+      match: { value: chunkId },
     })),
   };
 }

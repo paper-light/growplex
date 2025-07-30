@@ -5,7 +5,7 @@ cookies_path = "cookies.txt"
 
 subprocess.run(
     [
-        "yt-dlp",
+        ".",
         "--cookies",
         cookies_path,
         "-f",
@@ -15,7 +15,7 @@ subprocess.run(
         "mp3",
         "--no-playlist",
         "-o",
-        "../../data/yt/%(title)s/audio.%(ext)s",
+        "./data/yt/%(title)s/audio.%(ext)s",
         url,
     ]
 )

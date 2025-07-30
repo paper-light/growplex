@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Trash2, X } from "@lucide/svelte";
+
   import Thalia from "@/shared/assets/thalia.jpg";
   import Input from "@/shared/ui/lib/Input.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
@@ -73,14 +75,16 @@
         All integrations
       </Select>
 
-      <Button
-        onclick={() => {
-          filterName = "";
-          filterIntegrationId = "";
-        }}
-        color="neutral"
-        style="outline">Clear</Button
-      >
+      {#if filterName || filterIntegrationId}
+        <Button
+          onclick={() => {
+            filterName = "";
+            filterIntegrationId = "";
+          }}
+          color="neutral"
+          style="outline">Clear</Button
+        >
+      {/if}
 
       <AgentCreate
         projectId={project?.id || ""}
@@ -186,13 +190,18 @@
 </Modal>
 
 <Modal onclose={() => (deleteAgentId = "")} open={deleteAgentOpen}>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-col gap-2">
     <h2 class="font-semibold">Delete Agent</h2>
     <p>Are you sure you want to delete this agent?</p>
 
-    <Button color="neutral" style="outline" onclick={() => (deleteAgentId = "")}
-      >Cancel</Button
+    <Button
+      color="neutral"
+      style="outline"
+      onclick={() => (deleteAgentId = "")}
     >
+      Cancel <X size={16} />
+    </Button>
+
     <Button
       color="error"
       style="outline"
@@ -201,7 +210,9 @@
         agentCrud.delete(deleteAgentId);
         deleteAgentId = "";
         editAgentEnd();
-      }}>Delete</Button
+      }}
     >
+      Delete <Trash2 size={16} />
+    </Button>
   </div>
 </Modal>

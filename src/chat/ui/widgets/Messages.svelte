@@ -4,7 +4,7 @@
   import { ChevronsDown } from "@lucide/svelte";
 
   import Thalia from "@/shared/assets/Thalia.jpg";
-  import Man from "@/shared/assets/man.jpg";
+  import Man from "@/shared/assets/Man.jpg";
   import Button from "@/shared/ui/lib/Button.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import {

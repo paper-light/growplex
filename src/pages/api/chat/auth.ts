@@ -1,6 +1,6 @@
 import { nanoid } from "nanoid";
 import jwt from "jsonwebtoken";
-import { JWT_SECRET, MONO_URL } from "astro:env/server";
+import { AUTH_JWT_SECRET } from "astro:env/server";
 
 import { pb } from "@/shared/lib/pb";
 
@@ -87,7 +87,7 @@ export async function POST({ request }: { request: Request }) {
       username,
       theme: chat.theme,
     };
-    const token = jwt.sign(payload, JWT_SECRET);
+    const token = jwt.sign(payload, AUTH_JWT_SECRET);
     return new Response(JSON.stringify({ token, payload }), {
       status: 200,
       headers: {

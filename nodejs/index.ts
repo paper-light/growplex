@@ -9,7 +9,6 @@ import { handler as astroHandler } from "../dist/server/entry.mjs";
 import { attachSocketIO } from "./socket.io/controller";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 export async function start() {
   app.use(express.static("dist/client"));
@@ -18,8 +17,8 @@ export async function start() {
   const httpServer = http.createServer(app);
   attachSocketIO(httpServer);
 
-  httpServer.listen(PORT, () => {
-    console.log(`🚀 Server (HTTP + WS) listening on http://localhost:${PORT}`);
+  httpServer.listen(2999, () => {
+    console.log(`🚀 Server (HTTP + WS) listening on http://localhost:2999`);
   });
 }
 

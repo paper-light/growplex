@@ -18,6 +18,8 @@ export default defineConfig({
   site: "http://localhost:2999",
   env: {
     schema: {
+      ENV: envField.string({ context: "client", access: "public" }),
+
       PUBLIC_MESSAGE_DELAY_SEC: envField.number({
         context: "client",
         access: "public",
@@ -28,10 +30,6 @@ export default defineConfig({
         access: "public",
       }),
       PUBLIC_POSTHOG_TOKEN: envField.string({
-        context: "client",
-        access: "public",
-      }),
-      PUBLIC_CHAT_WIDGET_DOMAIN: envField.string({
         context: "client",
         access: "public",
       }),
@@ -49,11 +47,10 @@ export default defineConfig({
       TG_TOKEN: envField.string({ context: "server", access: "secret" }),
       TG_ID: envField.string({ context: "server", access: "secret" }),
 
-      MAILGUN_TOKEN: envField.string({ context: "server", access: "secret" }),
-      JWT_SECRET: envField.string({ context: "server", access: "secret" }),
+      AUTH_JWT_SECRET: envField.string({ context: "server", access: "secret" }),
 
       CRAWL4AI_URL: envField.string({ context: "server", access: "secret" }),
-      MONO_URL: envField.string({ context: "server", access: "secret" }),
+
       QDRANT_URL: envField.string({ context: "server", access: "secret" }),
       QDRANT_API_KEY: envField.string({ context: "server", access: "secret" }),
     },

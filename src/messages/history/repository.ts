@@ -15,7 +15,7 @@ import { RunnableLambda } from "@langchain/core/runnables";
 import { getContextVariable } from "@langchain/core/context";
 import { historyLangchainAdapter } from "./langchain-adapter";
 
-const HISTORY_TOKENS = parseInt(getEnv("HISTORY_TOKENS"), 10);
+const HISTORY_TOKENS = parseInt(getEnv("CHAT_HISTORY_TOKENS"), 10);
 const MAX_MSG_TOKENS = parseInt(getEnv("PUBLIC_CHAT_MAX_MESSAGE_TOKENS"), 10);
 const REDIS_PREFIX = "messages:history:";
 

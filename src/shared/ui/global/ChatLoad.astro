@@ -1,17 +1,20 @@
 ---
-import {
-  PUBLIC_CHAT_WIDGET_DOMAIN,
-  PUBLIC_CHAT_WIDGET_ID,
-} from "astro:env/client";
+import { ENV, PUBLIC_CHAT_WIDGET_ID } from "astro:env/client";
+
+const domain =
+  ENV === "local"
+    ? "http://localhost:2999"
+    : ENV === "dev"
+      ? "https://dev.growplex.dev"
+      : "https://growplex.dev";
 ---
 
-<script is:inline src={`${PUBLIC_CHAT_WIDGET_DOMAIN}/scripts/chat-widget.js`}
-></script>
+<script is:inline src={`${domain}/scripts/chat-widget.js`}></script>
 
 <script
   is:inline
   data-astro-rerun
-  data-domain={PUBLIC_CHAT_WIDGET_DOMAIN}
+  data-domain={domain}
   data-chat-id={PUBLIC_CHAT_WIDGET_ID}
 >
   (function () {

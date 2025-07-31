@@ -1,7 +1,8 @@
 ---
+import Growplex from "@/shared/assets/icons/Growplex.svg";
 import App from "./App.astro";
 
-const { title, favicon = "/LOGO.png" } = Astro.props;
+const { title, favicon = Growplex.src } = Astro.props;
 ---
 
 <App title={title} favicon={favicon}>

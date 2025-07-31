@@ -1,6 +1,5 @@
 ---
-import { Image } from "astro:assets";
-import Logo from "@/shared/assets/LOGO.png";
+import Growplex from "@/shared/assets/icons/Growplex.svg";
 import ThemeController from "@/shared/ui/components/ThemeController.svelte";
 import FormCTA from "@/shared/ui/components/FormCTA.svelte";
 
@@ -10,14 +9,9 @@ const { active } = Astro.props;
 <header
   class="max-w-screen-xl flex justify-between items-center border-b border-base-300 px-4 py-2 mx-auto rounded-2xl shadow sticky top-0 md:top-1 bg-base-100 z-10"
 >
-  <a href="/" class="inline-flex text-xl font-bold relative items-center gap-2">
-    <Image
-      src={Logo}
-      alt="logo"
-      class="rounded-2xl"
-      width={40}
-      loading="lazy"
-    />
+  <a href="/" class="inline-flex text-xl font-bold relative items-center gap-1">
+    <Growplex class="size-10" />
+
     <span>Growplex</span>
     <span class="absolute top-1 -right-18 text-xs hidden">by Gold Swan</span>
   </a>

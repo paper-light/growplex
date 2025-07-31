@@ -1,8 +1,9 @@
 ---
+import Growplex from "@/shared/assets/icons/Growplex.svg";
 import AppState from "@/shared/ui/layouts/App.svelte";
 import Root from "@/shared/ui/layouts/Root.astro";
 
-const { title, favicon = "/LOGO.png" } = Astro.props;
+const { title, favicon = Growplex.src } = Astro.props;
 ---
 
 <Root title={title} favicon={favicon} slot="head">

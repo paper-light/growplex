@@ -7,8 +7,9 @@ import OrgProjectSelect from "@/control/ui/OrgProjectSelect.svelte";
 import ThemeController from "@/shared/ui/components/ThemeController.svelte";
 import SidebarNav from "@/shared/ui/layouts/AppSidebarNav.svelte";
 import App from "@/shared/ui/layouts/App.astro";
+import Growplex from "@/shared/assets/icons/Growplex.svg";
 
-const { title, favicon = "/LOGO.png" } = Astro.props;
+const { title, favicon = Growplex.src } = Astro.props;
 ---
 
 <App title={title} favicon={favicon}>
@@ -78,9 +79,9 @@ const { title, favicon = "/LOGO.png" } = Astro.props;
         class="w-72 lg:w-64 bg-base-100 border-r border-base-300 p-4 flex flex-col h-screen"
       >
         <div
-          class="flex items-center justify-center gap-2 mb-4 select-none relative"
+          class="flex items-center justify-center gap-1 mb-4 select-none relative"
         >
-          <img src="/LOGO.png" alt="Logo" class="size-8" />
+          <Growplex class="size-8" />
           <h1 class="text-xl font-semibold text-primary">Growplex</h1>
 
           <div

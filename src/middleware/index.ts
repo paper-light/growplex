@@ -13,9 +13,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
       await ensureAdmin();
     } catch (err) {
       console.error("[pbAdminMiddleware] Failed to authenticate:", err);
-      return new Response("Unauthorized, please contact support", {
-        status: 401,
-      });
     }
   }
 

@@ -24,7 +24,7 @@ export function useMiddlewares(io: any) {
         }
 
         try {
-          const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+          const decoded = jwt.verify(token, process.env.AUTH_JWT_SECRET!);
           socket.data.guest = decoded;
         } catch (err) {
           console.error("Invalid Guest token:", err);

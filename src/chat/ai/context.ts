@@ -9,6 +9,7 @@ import type {
   AgentsResponse,
   SourcesResponse,
   OrgsResponse,
+  MessagesResponse,
 } from "@/shared/models/pocketbase-types";
 import { setContextVariable } from "@langchain/core/context";
 import { logger } from "@/shared/lib/logger";
@@ -35,6 +36,7 @@ export async function loadDataForContext(roomId: string) {
   const org = (chat.expand as any)?.project.expand.org;
 
   const pbHistory = await historyRepository.getHistory(roomId, false);
+  const message = pbHistory[pbHistory.length - 1];
   const history = historyLangchainAdapter.buildLangchainHistory(pbHistory);
 
   log.debug({ history }, "history");
@@ -48,6 +50,7 @@ export async function loadDataForContext(roomId: string) {
     sources,
     org,
     history,
+    message,
   };
 }
 
@@ -63,16 +66,20 @@ export const contextLambda = (cb?: Runnable, opts?: any) => {
       org: OrgsResponse;
 
       history: LangchainMessage[];
+      message: MessagesResponse;
 
       query: string;
       knowledge: string;
       withTools: boolean;
+      withSearch: boolean;
     }) => {
       // Chain config
+      setContextVariable("query", input.query);
+
       setContextVariable("withTools", input.withTools);
+      setContextVariable("withSearch", input.withSearch);
 
       setContextVariable("knowledge", input.knowledge);
-      setContextVariable("query", input.query);
 
       // Context data
       setContextVariable("room", input.room);
@@ -85,6 +92,7 @@ export const contextLambda = (cb?: Runnable, opts?: any) => {
 
       // History
       setContextVariable("history", input.history);
+      setContextVariable("message", input.message);
 
       return await cb?.invoke(opts || {});
     }

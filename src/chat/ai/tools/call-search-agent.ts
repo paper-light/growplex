@@ -29,6 +29,7 @@ export const callSearchChain = tool(
     
     IMPORTANT: NEVER attempt to answer factual questions without real proof from your knowledge base.
     This tool ensures you provide accurate, verifiable information that builds trust with potential customers.
+    If there is no information in the knowledge base, you should admit that you do not have the information. Create a ticket and offer to escalate the request to a human.
     
     Input: The enhanced query structure with the user's question, relevant keywords, and entities.
     Output: Comprehensive, factual information from your knowledge base and search results.

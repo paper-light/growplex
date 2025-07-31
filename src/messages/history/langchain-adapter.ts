@@ -95,7 +95,9 @@ class HistoryLangchainAdapter {
       };
     } else if (msg instanceof AIMessage || msg instanceof AIMessageChunk) {
       return {
-        content: msg.content.toString() || "<SELECTED TOOLS>",
+        content:
+          msg.content.toString() ||
+          `SELECTED TOOLS: \n\n${JSON.stringify(msg.tool_calls)}`,
         role: MessagesRoleOptions.assistant,
         room: opts.roomId,
         sentBy: opts.agent?.name,

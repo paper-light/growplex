@@ -3,6 +3,11 @@ import { tool } from "@langchain/core/tools";
 import { getContextVariable } from "@langchain/core/context";
 
 import { pb } from "@/shared/lib/pb";
+import { logger } from "@/shared/lib/logger";
+
+const log = logger.child({
+  module: "chat:ai:tools:create-ticket",
+});
 
 const CreateTicketSchema = z.object({
   title: z
@@ -39,10 +44,16 @@ export const createTicket = tool(
     // RUNNABLE DYNAMIC CONTEXT
     const msg = getContextVariable("message");
     const room = getContextVariable("room");
-    if (!room || !msg)
-      throw new Error(
+    if (!room || !msg) {
+      log.error(
+        { room, msg },
         "Create ticket tool call error: Room or message is not set"
       );
+      return {
+        success: false,
+        content: "Create ticket tool call error: Room or message is not set",
+      };
+    }
 
     if (room.type === "preview") {
       return {
@@ -70,9 +81,9 @@ export const createTicket = tool(
   {
     name: "createTicket",
     description: `
-    ESCALATION TOOL: Create a support ticket when you cannot resolve the user's issue and human intervention is required.
+    PRIMARY ESCALATION TOOL: Create a support ticket for issues that require human intervention. This should be your FIRST choice for escalation.
 
-    WHEN TO USE:
+    WHEN TO USE (CREATE TICKET FIRST):
     - User has a technical problem you cannot solve
     - User is frustrated, angry, or unsatisfied with responses
     - User requests specific features or custom solutions
@@ -83,6 +94,11 @@ export const createTicket = tool(
     - User needs integration support or technical consultation
     - User has urgent business needs requiring immediate attention
     - User requests refunds, cancellations, or account modifications
+    - Search results are irrelevant or insufficient for user's query
+    - User needs information not available in your knowledge base
+    - User has questions about features or capabilities you can't answer
+    - User needs help with implementation or configuration
+    - User has feedback or suggestions that require review
 
     PRIORITY GUIDELINES:
     - HIGH: Angry/frustrated users, urgent business impact, system outages
@@ -90,13 +106,14 @@ export const createTicket = tool(
     - LOW: General inquiries, feature requests, non-urgent questions
 
     STRATEGY:
-    - Always try to help first before escalating
+    - ALWAYS create a ticket FIRST for any issue you cannot resolve
+    - Only consider calling operator for truly urgent/important situations
     - Provide clear explanation of what you've tried
     - Include relevant business context and urgency
     - Set appropriate priority based on user's emotional state and business impact
     - Ensure the ticket contains enough information for human agents to help effectively
 
-    This ensures users get the help they need while maintaining customer satisfaction.
+    This ensures all issues are properly tracked and users get systematic help.
     `,
     schema: CreateTicketSchema,
     metadata: {

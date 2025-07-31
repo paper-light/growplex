@@ -33,13 +33,14 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
     query,
     knowledge: "",
     withTools: true,
+    withSearch: true,
   };
 
   let messagesToPersist: Partial<MessagesRecord>[] = [];
   let result: AIMessageChunk | null = null;
   let callingTools = true;
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 2; i++) {
     if (messagesToPersist.length > 0) {
       returnMessages.push(
         ...(await historyRepository.updateHistory(messagesToPersist))
@@ -85,9 +86,25 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
       log.debug({ toolMessage, name: toolCall.name }, "Tool message");
 
       if (toolMessage.name === "callSearchChain") {
-        const content = toolMessage.content;
-        log.debug({ content }, "Search chain content");
-        contextInput.knowledge += JSON.stringify(content);
+        const data = JSON.parse(toolMessage.content);
+        const content = data.content;
+        const success = data.success;
+        toolMessage.content = success
+          ? JSON.stringify({
+              content: "✅ Found relevant information for your question",
+              success: true,
+            })
+          : JSON.stringify({
+              content: "❌ No relevant information found",
+              success: false,
+            });
+
+        contextInput.knowledge = JSON.stringify(
+          `Relevant to query: ${success ? "✅" : "❌"}
+          Search results: ${content}`
+        );
+
+        contextInput.withSearch = false;
       }
 
       return toolMessage as ToolMessage;

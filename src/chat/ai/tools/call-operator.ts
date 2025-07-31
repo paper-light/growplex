@@ -49,31 +49,38 @@ export const callOperator = tool(
   {
     name: "callOperator",
     description: `
-    HUMAN TRANSFER TOOL: Transfer the conversation to a human operator when automated assistance is insufficient or inappropriate.
+    URGENT HUMAN TRANSFER TOOL: Transfer to human operator ONLY for truly urgent or critical situations that require immediate human attention. This should be used SPARINGLY and only after creating a ticket.
 
-    WHEN TO USE:
-    - User explicitly requests to speak with a human
-    - User is dissatisfied with automated responses
-    - Conversation becomes too complex for automated handling
-    - User has urgent business needs requiring immediate human attention
-    - User needs personalized consultation or custom solutions
-    - User requests account changes or administrative actions
-    - User has sensitive or confidential information to discuss
-    - User needs technical consultation or integration support
-    - User is frustrated and needs human empathy and understanding
-    - User asks for enterprise solutions or custom pricing
-    - User needs help with complex implementation or onboarding
-    - User has complaints or feedback that require human handling
+    WHEN TO USE (ONLY FOR URGENT SITUATIONS):
+    - User is in crisis or experiencing severe emotional distress
+    - User has a critical business emergency requiring immediate resolution
+    - User is threatening to cancel or leave due to urgent unresolved issues
+    - User has a security incident or data breach concern
+    - User is experiencing system downtime affecting their business operations
+    - User has a legal or compliance issue requiring immediate attention
+    - User is a VIP customer with urgent high-priority needs
+    - User has a billing emergency (overcharged, payment issues)
+    - User is experiencing a service outage affecting multiple users
+    - User has a safety or security concern
+
+    WHEN NOT TO USE (CREATE TICKET INSTEAD):
+    - General support questions or technical issues
+    - Feature requests or product inquiries
+    - Implementation or configuration help
+    - Search results being irrelevant
+    - User dissatisfaction with automated responses
+    - Account changes or administrative requests
+    - General feedback or suggestions
 
     STRATEGY:
-    - Always try to help first before transferring
-    - Provide clear explanation of why human assistance is needed
-    - Include comprehensive context to help the operator understand quickly
-    - Ensure smooth transition by summarizing the situation
-    - Set appropriate expectations about when an operator will be available
-    - Maintain professional tone and reassure the user they'll get help
+    - ALWAYS create a ticket FIRST for any issue
+    - Only call operator for truly urgent/critical situations
+    - Provide clear explanation of why immediate human attention is needed
+    - Include comprehensive context about the urgency
+    - Ensure the situation genuinely requires immediate human intervention
+    - Set appropriate expectations about operator availability
 
-    This ensures users get the personalized attention they need while maintaining service quality.
+    This ensures operators are available for truly urgent situations while maintaining systematic ticket tracking.
     `,
     schema: CallOperatorSchema,
     metadata: {

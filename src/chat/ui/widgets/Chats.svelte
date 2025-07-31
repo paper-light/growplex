@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Thalia from "@/shared/assets/thalia.jpg";
+  import Thalia from "@/shared/assets/Thalia.jpg";
   import Input from "@/shared/ui/lib/Input.svelte";
   import Select from "@/shared/ui/lib/Select.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";

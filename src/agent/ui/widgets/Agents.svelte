@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Trash2, X } from "@lucide/svelte";
 
-  import Thalia from "@/shared/assets/thalia.jpg";
+  import Thalia from "@/shared/assets/Thalia.jpg";
   import Input from "@/shared/ui/lib/Input.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import Select from "@/shared/ui/lib/Select.svelte";

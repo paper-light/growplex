@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack } from "svelte";
 
-  import Thalia from "@/shared/assets/thalia.jpg";
+  import Thalia from "@/shared/assets/Thalia.jpg";
   import {
     type ChatsResponse,
     type AgentsResponse,

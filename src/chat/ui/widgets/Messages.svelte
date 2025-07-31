@@ -3,7 +3,7 @@
   import { fade } from "svelte/transition";
   import { ChevronsDown } from "@lucide/svelte";
 
-  import Thalia from "@/shared/assets/thalia.jpg";
+  import Thalia from "@/shared/assets/Thalia.jpg";
   import Man from "@/shared/assets/man.jpg";
   import Button from "@/shared/ui/lib/Button.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";

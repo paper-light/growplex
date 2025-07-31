@@ -127,7 +127,8 @@
       if (!editAgent) return;
       e.preventDefault();
 
-      const inputAvatar = (e.currentTarget as any).avatar.files?.[0] || null;
+      const inputAvatar =
+        (e.currentTarget as any).avatar.files?.[0] || undefined;
       const inputName = (e.currentTarget as any).name.value;
       const inputSystem = (e.currentTarget as any).system.value;
 

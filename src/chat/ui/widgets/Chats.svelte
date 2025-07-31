@@ -135,9 +135,10 @@
       if (!editChat) return;
       e.preventDefault();
 
-      const inputAvatar = (e.currentTarget as any).avatar.files?.[0] || null;
+      const inputAvatar =
+        (e.currentTarget as any).avatar.files?.[0] || undefined;
       const inputName = (e.currentTarget as any).name.value;
-      const inputDomain = (e.currentTarget as any).domain.value;
+      const inputDomain = (e.currentTarget as any).domain.value || undefined;
       const inputFirstMessage = (e.currentTarget as any).firstMessage.value;
 
       await chatCrud.update({

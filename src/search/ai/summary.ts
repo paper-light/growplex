@@ -19,16 +19,23 @@ Search summary:
 `;
 
 export const SummaryReturnSchema = z.object({
-  searchResult: z.string(),
-  queryFullfilled: z.boolean(),
+  content: z
+    .string()
+    .describe(
+      "Summary of the search results. Provide the most relevant information in useful way"
+    ),
+  success: z
+    .boolean()
+    .describe("Whether the query was fullfilled by the search results"),
 });
 
 const summaryPromptTemplate = PromptTemplate.fromTemplate(PROMPT_TEMPLATE);
 
 const summaryBaseModel = new ChatOpenAI({
-  model: "gpt-4.1-nano",
-  temperature: 0.1,
+  model: "gpt-4.1-mini",
+  temperature: 0.2,
   apiKey: OPENAI_API_KEY,
+  maxTokens: 16384,
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(

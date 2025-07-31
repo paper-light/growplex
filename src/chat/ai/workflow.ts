@@ -1,11 +1,8 @@
-import { RunnableSequence } from "@langchain/core/runnables";
-
 import { historyRepository } from "@/messages/history/repository";
 import type {
   MessagesRecord,
   MessagesResponse,
 } from "@/shared/models/pocketbase-types";
-import { pb } from "@/shared/lib/pb";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 
 import { consulterChain } from "./consulter";
@@ -14,15 +11,14 @@ import { chatToolsMap } from "./tools";
 
 import { contextLambda, loadDataForContext } from "./context";
 import { logger } from "@/shared/lib/logger";
+import { langfuseHandler } from "@/shared/lib/langfuse";
 
 const log = logger.child({
   module: "chat:ai:workflow",
 });
 
-const chatChain = RunnableSequence.from([
-  historyRepository.getAsLambda(),
-  consulterChain,
-]);
+const chatChain = consulterChain;
+
 export const chatChainWithContext = contextLambda(chatChain);
 
 export const runChatWorkflow = async (roomId: string, query: string) => {
@@ -32,7 +28,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
 
   const data = await loadDataForContext(roomId);
   log.debug({ roomId }, "Loaded context data");
-  const invokeOptions = {
+  const contextInput = {
     ...data,
     query,
     knowledge: "",
@@ -52,7 +48,9 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
     }
 
     log.info({ iteration: i, roomId }, "Invoking chatChainWithContext");
-    result = await chatChainWithContext.invoke(invokeOptions);
+    result = await chatChainWithContext.invoke(contextInput, {
+      callbacks: [langfuseHandler],
+    });
     log.debug({ result }, "chatChainWithContext result");
 
     callingTools = !!result?.tool_calls?.length;
@@ -76,11 +74,22 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
     log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
 
     const toolPromises = result!.tool_calls!.map(async (toolCall) => {
+      log.debug({ toolCall }, "Tool call");
+
       const toolMessage = await contextLambda(
         chatToolsMap[toolCall.name],
         toolCall
-      ).invoke(invokeOptions);
+      ).invoke(contextInput, {
+        callbacks: [langfuseHandler],
+      });
       log.debug({ toolMessage, name: toolCall.name }, "Tool message");
+
+      if (toolMessage.name === "callSearchChain") {
+        const content = toolMessage.content;
+        log.debug({ content }, "Search chain content");
+        contextInput.knowledge += JSON.stringify(content);
+      }
+
       return toolMessage as ToolMessage;
     });
     const toolMessages = await Promise.all(toolPromises);
@@ -112,9 +121,11 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
   }
 
   if (callingTools) {
-    invokeOptions.withTools = false;
+    contextInput.withTools = false;
     log.info({ roomId }, "Final assistant message after tools");
-    result = await chatChainWithContext.invoke(invokeOptions);
+    result = await chatChainWithContext.invoke(contextInput, {
+      callbacks: [langfuseHandler],
+    });
 
     messagesToPersist.push(
       ...historyLangchainAdapter.buildPBHistory([

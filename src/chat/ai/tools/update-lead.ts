@@ -12,17 +12,31 @@ const log = logger.child({
 const UpdateLeadSchema = z.object({
   description: z
     .string()
-    .describe("The description of the conversation with the user"),
+    .describe(
+      "A comprehensive summary of the conversation, including user's needs, pain points, business context, and any decisions or next steps discussed"
+    ),
   // OPTIONAL
-  name: z.string().optional().describe("The name of the user"),
-  email: z.string().optional().describe("The email of the user"),
-  tg: z.string().optional().describe("The Telegram ID or username of the user"),
-  phone: z.string().optional().describe("The phone number of the user"),
+  name: z
+    .string()
+    .optional()
+    .describe("The full name of the user or contact person"),
+  email: z
+    .string()
+    .optional()
+    .describe("The email address of the user for follow-up communication"),
+  tg: z
+    .string()
+    .optional()
+    .describe("The Telegram ID or username of the user for messaging"),
+  phone: z
+    .string()
+    .optional()
+    .describe("The phone number of the user for calls or SMS"),
   payload: z
     .any()
     .optional()
     .describe(
-      "The payload of the user, any important information in JSON format"
+      "Additional structured data including company info, role, budget, timeline, decision makers, specific requirements, or any other relevant business information in JSON format"
     ),
 });
 
@@ -52,7 +66,7 @@ export const updateLead = tool(
       );
       return {
         success: false,
-        error: "Lead is not set",
+        content: "Lead is not set",
       };
     }
 
@@ -76,8 +90,29 @@ export const updateLead = tool(
   {
     name: "updateLead",
     description: `
-    Call this tool, when user has provided important information about himself, like name, email, phone, or any relevant information, that can be used to address company value to him.
-    If you are not sure about the information, do not update the lead.
+    STRATEGIC LEAD CAPTURE: Use this tool to systematically collect and update customer information for sales follow-up.
+
+    WHEN TO USE:
+    - User provides ANY personal information (name, email, phone, etc.)
+    - User shares business information (company, role, industry)
+    - User discusses needs, pain points, or requirements
+    - User mentions budget, timeline, or decision-making process
+    - User shows interest in your solutions or services
+    - User asks about pricing, features, or implementation
+    - User provides contact information for follow-up
+    - User shares specific use cases or requirements
+    - User mentions competitors or current solutions
+    - User discusses decision makers or approval process
+
+    STRATEGY:
+    - Always be helpful first, then capture information naturally
+    - Use this to build comprehensive customer profiles
+    - Include context about their business needs and pain points
+    - Track their level of interest and buying signals
+    - Collect information that will help sales team follow up effectively
+    - Never be pushy - only capture what they willingly share
+
+    This information is crucial for converting prospects into customers and enabling effective sales follow-up.
     `,
     schema: UpdateLeadSchema,
     metadata: {

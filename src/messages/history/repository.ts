@@ -86,10 +86,11 @@ class HistoryRepository {
       throw new Error("roomId is required");
     }
 
-    const msgPromises = messages.map((m) =>
-      pb.collection("messages").create(m)
-    );
-    const createdMessages = await Promise.all(msgPromises);
+    const createdMessages: MessagesResponse[] = [];
+    for (const msg of messages) {
+      const createdMsg = await pb.collection("messages").create(msg);
+      createdMessages.push(createdMsg);
+    }
 
     log.debug({ roomId, count: messages.length }, "updated history");
 

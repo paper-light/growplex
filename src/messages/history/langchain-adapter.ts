@@ -183,7 +183,7 @@ class HistoryLangchainAdapter {
       case MessagesRoleOptions.tool:
         const res = JSON.parse(msg.content);
         return new ToolMessage({
-          content: res.success ? res.content : res.error,
+          content: res.content,
           name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
           tool_call_id: (msg.metadata as any).toolCallId,
           status: res.success ? "success" : "error",

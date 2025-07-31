@@ -6,7 +6,6 @@ import type {
   OrgsResponse,
   SourcesResponse,
 } from "@/shared/models/pocketbase-types";
-import { langfuseHandler } from "@/shared/lib/langfuse";
 
 import { createSourcesFilter } from "../filters";
 
@@ -26,11 +25,10 @@ export class VectorRetriever {
         filter: createSourcesFilter(sources.map((s) => s.id)),
       });
 
-      const docs = await retriever.invoke(input, {
-        callbacks: [langfuseHandler],
-      });
+      const docs = await retriever.invoke(input);
+      const results = docs.map((doc) => doc.pageContent).join("\n");
 
-      return docs;
+      return { results, query: input };
     });
   }
 

@@ -9,8 +9,6 @@ export const chatTools: StructuredTool[] = [
   updateLead,
   createTicket,
   callOperator,
-
-  // @ts-ignore
   callSearchChain,
 ];
 

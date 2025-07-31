@@ -49,19 +49,6 @@ export function createChunksFilter(
   };
 }
 
-export function createChunksFilterIds(chunkIds: string[]) {
-  if (chunkIds.length === 0) {
-    return { must: [] };
-  }
-
-  return {
-    should: chunkIds.map((chunkId) => ({
-      key: "metadata.id",
-      match: { value: chunkId },
-    })),
-  };
-}
-
 export function createMetadataFilter(
   key: string,
   value: string | number | boolean

@@ -108,7 +108,7 @@ class Embedder {
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize,
       chunkOverlap,
-      lengthFunction: this.countTokens,
+      lengthFunction: (text: string) => this.countTokens(text),
 
       separators: ["\n\n", "\n", ". ", "! ", "? ", "; ", ": ", ", ", " ", ""],
     });
@@ -127,7 +127,6 @@ class Embedder {
           chunkLength: chunk.length,
           hasContent: chunk.trim().length > 0,
         },
-        id: `${metadata.documentId}-${index}`,
       }))
       .filter((doc) => doc.metadata.hasContent);
   }

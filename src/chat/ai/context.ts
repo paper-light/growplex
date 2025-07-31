@@ -57,16 +57,18 @@ export async function loadDataForContext(roomId: string) {
 export const contextLambda = (cb?: Runnable, opts?: any) => {
   return RunnableLambda.from(
     async (input: {
-      room: RoomsResponse;
-      lead: LeadsResponse;
-      chat: ChatsResponse;
-      integration: IntegrationsResponse;
-      agent: AgentsResponse;
-      sources: SourcesResponse;
-      org: OrgsResponse;
+      data: {
+        room: RoomsResponse;
+        lead: LeadsResponse;
+        chat: ChatsResponse;
+        integration: IntegrationsResponse;
+        agent: AgentsResponse;
+        sources: SourcesResponse;
+        org: OrgsResponse;
 
-      history: LangchainMessage[];
-      message: MessagesResponse;
+        history: LangchainMessage[];
+        message: MessagesResponse;
+      };
 
       query: string;
       knowledge: string;
@@ -82,17 +84,17 @@ export const contextLambda = (cb?: Runnable, opts?: any) => {
       setContextVariable("knowledge", input.knowledge);
 
       // Context data
-      setContextVariable("room", input.room);
-      setContextVariable("lead", input.lead);
-      setContextVariable("chat", input.chat);
-      setContextVariable("integration", input.integration);
-      setContextVariable("agent", input.agent);
-      setContextVariable("sources", input.sources);
-      setContextVariable("org", input.org);
+      setContextVariable("room", input.data.room);
+      setContextVariable("lead", input.data.lead);
+      setContextVariable("chat", input.data.chat);
+      setContextVariable("integration", input.data.integration);
+      setContextVariable("agent", input.data.agent);
+      setContextVariable("sources", input.data.sources);
+      setContextVariable("org", input.data.org);
 
       // History
-      setContextVariable("history", input.history);
-      setContextVariable("message", input.message);
+      setContextVariable("history", input.data.history);
+      setContextVariable("message", input.data.message);
 
       return await cb?.invoke(opts || {});
     }

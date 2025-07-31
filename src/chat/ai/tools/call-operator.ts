@@ -49,38 +49,35 @@ export const callOperator = tool(
   {
     name: "callOperator",
     description: `
-    URGENT HUMAN TRANSFER TOOL: Transfer to human operator ONLY for truly urgent or critical situations that require immediate human attention. This should be used SPARINGLY and only after creating a ticket.
+    EXPLICIT HUMAN TRANSFER TOOL: Transfer to human operator ONLY when user explicitly requests human assistance. This tool should be used extremely sparingly.
 
-    WHEN TO USE (ONLY FOR URGENT SITUATIONS):
-    - User is in crisis or experiencing severe emotional distress
-    - User has a critical business emergency requiring immediate resolution
-    - User is threatening to cancel or leave due to urgent unresolved issues
-    - User has a security incident or data breach concern
-    - User is experiencing system downtime affecting their business operations
-    - User has a legal or compliance issue requiring immediate attention
-    - User is a VIP customer with urgent high-priority needs
-    - User has a billing emergency (overcharged, payment issues)
-    - User is experiencing a service outage affecting multiple users
-    - User has a safety or security concern
+    WHEN TO USE (ONLY when user explicitly asks):
+    - User says "I want to speak with a human"
+    - User says "Can I talk to a real person?"
+    - User says "I need to speak with someone"
+    - User says "Transfer me to a human"
+    - User says "I want to talk to a person"
+    - User explicitly requests human escalation in any form
 
     WHEN NOT TO USE (CREATE TICKET INSTEAD):
-    - General support questions or technical issues
-    - Feature requests or product inquiries
-    - Implementation or configuration help
+    - User is frustrated but doesn't ask for human
+    - User is dissatisfied with responses but doesn't request human
+    - User has complex issues but doesn't ask for human
+    - User has urgent needs but doesn't request human
+    - User is angry but doesn't ask for human
+    - Any situation where user hasn't explicitly asked for human assistance
     - Search results being irrelevant
-    - User dissatisfaction with automated responses
-    - Account changes or administrative requests
-    - General feedback or suggestions
+    - Technical issues or support questions
+    - Feature requests or general inquiries
 
     STRATEGY:
-    - ALWAYS create a ticket FIRST for any issue
-    - Only call operator for truly urgent/critical situations
-    - Provide clear explanation of why immediate human attention is needed
-    - Include comprehensive context about the urgency
-    - Ensure the situation genuinely requires immediate human intervention
-    - Set appropriate expectations about operator availability
+    - ONLY use when user explicitly asks for human assistance
+    - For all other issues, create a ticket instead
+    - Do not assume user wants human help even if they seem frustrated
+    - Always try to help first before considering any escalation
+    - If user doesn't explicitly ask for human, create a ticket
 
-    This ensures operators are available for truly urgent situations while maintaining systematic ticket tracking.
+    This ensures operators are only called when genuinely requested by the user.
     `,
     schema: CallOperatorSchema,
     metadata: {

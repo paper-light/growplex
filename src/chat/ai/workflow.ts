@@ -26,10 +26,10 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
 
   log.info({ roomId, query }, "runChatWorkflow started");
 
-  const data = await loadDataForContext(roomId);
+  let contextData = await loadDataForContext(roomId);
   log.debug({ roomId }, "Loaded context data");
   const contextInput = {
-    ...data,
+    data: contextData,
     query,
     knowledge: "",
     withTools: true,
@@ -46,6 +46,8 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         ...(await historyRepository.updateHistory(messagesToPersist))
       );
       messagesToPersist = [];
+      contextData = await loadDataForContext(roomId);
+      contextInput.data = contextData;
     }
 
     log.info({ iteration: i, roomId }, "Invoking chatChainWithContext");
@@ -62,7 +64,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
           msg: result!,
           opts: {
             roomId,
-            agent: data.agent,
+            agent: contextData.agent,
             visible: !callingTools,
           },
         },
@@ -119,7 +121,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
             msg: toolMessage,
             opts: {
               roomId,
-              agent: data.agent,
+              agent: contextData.agent,
               visible:
                 // @ts-ignore
                 chatToolsMap[toolMessage.name]?.metadata?.visible ?? false,
@@ -128,6 +130,9 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         })
       )
     );
+
+    contextData = await loadDataForContext(roomId);
+    contextInput.data = contextData;
   }
 
   if (messagesToPersist.length > 0) {
@@ -135,6 +140,8 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
       ...(await historyRepository.updateHistory(messagesToPersist))
     );
     messagesToPersist = [];
+    contextData = await loadDataForContext(roomId);
+    contextInput.data = contextData;
   }
 
   if (callingTools) {
@@ -150,7 +157,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
           msg: result!,
           opts: {
             roomId,
-            agent: data.agent,
+            agent: contextData.agent,
             visible: true,
           },
         },

@@ -40,7 +40,7 @@ export const SummaryReturnSchema = z.object({
 const summaryPromptTemplate = PromptTemplate.fromTemplate(PROMPT_TEMPLATE);
 
 const summaryBaseModel = new ChatOpenAI({
-  model: "gpt-4.1-mini",
+  model: "gpt-4.1-nano",
   temperature: 0.2,
   apiKey: OPENAI_API_KEY,
   maxTokens: 16384,

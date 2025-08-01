@@ -5,9 +5,10 @@ import ProfileMenu from "@/user/ui/ProfileMenu.svelte";
 import OrgProjectSelect from "@/control/ui/OrgProjectSelect.svelte";
 
 import ThemeController from "@/shared/ui/components/ThemeController.svelte";
-import SidebarNav from "@/shared/ui/layouts/AppSidebarNav.svelte";
-import App from "@/shared/ui/layouts/App.astro";
 import Growplex from "@/shared/assets/icons/Growplex.svg";
+
+import SidebarNav from "./AppSidebarNav.svelte";
+import App from "./App.astro";
 
 const { title, favicon = Growplex.src } = Astro.props;
 ---

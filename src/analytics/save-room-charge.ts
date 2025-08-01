@@ -7,11 +7,6 @@ import type {
 } from "@/shared/models/pocketbase-types";
 import { logger } from "@/shared/lib/logger";
 
-interface RoomUsage {
-  usage: number;
-}
-type RoomsUsage = Record<string, RoomUsage>;
-
 interface IntegrationUsage {
   usage: number;
 }
@@ -19,7 +14,6 @@ type IntegrationsUsage = Record<string, IntegrationUsage>;
 
 interface ChatUsage {
   usage: number;
-  rooms: RoomsUsage;
 }
 type ChatsUsage = Record<string, ChatUsage>;
 
@@ -79,24 +73,14 @@ export async function saveRoomCharge(roomId: string) {
   }
 
   if (!projectUsage.chats[chat.id]) {
-    projectUsage.chats[chat.id] = {
-      usage: 0,
-      rooms: {},
-    };
+    projectUsage.chats[chat.id] = { usage: 0 };
   }
 
   const integrationUsage: IntegrationUsage =
     projectUsage.integrations[integration.id];
   const chatUsage = projectUsage.chats[chat.id];
 
-  if (!chatUsage.rooms[roomId]) {
-    chatUsage.rooms[roomId] = { usage: 0 };
-  }
-
-  const roomUsage = chatUsage.rooms[roomId];
-
   // Increment usage
-  roomUsage.usage += 1;
   chatUsage.usage += 1;
   integrationUsage.usage += 1;
   projectUsage.usage += 1;

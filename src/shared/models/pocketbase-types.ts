@@ -24,7 +24,9 @@ export enum Collections {
 	Projects = "projects",
 	Rooms = "rooms",
 	Sources = "sources",
+	Subscriptions = "subscriptions",
 	Tickets = "tickets",
+	Tiers = "tiers",
 	Users = "users",
 }
 
@@ -216,8 +218,8 @@ export enum MessagesEventOptions {
 	"message" = "message",
 	"updateLead" = "updateLead",
 	"createTicket" = "createTicket",
-	"callSearchAgent" = "callSearchAgent",
 	"callOperator" = "callOperator",
+	"callSearchChain" = "callSearchChain",
 }
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string
@@ -261,10 +263,19 @@ export type OrgMembersRecord = {
 	updated?: IsoDateString
 }
 
+export enum OrgsEarlyAdopterOptions {
+	"Lite" = "Lite",
+	"Plus" = "Plus",
+	"Pro" = "Pro",
+	"Business" = "Business",
+	"Free" = "Free",
+}
 export type OrgsRecord = {
 	created?: IsoDateString
+	earlyAdopter?: OrgsEarlyAdopterOptions
 	id: string
 	name: string
+	subscription?: RecordIdString
 	updated?: IsoDateString
 }
 
@@ -309,6 +320,17 @@ export type SourcesRecord<Tmetadata = unknown> = {
 	updated?: IsoDateString
 }
 
+export type SubscriptionsRecord<TusagePayload = unknown> = {
+	created?: IsoDateString
+	ended?: IsoDateString
+	id: string
+	subscribed?: IsoDateString
+	thaliaGas?: number
+	tier?: RecordIdString
+	updated?: IsoDateString
+	usagePayload?: null | TusagePayload
+}
+
 export enum TicketsPriorityOptions {
 	"low" = "low",
 	"high" = "high",
@@ -322,6 +344,15 @@ export type TicketsRecord<Tmetadata = unknown> = {
 	metadata?: null | Tmetadata
 	priority?: TicketsPriorityOptions
 	title?: string
+	updated?: IsoDateString
+}
+
+export type TiersRecord = {
+	created?: IsoDateString
+	id: string
+	name?: string
+	priceCents?: number
+	thaliaCap?: number
 	updated?: IsoDateString
 }
 
@@ -359,7 +390,9 @@ export type OrgsResponse<Texpand = unknown> = Required<OrgsRecord> & BaseSystemF
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
 export type SourcesResponse<Tmetadata = unknown, Texpand = unknown> = Required<SourcesRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type SubscriptionsResponse<TusagePayload = unknown, Texpand = unknown> = Required<SubscriptionsRecord<TusagePayload>> & BaseSystemFields<Texpand>
 export type TicketsResponse<Tmetadata = unknown, Texpand = unknown> = Required<TicketsRecord<Tmetadata>> & BaseSystemFields<Texpand>
+export type TiersResponse<Texpand = unknown> = Required<TiersRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Tmetadata = unknown, Texpand = unknown> = Required<UsersRecord<Tmetadata>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -383,7 +416,9 @@ export type CollectionRecords = {
 	projects: ProjectsRecord
 	rooms: RoomsRecord
 	sources: SourcesRecord
+	subscriptions: SubscriptionsRecord
 	tickets: TicketsRecord
+	tiers: TiersRecord
 	users: UsersRecord
 }
 
@@ -406,7 +441,9 @@ export type CollectionResponses = {
 	projects: ProjectsResponse
 	rooms: RoomsResponse
 	sources: SourcesResponse
+	subscriptions: SubscriptionsResponse
 	tickets: TicketsResponse
+	tiers: TiersResponse
 	users: UsersResponse
 }
 
@@ -432,6 +469,8 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
 	collection(idOrName: 'rooms'): RecordService<RoomsResponse>
 	collection(idOrName: 'sources'): RecordService<SourcesResponse>
+	collection(idOrName: 'subscriptions'): RecordService<SubscriptionsResponse>
 	collection(idOrName: 'tickets'): RecordService<TicketsResponse>
+	collection(idOrName: 'tiers'): RecordService<TiersResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

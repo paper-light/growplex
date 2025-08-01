@@ -25,6 +25,7 @@
 
   // USER AUTH EFFECT
   $effect(() => {
+    console.log("userProvider.token", userProvider.token);
     const token = userProvider.token;
     if (!token) return;
 

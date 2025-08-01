@@ -1,7 +1,7 @@
 import pino from "pino";
 import pretty from "pino-pretty";
 
-const isLocal = process.env.ENV === "development";
+const isLocal = process.env.ENV === "local";
 
 export const logger = pino(
   {

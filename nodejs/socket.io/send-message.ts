@@ -6,6 +6,7 @@ import { embedder } from "@/search/embedder";
 import { runChatWorkflow } from "@/chat/ai/workflow";
 import { historyRepository } from "@/messages/history/repository";
 import { logger } from "@/shared/lib/logger";
+import { chargeRoom, BILLING_ERRORS } from "@/billing";
 
 import type { SendMessageDTO } from "./types";
 
@@ -61,12 +62,29 @@ export async function sendMessage(
 
     if (room.status === "operator") return;
 
-    const newMsgs = await runChatWorkflow(room.id, msg.content);
-
-    for (const msg of newMsgs) {
-      io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
+    // validate and count billing
+    try {
+      await chargeRoom(room.id);
+      const newMsgs = await runChatWorkflow(room.id, msg.content);
+      for (const msg of newMsgs) {
+        io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
+      }
+    } catch (error: any) {
+      if (error.message.includes(BILLING_ERRORS.THALIA_GAS_EXCEEDED)) {
+        io.to(room.id).emit("limit-exceeded", {
+          message: "Usage limit exceeded. Please upgrade your plan.",
+        });
+        return;
+      }
+      if (error.message.includes(BILLING_ERRORS.TIER_NOT_FOUND)) {
+        io.to(room.id).emit("billing-error", {
+          message: "Billing configuration error. Please contact support.",
+        });
+        return;
+      }
+      console.error(error);
     }
   } catch (err) {
-    console.error(err);
+    log.error({ err }, "Error sending message");
   }
 }

@@ -35,15 +35,10 @@ const {
 
     <slot name="head" />
   </head>
-  <body class="bg-transparent">
+  <body>
     <PortalHost client:only />
 
-    <div
-      class="bg-transparent"
-      transition:persist="chat-widget-root"
-      id="chat-widget-root"
-    >
-    </div>
+    <div transition:persist="chat-widget-root" id="chat-widget-root"></div>
 
     <slot />
 

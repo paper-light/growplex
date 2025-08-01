@@ -26,7 +26,7 @@
 
     await chatCrud.update({
       id: chat.id,
-      domain: newDomain,
+      domain: newDomain || undefined,
     });
   }, DEBOUNCE_TIME);
 </script>

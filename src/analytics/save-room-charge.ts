@@ -41,7 +41,7 @@ const log = logger.child({
 export async function saveRoomCharge(roomId: string) {
   const room = await pb.collection("rooms").getOne(roomId, {
     expand:
-      "chat,chat.integration,chat.project,chat.project.org,chat.project.org.subscription,chat.project.org.subscription.tier",
+      "chat,chat.integration,chat.project,chat.project.org,chat.project.org.subscription",
   });
   const chat: ChatsResponse = (room.expand as any)?.chat;
   const integration: IntegrationsResponse = (chat.expand as any)?.integration;

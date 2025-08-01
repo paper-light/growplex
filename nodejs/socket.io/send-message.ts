@@ -76,7 +76,7 @@ export async function sendMessage(
         });
         return;
       }
-      if (error.message.includes(BILLING_ERRORS.TIER_NOT_FOUND)) {
+      if (error.message.includes(BILLING_ERRORS.SUBSCRIPTION_NOT_FOUND)) {
         io.to(room.id).emit("billing-error", {
           message: "Billing configuration error. Please contact support.",
         });

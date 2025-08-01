@@ -7,9 +7,7 @@ onRecordCreate((e) => {
     const subSub = txApp.findCollectionByNameOrId("subscriptions");
     const sub = new Record(subSub);
 
-    const tier = txApp.findRecordById("tiers", "rdb5ipldiw79jag");
-
-    sub.set("tier", tier.id);
+    sub.set("tier", "Free");
     txApp.save(sub);
 
     const created = sub.getDateTime("created");

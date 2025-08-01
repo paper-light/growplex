@@ -1,5 +1,5 @@
 // Error message constants for consistency
 export const BILLING_ERRORS = {
-  TIER_NOT_FOUND: "Tier or subscription not found",
+  SUBSCRIPTION_NOT_FOUND: "Tier or subscription not found",
   THALIA_GAS_EXCEEDED: "Thalia gas exceeded the tier",
 } as const;

@@ -320,13 +320,20 @@ export type SourcesRecord<Tmetadata = unknown> = {
 	updated?: IsoDateString
 }
 
+export enum SubscriptionsTierOptions {
+	"Free" = "Free",
+	"Lite" = "Lite",
+	"Plus" = "Plus",
+	"Pro" = "Pro",
+	"Business" = "Business",
+}
 export type SubscriptionsRecord<TusagePayload = unknown> = {
 	created?: IsoDateString
 	ended?: IsoDateString
 	id: string
 	subscribed?: IsoDateString
 	thaliaGas?: number
-	tier?: RecordIdString
+	tier?: SubscriptionsTierOptions
 	updated?: IsoDateString
 	usagePayload?: null | TusagePayload
 }

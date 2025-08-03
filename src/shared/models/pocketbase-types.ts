@@ -26,7 +26,6 @@ export enum Collections {
 	Sources = "sources",
 	Subscriptions = "subscriptions",
 	Tickets = "tickets",
-	Tiers = "tiers",
 	Users = "users",
 }
 
@@ -146,6 +145,12 @@ export enum DocumentsStatusOptions {
 	"loaded" = "loaded",
 	"error" = "error",
 }
+
+export enum DocumentsTypeOptions {
+	"file" = "file",
+	"webPage" = "webPage",
+	"manual" = "manual",
+}
 export type DocumentsRecord<Tmetadata = unknown> = {
 	chunkCount?: number
 	content?: string
@@ -157,7 +162,9 @@ export type DocumentsRecord<Tmetadata = unknown> = {
 	status?: DocumentsStatusOptions
 	title?: string
 	tokenCount?: number
+	type?: DocumentsTypeOptions
 	updated?: IsoDateString
+	url?: string
 }
 
 export enum FeedbacksTypeOptions {
@@ -304,19 +311,12 @@ export type RoomsRecord = {
 	updated?: IsoDateString
 }
 
-export enum SourcesTypeOptions {
-	"web" = "web",
-	"file" = "file",
-}
 export type SourcesRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
-	frequencyHours?: number
 	id: string
-	indexed?: IsoDateString
 	metadata?: null | Tmetadata
 	name?: string
 	project?: RecordIdString
-	type?: SourcesTypeOptions
 	updated?: IsoDateString
 }
 
@@ -351,15 +351,6 @@ export type TicketsRecord<Tmetadata = unknown> = {
 	metadata?: null | Tmetadata
 	priority?: TicketsPriorityOptions
 	title?: string
-	updated?: IsoDateString
-}
-
-export type TiersRecord = {
-	created?: IsoDateString
-	id: string
-	name?: string
-	priceCents?: number
-	thaliaCap?: number
 	updated?: IsoDateString
 }
 
@@ -399,7 +390,6 @@ export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSyste
 export type SourcesResponse<Tmetadata = unknown, Texpand = unknown> = Required<SourcesRecord<Tmetadata>> & BaseSystemFields<Texpand>
 export type SubscriptionsResponse<TusagePayload = unknown, Texpand = unknown> = Required<SubscriptionsRecord<TusagePayload>> & BaseSystemFields<Texpand>
 export type TicketsResponse<Tmetadata = unknown, Texpand = unknown> = Required<TicketsRecord<Tmetadata>> & BaseSystemFields<Texpand>
-export type TiersResponse<Texpand = unknown> = Required<TiersRecord> & BaseSystemFields<Texpand>
 export type UsersResponse<Tmetadata = unknown, Texpand = unknown> = Required<UsersRecord<Tmetadata>> & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
@@ -425,7 +415,6 @@ export type CollectionRecords = {
 	sources: SourcesRecord
 	subscriptions: SubscriptionsRecord
 	tickets: TicketsRecord
-	tiers: TiersRecord
 	users: UsersRecord
 }
 
@@ -450,7 +439,6 @@ export type CollectionResponses = {
 	sources: SourcesResponse
 	subscriptions: SubscriptionsResponse
 	tickets: TicketsResponse
-	tiers: TiersResponse
 	users: UsersResponse
 }
 
@@ -478,6 +466,5 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'sources'): RecordService<SourcesResponse>
 	collection(idOrName: 'subscriptions'): RecordService<SubscriptionsResponse>
 	collection(idOrName: 'tickets'): RecordService<TicketsResponse>
-	collection(idOrName: 'tiers'): RecordService<TiersResponse>
 	collection(idOrName: 'users'): RecordService<UsersResponse>
 }

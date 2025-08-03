@@ -7,8 +7,8 @@ import OrgProjectSelect from "@/control/ui/OrgProjectSelect.svelte";
 import ThemeController from "@/shared/ui/components/ThemeController.svelte";
 import Growplex from "@/shared/assets/icons/Growplex.svg";
 
-import SidebarNav from "./AppSidebarNav.svelte";
-import App from "./App.astro";
+import SidebarNav from "./_AppSidebarNav.svelte";
+import App from "./_App.astro";
 
 const { title, favicon = Growplex.src } = Astro.props;
 ---
@@ -32,12 +32,16 @@ const { title, favicon = Growplex.src } = Astro.props;
         <div class="flex-1 px-2 text-center lg:text-left">
           <h1 class="text-xl font-semibold">{title}</h1>
         </div>
-        <!-- Actions -->
-        <ProfileMenu
-          active={title}
-          client:only
-          transition:persist="profile-menu"
-        />
+
+        <div class="flex items-center gap-2">
+          <ThemeController client:only transition:persist="theme-controller" />
+          <!-- Actions -->
+          <ProfileMenu
+            active={title}
+            client:only
+            transition:persist="profile-menu"
+          />
+        </div>
       </header>
 
       <!-- Main slot -->
@@ -103,9 +107,7 @@ const { title, favicon = Growplex.src } = Astro.props;
         />
 
         <!-- Theme toggle at bottom -->
-        <div class="mt-auto">
-          <ThemeController client:only transition:persist="theme-controller" />
-        </div>
+        <div class="mt-auto"></div>
       </aside>
     </div>
   </div>

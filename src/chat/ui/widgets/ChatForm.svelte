@@ -1,7 +1,7 @@
 <script lang="ts">
   import DomainConnect from "@/knowledge/ui/DomainConnect.svelte";
 
-  import Card from "@/shared/ui/lib/Card.svelte";
+  import Card from "@/shared/ui/Card.svelte";
   import SourceStatus from "@/knowledge/ui/SourceStatus.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";

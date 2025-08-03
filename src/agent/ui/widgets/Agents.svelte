@@ -2,16 +2,16 @@
   import { Trash2, X } from "@lucide/svelte";
 
   import Thalia from "@/shared/assets/Thalia.jpg";
-  import Input from "@/shared/ui/lib/Input.svelte";
+  import Input from "@/shared/ui/Input.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
-  import Select from "@/shared/ui/lib/Select.svelte";
+  import Select from "@/shared/ui/Select.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
-  import Card from "@/shared/ui/lib/Card.svelte";
-  import Modal from "@/shared/ui/lib/Modal.svelte";
-  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import Card from "@/shared/ui/Card.svelte";
+  import Modal from "@/shared/ui/Modal.svelte";
+  import TextArea from "@/shared/ui/TextArea.svelte";
   import { agentCrud } from "@/agent/repositories/agent-crud";
   import { pb } from "@/shared/lib/pb";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
   import AgentCreate from "@/agent/ui/features/AgentCreate.svelte";
   import AgentAvatarUpdate from "@/agent/ui/features/AgentAvatarUpdate.svelte";

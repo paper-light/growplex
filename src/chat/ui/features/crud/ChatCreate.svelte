@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
 
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import type { ChatsResponse } from "@/shared/models/pocketbase-types";
 
   import { chatCrud } from "@/chat/repositories/chat-crud";

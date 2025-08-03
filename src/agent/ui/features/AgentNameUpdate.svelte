@@ -3,7 +3,7 @@
   import { Pencil } from "@lucide/svelte";
 
   import { debounce } from "@/shared/helpers/debounce";
-  import Input from "@/shared/ui/lib/Input.svelte";
+  import Input from "@/shared/ui/Input.svelte";
   import type { AgentsResponse } from "@/shared/models/pocketbase-types";
   import { agentCrud } from "@/agent/repositories/agent-crud";
 

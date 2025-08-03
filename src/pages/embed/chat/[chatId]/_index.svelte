@@ -9,7 +9,7 @@
     UsersResponse,
   } from "@/shared/models/pocketbase-types.ts";
   import { socketProvider } from "@/chat/providers/socket.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
 
   import Chat from "@/chat/ui/widgets/Chat.svelte";
 

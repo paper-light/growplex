@@ -5,7 +5,7 @@
   } from "@/shared/models/pocketbase-types";
   import { userProvider } from "@/user/user.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
 
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import SendMessage from "@/chat/ui/features/SendMessage.svelte";

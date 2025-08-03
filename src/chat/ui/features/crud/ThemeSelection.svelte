@@ -3,7 +3,7 @@
 
   import type { ChatsResponse } from "@/shared/models/pocketbase-types";
   import { themes } from "@/shared/styles/themes";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import { chatCrud } from "@/chat/repositories/chat-crud";
 
   interface Props {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Card from "@/shared/ui/lib/Card.svelte";
+  import Card from "@/shared/ui/Card.svelte";
   import AgentSelect from "@/agent/ui/features/AgentSelect.svelte";
   import AgentNameUpdate from "@/agent/ui/features/AgentNameUpdate.svelte";
   import AgentAvatarUpdate from "@/agent/ui/features/AgentAvatarUpdate.svelte";

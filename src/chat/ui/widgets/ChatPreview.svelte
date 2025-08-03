@@ -5,7 +5,7 @@
   import { userProvider } from "@/user/user.svelte";
   import { uiProvider } from "@/user/ui.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import { roomCrud } from "@/chat/repositories/room-crud";

@@ -2,8 +2,8 @@
   import { X } from "@lucide/svelte";
   import type { ClassValue } from "svelte/elements";
 
-  import Select from "@/shared/ui/lib/Select.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Select from "@/shared/ui/Select.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
 
   import { chatsProvider } from "@/chat/providers/chats.svelte";

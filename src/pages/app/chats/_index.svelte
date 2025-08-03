@@ -1,15 +1,15 @@
 <script lang="ts">
   import Thalia from "@/shared/assets/Thalia.jpg";
-  import Input from "@/shared/ui/lib/Input.svelte";
-  import Select from "@/shared/ui/lib/Select.svelte";
+  import Input from "@/shared/ui/Input.svelte";
+  import Select from "@/shared/ui/Select.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
-  import Card from "@/shared/ui/lib/Card.svelte";
-  import Modal from "@/shared/ui/lib/Modal.svelte";
-  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import Card from "@/shared/ui/Card.svelte";
+  import Modal from "@/shared/ui/Modal.svelte";
+  import TextArea from "@/shared/ui/TextArea.svelte";
   import { chatCrud } from "@/chat/repositories/chat-crud";
   import { pb } from "@/shared/lib/pb";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
   import ChatCreate from "@/chat/ui/features/crud/ChatCreate.svelte";
   import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";

@@ -2,7 +2,7 @@
   import type { ClassValue } from "svelte/elements";
 
   import { debounce } from "@/shared/helpers/debounce";
-  import TextArea from "@/shared/ui/lib/TextArea.svelte";
+  import TextArea from "@/shared/ui/TextArea.svelte";
   import type { AgentsResponse } from "@/shared/models/pocketbase-types";
   import { agentCrud } from "@/agent/repositories/agent-crud";
 

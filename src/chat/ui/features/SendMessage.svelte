@@ -2,7 +2,7 @@
   import { ChevronsRight } from "@lucide/svelte";
 
   import { socketProvider } from "@/chat/providers/socket.svelte";
-  import Button from "@/shared/ui/lib/Button.svelte";
+  import Button from "@/shared/ui/Button.svelte";
   import {
     MessagesRoleOptions,
     type RoomsResponse,

@@ -1,12 +1,12 @@
-import { pb } from "../shared/lib/pb";
-import { dummyCrawlUrls, crawlRawHTMLs, deepCrawlUrls } from "../crawler/crawl";
-import { parseSitemaps } from "../crawler/parse-sitemaps";
-import { validateDomain } from "../crawler/utils";
+import { pb } from "@/shared/lib/pb";
+import { dummyCrawlUrls, crawlRawHTMLs, deepCrawlUrls } from "@/crawler/crawl";
+import { parseSitemaps } from "@/crawler/parse-sitemaps";
+import { validateDomain } from "@/crawler/utils";
 import {
   type DocumentsResponse,
   DocumentsStatusOptions,
-} from "../shared/models/pocketbase-types";
-import { embedder } from "../search/embedder";
+} from "@/shared/models/pocketbase-types";
+import { embedder } from "@/search/embedder";
 
 import type { ProcessMode } from "./types";
 

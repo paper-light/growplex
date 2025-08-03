@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { PUBLIC_CHAT_MAX_MESSAGE_TOKENS } from "astro:env/client";
-
   import type {
     RoomsResponse,
     UsersResponse,
@@ -12,8 +10,9 @@
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import SendMessage from "@/chat/ui/features/SendMessage.svelte";
   import MessageField from "@/chat/ui/features/MessageField.svelte";
+  import { CHAT_CONFIG } from "@/chat/config";
 
-  const MAX_INPUT_CHARS = (PUBLIC_CHAT_MAX_MESSAGE_TOKENS || 1000) * 0.75 * 4.5;
+  const MAX_INPUT_CHARS = CHAT_CONFIG.MAX_MSG_TOKENS * 0.75 * 4.5;
   interface Props {
     parentRoom?: RoomsResponse;
     parentUser?: UsersResponse | { name: string };

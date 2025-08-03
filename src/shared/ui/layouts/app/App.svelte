@@ -13,6 +13,7 @@
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
+  import { subscriptionProvider } from "@/billing/providers/subscription.svelte";
 
   // GLOBAL
   onMount(() => {
@@ -45,10 +46,12 @@
 
     untrack(() => {
       projectsProvider.subscribe(org.id);
+      subscriptionProvider.subscribe(org.id);
     });
 
     return () => {
       projectsProvider.unsubscribe();
+      subscriptionProvider.unsubscribe();
     };
   });
 

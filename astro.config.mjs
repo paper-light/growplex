@@ -20,10 +20,6 @@ export default defineConfig({
     schema: {
       ENV: envField.string({ context: "client", access: "public" }),
 
-      PUBLIC_MESSAGE_DELAY_SEC: envField.number({
-        context: "client",
-        access: "public",
-      }),
       PUBLIC_PB_URL: envField.string({ context: "client", access: "public" }),
       PUBLIC_POSTHOG_HOST: envField.string({
         context: "client",
@@ -34,10 +30,6 @@ export default defineConfig({
         access: "public",
       }),
       PUBLIC_CHAT_WIDGET_ID: envField.string({
-        context: "client",
-        access: "public",
-      }),
-      PUBLIC_CHAT_MAX_MESSAGE_TOKENS: envField.number({
         context: "client",
         access: "public",
       }),

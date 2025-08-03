@@ -14,9 +14,10 @@ import { embedder } from "@/search/embedder";
 import { RunnableLambda } from "@langchain/core/runnables";
 import { getContextVariable } from "@langchain/core/context";
 import { historyLangchainAdapter } from "./langchain-adapter";
+import { CHAT_CONFIG } from "@/chat/config";
 
-const HISTORY_TOKENS = parseInt(getEnv("CHAT_HISTORY_TOKENS"), 10);
-const MAX_MSG_TOKENS = parseInt(getEnv("PUBLIC_CHAT_MAX_MESSAGE_TOKENS"), 10);
+const HISTORY_TOKENS = CHAT_CONFIG.MAX_HISTORY_TOKENS;
+const MAX_MSG_TOKENS = CHAT_CONFIG.MAX_MSG_TOKENS;
 const REDIS_PREFIX = "messages:history:";
 
 const log = logger.child({ module: "messages:history:repository" });

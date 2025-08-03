@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { PUBLIC_MESSAGE_DELAY_SEC } from "astro:env/client";
   import { ChevronsRight } from "@lucide/svelte";
 
   import { socketProvider } from "@/chat/providers/socket.svelte";
@@ -10,6 +9,7 @@
     type UsersResponse,
   } from "@/shared/models/pocketbase-types";
   import { pb } from "@/shared/lib/pb";
+  import { CHAT_CONFIG } from "@/chat/config";
 
   type Props = {
     user: UsersResponse | { name: string; avatar?: string };
@@ -56,7 +56,7 @@
 
     setTimeout(() => {
       canSend = true;
-    }, PUBLIC_MESSAGE_DELAY_SEC * 1000);
+    }, CHAT_CONFIG.MESSAGE_DELAY_SEC * 1000);
   }
 </script>
 

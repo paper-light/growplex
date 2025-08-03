@@ -1,0 +1,5 @@
+export const CHAT_CONFIG = {
+  MAX_MSG_TOKENS: 512,
+  MAX_HISTORY_TOKENS: 20000,
+  MESSAGE_DELAY_SEC: 2,
+} as const;

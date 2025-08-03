@@ -100,7 +100,7 @@
 
     // For opening, open, closing states — full height + width immediately
     styles += `
-    height: 100vh;
+    height: 90vh;
     width: ${isMobile ? "100vw" : "400px"};
   `;
 

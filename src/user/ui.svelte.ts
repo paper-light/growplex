@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 const UIStateSchema = z.object({
+  globalSidebarOpen: z.boolean().default(true),
+
   integrationsSidebarOpen: z.boolean().default(false),
   chatPreviewOpen: z.boolean().default(true),
 
@@ -12,6 +14,8 @@ type UIState = z.infer<typeof UIStateSchema>;
 
 class UIProvider {
   private state: UIState = $state(this.loadState());
+
+  globalSidebarOpen = $derived(this.state.globalSidebarOpen);
 
   integrationsSidebarOpen = $derived(this.state.integrationsSidebarOpen);
   chatPreviewOpen = $derived(this.state.chatPreviewOpen);

@@ -11,6 +11,7 @@ import { sendMessage } from "./send-message";
 import { chatRateLimiter } from "./rate-limiter";
 import { useMiddlewares } from "./middleware";
 import type { JoinRoomDTO, SendMessageDTO } from "./types";
+import { CHAT_CONFIG } from "@/chat/config";
 
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
@@ -40,8 +41,7 @@ export function attachSocketIO(httpServer: any) {
       const msg = JSON.parse(dto.msgStr);
 
       if (
-        embedder.countTokens(msg.content, "gpt-4") >
-        parseInt(process.env.PUBLIC_CHAT_MAX_MESSAGE_TOKENS!)
+        embedder.countTokens(msg.content, "gpt-4") > CHAT_CONFIG.MAX_MSG_TOKENS
       ) {
         socket.emit("msg-length-limit", {
           message: "Message is too long!",

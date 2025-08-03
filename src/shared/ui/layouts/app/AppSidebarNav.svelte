@@ -135,10 +135,17 @@
 
         <ul class="mt-2 space-y-1">
           <li class="w-full">
-            <a href={`/app/analytics`} class={linkClass("Analytics")}>
+            <!-- <a href={`/app/analytics`} class={linkClass("Analytics")}>
               <ChartBar size={18} />
               Analytics
-            </a>
+            </a> -->
+            <span
+              class={["text-left", linkClass("Analytics", true)]}
+              title="Coming soon"
+            >
+              <ChartBar size={18} />
+              Analytics
+            </span>
           </li>
           <li class="w-full">
             <a href={`/app/billing`} class={linkClass("Billing")}>

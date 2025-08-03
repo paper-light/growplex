@@ -1,9 +1,9 @@
 ---
 import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
+
+import Integrations from "./_index.svelte";
 ---
 
 <AppDashboard title="Integrations">
-  <div>
-    <h1>Integrations</h1>
-  </div>
+  <Integrations client:load />
 </AppDashboard>

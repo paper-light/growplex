@@ -1,9 +1,9 @@
 ---
 import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
+
+import Billing from "./_index.svelte";
 ---
 
 <AppDashboard title="Billing">
-  <div>
-    <h1>Billing</h1>
-  </div>
+  <Billing client:load />
 </AppDashboard>

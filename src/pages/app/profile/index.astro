@@ -1,8 +1,9 @@
 ---
 import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
-import ProfileCard from "@/user/ui/ProfileCard.svelte";
+
+import Profile from "./_index.svelte";
 ---
 
 <AppDashboard title="Profile">
-  <ProfileCard client:only transition:persist="profile-card" />
+  <Profile client:load />
 </AppDashboard>

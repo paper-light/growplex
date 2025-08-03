@@ -1,9 +1,9 @@
 ---
 import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
+
+import Chats from "./_index.svelte";
 ---
 
-<AppDashboard title="Analytics">
-  <div>
-    <h1>Analytics</h1>
-  </div>
+<AppDashboard title="Chats">
+  <Chats client:load />
 </AppDashboard>

@@ -3,9 +3,8 @@ import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
 
 import Sidebar from "@/integration/ui/Sidebar.svelte";
 import ChatPreview from "@/chat/ui/widgets/ChatPreview.svelte";
-import ChatForm from "@/chat/ui/widgets/ChatForm.svelte";
-import AgentForm from "@/agent/ui/widgets/AgentForm.svelte";
-import ChatConnect from "@/chat/ui/features/crud/ChatConnect.svelte";
+
+import Wizard from "./_index.svelte";
 ---
 
 <AppDashboard title="Integration Wizard">
@@ -21,9 +20,7 @@ import ChatConnect from "@/chat/ui/features/crud/ChatConnect.svelte";
 
       <div class="h-full overflow-hidden">
         <div class="h-full flex flex-col p-4 gap-2 overflow-y-auto">
-          <ChatConnect client:load />
-          <ChatForm client:load />
-          <AgentForm client:load />
+          <Wizard client:load />
         </div>
       </div>
 
@@ -35,9 +32,7 @@ import ChatConnect from "@/chat/ui/features/crud/ChatConnect.svelte";
     <!-- Mobile Layout: Single column with overlays -->
     <div class="lg:hidden w-full h-full relative">
       <div class="h-full flex flex-col p-4 gap-2 overflow-y-auto">
-        <ChatConnect client:load />
-        <ChatForm client:load />
-        <AgentForm client:load />
+        <Wizard client:load />
       </div>
       <Sidebar client:load />
       <ChatPreview client:load />

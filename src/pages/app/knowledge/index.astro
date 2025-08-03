@@ -1,9 +1,9 @@
 ---
 import AppDashboard from "@/shared/ui/layouts/app/AppDashboard.astro";
+
+import Knowledge from "./_index.svelte";
 ---
 
 <AppDashboard title="Knowledge">
-  <div>
-    <h1>Knowledge</h1>
-  </div>
+  <Knowledge client:load />
 </AppDashboard>

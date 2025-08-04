@@ -11,6 +11,7 @@
     class?: ClassValue;
     style?: "soft" | "outline" | "ghost" | "solid";
     color?: "primary" | "secondary" | "accent" | "neutral" | "error";
+    size?: "xs" | "sm" | "md" | "lg" | "xl";
     children?: Snippet;
     onSuccess?: (record: RecordModel) => void;
     onError?: (error: unknown) => void;
@@ -29,6 +30,7 @@
     color = "primary",
     onSuccess,
     onError,
+    size = "md",
     children,
   }: Props = $props();
 
@@ -50,6 +52,7 @@
   <Button
     {style}
     {color}
+    {size}
     onclick={createRecord}
     class="flex items-center gap-2 w-full"
   >

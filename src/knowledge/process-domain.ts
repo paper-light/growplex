@@ -2,13 +2,11 @@ import { pb } from "@/shared/lib/pb";
 import { dummyCrawlUrls, crawlRawHTMLs, deepCrawlUrls } from "@/crawler/crawl";
 import { parseSitemaps } from "@/crawler/parse-sitemaps";
 import { validateDomain } from "@/crawler/utils";
-import {
-  type DocumentsResponse,
-  DocumentsStatusOptions,
-} from "@/shared/models/pocketbase-types";
-import { embedder } from "@/search/embedder";
 
-import type { ProcessMode } from "./types";
+import { indexDocs } from "./index-docs";
+import { createWebDocs } from "./create-web-docs";
+
+export type ProcessMode = "dummy" | "hybrid" | "auto";
 
 // -------------------------PUBLIC-------------------------
 
@@ -26,8 +24,7 @@ export async function processDomain(
     .collection("orgs")
     .getFirstListItem(`projects_via_org.id ?= "${projectId}"`);
   const source = await pb.collection("sources").create({
-    name: validatedDomain,
-    type: "web",
+    name: `Source for ${validatedDomain}`,
     project: projectId,
     metadata: {
       domain,
@@ -42,62 +39,11 @@ export async function processDomain(
 
   const results = await fn(validatedDomain, antiBot);
 
-  const docs: DocumentsResponse[] = [];
-  const uniqueURLs = new Set<string>();
-  for (const result of results) {
-    if (uniqueURLs.has(result.url)) continue;
+  const loadedDocs = await createWebDocs(org.id, source.id, projectId, results);
 
-    const doc = await pb.collection("documents").create({
-      source: source.id,
-      title: result?.metadata?.title || result?.url,
-      status:
-        result.success && result.status_code === 200
-          ? DocumentsStatusOptions.loaded
-          : DocumentsStatusOptions.error,
-      content: result.success
-        ? result.markdown.fit_markdown
-        : result.error_message,
-      metadata: {
-        ...result?.metadata,
-        sourceId: source.id,
-        projectId,
-        status_code: result.status_code,
-        success: result.success,
-        url: result.url,
-      },
-    });
+  await indexDocs(org.id, loadedDocs);
 
-    docs.push(doc);
-    uniqueURLs.add(result.url);
-  }
-
-  const loadedDocs = docs.filter(
-    (d) => d.status === DocumentsStatusOptions.loaded
-  );
-
-  const metrics = await embedder.addTexts(
-    org.id,
-    loadedDocs.map((d) => ({
-      content: d.content,
-      metadata: {
-        ...(d.metadata as Record<string, any>),
-        documentId: d.id,
-      },
-    }))
-  );
-
-  for (const [index, doc] of loadedDocs.entries()) {
-    await pb.collection("documents").update(doc.id, {
-      chunkCount: metrics.documentMetrics[index].chunkCount,
-      tokenCount: metrics.documentMetrics[index].tokenCount,
-    });
-  }
-
-  await pb.collection("sources").update(source.id, {
-    indexed: new Date().toISOString(),
-  });
-
-  return { source, docs, loadedDocs };
+  return { source, loadedDocs };
 }
 
 // -------------------------PRIVATE-------------------------

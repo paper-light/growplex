@@ -22,7 +22,7 @@
     grow?: boolean;
 
     key: string;
-    record: RecordModel;
+    record: RecordModel | null;
     onSuccess?: (record: RecordModel) => void;
     onError?: (error: unknown) => void;
     mode?: "debounce" | "form";
@@ -46,18 +46,17 @@
     key,
   }: Props = $props();
 
-  const value = $derived(record[key] ?? "");
+  const value = $derived(record?.[key] ?? "");
 
   const updateName = async (e: Event) => {
-    console.log("updateName", e);
     const newValue = (e.target as HTMLInputElement).value;
 
-    if (newValue === value) return;
+    if (newValue === value || !record) return;
 
     try {
       const updatedRecord = await pb
-        .collection(record.collectionId)
-        .update(record.id, {
+        .collection(record!.collectionId)
+        .update(record!.id, {
           [key]: newValue,
         });
       onSuccess?.(updatedRecord);

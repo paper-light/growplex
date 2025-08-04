@@ -27,7 +27,6 @@
     record: RecordModel | null;
     onSuccess?: (record: RecordModel) => void;
     onError?: (error: unknown) => void;
-    mode?: "debounce" | "form";
   }
 
   let {
@@ -42,7 +41,6 @@
     onSuccess,
     onError,
     required = false,
-    mode = "debounce",
     children,
     disabled = false,
     key,
@@ -73,7 +71,7 @@
   <Input
     {color}
     {ghost}
-    oninput={mode === "debounce" ? updateNameDebounced : undefined}
+    oninput={updateNameDebounced}
     {value}
     {size}
     {name}

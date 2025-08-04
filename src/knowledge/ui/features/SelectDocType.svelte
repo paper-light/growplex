@@ -1,0 +1,47 @@
+<script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
+  import Button from "@/shared/ui/Button.svelte";
+  import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
+  import { pb } from "@/shared/lib/pb";
+
+  interface Props {
+    class?: ClassValue;
+    document: DocumentsResponse | null;
+    docType?: string;
+    onDocTypeChange?: (docType: string) => void;
+  }
+
+  let {
+    class: classNames,
+    document,
+    docType = $bindable("manual"),
+    onDocTypeChange,
+  }: Props = $props();
+
+  const types: { value: string; label: string }[] = [
+    { value: "manual", label: "Manual" },
+    { value: "webPage", label: "Web Page" },
+    { value: "file", label: "File" },
+  ];
+</script>
+
+<div class={classNames}>
+  {#each types as type}
+    <Button
+      class="flex-1"
+      color={docType === type.value ? "primary" : "neutral"}
+      style={docType === type.value ? "soft" : "ghost"}
+      disabled={document?.status === "indexed"}
+      onclick={() => {
+        if (!document) return;
+        pb.collection("documents").update(document.id, {
+          type: type.value,
+        });
+        onDocTypeChange?.(type.value);
+      }}
+    >
+      {type.label}
+    </Button>
+  {/each}
+</div>

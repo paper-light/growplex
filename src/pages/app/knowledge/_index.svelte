@@ -159,7 +159,7 @@
                 <tbody>
                   {#each documents as document}
                     <tr
-                      class="hover cursor-pointer"
+                      class="hover cursor-pointer hover:bg-base-300"
                       onclick={() => (docId = document.id)}
                     >
                       <td class="font-medium">
@@ -231,15 +231,15 @@
   onclose={() => (docId = "")}
 >
   <div class="">
-    <header class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
+    <header class="flex items-center justify-between px-6 py-4">
+      <div class="flex items-center gap-3">
         <EditStringField
           key="title"
           ghost
-          size="xl"
+          size="lg"
           record={document as RecordModel | null}
         />
-        <div class={["badge", getStatusBadge(document?.status || "")]}>
+        <div class={["badge badge-lg", getStatusBadge(document?.status || "")]}>
           {document?.status}
         </div>
       </div>

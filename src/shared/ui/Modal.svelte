@@ -27,6 +27,8 @@
     backdrop = true,
   }: Props = $props();
 
+  let dialogElement: HTMLDialogElement | null = $state(null);
+
   let placementClass = $derived.by(() => {
     switch (placement) {
       case "top":
@@ -41,33 +43,40 @@
         return "modal-middle";
     }
   });
+
+  $effect(() => {
+    if (open && dialogElement) {
+      dialogElement.showModal();
+    } else if (!open && dialogElement) {
+      dialogElement.close();
+    }
+  });
+
+  function handleClose() {
+    onclose?.();
+  }
+
+  function handleBackdropClick(event: MouseEvent) {
+    if (event.target === dialogElement) {
+      handleClose();
+    }
+  }
 </script>
 
 <div use:portal={id}>
-  <input type="checkbox" class="modal-toggle" bind:checked={open} />
-  <div class={["modal", placementClass]}>
-    {#if backdrop}
-      <button
-        aria-label="Close modal"
-        class="modal-backdrop"
-        onclick={() => onclose?.()}
-      ></button>
-    {/if}
+  <dialog
+    bind:this={dialogElement}
+    class={["modal", placementClass]}
+    onclick={handleBackdropClick}
+  >
     <div class={["modal-box relative", className]}>
       <div class="absolute top-2 right-2">
-        <Button
-          color="neutral"
-          style="ghost"
-          onclick={() => {
-            onclose?.();
-          }}
-          circle
-        >
+        <Button color="neutral" style="ghost" onclick={handleClose} circle>
           <X size={24} />
         </Button>
       </div>
 
       {@render children()}
     </div>
-  </div>
+  </dialog>
 </div>

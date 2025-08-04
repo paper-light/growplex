@@ -62,17 +62,15 @@
   </Button>
 </div>
 
-{#if confirmOpen}
-  <Modal open={confirmOpen} onclose={() => (confirmOpen = false)} order={1}>
-    <div class="flex flex-col gap-4">
-      <h2 class="font-semibold">Delete {record?.title || record?.name}</h2>
-      <p>Are you sure you want to delete this record?</p>
-      <div class="flex justify-end">
-        <Button color="error" style="outline" onclick={deleteRecord}>
-          <Trash2 class="size-4" />
-          Delete
-        </Button>
-      </div>
+<Modal open={confirmOpen} onclose={() => (confirmOpen = false)}>
+  <div class="flex flex-col gap-4">
+    <h2 class="font-semibold">Delete {record?.title || record?.name}</h2>
+    <p>Are you sure you want to delete this record?</p>
+    <div class="flex justify-end">
+      <Button color="error" style="outline" onclick={deleteRecord}>
+        <Trash2 class="size-4" />
+        Delete
+      </Button>
     </div>
-  </Modal>
-{/if}
+  </div>
+</Modal>

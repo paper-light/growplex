@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { RecordModel } from "pocketbase";
-  import { actions } from "astro:actions";
   import type { ClassValue } from "svelte/elements";
 
   import Input from "@/shared/ui/Input.svelte";
@@ -10,13 +9,12 @@
   } from "@/shared/models/pocketbase-types";
   import DeleteRecord from "@/shared/ui/features/DeleteRecord.svelte";
   import Button from "@/shared/ui/Button.svelte";
-  import EditTextField from "@/shared/ui/features/EditTextField.svelte";
-  import EditStringField from "@/shared/ui/features/EditStringField.svelte";
   import FileInput from "@/shared/ui/FileInput.svelte";
   import { pb } from "@/shared/lib/pb";
   import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
   import IndexDoc from "@/knowledge/ui/features/IndexDoc.svelte";
   import SelectDocType from "./features/SelectDocType.svelte";
+  import TextArea from "@/shared/ui/TextArea.svelte";
 
   interface Props {
     document: DocumentsResponse | null;
@@ -38,10 +36,21 @@
     onSaveError,
   }: Props = $props();
 
+  let title = $derived(document?.title || "");
+  let url = $derived(document?.url || "");
+  let content = $derived(document?.content || "");
+
   let selectedFile = $state<File | null>(null);
 
   let indexing = $state(false);
   let docType = $derived(document?.type || "manual");
+
+  const isFormDirty = $derived(
+    title !== document?.title ||
+      url !== document?.url ||
+      content !== document?.content ||
+      docType !== document?.type
+  );
 
   async function saveDocument(e: Event) {
     e.preventDefault();
@@ -73,7 +82,7 @@
       class="flex items-center justify-between px-6 py-4 border-b border-base-300"
     >
       <div class="flex items-center gap-3 relative">
-        <Input size="lg" name="title" placeholder="Title" />
+        <Input size="lg" name="title" placeholder="Title" bind:value={title} />
         <div
           class={[
             "badge absolute -top-3 -right-14",
@@ -96,19 +105,24 @@
 
     <div class="flex-1 flex flex-col min-h-0">
       <div class="p-6 flex-1 min-h-0">
-        <SelectDocType class="flex gap-2 mb-6" {document} bind:docType />
+        <SelectDocType
+          mode="form"
+          class="flex gap-2 mb-6"
+          {document}
+          bind:docType
+        />
 
         <div class="flex flex-col gap-4 flex-1 min-h-0">
           {#if document}
             {#if docType === "webPage"}
               <div class="flex gap-2 items-center">
-                <EditStringField
-                  key="url"
-                  record={document as RecordModel}
+                <Input
+                  name="url"
                   placeholder="https://example.com"
+                  bind:value={url}
                 >
                   URL
-                </EditStringField>
+                </Input>
 
                 <Button
                   style="soft"
@@ -138,23 +152,24 @@
             {/if}
 
             <div class="flex flex-col gap-2 flex-1 min-h-0">
-              <EditTextField
-                key="content"
-                record={document as RecordModel}
-                class="flex-1 min-h-0"
+              <TextArea
+                color="neutral"
+                name="content"
+                class="w-full flex-1 min-h-0"
                 rows={20}
                 placeholder={docType === "manual"
                   ? "Enter your content here..."
                   : docType === "webPage"
                     ? "Content from web page..."
                     : "File content will appear here..."}
+                bind:value={content}
               >
                 {docType === "manual"
                   ? "Your content to index..."
                   : docType === "webPage"
                     ? "Content from web page..."
                     : "File content will appear here..."}
-              </EditTextField>
+              </TextArea>
             </div>
           {/if}
         </div>
@@ -166,9 +181,9 @@
           color="primary"
           size="lg"
           block
-          disabled={!document || indexing}>Save document</Button
+          disabled={!document || indexing || !isFormDirty}>Save document</Button
         >
-        <IndexDoc {document} {project} bind:indexing />
+        <IndexDoc cleanForm={!isFormDirty} {document} {project} bind:indexing />
       </footer>
     </div>
   </form>

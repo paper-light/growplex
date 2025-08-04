@@ -15,6 +15,7 @@
     indexing?: boolean;
     onSuccess?: () => void;
     onError?: (error: unknown) => void;
+    cleanForm?: boolean;
   }
 
   let {
@@ -24,6 +25,7 @@
     indexing = $bindable(false),
     onSuccess,
     onError,
+    cleanForm = true,
   }: Props = $props();
 
   async function indexDocument() {
@@ -60,7 +62,7 @@
     size="lg"
     block
     onclick={indexDocument}
-    disabled={!document || !project || indexing}
+    disabled={!document || !project || indexing || !cleanForm}
   >
     {document?.status === "indexed" ? "Reindex" : "Index"}
   </Button>

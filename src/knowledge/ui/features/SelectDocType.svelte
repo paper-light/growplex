@@ -10,6 +10,7 @@
     document: DocumentsResponse | null;
     docType?: string;
     onDocTypeChange?: (docType: string) => void;
+    mode?: "form" | "action";
   }
 
   let {
@@ -17,6 +18,7 @@
     document,
     docType = $bindable("manual"),
     onDocTypeChange,
+    mode = "form",
   }: Props = $props();
 
   const types: { value: string; label: string }[] = [
@@ -27,6 +29,9 @@
 </script>
 
 <div class={classNames}>
+  {#if mode === "form"}
+    <input name="type" class="hidden" type="text" bind:value={docType} />
+  {/if}
   {#each types as type}
     <Button
       class="flex-1"
@@ -35,9 +40,13 @@
       disabled={document?.status === "indexed"}
       onclick={() => {
         if (!document) return;
-        pb.collection("documents").update(document.id, {
-          type: type.value,
-        });
+        if (mode === "action") {
+          pb.collection("documents").update(document.id, {
+            type: type.value,
+          });
+        } else {
+          docType = type.value;
+        }
         onDocTypeChange?.(type.value);
       }}
     >

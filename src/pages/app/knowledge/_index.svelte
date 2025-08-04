@@ -219,9 +219,6 @@
     class="h-full"
     {document}
     {project}
-    onSaveSuccess={() => {
-      docId = "";
-    }}
     onDeleteSuccess={() => {
       docId = "";
     }}

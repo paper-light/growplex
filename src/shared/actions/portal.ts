@@ -11,7 +11,7 @@ export function createPortal(node: HTMLElement, id = "default") {
 function mount(node: HTMLElement, key: string) {
   if (!portalMap.has(key)) throw `unknown portal ${key}`;
   const host = portalMap.get(key);
-  host.insertBefore(node, null);
+  host.appendChild(node);
   return () => host.contains(node) && host.removeChild(node);
 }
 export function portal(node: HTMLElement, id = "default") {

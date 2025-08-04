@@ -12,6 +12,10 @@
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import EditStringField from "@/shared/ui/features/EditStringField.svelte";
+  import Modal from "@/shared/ui/Modal.svelte";
+  import DeleteRecord from "@/shared/ui/features/DeleteRecord.svelte";
+
+  let docId = $state("");
 
   let sidebarScroll = $state<HTMLElement | null>(null);
   let documentsScroll = $state<HTMLElement | null>(null);
@@ -25,6 +29,8 @@
     documentsProvider.documents.filter((d) => d.source === source?.id)
   );
 
+  const document = $derived(documents.find((d) => d.id === docId) || null);
+
   $effect(() => {
     if (sources.length > 0) {
       scrollToBottom(sidebarScroll);
@@ -36,6 +42,32 @@
       scrollToBottom(documentsScroll);
     }
   });
+
+  function getStatusBadge(status: string) {
+    switch (status) {
+      case "indexed":
+        return "badge-success";
+      case "loaded":
+        return "badge-neutral";
+      case "error":
+        return "badge-error";
+      default:
+        return "badge-neutral";
+    }
+  }
+
+  function getTypeBadge(type: string) {
+    switch (type) {
+      case "file":
+        return "badge-info";
+      case "webPage":
+        return "badge-primary";
+      case "manual":
+        return "badge-secondary";
+      default:
+        return "badge-neutral";
+    }
+  }
 </script>
 
 <div class="w-full h-full flex">
@@ -87,7 +119,12 @@
         </div>
 
         <div>
-          <Button color="neutral" style="outline">Delete</Button>
+          <DeleteRecord
+            record={source as RecordModel}
+            onSuccess={() => {
+              settingsProvider.selectSource(sources[0].id);
+            }}
+          />
         </div>
       </div>
 
@@ -105,22 +142,64 @@
     <div class="flex-1 flex flex-col min-h-0 p-4">
       <div class="flex flex-col gap-4 flex-1 min-h-0">
         <div
-          class="flex flex-col gap-2 flex-1 min-h-0 px-4 overflow-y-auto"
+          class="flex flex-col gap-2 flex-1 min-h-0 overflow-y-auto"
           bind:this={documentsScroll}
         >
           {#if documents.length > 0}
-            {#each documents as document}
-              <div class="flex flex-col gap-2 p-3 rounded-lg">
-                <h3 class="font-semibold">
-                  {document.title || `Document ${document.id.slice(0, 4)}`}
-                </h3>
-                {#if document.content}
-                  <p class="text-sm text-base-content/70 line-clamp-2">
-                    {document.content}
-                  </p>
-                {/if}
-              </div>
-            {/each}
+            <div class="overflow-x-auto">
+              <table class="table table-zebra w-full">
+                <thead>
+                  <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#each documents as document}
+                    <tr
+                      class="hover cursor-pointer"
+                      onclick={() => (docId = document.id)}
+                    >
+                      <td class="font-medium">
+                        {document.title ||
+                          `Document ${document.id.slice(0, 4)}`}
+                      </td>
+                      <td class="max-w-xs">
+                        {#if document.content}
+                          <p class="text-sm line-clamp-2">
+                            {document.content}
+                          </p>
+                        {:else}
+                          <span class="text-base-content/50 text-sm"
+                            >No content</span
+                          >
+                        {/if}
+                      </td>
+                      <td>
+                        {#if document.status}
+                          <span class="badge {getStatusBadge(document.status)}">
+                            {document.status}
+                          </span>
+                        {:else}
+                          <span class="badge badge-neutral">Unknown</span>
+                        {/if}
+                      </td>
+                      <td>
+                        {#if document.type}
+                          <span class="badge {getTypeBadge(document.type)}">
+                            {document.type}
+                          </span>
+                        {:else}
+                          <span class="badge badge-neutral">Unknown</span>
+                        {/if}
+                      </td>
+                    </tr>
+                  {/each}
+                </tbody>
+              </table>
+            </div>
           {:else}
             <div class="flex flex-col gap-2 p-4 text-center">
               <h2 class="text-lg font-bold">No documents found</h2>
@@ -139,11 +218,40 @@
           data={{
             source: source?.id,
           }}
-          onSuccess={(document) => {
-            console.log(document);
-          }}
         />
       </footer>
     </div>
   </main>
 </div>
+
+<Modal
+  class="w-full max-w-2xl"
+  open={!!document}
+  placement="right"
+  onclose={() => (docId = "")}
+>
+  <div class="">
+    <header class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <EditStringField
+          key="title"
+          ghost
+          size="xl"
+          record={document as RecordModel | null}
+        />
+        <div class={["badge", getStatusBadge(document?.status || "")]}>
+          {document?.status}
+        </div>
+      </div>
+
+      <div>
+        <DeleteRecord
+          record={document as RecordModel | null}
+          onSuccess={() => {
+            docId = "";
+          }}
+        />
+      </div>
+    </header>
+  </div>
+</Modal>

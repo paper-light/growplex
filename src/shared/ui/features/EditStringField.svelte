@@ -24,7 +24,7 @@
 
     key: string;
 
-    record: RecordModel;
+    record: RecordModel | null;
     onSuccess?: (record: RecordModel) => void;
     onError?: (error: unknown) => void;
     mode?: "debounce" | "form";
@@ -53,7 +53,7 @@
   const updateName = async (e: Event) => {
     const newValue = (e.target as HTMLInputElement).value;
 
-    if (newValue === value || disabled) return;
+    if (newValue === value || disabled || !record) return;
 
     try {
       const updatedRecord = await pb

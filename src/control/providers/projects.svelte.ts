@@ -24,6 +24,7 @@ class ProjectsProvider {
   async load(orgId: string) {
     const projects = await pb.collection("projects").getFullList({
       filter: `org = "${orgId}"`,
+      sort: "created",
     });
     this.projects = projects;
   }
@@ -58,6 +59,7 @@ class ProjectsProvider {
       },
       {
         filter: `org = "${orgId}"`,
+        sort: "created",
       }
     );
   }

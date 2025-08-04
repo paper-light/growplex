@@ -1,5 +1,16 @@
 /// <reference path="../pb_data/types.d.ts" />
 
+onRecordCreate((e) => {
+  if (!e.record.get("type")) {
+    e.record.set("type", "manual");
+  }
+  if (!e.record.get("status")) {
+    e.record.set("status", "loaded");
+  }
+
+  e.next();
+});
+
 onRecordDelete((e) => {
   $app.runInTransaction((txApp) => {
     // Get the organization ID from the document's source

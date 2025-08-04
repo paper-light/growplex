@@ -11,8 +11,8 @@
   import { pb } from "@/shared/lib/pb";
   import Button from "@/shared/ui/Button.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
-  import ChatCreate from "@/chat/ui/features/crud/ChatCreate.svelte";
   import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";
+  import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
 
   let filterIntegrationId = $state("");
   let filterName = $state("");
@@ -82,11 +82,10 @@
         >
       {/if}
 
-      <ChatCreate
+      <CreateRecord
         projectId={project?.id || ""}
-        afterCreate={(chat) => {
-          editChatId = chat.id;
-        }}
+        collection="chats"
+        onSuccess={(chat) => (editChatId = chat.id)}
       />
     </div>
   </div>

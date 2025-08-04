@@ -5,7 +5,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  const { size = "size-10" } = $props();
+  const { size = "size-9" } = $props();
 
   onMount(() => {
     localStorage.getItem("theme") === "dark"

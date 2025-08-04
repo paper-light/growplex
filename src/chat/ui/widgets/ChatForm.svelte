@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { RecordModel } from "pocketbase";
+
   import DomainConnect from "@/knowledge/ui/DomainConnect.svelte";
 
   import Card from "@/shared/ui/Card.svelte";
@@ -10,10 +12,9 @@
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import ChatSelect from "@/chat/ui/features/crud/ChatSelect.svelte";
   import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";
-  import ChatNameUpdate from "@/chat/ui/features/crud/ChatNameUpdate.svelte";
-  import ChatDomainUpdate from "@/chat/ui/features/crud/ChatDomainUpdate.svelte";
-  import ChatFirstMessageUpdate from "@/chat/ui/features/crud/ChatFirstMessageUpdate.svelte";
   import ThemeSelection from "@/chat/ui/features/crud/ThemeSelection.svelte";
+  import EditStringField from "@/shared/ui/features/EditStringField.svelte";
+  import EditTextField from "@/shared/ui/features/EditTextField.svelte";
 
   const project = $derived(projectsProvider.selectedProject);
   const integartion = $derived(integrationsProvider.selectedIntegration);
@@ -22,7 +23,10 @@
   const sources = $derived(
     sourcesProvider.sources.filter((s) => integartion?.sources?.includes(s.id))
   );
-  const webSource = $derived(sources.find((s) => s.type === "web") || null);
+  const webSource = $derived(
+    sources.find((s) => domain in (s.metadata as Record<string, unknown>)) ||
+      null
+  );
 
   const domain = $derived(chat?.domain ?? "");
 </script>
@@ -36,9 +40,23 @@
         <ChatAvatarUpdate {chat} class="flex-1 max-w-24" mode="action" />
 
         <div class="flex-1 space-y-2">
-          <ChatNameUpdate {chat} />
+          <EditStringField
+            record={chat as RecordModel}
+            class="font-semibold"
+            ghost
+            size="lg"
+            key="name"
+          />
 
-          <ChatDomainUpdate {chat} disabled={!!webSource} />
+          <EditStringField
+            record={chat as RecordModel}
+            class="font-semibold"
+            key="domain"
+            ghost
+            size="sm"
+            disabled={!!webSource}
+          />
+
           <DomainConnect
             projectId={project?.id || ""}
             {domain}
@@ -51,7 +69,10 @@
         </div>
       </div>
 
-      <ChatFirstMessageUpdate {chat} />
+      <EditTextField record={chat as RecordModel} key="firstMessage">
+        Hello! I am your AI assistant! Do you have any questions?
+      </EditTextField>
+
       <ThemeSelection {chat} />
     {/if}
   </div>

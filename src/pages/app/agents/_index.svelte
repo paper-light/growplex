@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Trash2, X } from "@lucide/svelte";
+  import { Plus, Trash2, X } from "@lucide/svelte";
 
   import Thalia from "@/shared/assets/Thalia.jpg";
   import Input from "@/shared/ui/Input.svelte";
@@ -13,7 +13,7 @@
   import { pb } from "@/shared/lib/pb";
   import Button from "@/shared/ui/Button.svelte";
   import { projectsProvider } from "@/control/providers/projects.svelte";
-  import AgentCreate from "@/agent/ui/features/AgentCreate.svelte";
+  import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import AgentAvatarUpdate from "@/agent/ui/features/AgentAvatarUpdate.svelte";
 
   let filterIntegrationId = $state("");
@@ -86,12 +86,14 @@
         >
       {/if}
 
-      <AgentCreate
+      <CreateRecord
         projectId={project?.id || ""}
-        afterCreate={(agent) => {
-          editAgentId = agent.id;
-        }}
-      />
+        collection="agents"
+        onSuccess={(agent) => (editAgentId = agent.id)}
+      >
+        <Plus class="size-4" />
+        Create Agent
+      </CreateRecord>
     </div>
   </div>
 

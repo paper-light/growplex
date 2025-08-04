@@ -26,6 +26,7 @@ class IntegrationsProvider {
   private async load(projectId: string) {
     const integrations = await pb.collection("integrations").getFullList({
       filter: `project = "${projectId}"`,
+      sort: "created",
     });
     this.integrations = integrations;
   }
@@ -60,6 +61,7 @@ class IntegrationsProvider {
       },
       {
         filter: `project = "${projectId}"`,
+        sort: "created",
       }
     );
   }

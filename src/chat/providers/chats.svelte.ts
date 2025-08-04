@@ -46,6 +46,7 @@ class ChatsProvider {
   async load(projectId: string) {
     const chats = await pb.collection("chats").getFullList({
       filter: `project = "${projectId}"`,
+      sort: "created",
     });
     this.chats = chats;
   }
@@ -78,6 +79,7 @@ class ChatsProvider {
       },
       {
         filter: `project = "${projectId}"`,
+        sort: "created",
       }
     );
   }

@@ -9,6 +9,7 @@ class DocumentsProvider {
   async load(projectId: string) {
     const documents = await pb.collection("documents").getFullList({
       filter: `source.project = "${projectId}"`,
+      sort: "created",
     });
     this.documents = documents;
   }
@@ -42,6 +43,7 @@ class DocumentsProvider {
       },
       {
         filter: `source.project = "${projectId}"`,
+        sort: "created",
       }
     );
   }

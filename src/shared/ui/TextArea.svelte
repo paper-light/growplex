@@ -9,6 +9,7 @@
     disabled?: boolean;
     ghost?: boolean;
     grow?: boolean;
+    required?: boolean;
     placeholder?: string;
     rows?: number;
     resize?: "none" | "vertical" | "horizontal" | "both";
@@ -44,6 +45,7 @@
     rows = 4,
     placeholder = "",
     resize = "none",
+    required = false,
     name,
     oninput,
     onblur,
@@ -99,6 +101,7 @@
     ]}
     {name}
     {disabled}
+    {required}
     {placeholder}
     bind:value
     oninput={(e: Event) => {

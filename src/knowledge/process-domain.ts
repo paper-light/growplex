@@ -3,8 +3,10 @@ import { dummyCrawlUrls, crawlRawHTMLs, deepCrawlUrls } from "@/crawler/crawl";
 import { parseSitemaps } from "@/crawler/parse-sitemaps";
 import { validateDomain } from "@/crawler/utils";
 
+import type { SourcesResponse } from "@/shared/models/pocketbase-types";
+
+import { createWebDocs } from "../document/create-web-docs";
 import { indexDocs } from "./index-docs";
-import { createWebDocs } from "./create-web-docs";
 
 export type ProcessMode = "dummy" | "hybrid" | "auto";
 
@@ -14,6 +16,7 @@ export async function processDomain(
   projectId: string,
   domain: string,
   integrationId?: string,
+  sourceId?: string,
   mode: ProcessMode = "auto",
   antiBot = false
 ) {
@@ -23,13 +26,26 @@ export async function processDomain(
   const org = await pb
     .collection("orgs")
     .getFirstListItem(`projects_via_org.id ?= "${projectId}"`);
-  const source = await pb.collection("sources").create({
-    name: `Source for ${validatedDomain}`,
-    project: projectId,
-    metadata: {
-      domain,
-    },
-  });
+
+  let source: SourcesResponse;
+  if (sourceId) {
+    source = await pb.collection("sources").getOne(sourceId);
+    if (!source) throw new Error("Source not found");
+    source = await pb.collection("sources").update(sourceId, {
+      metadata: {
+        ...(source.metadata || {}),
+        domain,
+      },
+    });
+  } else {
+    source = await pb.collection("sources").create({
+      name: `Source for ${validatedDomain}`,
+      project: projectId,
+      metadata: {
+        domain,
+      },
+    });
+  }
 
   if (integrationId) {
     await pb.collection("integrations").update(integrationId, {
@@ -39,9 +55,9 @@ export async function processDomain(
 
   const results = await fn(validatedDomain, antiBot);
 
-  const loadedDocs = await createWebDocs(org.id, source.id, projectId, results);
+  const loadedDocs = await createWebDocs(source.id, results);
 
-  await indexDocs(org.id, loadedDocs);
+  await indexDocs(source.id, loadedDocs);
 
   return { source, loadedDocs };
 }

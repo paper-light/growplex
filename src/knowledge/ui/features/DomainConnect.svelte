@@ -1,37 +1,66 @@
 <script lang="ts">
   import { actions } from "astro:actions";
+  import type { Snippet } from "svelte";
   import type { ClassValue } from "svelte/elements";
   import { Rocket } from "@lucide/svelte";
 
   import Button from "@/shared/ui/Button.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
+  import Input from "@/shared/ui/Input.svelte";
 
   interface Props {
+    class?: ClassValue;
+    size?: "xs" | "sm" | "md" | "lg" | "xl";
+    color?:
+      | "primary"
+      | "secondary"
+      | "accent"
+      | "info"
+      | "success"
+      | "warning"
+      | "error"
+      | "neutral";
+    style?: "solid" | "outline" | "ghost" | "link" | "dash" | "soft";
+    children?: Snippet;
+
     projectId: string;
     integrationId?: string;
-    class?: ClassValue;
-    domain: string;
+    sourceId?: string;
+    domain?: string;
     disabled?: boolean;
   }
 
   const {
     projectId,
     integrationId,
-    domain,
+    sourceId,
+    domain = "",
+    size = "md",
+    color = "secondary",
+    style = "solid",
     class: className = "",
     disabled = false,
+    children,
   }: Props = $props();
 
   let open = $state(false);
+  let value = $derived(domain);
+
+  $effect(() => {
+    if (!open) value = "";
+  });
 
   async function connect() {
+    if (!value) return;
+
     open = false;
 
     const res = await actions.indexWeb({
       projectId,
-      url: domain,
+      url: value,
       integrationId,
+      sourceId,
     });
     if (!res.data?.ok) return;
 
@@ -40,22 +69,24 @@
 </script>
 
 <div class={className}>
-  <Button
-    color="secondary"
-    size="sm"
-    style="outline"
-    onclick={() => (open = true)}
-    {disabled}
-  >
-    Teach agent about this domain <Rocket class="size-4" />
+  <Button {color} {size} {style} onclick={() => (open = true)} {disabled}>
+    {#if children}
+      {@render children()}
+    {:else}
+      Load your domain <Rocket class="size-4" />
+    {/if}
   </Button>
 </div>
 
 <Modal bind:open>
   <div class="flex flex-col gap-4 justify-between">
-    <h3 class="text-lg">
-      Teach agent about <span class="font-bold">{domain}</span>?
-    </h3>
+    <Input
+      bind:value
+      placeholder="Domain"
+      onkeydown={(e) => {
+        if (e.key === "Enter") connect();
+      }}
+    />
     <p>
       This will run crawling and indexing of the domain and can take up to 1
       hour, depending on the size of the site.

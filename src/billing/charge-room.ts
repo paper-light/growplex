@@ -23,6 +23,11 @@ export async function chargeRoom(roomId: string) {
     throw new Error(BILLING_ERRORS.SUBSCRIPTION_NOT_FOUND);
   }
 
+  if (new Date(sub.ended).getTime() < Date.now()) {
+    log.error({ roomId }, "Subscription has expired");
+    throw new Error(BILLING_ERRORS.SUBSCRIPTION_EXPIRED);
+  }
+
   if (sub.thaliaGas >= BILLING_LIMITS[sub.tier]) {
     log.error({ roomId }, "Thalia gas exceeded");
     throw new Error(BILLING_ERRORS.THALIA_GAS_EXCEEDED);

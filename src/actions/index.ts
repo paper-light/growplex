@@ -3,6 +3,7 @@ import { defineAction } from "astro:actions";
 import { tgHandler, TGSchema } from "./notification/tg";
 import { indexWebHandler, IndexWebSchema } from "./knowledge/index-web";
 import { indexDocsHandler, IndexDocsSchema } from "./knowledge/index-docs";
+import { crawlUrlHandler, CrawlUrlSchema } from "./crawler/crawl-url";
 
 export const server = {
   sendTG: defineAction({
@@ -18,5 +19,10 @@ export const server = {
   indexDocs: defineAction({
     input: IndexDocsSchema,
     handler: indexDocsHandler,
+  }),
+
+  crawlUrl: defineAction({
+    input: CrawlUrlSchema,
+    handler: crawlUrlHandler,
   }),
 };

@@ -6,6 +6,7 @@ export const IndexWebSchema = z.object({
   projectId: z.string(),
   url: z.string(),
   integrationId: z.string().optional(),
+  sourceId: z.string().optional(),
 });
 
 export const indexWebHandler = async (
@@ -15,7 +16,8 @@ export const indexWebHandler = async (
     const { source } = await processDomain(
       input.projectId,
       input.url,
-      input.integrationId
+      input.integrationId,
+      input.sourceId
     );
     return { ok: true, sourceId: source.id };
   } catch (err) {

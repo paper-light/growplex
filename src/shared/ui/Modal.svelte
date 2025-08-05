@@ -53,6 +53,7 @@
   });
 
   function handleClose() {
+    open = false;
     onclose?.();
   }
 

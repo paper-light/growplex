@@ -1,23 +1,12 @@
 import { z } from "astro:schema";
 
 import { indexDocs, reindexDocs } from "@/knowledge/index-docs";
-import {
-  DocumentsStatusOptions,
-  type DocumentsResponse,
-} from "@/shared/models/pocketbase-types";
+import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
 
 export const IndexDocsSchema = z.object({
   mode: z.enum(["index", "reindex"]).default("index"),
-  orgId: z.string(),
-  projectId: z.string(),
-  docs: z.array(
-    z.object({
-      id: z.string(),
-      status: z.nativeEnum(DocumentsStatusOptions),
-      content: z.string(),
-      metadata: z.record(z.any()),
-    })
-  ),
+  sourceId: z.string(),
+  docs: z.array(z.any()),
 });
 
 export const indexDocsHandler = async (
@@ -31,7 +20,7 @@ export const indexDocsHandler = async (
   }
 
   try {
-    await fn!(input.orgId, input.projectId, input.docs as DocumentsResponse[]);
+    await fn!(input.sourceId, input.docs as DocumentsResponse[]);
     return { ok: true };
   } catch (err) {
     console.log(err);

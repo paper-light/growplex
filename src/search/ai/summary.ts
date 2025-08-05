@@ -43,7 +43,7 @@ const summaryBaseModel = new ChatOpenAI({
   model: "gpt-4.1-nano",
   temperature: 0.2,
   apiKey: OPENAI_API_KEY,
-  maxTokens: 16384,
+  maxTokens: 8192,
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(

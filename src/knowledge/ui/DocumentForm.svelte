@@ -1,24 +1,22 @@
 <script lang="ts">
+  import { actions } from "astro:actions";
   import type { RecordModel } from "pocketbase";
   import type { ClassValue } from "svelte/elements";
 
   import Input from "@/shared/ui/Input.svelte";
-  import type {
-    DocumentsResponse,
-    ProjectsResponse,
-  } from "@/shared/models/pocketbase-types";
+  import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
   import DeleteRecord from "@/shared/ui/features/DeleteRecord.svelte";
   import Button from "@/shared/ui/Button.svelte";
   import FileInput from "@/shared/ui/FileInput.svelte";
   import { pb } from "@/shared/lib/pb";
   import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
   import IndexDoc from "@/knowledge/ui/features/IndexDoc.svelte";
-  import SelectDocType from "./features/SelectDocType.svelte";
   import TextArea from "@/shared/ui/TextArea.svelte";
+
+  import SelectDocType from "./features/SelectDocType.svelte";
 
   interface Props {
     document: DocumentsResponse | null;
-    project: ProjectsResponse | null;
 
     class?: ClassValue;
 
@@ -29,7 +27,6 @@
 
   const {
     document,
-    project,
     class: className,
     onSaveSuccess,
     onDeleteSuccess,
@@ -43,6 +40,7 @@
   let selectedFile = $state<File | null>(null);
 
   let indexing = $state(false);
+  let crawling = $state(false);
   let docType = $derived(document?.type || "manual");
 
   const isFormDirty = $derived(
@@ -54,7 +52,7 @@
 
   async function saveDocument(e: Event) {
     e.preventDefault();
-    if (!document || !project) return;
+    if (!document) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
 
@@ -74,6 +72,16 @@
       selectedFile = file;
     }
   }
+
+  async function crawlDocument() {
+    crawling = true;
+    const res = await actions.crawlUrl({
+      url,
+      sourceId: document?.source,
+      documentId: document?.id,
+    });
+    crawling = false;
+  }
 </script>
 
 <div class={className}>
@@ -85,7 +93,7 @@
         <Input size="lg" name="title" placeholder="Title" bind:value={title} />
         <div
           class={[
-            "badge absolute -top-3 -right-14",
+            "badge absolute -top-3 -right-11",
             docStatusBadgeClasses(document?.status || ""),
           ]}
         >
@@ -126,12 +134,11 @@
 
                 <Button
                   style="soft"
-                  onclick={() => {
-                    if (!document) return;
-                    console.log("Crawling");
-                  }}
+                  onclick={crawlDocument}
+                  disabled={crawling}
+                  color={crawling ? "info" : "primary"}
                 >
-                  Crawl
+                  {crawling ? "Crawling..." : "Crawl"}
                 </Button>
               </div>
             {:else if docType === "file"}
@@ -153,22 +160,17 @@
 
             <div class="flex flex-col gap-2 flex-1 min-h-0">
               <TextArea
+                disabled={docType !== "manual"}
                 color="neutral"
                 name="content"
                 class="w-full flex-1 min-h-0"
                 rows={20}
-                placeholder={docType === "manual"
-                  ? "Enter your content here..."
-                  : docType === "webPage"
-                    ? "Content from web page..."
-                    : "File content will appear here..."}
+                placeholder="Content"
                 bind:value={content}
               >
                 {docType === "manual"
-                  ? "Your content to index..."
-                  : docType === "webPage"
-                    ? "Content from web page..."
-                    : "File content will appear here..."}
+                  ? "Write your content to index..."
+                  : "Loaded content"}
               </TextArea>
             </div>
           {/if}
@@ -183,7 +185,7 @@
           block
           disabled={!document || indexing || !isFormDirty}>Save document</Button
         >
-        <IndexDoc cleanForm={!isFormDirty} {document} {project} bind:indexing />
+        <IndexDoc cleanForm={!isFormDirty} {document} bind:indexing />
       </footer>
     </div>
   </form>

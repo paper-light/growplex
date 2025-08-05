@@ -142,8 +142,12 @@ export type ChatsRecord<Ttheme = unknown> = {
 
 export enum DocumentsStatusOptions {
 	"indexed" = "indexed",
-	"loaded" = "loaded",
 	"error" = "error",
+	"unsynced" = "unsynced",
+	"indexing" = "indexing",
+	"crawling" = "crawling",
+	"reading" = "reading",
+	"idle" = "idle",
 }
 
 export enum DocumentsTypeOptions {

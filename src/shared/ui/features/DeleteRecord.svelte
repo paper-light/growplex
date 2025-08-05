@@ -10,11 +10,24 @@
 
   interface Props {
     class?: ClassValue;
+    size?: "xs" | "sm" | "md" | "lg" | "xl";
+    color?:
+      | "primary"
+      | "secondary"
+      | "accent"
+      | "info"
+      | "success"
+      | "warning"
+      | "error"
+      | "neutral";
+    style?: "solid" | "outline" | "ghost" | "link" | "dash" | "soft";
+
     record: RecordModel | null;
     onSuccess?: () => void;
     onError?: (error: unknown) => void;
     children?: Snippet;
     confirm?: boolean;
+    msg?: string;
   }
 
   const {
@@ -24,6 +37,10 @@
     onError,
     children,
     confirm = true,
+    size = "md",
+    color = "error",
+    style = "outline",
+    msg = "Are you sure you want to delete this record?",
   }: Props = $props();
 
   let confirmOpen = $state(false);
@@ -44,8 +61,9 @@
 
 <div class={className}>
   <Button
-    color="error"
-    style="outline"
+    {color}
+    {style}
+    {size}
     onclick={() => {
       if (confirm) {
         confirmOpen = true;
@@ -65,9 +83,9 @@
 <Modal open={confirmOpen} onclose={() => (confirmOpen = false)}>
   <div class="flex flex-col gap-4">
     <h2 class="font-semibold">Delete {record?.title || record?.name}</h2>
-    <p>Are you sure you want to delete this record?</p>
+    <p>{msg}</p>
     <div class="flex justify-end">
-      <Button color="error" style="outline" onclick={deleteRecord}>
+      <Button {color} {style} onclick={deleteRecord}>
         <Trash2 class="size-4" />
         Delete
       </Button>

@@ -12,11 +12,12 @@ const log = logger.child({
   module: "knowledge:index-docs",
 });
 
-export async function reindexDocs(
-  orgId: string,
-  projectId: string,
-  docs: DocumentsResponse[]
-) {
+export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
+  const source = await pb
+    .collection("sources")
+    .getOne(sourceId, { expand: "project" });
+  const orgId = (source.expand as any).project.org;
+
   await qdrantClient.delete(`org_${orgId}`, {
     wait: true,
     ordering: undefined,
@@ -25,40 +26,51 @@ export async function reindexDocs(
 
   for (const doc of docs) {
     await pb.collection("documents").update(doc.id, {
-      status: DocumentsStatusOptions.loaded,
+      status: DocumentsStatusOptions.idle,
     });
   }
 
-  await indexDocs(orgId, projectId, docs);
+  await indexDocs(sourceId, docs);
 }
 
-export async function indexDocs(
-  orgId: string,
-  projectId: string,
-  docs: DocumentsResponse[]
-) {
+export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
+  const source = await pb
+    .collection("sources")
+    .getOne(sourceId, { expand: "project" });
+  const projectId = source.project;
+  const orgId = (source.expand as any).project.org;
+
   for (const doc of docs) {
+    const docIndexed = doc.status === "indexed";
+    const metadata = {
+      ...(doc.metadata as Record<string, any>),
+      orgId,
+      projectId,
+      sourceId: doc.source,
+      documentId: doc.id,
+    };
+
     try {
+      await pb.collection("documents").update(doc.id, {
+        status: docIndexed ? "indexed" : "indexing",
+        metadata,
+      });
+
       const metrics = await embedder.addTexts(orgId, [
         {
           content: doc.content,
-          metadata: {
-            ...(doc.metadata as Record<string, any>),
-            orgId,
-            projectId,
-            sourceId: doc.source,
-            documentId: doc.id,
-          },
+          metadata,
         },
       ]);
+
       await pb.collection("documents").update(doc.id, {
         chunkCount: metrics.documentMetrics[0].chunkCount,
         tokenCount: metrics.documentMetrics[0].tokenCount,
-        status: DocumentsStatusOptions.indexed,
+        status: "indexed",
       });
     } catch (error) {
       await pb.collection("documents").update(doc.id, {
-        status: DocumentsStatusOptions.error,
+        status: docIndexed ? "indexed" : "error",
       });
       log.error({ error }, "Error indexing doc");
     }

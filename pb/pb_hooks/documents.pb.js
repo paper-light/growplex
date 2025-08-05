@@ -5,7 +5,10 @@ onRecordCreate((e) => {
     e.record.set("type", "manual");
   }
   if (!e.record.get("status")) {
-    e.record.set("status", "loaded");
+    e.record.set("status", "idle");
+  }
+  if (!e.record.get("title")) {
+    e.record.set("title", `Document ${e.record.id.slice(0, 4)}`);
   }
 
   e.next();
@@ -13,9 +16,9 @@ onRecordCreate((e) => {
 
 onRecordDelete((e) => {
   $app.runInTransaction((txApp) => {
-    if (e.record.get("status") == "indexed") {
+    if (["indexed", "unsynced"].includes(e.record.get("status"))) {
       // Get the organization ID from the document's source
-      const sourceId = JSON.parse(e.record.get("metadata")).sourceId;
+      const sourceId = e.record.get("source");
       const source = txApp.findRecordById("sources", sourceId);
       if (!source) throw new Error("Source not found for document");
 

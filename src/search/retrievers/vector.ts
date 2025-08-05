@@ -21,7 +21,7 @@ export class VectorRetriever {
       }
 
       const retriever = await vectorRetriever.createRetriever(org.id, {
-        k: 200,
+        k: 50,
         filter: createSourcesFilter(sources.map((s) => s.id)),
       });
 

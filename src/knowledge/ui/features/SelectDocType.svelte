@@ -37,7 +37,7 @@
       class="flex-1"
       color={docType === type.value ? "primary" : "neutral"}
       style={docType === type.value ? "soft" : "ghost"}
-      disabled={document?.status === "indexed"}
+      disabled={["indexed", "unsynced"].includes(document?.status || "")}
       onclick={() => {
         if (!document) return;
         if (mode === "action") {

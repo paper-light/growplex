@@ -69,6 +69,7 @@
 
 <div class={className}>
   <Input
+    class="w-full"
     {color}
     {ghost}
     oninput={updateNameDebounced}

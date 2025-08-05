@@ -17,6 +17,7 @@
   import DocumentForm from "@/knowledge/ui/DocumentForm.svelte";
   import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
   import { docTypeBadgeClasses } from "@/knowledge/helpers/doc-type-badge";
+  import DomainConnect from "@/knowledge/ui/features/DomainConnect.svelte";
 
   let docId = $state("");
 
@@ -96,8 +97,14 @@
           />
         </div>
 
-        <div>
+        <div class="flex items-center gap-2">
+          <DomainConnect
+            style="outline"
+            projectId={project?.id || ""}
+            sourceId={source?.id}
+          />
           <DeleteRecord
+            msg="Are you sure you want to delete this source? All documents will be deleted as well."
             record={source as RecordModel}
             onSuccess={() => {
               settingsProvider.selectSource(sources[0].id);
@@ -106,7 +113,7 @@
         </div>
       </div>
 
-      <div>
+      <div class="hidden">
         <h2 class="font-semibold">Filters</h2>
         <div class="flex items-center gap-2">
           <Button size="sm" color="neutral" style="outline">

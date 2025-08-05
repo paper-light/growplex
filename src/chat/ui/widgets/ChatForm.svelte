@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { RecordModel } from "pocketbase";
 
-  import DomainConnect from "@/knowledge/ui/DomainConnect.svelte";
+  import DomainConnect from "@/knowledge/ui/features/DomainConnect.svelte";
 
   import Card from "@/shared/ui/Card.svelte";
   import SourceStatus from "@/knowledge/ui/SourceStatus.svelte";

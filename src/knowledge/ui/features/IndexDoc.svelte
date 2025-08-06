@@ -34,11 +34,8 @@
   async function indexDocument() {
     if (disabled) return;
 
-    const mode = document!.status === "unsynced" ? "reindex" : "index";
-
     indexing = true;
     const result = await actions.indexDocs({
-      mode,
       sourceId: document!.source,
       docs: [document!],
     });

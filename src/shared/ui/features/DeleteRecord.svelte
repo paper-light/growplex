@@ -21,6 +21,8 @@
       | "error"
       | "neutral";
     style?: "solid" | "outline" | "ghost" | "link" | "dash" | "soft";
+    square?: boolean;
+    circle?: boolean;
 
     record: RecordModel | null;
     onSuccess?: () => void;
@@ -40,6 +42,8 @@
     size = "md",
     color = "error",
     style = "outline",
+    square = false,
+    circle = false,
     msg = "Are you sure you want to delete this record?",
   }: Props = $props();
 
@@ -68,8 +72,11 @@
     {color}
     {style}
     {size}
+    {square}
+    {circle}
     disabled={deleting}
-    onclick={() => {
+    onclick={(e: MouseEvent) => {
+      e.stopPropagation();
       if (confirm) {
         confirmOpen = true;
       } else {

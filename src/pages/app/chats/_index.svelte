@@ -195,13 +195,6 @@
 
       <Button
         type="button"
-        color="neutral"
-        style="outline"
-        onclick={editChatEnd}>Cancel</Button
-      >
-
-      <Button
-        type="button"
         color="error"
         style="outline"
         onclick={() => {

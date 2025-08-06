@@ -4,7 +4,7 @@
 
   interface Props {
     class?: ClassValue;
-    onclick?: () => void;
+    onclick?: (e: MouseEvent) => void;
     color?:
       | "primary"
       | "secondary"

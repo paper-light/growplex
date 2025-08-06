@@ -61,7 +61,6 @@
     sizesMap[size],
     colorClasses[color],
     ghost && "select-ghost",
-    disabled && "select-disabled",
     className,
   ]}
   {disabled}

@@ -13,8 +13,10 @@
     children?: any;
     onclose?: () => void;
     backdrop?: boolean;
+    noPadding?: boolean;
     placement?: "top" | "bottom" | "left" | "right" | "center";
     order?: number;
+    transparent?: boolean;
   }
 
   let {
@@ -24,7 +26,9 @@
     children,
     onclose,
     placement = "center",
-    backdrop = true,
+    backdrop = false,
+    noPadding = false,
+    transparent = false,
   }: Props = $props();
 
   let dialogElement: HTMLDialogElement | null = $state(null);
@@ -56,21 +60,15 @@
     open = false;
     onclose?.();
   }
-
-  function handleBackdropClick(event: MouseEvent) {
-    if (event.target === dialogElement) {
-      handleClose();
-    }
-  }
 </script>
 
 <div use:portal={id}>
   <dialog
+    style={transparent ? "background: transparent" : ""}
     bind:this={dialogElement}
     class={["modal", placementClass]}
-    onclick={handleBackdropClick}
   >
-    <div class={["modal-box relative", className]}>
+    <div class={["modal-box relative", noPadding && "p-0", className]}>
       <div class="absolute top-2 right-2">
         <Button color="neutral" style="ghost" onclick={handleClose} circle>
           <X size={24} />
@@ -79,5 +77,11 @@
 
       {@render children()}
     </div>
+
+    {#if backdrop}
+      <form method="dialog" class="modal-backdrop">
+        <button onclick={handleClose}>close</button>
+      </form>
+    {/if}
   </dialog>
 </div>

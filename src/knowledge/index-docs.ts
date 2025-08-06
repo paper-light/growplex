@@ -24,11 +24,13 @@ export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
     filter: createDocumentIdsFilter(docs.map((d) => d.id)),
   });
 
-  for (const doc of docs) {
-    await pb.collection("documents").update(doc.id, {
-      status: DocumentsStatusOptions.idle,
-    });
-  }
+  await Promise.all(
+    docs.map((doc) =>
+      pb.collection("documents").update(doc.id, {
+        status: DocumentsStatusOptions.idle,
+      })
+    )
+  );
 
   await indexDocs(sourceId, docs);
 }
@@ -40,39 +42,41 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
   const projectId = source.project;
   const orgId = (source.expand as any).project.org;
 
-  for (const doc of docs) {
-    const docIndexed = doc.status === "indexed";
-    const metadata = {
-      ...(doc.metadata as Record<string, any>),
-      orgId,
-      projectId,
-      sourceId: doc.source,
-      documentId: doc.id,
-    };
+  await Promise.all(
+    docs.map(async (doc) => {
+      const docIndexed = doc.status === "indexed";
+      const metadata = {
+        ...(doc.metadata as Record<string, any>),
+        orgId,
+        projectId,
+        sourceId: doc.source,
+        documentId: doc.id,
+      };
 
-    try {
-      await pb.collection("documents").update(doc.id, {
-        status: docIndexed ? "indexed" : "indexing",
-        metadata,
-      });
-
-      const metrics = await embedder.addTexts(orgId, [
-        {
-          content: doc.content,
+      try {
+        await pb.collection("documents").update(doc.id, {
+          status: docIndexed ? "indexed" : "indexing",
           metadata,
-        },
-      ]);
+        });
 
-      await pb.collection("documents").update(doc.id, {
-        chunkCount: metrics.documentMetrics[0].chunkCount,
-        tokenCount: metrics.documentMetrics[0].tokenCount,
-        status: "indexed",
-      });
-    } catch (error) {
-      await pb.collection("documents").update(doc.id, {
-        status: docIndexed ? "indexed" : "error",
-      });
-      log.error({ error }, "Error indexing doc");
-    }
-  }
+        const metrics = await embedder.addTexts(orgId, [
+          {
+            content: doc.content,
+            metadata,
+          },
+        ]);
+
+        await pb.collection("documents").update(doc.id, {
+          chunkCount: metrics.documentMetrics[0].chunkCount,
+          tokenCount: metrics.documentMetrics[0].tokenCount,
+          status: "indexed",
+        });
+      } catch (error) {
+        await pb.collection("documents").update(doc.id, {
+          status: docIndexed ? "indexed" : "error",
+        });
+        log.error({ error }, "Error indexing doc");
+      }
+    })
+  );
 }

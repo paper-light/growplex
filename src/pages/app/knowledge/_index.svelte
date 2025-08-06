@@ -33,6 +33,27 @@
     documentsProvider.documents.filter((d) => d.source === source?.id)
   );
 
+  const stats = $derived.by(() => {
+    const docs = documents.filter((d) =>
+      ["indexed", "unsynced"].includes(d.status)
+    );
+    return docs.reduce(
+      (acc, doc) => {
+        acc.totalChunks += doc.chunkCount;
+        acc.totalTokens += doc.tokenCount;
+        acc.averageChunkTokens = acc.totalTokens / acc.totalChunks;
+        acc.averageDocumentChunks = acc.totalChunks / docs.length;
+        return acc;
+      },
+      {
+        totalTokens: 0,
+        totalChunks: 0,
+        averageChunkTokens: 0,
+        averageDocumentChunks: 0,
+      }
+    );
+  });
+
   const document = $derived(documents.find((d) => d.id === docId) || null);
 
   $effect(() => {
@@ -110,6 +131,39 @@
               settingsProvider.selectSource(sources[0].id);
             }}
           />
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="text-sm text-base-content/50">
+          <p>
+            {documents.length}
+          </p>
+          <p>docs</p>
+        </div>
+        <div class="text-sm text-base-content/50">
+          <p>
+            {stats.totalTokens}
+          </p>
+          <p>tkns</p>
+        </div>
+        <div class="text-sm text-base-content/50">
+          <p>
+            {stats.totalChunks}
+          </p>
+          <p>chnks</p>
+        </div>
+        <div class="text-sm text-base-content/50">
+          <p>
+            {stats.averageChunkTokens.toFixed(2)}
+          </p>
+          <p>tkns/chnk</p>
+        </div>
+        <div class="text-sm text-base-content/50">
+          <p>
+            {stats.averageDocumentChunks.toFixed(2)}
+          </p>
+          <p>chnks/doc</p>
         </div>
       </div>
 
@@ -225,7 +279,6 @@
   <DocumentForm
     class="h-full"
     {document}
-    {project}
     onDeleteSuccess={() => {
       docId = "";
     }}

@@ -52,7 +52,7 @@ export const crawlUrlHandler = async (
           content: docIndexed ? document.content : res.error_message,
           url: docIndexed ? document.url : res.url,
         });
-        return { ok: false, error: res };
+        return { ok: false, error: res.error_message };
       }
 
       await pb.collection("documents").update(document.id, {
@@ -66,7 +66,7 @@ export const crawlUrlHandler = async (
           documentId: document.id,
         },
       });
-      return { ok: true, res };
+      return { ok: true };
     } catch (err) {
       await pb.collection("documents").update(document.id, {
         status: docIndexed ? "indexed" : "error",
@@ -77,6 +77,6 @@ export const crawlUrlHandler = async (
     }
   } catch (err) {
     log.error(err);
-    return { ok: false, error: err };
+    return { ok: false, error: "Error crawling URL" };
   }
 };

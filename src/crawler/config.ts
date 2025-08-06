@@ -17,8 +17,8 @@ export function buildCrawlerConfig(
   cache: boolean,
   stream: boolean,
   recursive: boolean,
-  maxPages: number = 1000,
-  maxDepth: number = 5
+  maxPages: number,
+  maxDepth: number
 ) {
   const config: any = {
     type: "CrawlerRunConfig",

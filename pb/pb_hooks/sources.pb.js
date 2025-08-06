@@ -14,10 +14,7 @@ onRecordDelete((e) => {
       "documents",
       `source = "${e.record.id}"`
     );
-    console.log(
-      "Deleting documents for source:",
-      JSON.stringify(docs.map((d) => d.id))
-    );
+
     docs.forEach((doc) => {
       txApp.delete(doc);
     });

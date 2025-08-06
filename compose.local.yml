@@ -31,17 +31,6 @@ services:
     env_file:
       - .env
 
-  meilisearch:
-    image: getmeili/meilisearch:latest
-    ports:
-      - "7700:7700"
-    volumes:
-      - ./meilisearch/data:/meili_data
-    env_file:
-      - .env
-    environment:
-      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
-
   redis:
     image: docker.dragonflydb.io/dragonflydb/dragonfly
     ports:
@@ -50,9 +39,20 @@ services:
       - ./redis/data:/redis/data
 
   crawl4ai:
-    image: unclecode/crawl4ai:0.6.0-r2
+    image: unclecode/crawl4ai
     ports:
       - "11235:11235"
+
+  # meilisearch:
+  #   image: getmeili/meilisearch:latest
+  #   ports:
+  #     - "7700:7700"
+  #   volumes:
+  #     - ./meilisearch/data:/meili_data
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
 
   # weaviate:
   #   image: cr.weaviate.io/semitechnologies/weaviate:1.26.4

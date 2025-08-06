@@ -41,9 +41,11 @@ export async function crawlUrls(urls: string[], antiBot = false, cache = true) {
 export async function deepCrawlUrls(
   urls: string[],
   antiBot = false,
-  cache = true
+  cache = true,
+  maxPages = 200,
+  maxDepth = 3
 ) {
-  const results = await crawl(urls, antiBot, cache, true);
+  const results = await crawl(urls, antiBot, cache, true, maxPages, maxDepth);
   return results;
 }
 
@@ -53,7 +55,9 @@ async function crawl(
   urls: string[],
   antiBot = false,
   cache = true,
-  recursive = true
+  recursive = true,
+  maxPages = 200,
+  maxDepth = 3
 ) {
   const res = await fetch(`${CRAWL4AI_URL}/crawl`, {
     //@ts-ignore
@@ -72,8 +76,8 @@ async function crawl(
         cache,
         false, // stream = false
         recursive,
-        1000,
-        5
+        maxPages,
+        maxDepth
       ),
     }),
   });

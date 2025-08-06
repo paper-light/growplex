@@ -44,9 +44,12 @@
   }: Props = $props();
 
   let confirmOpen = $state(false);
+  let deleting = $state(false);
 
   const deleteRecord = async () => {
     if (!record) return;
+
+    deleting = true;
 
     try {
       await pb.collection(record.collectionId).delete(record.id);
@@ -56,6 +59,7 @@
     }
 
     confirmOpen = false;
+    deleting = false;
   };
 </script>
 
@@ -64,6 +68,7 @@
     {color}
     {style}
     {size}
+    disabled={deleting}
     onclick={() => {
       if (confirm) {
         confirmOpen = true;
@@ -72,7 +77,9 @@
       }
     }}
   >
-    {#if children}
+    {#if deleting}
+      Deleting...
+    {:else if children}
       {@render children()}
     {:else}
       Delete <Trash2 class="size-4" />
@@ -85,9 +92,13 @@
     <h2 class="font-semibold">Delete {record?.title || record?.name}</h2>
     <p>{msg}</p>
     <div class="flex justify-end">
-      <Button {color} {style} onclick={deleteRecord}>
-        <Trash2 class="size-4" />
-        Delete
+      <Button {color} {style} onclick={deleteRecord} disabled={deleting}>
+        {#if deleting}
+          Deleting...
+        {:else}
+          <Trash2 class="size-4" />
+          Delete
+        {/if}
       </Button>
     </div>
   </div>

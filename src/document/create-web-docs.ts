@@ -23,7 +23,7 @@ export async function createWebDocs(sourceId: string, results: any[]) {
       url: result.url,
       status: result.success && result.status_code === 200 ? "idle" : "error",
       content: result.success
-        ? result.markdown.fit_markdown
+        ? `${result.markdown.fit_markdown.slice(0, 23000)}...`
         : result.error_message,
       metadata: {
         ...result?.metadata,

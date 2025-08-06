@@ -167,8 +167,10 @@
         </div>
       </div>
 
+      <h2 class="font-semibold text-lg">Documents</h2>
+
       <div class="hidden">
-        <h2 class="font-semibold">Filters</h2>
+        <h3 class="font-semibold">Filters</h3>
         <div class="flex items-center gap-2">
           <Button size="sm" color="neutral" style="outline">
             <Funnel class="size-4" />
@@ -275,6 +277,7 @@
   open={!!document}
   placement="right"
   onclose={() => (docId = "")}
+  backdrop
 >
   <DocumentForm
     class="h-full"

@@ -94,7 +94,7 @@
   </Button>
 </div>
 
-<Modal open={confirmOpen} onclose={() => (confirmOpen = false)}>
+<Modal open={confirmOpen} onclose={() => (confirmOpen = false)} backdrop>
   <div class="flex flex-col gap-4">
     <h2 class="font-semibold">Delete {record?.title || record?.name}</h2>
     <p>{msg}</p>

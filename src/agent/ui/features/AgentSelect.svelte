@@ -4,7 +4,6 @@
   import Select from "@/shared/ui/Select.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
-  import { integrationsCrud } from "@/integration/repositories/integration-crud";
   import { settingsProvider } from "@/user/settings.svelte";
 
   interface Props {
@@ -16,9 +15,8 @@
   const integration = $derived(integrationsProvider.selectedIntegration);
   const selectedAgent = $derived(agentsProvider.selectedIntegrationAgent);
   const allAgents = $derived(
-    agentsProvider.agents?.filter(
-      (a) => !integration?.agents.includes(a.id) || a.id === selectedAgent?.id
-    ) || []
+    agentsProvider.agents?.filter((a) => integration?.agents.includes(a.id)) ||
+      []
   );
 
   const agentId = $derived(selectedAgent?.id || "");
@@ -34,15 +32,7 @@
     const id = (e.target as HTMLSelectElement).value;
     if (!id || !integration) return;
 
-    const updated = await integrationsCrud.update({
-      id: integration.id,
-      agents: [id],
-    });
-
     settingsProvider.selectIntegrationAgent(id);
-
-    console.log("integration", integration.agents);
-    console.log("updated", updated.agents);
   }
 </script>
 

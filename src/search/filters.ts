@@ -19,7 +19,7 @@ export function createSourcesFilter(sources: string[]) {
   }
 
   return {
-    must: sources.map((source) => ({
+    should: sources.map((source) => ({
       key: "metadata.sourceId",
       match: { value: source },
     })),
@@ -67,7 +67,7 @@ export function createMultiMetadataFilter(
   }
 
   return {
-    must: filterEntries.map(([key, value]) => ({
+    should: filterEntries.map(([key, value]) => ({
       key: `metadata.${key}`,
       match: { value },
     })),

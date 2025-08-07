@@ -17,6 +17,8 @@
     placement?: "top" | "bottom" | "left" | "right" | "center";
     order?: number;
     transparent?: boolean;
+
+    transition?: boolean;
   }
 
   let {

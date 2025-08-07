@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RecordModel } from "pocketbase";
-  import { Funnel } from "@lucide/svelte";
+  import { Funnel, ChevronLeft, ChevronRight } from "@lucide/svelte";
 
   import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
   import { documentsProvider } from "@/knowledge/providers/documents.svelte";
@@ -21,6 +21,10 @@
 
   let docId = $state("");
 
+  // Pagination state
+  let currentPage = $state(1);
+  let pageSize = $state(20);
+
   let sidebarScroll = $state<HTMLElement | null>(null);
   let documentsScroll = $state<HTMLElement | null>(null);
 
@@ -32,6 +36,13 @@
   const documents = $derived(
     documentsProvider.documents.filter((d) => d.source === source?.id)
   );
+
+  // Pagination computed values
+  const totalPages = $derived(Math.ceil(documents.length / pageSize));
+  const startIndex = $derived((currentPage - 1) * pageSize);
+  const endIndex = $derived(Math.min(startIndex + pageSize, documents.length));
+
+  const paginatedDocuments = $derived(documents.slice(startIndex, endIndex));
 
   const stats = $derived.by(() => {
     const docs = documents.filter((d) =>
@@ -56,6 +67,13 @@
 
   const document = $derived(documents.find((d) => d.id === docId) || null);
 
+  // Reset to first page when source changes
+  $effect(() => {
+    if (source) {
+      currentPage = 1;
+    }
+  });
+
   $effect(() => {
     if (sources.length > 0) {
       scrollToBottom(sidebarScroll);
@@ -67,6 +85,33 @@
       scrollToBottom(documentsScroll);
     }
   });
+
+  // Pagination functions
+  function goToPage(page: number) {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+    }
+  }
+
+  function goToFirstPage() {
+    currentPage = 1;
+  }
+
+  function goToLastPage() {
+    currentPage = totalPages;
+  }
+
+  function goToPreviousPage() {
+    if (currentPage > 1) {
+      currentPage--;
+    }
+  }
+
+  function goToNextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+    }
+  }
 </script>
 
 <div class="w-full h-full flex">
@@ -198,7 +243,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {#each documents as document}
+                  {#each paginatedDocuments as document}
                     <tr
                       class="hover cursor-pointer hover:bg-base-300"
                       onclick={() => (docId = document.id)}
@@ -247,6 +292,85 @@
                 </tbody>
               </table>
             </div>
+
+            <!-- Pagination Controls -->
+            {#if totalPages > 1}
+              <div
+                class="flex items-center justify-center p-4 border-t border-base-300 bg-base-50"
+              >
+                <div class="flex items-center gap-2">
+                  <!-- First Page (only show if not on first page) -->
+                  {#if currentPage > 1}
+                    <Button
+                      size="sm"
+                      style="outline"
+                      color="neutral"
+                      onclick={goToFirstPage}
+                      class="min-w-10"
+                    >
+                      1
+                    </Button>
+                  {/if}
+
+                  <!-- Ellipsis after first page -->
+                  {#if currentPage > 2}
+                    <span class="text-base-content/50">...</span>
+
+                    <!-- Previous Page (only show if not on first page) -->
+                    <Button
+                      size="sm"
+                      style="outline"
+                      color="neutral"
+                      onclick={goToPreviousPage}
+                    >
+                      <ChevronLeft class="size-4" />
+                    </Button>
+                  {/if}
+
+                  <!-- Current Page -->
+                  <Button
+                    size="sm"
+                    style="solid"
+                    color="primary"
+                    class="min-w-10"
+                  >
+                    {currentPage}
+                  </Button>
+
+                  <!-- Next Page (only show if not on last page) -->
+                  {#if currentPage < totalPages}
+                    <Button
+                      size="sm"
+                      style="outline"
+                      color="neutral"
+                      onclick={goToNextPage}
+                    >
+                      <ChevronRight class="size-4" />
+                    </Button>
+
+                    <!-- Ellipsis before last page -->
+                    {#if currentPage < totalPages - 2}
+                      <span class="text-base-content/50">...</span>
+                    {/if}
+
+                    <!-- Last Page (only show if not on last page) -->
+                    <Button
+                      size="sm"
+                      style="outline"
+                      color="neutral"
+                      onclick={goToLastPage}
+                      class="min-w-10"
+                    >
+                      {totalPages}
+                    </Button>
+                  {/if}
+                </div>
+
+                <div class="ml-6 text-sm text-base-content/70">
+                  Page {currentPage} of {totalPages} • {documents.length} documents
+                </div>
+              </div>
+            {/if}
           {:else}
             <div class="flex flex-col gap-2 p-4 text-center">
               <h2 class="text-lg font-bold">No documents found</h2>

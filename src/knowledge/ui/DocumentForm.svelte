@@ -84,55 +84,60 @@
   }
 </script>
 
-<div class={className}>
-  <form class="w-full h-full flex flex-col" onsubmit={saveDocument}>
-    <header
-      class="flex items-center justify-between px-6 py-4 border-b border-base-300"
-    >
-      <div class="flex items-center gap-3 relative">
-        <Input size="lg" name="title" placeholder="Title" bind:value={title} />
-        <div
-          class={[
-            "badge absolute -top-3 -right-11",
-            docStatusBadgeClasses(document?.status || ""),
-          ]}
-        >
-          {document?.status}
+{#if document}
+  <div class={className}>
+    <form class="w-full h-full flex flex-col" onsubmit={saveDocument}>
+      <header
+        class="flex items-center justify-between px-6 py-4 border-b border-base-300"
+      >
+        <div class="flex items-center gap-3 relative">
+          <Input
+            size="lg"
+            name="title"
+            placeholder="Title"
+            bind:value={title}
+          />
+          <div
+            class={[
+              "badge absolute -top-3 -right-11",
+              docStatusBadgeClasses(document.status || ""),
+            ]}
+          >
+            {document.status}
+          </div>
         </div>
-      </div>
 
-      <div>
-        <DeleteRecord
-          record={document as RecordModel | null}
-          onSuccess={() => {
-            onDeleteSuccess?.();
-          }}
-        />
-      </div>
-    </header>
+        <div>
+          <DeleteRecord
+            record={document as RecordModel}
+            onSuccess={() => {
+              onDeleteSuccess?.();
+            }}
+          />
+        </div>
+      </header>
 
-    {#if ["indexed", "unsynced"].includes(document?.status || "")}
-      <div class="flex items-center gap-2">
-        <p class="text-sm text-base-content/50">
-          {document?.chunkCount} chunks
-        </p>
-        <p class="text-sm text-base-content/50">
-          {document?.tokenCount} tokens
-        </p>
-      </div>
-    {/if}
+      {#if ["indexed", "unsynced"].includes(document.status || "")}
+        <div class="flex items-center gap-2">
+          <p class="text-sm text-base-content/50">
+            {document.chunkCount} chunks
+          </p>
+          <p class="text-sm text-base-content/50">
+            {document.tokenCount} tokens
+          </p>
+        </div>
+      {/if}
 
-    <div class="flex-1 flex flex-col min-h-0">
-      <div class="p-6 flex-1 min-h-0">
-        <SelectDocType
-          mode="form"
-          class="flex gap-2 mb-6"
-          {document}
-          bind:docType
-        />
+      <div class="flex-1 flex flex-col min-h-0">
+        <div class="p-6 flex-1 min-h-0">
+          <SelectDocType
+            mode="form"
+            class="flex gap-2 mb-6"
+            {document}
+            bind:docType
+          />
 
-        <div class="flex flex-col gap-4 flex-1 min-h-0">
-          {#if document}
+          <div class="flex flex-col gap-4 flex-1 min-h-0">
             {#if docType === "webPage"}
               <div class="flex gap-2 items-center">
                 <Input
@@ -184,20 +189,26 @@
                   : "Loaded content"}
               </TextArea>
             </div>
-          {/if}
+          </div>
         </div>
-      </div>
 
-      <footer class="p-6 border-t border-base-300 space-y-2">
-        <Button
-          type="submit"
-          color="primary"
-          size="lg"
-          block
-          disabled={!document || indexing || !isFormDirty}>Save document</Button
-        >
-        <IndexDoc cleanForm={!isFormDirty} {document} bind:indexing />
-      </footer>
+        <footer class="p-6 border-t border-base-300 space-y-2">
+          <Button
+            type="submit"
+            color="primary"
+            size="lg"
+            block
+            disabled={indexing || !isFormDirty}>Save document</Button
+          >
+          <IndexDoc cleanForm={!isFormDirty} {document} bind:indexing />
+        </footer>
+      </div>
+    </form>
+  </div>
+{:else}
+  <div class={className}>
+    <div class="w-full h-full flex items-center justify-center">
+      <p class="text-base-content/70">No document selected</p>
     </div>
-  </form>
-</div>
+  </div>
+{/if}

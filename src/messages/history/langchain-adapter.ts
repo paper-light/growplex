@@ -1,4 +1,4 @@
-import { embedder } from "@/search/embedder";
+import { chunker } from "@/search/chunker";
 import { pb } from "@/shared/lib/pb";
 import {
   MessagesRoleOptions,
@@ -65,7 +65,7 @@ class HistoryLangchainAdapter {
         room: opts.roomId,
         sentBy: opts.sentBy,
         visible: false,
-        contentTokensCount: embedder.countTokens(
+        contentTokensCount: chunker.countTokens(
           msg.content.toString(),
           "gpt-4"
         ),
@@ -84,7 +84,7 @@ class HistoryLangchainAdapter {
         room: opts.roomId,
         sentBy: opts.sentBy,
         visible: opts.visible,
-        contentTokensCount: embedder.countTokens(
+        contentTokensCount: chunker.countTokens(
           msg.content.toString(),
           "gpt-4"
         ),
@@ -102,7 +102,7 @@ class HistoryLangchainAdapter {
         room: opts.roomId,
         sentBy: opts.agent?.name,
         visible: opts.visible,
-        contentTokensCount: embedder.countTokens(
+        contentTokensCount: chunker.countTokens(
           msg.content.toString(),
           "gpt-4"
         ),
@@ -122,7 +122,7 @@ class HistoryLangchainAdapter {
         room: opts.roomId,
         sentBy: opts.agent?.name,
         visible: opts.visible,
-        contentTokensCount: embedder.countTokens(
+        contentTokensCount: chunker.countTokens(
           msg.content.toString(),
           "gpt-4"
         ),

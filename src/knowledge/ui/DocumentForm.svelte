@@ -160,7 +160,10 @@
             {:else if docType === "file"}
               <div class="flex flex-col gap-2">
                 <FileInput
-                  accept=".txt,.md,.pdf,.doc,.docx,.csv,.json,.xml,.xlsx"
+                  accept={
+                    ".txt,.md,.json,.xml,.html,.csv"
+                  // ".txt,.md,.pdf,.doc,.docx,.rtf,.csv,.xls,.xlsx,.ppt,.pptx,.html,.xml,.json,.odt,.odp,.ods,.epub"
+                  }
                   onchange={handleFileSelect}
                   class="w-full"
                 >

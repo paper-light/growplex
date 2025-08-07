@@ -1,8 +1,41 @@
 // QDRANT FILTERS
 
+export function mergeFilters(filters: any[]) {
+  const mustConditions = filters
+    .map((filter) => filter.must || [])
+    .flat()
+    .filter((condition) => condition && Object.keys(condition).length > 0);
+
+  const shouldConditions = filters
+    .map((filter) => filter.should || [])
+    .flat()
+    .filter((condition) => condition && Object.keys(condition).length > 0);
+
+  const result: any = {};
+
+  if (mustConditions.length > 0) {
+    result.must = mustConditions;
+  }
+
+  if (shouldConditions.length > 0) {
+    result.should = shouldConditions;
+  }
+
+  return result;
+}
+
+export function createOrgFilter(orgId: string) {
+  if (!orgId) {
+    return {};
+  }
+  return {
+    must: [{ key: "metadata.orgId", match: { value: orgId } }],
+  };
+}
+
 export function createMultiProjectFilter(projectIds: string[]) {
   if (projectIds.length === 0) {
-    return { must: [] };
+    return {};
   }
 
   return {
@@ -15,7 +48,7 @@ export function createMultiProjectFilter(projectIds: string[]) {
 
 export function createSourcesFilter(sources: string[]) {
   if (sources.length === 0) {
-    return { must: [] };
+    return {};
   }
 
   return {
@@ -30,7 +63,7 @@ export function createChunksFilter(
   chunkIds: { documentId: string; chunkIndex: number }[]
 ) {
   if (chunkIds.length === 0) {
-    return { must: [] };
+    return {};
   }
 
   return {
@@ -63,7 +96,7 @@ export function createMultiMetadataFilter(
 ) {
   const filterEntries = Object.entries(filters);
   if (filterEntries.length === 0) {
-    return { must: [] };
+    return {};
   }
 
   return {
@@ -76,7 +109,7 @@ export function createMultiMetadataFilter(
 
 export function createDocumentIdsFilter(documentIds: string[]) {
   if (documentIds.length === 0) {
-    return { must: [] };
+    return {};
   }
 
   return {

@@ -4,7 +4,6 @@ import { pb } from "@/shared/lib/pb";
 import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { guardRoomAccess } from "@/auth/guards/guard-room-access";
-import { embedder } from "@/search/embedder";
 
 import { joinRoom } from "./join-room";
 import { sendMessage } from "./send-message";
@@ -12,6 +11,7 @@ import { chatRateLimiter } from "./rate-limiter";
 import { useMiddlewares } from "./middleware";
 import type { JoinRoomDTO, SendMessageDTO } from "./types";
 import { CHAT_CONFIG } from "@/chat/config";
+import { chunker } from "@/search/chunker";
 
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
@@ -41,7 +41,7 @@ export function attachSocketIO(httpServer: any) {
       const msg = JSON.parse(dto.msgStr);
 
       if (
-        embedder.countTokens(msg.content, "gpt-4") > CHAT_CONFIG.MAX_MSG_TOKENS
+        chunker.countTokens(msg.content, "gpt-4") > CHAT_CONFIG.MAX_MSG_TOKENS
       ) {
         socket.emit("msg-length-limit", {
           message: "Message is too long!",

@@ -1,12 +1,18 @@
-import { z } from "zod";
-
-import { searchChainWithContext } from "@/search/ai/workflow";
+import type { RunnableConfig } from "@langchain/core/runnables";
 import { tool } from "@langchain/core/tools";
+
+import { searchChain } from "@/search/ai/workflow";
 import { EnhancerReturnSchema } from "@/search/ai/enhancer";
 
 export const callSearchChain = tool(
-  async (input: z.infer<typeof EnhancerReturnSchema>) => {
-    const result = await searchChainWithContext.invoke(input);
+  async (input: any, config: RunnableConfig) => {
+    const args = EnhancerReturnSchema.parse(input);
+    const { roomId } = config.configurable || {};
+
+    const result = await searchChain.invoke({
+      ...args,
+      roomId,
+    });
     return result;
   },
   {

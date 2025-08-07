@@ -8,6 +8,7 @@ onRecordCreate((e) => {
     const sub = new Record(subSub);
 
     sub.set("tier", "Free");
+    sub.set("gas", 1000); // 200c = 2$
     txApp.save(sub);
 
     const created = sub.getDateTime("created");

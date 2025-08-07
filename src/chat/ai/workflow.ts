@@ -9,28 +9,38 @@ import { consulterChain } from "./consulter";
 import { AIMessageChunk, ToolMessage } from "@langchain/core/messages";
 import { chatToolsMap } from "./tools";
 
-import { contextLambda, loadDataForContext } from "./context";
+import { context } from "./context";
 import { logger } from "@/shared/lib/logger";
 import { langfuseHandler } from "@/shared/lib/langfuse";
+import {
+  RunnableParallel,
+  RunnablePassthrough,
+  RunnableSequence,
+} from "@langchain/core/runnables";
 
 const log = logger.child({
   module: "chat:ai:workflow",
 });
 
-const chatChain = consulterChain;
-
-export const chatChainWithContext = contextLambda(chatChain);
+const chatChain = RunnableSequence.from([
+  RunnableParallel.from({
+    chainInput: new RunnablePassthrough(),
+    history: historyRepository.asLambda(),
+    context: context.asLambda(),
+  }),
+  consulterChain,
+]);
 
 export const runChatWorkflow = async (roomId: string, query: string) => {
   const returnMessages: MessagesResponse[] = [];
 
   log.info({ roomId, query }, "runChatWorkflow started");
 
-  let contextData = await loadDataForContext(roomId);
+  let data = await context.loadRoomContext(roomId);
   log.debug({ roomId }, "Loaded context data");
-  const contextInput = {
-    data: contextData,
+  const chatInput = {
     query,
+    roomId,
     knowledge: "",
     withTools: true,
     withSearch: true,
@@ -46,15 +56,13 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         ...(await historyRepository.updateHistory(messagesToPersist))
       );
       messagesToPersist = [];
-      contextData = await loadDataForContext(roomId);
-      contextInput.data = contextData;
     }
 
-    log.info({ iteration: i, roomId }, "Invoking chatChainWithContext");
-    result = await chatChainWithContext.invoke(contextInput, {
+    log.info({ iteration: i, roomId }, "Invoking chatChain");
+    result = await chatChain.invoke(chatInput, {
       callbacks: [langfuseHandler],
     });
-    log.debug({ result }, "chatChainWithContext result");
+    log.debug({ result }, "chatChain result");
 
     callingTools = !!result?.tool_calls?.length;
 
@@ -64,7 +72,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
           msg: result!,
           opts: {
             roomId,
-            agent: contextData.agent,
+            agent: data.agent,
             visible: !callingTools,
           },
         },
@@ -79,10 +87,10 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
     const toolPromises = result!.tool_calls!.map(async (toolCall) => {
       log.debug({ toolCall }, "Tool call");
 
-      const toolMessage = await contextLambda(
-        chatToolsMap[toolCall.name],
-        toolCall
-      ).invoke(contextInput, {
+      const toolMessage = await chatToolsMap[toolCall.name].invoke(toolCall, {
+        configurable: {
+          roomId,
+        },
         callbacks: [langfuseHandler],
       });
       log.debug({ toolMessage, name: toolCall.name }, "Tool message");
@@ -101,12 +109,11 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
               success: false,
             });
 
-        contextInput.knowledge = JSON.stringify(
+        chatInput.knowledge = JSON.stringify(
           `Relevant to query: ${success ? "✅" : "❌"}
           Search results: ${content}`
         );
-
-        contextInput.withSearch = false;
+        chatInput.withSearch = false;
       }
 
       return toolMessage as ToolMessage;
@@ -121,7 +128,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
             msg: toolMessage,
             opts: {
               roomId,
-              agent: contextData.agent,
+              agent: data.agent,
               visible:
                 // @ts-ignore
                 chatToolsMap[toolMessage.name]?.metadata?.visible ?? false,
@@ -130,9 +137,6 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         })
       )
     );
-
-    contextData = await loadDataForContext(roomId);
-    contextInput.data = contextData;
   }
 
   if (messagesToPersist.length > 0) {
@@ -140,14 +144,12 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
       ...(await historyRepository.updateHistory(messagesToPersist))
     );
     messagesToPersist = [];
-    contextData = await loadDataForContext(roomId);
-    contextInput.data = contextData;
   }
 
   if (callingTools) {
-    contextInput.withTools = false;
+    chatInput.withTools = false;
     log.info({ roomId }, "Final assistant message after tools");
-    result = await chatChainWithContext.invoke(contextInput, {
+    result = await chatChain.invoke(chatInput, {
       callbacks: [langfuseHandler],
     });
 
@@ -157,7 +159,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
           msg: result!,
           opts: {
             roomId,
-            agent: contextData.agent,
+            agent: data.agent,
             visible: true,
           },
         },

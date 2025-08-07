@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { getContextVariable } from "@langchain/core/context";
 
 import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
+import type { RunnableConfig } from "@langchain/core/runnables";
 
 const log = logger.child({
   module: "chat:ai:tools:create-ticket",
@@ -35,32 +35,25 @@ const CreateTicketSchema = z.object({
 });
 
 export const createTicket = tool(
-  async ({
-    title,
-    description,
-    priority,
-    payload,
-  }: z.infer<typeof CreateTicketSchema>) => {
-    // RUNNABLE DYNAMIC CONTEXT
-    const msg = getContextVariable("message");
-    const room = getContextVariable("room");
-    if (!room || !msg) {
-      log.error(
-        { room, msg },
-        "Create ticket tool call error: Room or message is not set"
-      );
-      return {
-        success: false,
-        content: "Create ticket tool call error: Room or message is not set",
-      };
-    }
+  async (input: any, config: RunnableConfig) => {
+    const args = CreateTicketSchema.parse(input);
+    const { title, description, priority, payload } = args;
+    const { roomId } = config.configurable || {};
 
-    if (room.type === "preview") {
+    const room = await pb.collection("rooms").getOne(roomId);
+
+    if (room.status === "preview") {
       return {
         success: true,
         content: `Ticket is not created in preview mode`,
       };
     }
+
+    const msg = await pb
+      .collection("messages")
+      .getFirstListItem(`room = "${roomId}" && role = "user"`, {
+        sort: "-created",
+      });
 
     const ticket = await pb.collection("tickets").create({
       message: msg.id,

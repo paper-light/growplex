@@ -1,11 +1,6 @@
 import z from "zod";
-import { ChatOpenAI } from "@langchain/openai";
-import { PromptTemplate } from "@langchain/core/prompts";
 
-import { getEnv } from "@/shared/helpers/get-env";
 import { RunnableLambda } from "@langchain/core/runnables";
-
-const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
 export const EnhancerReturnSchema = z.object({
   enhancedQuery: z

@@ -330,10 +330,12 @@ export enum SubscriptionsTierOptions {
 	"Plus" = "Plus",
 	"Pro" = "Pro",
 	"Business" = "Business",
+	"PAYG" = "PAYG",
 }
 export type SubscriptionsRecord<TusagePayload = unknown> = {
 	created?: IsoDateString
 	ended?: IsoDateString
+	gas?: number
 	id: string
 	subscribed?: IsoDateString
 	thaliaGas?: number

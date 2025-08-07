@@ -2,7 +2,7 @@ import { type Socket, type Server } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
 import { RoomsStatusOptions } from "@/shared/models/pocketbase-types";
-import { embedder } from "@/search/embedder";
+import { chunker } from "@/search/chunker";
 import { runChatWorkflow } from "@/chat/ai/workflow";
 import { historyRepository } from "@/messages/history/repository";
 import { logger } from "@/shared/lib/logger";
@@ -23,7 +23,7 @@ export async function sendMessage(
     // ALWAYS ON SEND MESSAGE
     const msg = {
       ...JSON.parse(msgStr),
-      contentTokensCount: embedder.countTokens(
+      contentTokensCount: chunker.countTokens(
         JSON.parse(msgStr).content,
         "gpt-4"
       ),

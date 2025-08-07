@@ -1,20 +1,18 @@
-// import * as hub from "langchain/hub/node";
 import { ChatOpenAI } from "@langchain/openai";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
 import { RunnableLambda } from "@langchain/core/runnables";
-import { getContextVariable } from "@langchain/core/context";
 
 import { getEnv } from "@/shared/helpers/get-env";
 import { logger } from "@/shared/lib/logger";
 
 import { chatTools } from "./tools";
+import { context } from "./context";
 
 const log = logger.child({ module: "chat:ai:consulter" });
 
-const ENV = getEnv("ENV");
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
 const CONSULTER_PROMPT_TEMPLATE_START = `
@@ -131,40 +129,38 @@ export const baseConsulterModel = new ChatOpenAI({
   maxTokens: 512,
 });
 
-export const consulterChain = RunnableLambda.from(() => {
-  const history = getContextVariable("history");
+export const consulterChain = RunnableLambda.from(
+  (input: {
+    history: string;
+    chainInput: {
+      query: string;
+      withTools: boolean;
+      withSearch: boolean;
+      knowledge: string;
+    };
+    context: Awaited<ReturnType<typeof context.loadRoomContext>>;
+  }) => {
+    const { history, chainInput, context } = input;
+    const { query, withTools, withSearch, knowledge } = chainInput;
+    const { agent } = context;
 
-  const knowledge = getContextVariable("knowledge") || "<no knowledge>";
-  const query = getContextVariable("query");
-  const agent = getContextVariable("agent");
+    let tools = withTools ? chatTools : [];
+    if (!withSearch) tools = tools.filter((t) => t.name !== "callSearchChain");
 
-  if (!history || !knowledge || !query || !agent) {
-    log.error(
-      { history, knowledge, query, agent },
-      "Missing context variables"
+    log.debug(
+      { withTools, withSearch, tools },
+      "consulterChain withTools and withSearch"
     );
-    throw new Error("Missing context variables");
+    log.debug({ history }, "consulterChain history");
+    log.debug({ knowledge, query, system: agent.system }, "Template variables");
+
+    return consulterPromptTemplate
+      .pipe(baseConsulterModel.bindTools(tools))
+      .invoke({
+        history,
+        knowledge,
+        system: agent.system,
+        query,
+      });
   }
-
-  const withTools = getContextVariable("withTools");
-  const withSearch = getContextVariable("withSearch");
-
-  let tools = withTools ? chatTools : [];
-  if (!withSearch) tools = tools.filter((t) => t.name !== "callSearchChain");
-
-  log.debug(
-    { withTools, withSearch, tools },
-    "consulterChain withTools and withSearch"
-  );
-  log.debug({ history }, "consulterChain history");
-  log.debug({ knowledge, query, system: agent.system }, "Template variables");
-
-  return consulterPromptTemplate
-    .pipe(baseConsulterModel.bindTools(tools))
-    .invoke({
-      history,
-      knowledge,
-      system: agent.system,
-      query,
-    });
-});
+);

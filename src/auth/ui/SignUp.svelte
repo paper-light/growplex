@@ -36,7 +36,7 @@
       await pb.collection("users").create({
         email,
         password,
-        confirmPassword,
+        passwordConfirm: confirmPassword,
         name: username,
       });
       await pb.collection("users").authWithPassword(email, password, {

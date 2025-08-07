@@ -23,7 +23,7 @@ export const indexDocsHandler = async (
       ),
       indexDocs(
         input.sourceId,
-        input.docs.filter((doc) => doc.status === "indexed")
+        input.docs.filter((doc) => doc.status === "idle")
       ),
     ]);
 

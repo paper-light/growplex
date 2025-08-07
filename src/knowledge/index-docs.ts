@@ -1,12 +1,21 @@
-import { embedder } from "@/search/embedder";
 import { logger } from "@/shared/lib/logger";
 import { pb } from "@/shared/lib/pb";
 import {
   DocumentsStatusOptions,
   type DocumentsResponse,
+  type SubscriptionsResponse,
 } from "@/shared/models/pocketbase-types";
-import { qdrantClient } from "@/shared/lib/qdrant";
-import { createDocumentIdsFilter } from "@/search/filters";
+
+import { qdrantStore } from "@/search/stores";
+import {
+  createDocumentIdsFilter,
+  createOrgFilter,
+  mergeFilters,
+} from "@/search/filters";
+import { BILLING_GAS_PRICES_PER_TOKEN } from "@/billing/config";
+import { BILLING_ERRORS } from "@/billing";
+import { chunker } from "@/search/chunker";
+import { indexer } from "@/search/indexer";
 
 const log = logger.child({
   module: "knowledge:index-docs",
@@ -18,10 +27,11 @@ export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
     .getOne(sourceId, { expand: "project" });
   const orgId = (source.expand as any).project.org;
 
-  await qdrantClient.delete(`org_${orgId}`, {
-    wait: true,
-    ordering: undefined,
-    filter: createDocumentIdsFilter(docs.map((d) => d.id)),
+  await qdrantStore.delete({
+    filter: mergeFilters([
+      createOrgFilter(orgId),
+      createDocumentIdsFilter(docs.map((d) => d.id)),
+    ]),
   });
 
   await Promise.all(
@@ -36,15 +46,18 @@ export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
 }
 
 export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
-  const source = await pb
-    .collection("sources")
-    .getOne(sourceId, { expand: "project" });
+  const source = await pb.collection("sources").getOne(sourceId, {
+    expand: "project,project.org,project.org.subscription",
+  });
   const projectId = source.project;
-  const orgId = (source.expand as any).project.org;
+  const orgId = (source.expand as any).project.org.org;
+  const subscription: SubscriptionsResponse = (source.expand as any).project
+    .expand.org.expand.subscription;
 
   await Promise.all(
     docs.map(async (doc) => {
-      const docIndexed = doc.status === "indexed";
+      const docIndexed = doc.status === "indexed" || doc.status === "unsynced";
+
       const metadata = {
         ...(doc.metadata as Record<string, any>),
         orgId,
@@ -54,26 +67,34 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
       };
 
       try {
+        const tokenCount = chunker.countTokens(doc.content);
+        const gasCost = BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * tokenCount;
+        if (subscription.gas < gasCost)
+          throw new Error(BILLING_ERRORS.NOT_ENOUGH_GAS);
+
+        await pb.collection("subscriptions").update(subscription.id, {
+          gas: subscription.gas - gasCost,
+        });
+
         await pb.collection("documents").update(doc.id, {
           status: docIndexed ? "indexed" : "indexing",
           metadata,
         });
 
-        const metrics = await embedder.addTexts(orgId, [
-          {
-            content: doc.content,
-            metadata,
-          },
-        ]);
+        const { chunkCounts } = await indexer.indexTexts(
+          [doc.content],
+          [metadata]
+        );
 
         await pb.collection("documents").update(doc.id, {
-          chunkCount: metrics.documentMetrics[0].chunkCount,
-          tokenCount: metrics.documentMetrics[0].tokenCount,
+          chunkCount: chunkCounts[0],
+          tokenCount,
           status: "indexed",
         });
       } catch (error) {
         await pb.collection("documents").update(doc.id, {
           status: docIndexed ? "indexed" : "error",
+          content: docIndexed ? doc.content : (error as Error).message,
         });
         log.error({ error }, "Error indexing doc");
       }

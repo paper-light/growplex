@@ -17,3 +17,14 @@ cacheDirectories = ["node_modules/.cache"]
 
 [start]
 cmd = "pnpm run start"
+
+# [nixpkgs]
+# packages = [
+#   "poppler",       # for pdftotext (PDF support)
+#   "antiword",      # for .doc
+#   "unrtf",         # for .rtf
+#   "catdoc",        # for .xls
+#   "libreoffice",   # fallback document converter (heavy but useful)
+#   "tesseract",     # OCR fallback (optional)
+#   "bash"           # some parsers need shell to be available
+# ]

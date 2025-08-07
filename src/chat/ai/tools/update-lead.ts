@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { getContextVariable } from "@langchain/core/context";
 
 import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
+import type { RunnableConfig } from "@langchain/core/runnables";
+import type { LeadsResponse } from "@/shared/models/pocketbase-types";
 
 const log = logger.child({
   module: "chat-service:agent:tools",
@@ -41,18 +42,17 @@ const UpdateLeadSchema = z.object({
 });
 
 export const updateLead = tool(
-  async ({
-    description,
-    name,
-    email,
-    phone,
-    tg,
-    payload,
-  }: z.infer<typeof UpdateLeadSchema>) => {
-    const lead = getContextVariable("lead");
-    const room = getContextVariable("room");
+  async (input: any, config: RunnableConfig) => {
+    const args = UpdateLeadSchema.parse(input);
+    const { description, name, email, phone, tg, payload } = args;
+    const { roomId } = config.configurable || {};
 
-    if (room.type === "preview") {
+    const room = await pb.collection("rooms").getOne(roomId, {
+      expand: "lead",
+    });
+    const lead: LeadsResponse = (room.expand as any)?.lead;
+
+    if (room.status === "preview") {
       return {
         success: true,
         content: `Lead is not updated in preview mode`,
@@ -60,10 +60,7 @@ export const updateLead = tool(
     }
 
     if (!lead) {
-      log.warn(
-        { roomId: getContextVariable("room")?.id },
-        "Update lead tool call error: Lead is not set"
-      );
+      log.warn({ roomId }, "Update lead tool call error: Lead is not set");
       return {
         success: false,
         content: "Lead is not set",

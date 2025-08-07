@@ -19,7 +19,7 @@ CRITICAL RULES:
 
 Query: {query}
 
-Search results: {results}
+Search results: {searchResult}
 
 Search summary:
 `;

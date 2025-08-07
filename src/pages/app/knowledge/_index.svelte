@@ -18,12 +18,14 @@
   import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
   import { docTypeBadgeClasses } from "@/knowledge/helpers/doc-type-badge";
   import DomainConnect from "@/knowledge/ui/features/DomainConnect.svelte";
+  import Pagination from "@/shared/ui/features/Pagination.svelte";
+
+  const PAGE_SIZE = 30;
 
   let docId = $state("");
 
   // Pagination state
   let currentPage = $state(1);
-  let pageSize = $state(20);
 
   let sidebarScroll = $state<HTMLElement | null>(null);
   let documentsScroll = $state<HTMLElement | null>(null);
@@ -38,9 +40,9 @@
   );
 
   // Pagination computed values
-  const totalPages = $derived(Math.ceil(documents.length / pageSize));
-  const startIndex = $derived((currentPage - 1) * pageSize);
-  const endIndex = $derived(Math.min(startIndex + pageSize, documents.length));
+  const totalPages = $derived(Math.ceil(documents.length / PAGE_SIZE));
+  const startIndex = $derived((currentPage - 1) * PAGE_SIZE);
+  const endIndex = $derived(Math.min(startIndex + PAGE_SIZE, documents.length));
 
   const paginatedDocuments = $derived(documents.slice(startIndex, endIndex));
 
@@ -85,33 +87,6 @@
       scrollToBottom(documentsScroll);
     }
   });
-
-  // Pagination functions
-  function goToPage(page: number) {
-    if (page >= 1 && page <= totalPages) {
-      currentPage = page;
-    }
-  }
-
-  function goToFirstPage() {
-    currentPage = 1;
-  }
-
-  function goToLastPage() {
-    currentPage = totalPages;
-  }
-
-  function goToPreviousPage() {
-    if (currentPage > 1) {
-      currentPage--;
-    }
-  }
-
-  function goToNextPage() {
-    if (currentPage < totalPages) {
-      currentPage++;
-    }
-  }
 </script>
 
 <div class="w-full h-full flex">
@@ -179,7 +154,7 @@
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <div class="text-sm text-base-content/50">
           <p>
             {documents.length}
@@ -293,84 +268,11 @@
               </table>
             </div>
 
-            <!-- Pagination Controls -->
-            {#if totalPages > 1}
-              <div
-                class="flex items-center justify-center p-4 border-t border-base-300 bg-base-50"
-              >
-                <div class="flex items-center gap-2">
-                  <!-- First Page (only show if not on first page) -->
-                  {#if currentPage > 1}
-                    <Button
-                      size="sm"
-                      style="outline"
-                      color="neutral"
-                      onclick={goToFirstPage}
-                      class="min-w-10"
-                    >
-                      1
-                    </Button>
-                  {/if}
-
-                  <!-- Ellipsis after first page -->
-                  {#if currentPage > 2}
-                    <span class="text-base-content/50">...</span>
-
-                    <!-- Previous Page (only show if not on first page) -->
-                    <Button
-                      size="sm"
-                      style="outline"
-                      color="neutral"
-                      onclick={goToPreviousPage}
-                    >
-                      <ChevronLeft class="size-4" />
-                    </Button>
-                  {/if}
-
-                  <!-- Current Page -->
-                  <Button
-                    size="sm"
-                    style="solid"
-                    color="primary"
-                    class="min-w-10"
-                  >
-                    {currentPage}
-                  </Button>
-
-                  <!-- Next Page (only show if not on last page) -->
-                  {#if currentPage < totalPages}
-                    <Button
-                      size="sm"
-                      style="outline"
-                      color="neutral"
-                      onclick={goToNextPage}
-                    >
-                      <ChevronRight class="size-4" />
-                    </Button>
-
-                    <!-- Ellipsis before last page -->
-                    {#if currentPage < totalPages - 2}
-                      <span class="text-base-content/50">...</span>
-                    {/if}
-
-                    <!-- Last Page (only show if not on last page) -->
-                    <Button
-                      size="sm"
-                      style="outline"
-                      color="neutral"
-                      onclick={goToLastPage}
-                      class="min-w-10"
-                    >
-                      {totalPages}
-                    </Button>
-                  {/if}
-                </div>
-
-                <div class="ml-6 text-sm text-base-content/70">
-                  Page {currentPage} of {totalPages} • {documents.length} documents
-                </div>
-              </div>
-            {/if}
+            <Pagination
+              bind:page={currentPage}
+              {totalPages}
+              itemsLength={documents.length}
+            />
           {:else}
             <div class="flex flex-col gap-2 p-4 text-center">
               <h2 class="text-lg font-bold">No documents found</h2>

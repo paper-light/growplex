@@ -1,4 +1,3 @@
-import { getEnv } from "@/shared/helpers/get-env";
 import { redisClient } from "@/shared/lib/redis";
 import { logger } from "@/shared/lib/logger";
 import {
@@ -10,9 +9,8 @@ import {
   MessagesRoleOptions,
 } from "@/shared/models/pocketbase-types";
 import { pb } from "@/shared/lib/pb";
-import { embedder } from "@/search/embedder";
+import { chunker } from "@/search/chunker";
 import { RunnableLambda } from "@langchain/core/runnables";
-import { getContextVariable } from "@langchain/core/context";
 import { historyLangchainAdapter } from "./langchain-adapter";
 import { CHAT_CONFIG } from "@/chat/config";
 
@@ -25,16 +23,14 @@ const log = logger.child({ module: "messages:history:repository" });
 class HistoryRepository {
   private lengthProximation = Math.ceil((HISTORY_TOKENS / MAX_MSG_TOKENS) * 2);
 
-  getAsLambda() {
-    return RunnableLambda.from(async () => {
-      const room = getContextVariable("room");
-      if (!room) {
-        throw new Error("room is required");
-      }
-      const pbHistory = await this.getHistory(room.id, false);
+  asLambda() {
+    return RunnableLambda.from(async (input: { roomId: string }) => {
+      const { roomId } = input;
+
+      const pbHistory = await this.getHistory(roomId, false);
       const history = historyLangchainAdapter.buildLangchainHistory(pbHistory);
 
-      return { history };
+      return history;
     });
   }
 
@@ -195,7 +191,7 @@ class HistoryRepository {
       visible: true,
       room: roomId,
       sentBy: agent.name,
-      contentTokensCount: embedder.countTokens(chat.firstMessage, "gpt-4"),
+      contentTokensCount: chunker.countTokens(chat.firstMessage, "gpt-4"),
       metadata: agent?.avatar
         ? {
             avatar: pb.files.getURL(agent, agent.avatar),

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { getContextVariable } from "@langchain/core/context";
+import type { RunnableConfig } from "@langchain/core/runnables";
 
 import { pb } from "@/shared/lib/pb";
 
@@ -20,10 +20,12 @@ const CallOperatorSchema = z.object({
 });
 
 export const callOperator = tool(
-  async ({ description, payload }: z.infer<typeof CallOperatorSchema>) => {
-    const room = getContextVariable("room");
-    if (!room)
-      throw new Error("Call operator tool call error: Room is not set");
+  async (input: any, config: RunnableConfig) => {
+    const args = CallOperatorSchema.parse(input);
+    const { description, payload } = args;
+    const { roomId } = config.configurable || {};
+
+    const room = await pb.collection("rooms").getOne(roomId);
 
     if (room.status === "preview") {
       return {
@@ -35,7 +37,6 @@ export const callOperator = tool(
     await pb.collection("rooms").update(room.id, {
       status: "waitingOperator",
       metadata: {
-        ...room.metadata,
         ...payload,
         description,
       },

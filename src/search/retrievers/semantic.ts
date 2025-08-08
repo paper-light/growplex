@@ -25,7 +25,7 @@ export class SemanticRetriever {
 
         const filters = mergeFilters([
           createOrgFilter(org.id),
-          createSourcesFilter(sources.map((s: SourcesResponse) => s.id)),
+          createSourcesFilter(sources?.map((s: SourcesResponse) => s.id) || []),
         ]);
 
         const retriever = this.vectoreStore.asRetriever({

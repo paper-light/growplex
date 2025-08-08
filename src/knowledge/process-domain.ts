@@ -23,10 +23,6 @@ export async function processDomain(
   const fn = processors[mode];
   const validatedDomain = validateDomain(domain);
 
-  const org = await pb
-    .collection("orgs")
-    .getFirstListItem(`projects_via_org.id ?= "${projectId}"`);
-
   let source: SourcesResponse;
   if (sourceId) {
     source = await pb.collection("sources").getOne(sourceId);
@@ -55,11 +51,11 @@ export async function processDomain(
 
   const results = await fn(validatedDomain, antiBot);
 
-  const loadedDocs = await createWebDocs(source.id, results);
+  const docs = await createWebDocs(source.id, results);
 
-  await indexDocs(source.id, loadedDocs);
+  await indexDocs(source.id, docs);
 
-  return { source, loadedDocs };
+  return { source, docs };
 }
 
 // -------------------------PRIVATE-------------------------

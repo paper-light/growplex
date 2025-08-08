@@ -50,7 +50,7 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
     expand: "project,project.org,project.org.subscription",
   });
   const projectId = source.project;
-  const orgId = (source.expand as any).project.org.org;
+  const orgId = (source.expand as any).project.org;
   const subscription: SubscriptionsResponse = (source.expand as any).project
     .expand.org.expand.subscription;
 
@@ -68,27 +68,30 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
 
       try {
         const tokenCount = chunker.countTokens(doc.content);
-        const gasCost = BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * tokenCount;
-        if (subscription.gas < gasCost)
+        const estGasCost =
+          BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * tokenCount;
+        if (subscription.gas < estGasCost)
           throw new Error(BILLING_ERRORS.NOT_ENOUGH_GAS);
-
-        await pb.collection("subscriptions").update(subscription.id, {
-          gas: subscription.gas - gasCost,
-        });
 
         await pb.collection("documents").update(doc.id, {
           status: docIndexed ? "indexed" : "indexing",
           metadata,
         });
 
-        const { chunkCounts } = await indexer.indexTexts(
+        const { chunkCounts, totalTokens } = await indexer.indexTexts(
           [doc.content],
           [metadata]
         );
 
+        const gasCost =
+          BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * totalTokens[0];
+        await pb.collection("subscriptions").update(subscription.id, {
+          gas: subscription.gas - gasCost,
+        });
+
         await pb.collection("documents").update(doc.id, {
           chunkCount: chunkCounts[0],
-          tokenCount,
+          tokenCount: totalTokens[0],
           status: "indexed",
         });
       } catch (error) {

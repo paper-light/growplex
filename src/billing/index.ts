@@ -1,2 +1,2 @@
-export { chargeRoom } from "./charge-room";
+export { charger } from "./charger";
 export { BILLING_ERRORS } from "./errors";

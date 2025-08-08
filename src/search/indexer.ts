@@ -34,11 +34,15 @@ class Indexer {
       );
 
       const chunkCounts = docsChunks.map((docChunks) => docChunks.length);
+      const totalTokens = docsChunks.map((docChunks) =>
+        docChunks.reduce((acc, chunk) => acc + chunk.metadata.tokenCount, 0)
+      );
 
       await this.store.addDocuments(docsChunks.flat());
 
       return {
         chunkCounts,
+        totalTokens,
       };
     });
   }

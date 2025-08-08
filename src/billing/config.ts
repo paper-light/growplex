@@ -15,19 +15,23 @@ export const BILLING_PRICES = {
 } as const;
 
 // 5 gas = 0.01$ = 1c of our costs
+// Prices for business clients
 export const BILLING_GAS_PRICES_PER_TOKEN = {
-  //
-  GPT41Mini: {
-    cache: 0.00005, // 0.1$/1M = 0.0000001$/token = 0.00001c/token = 0.00005gas/token
-    in: 0.0002, // 0.4$/1M = 0.0000004$/token
-    out: 0.0008, // 1.6$/1M = 0.0000016$/token
+  "gpt-5-nano": {
+    cache: 0.00000000025,
+    in: 0.0000000025,
+    out: 0.00000002,
   },
 
-  GPT41Nano: {
-    cache: 0.0000125, // mini / 4
-    in: 0.00005, // mini / 4
-    out: 0.0002, // mini / 4
+  "gpt-5-mini": {
+    cache: 0.00000000125,
+    in: 0.0000000125,
+    out: 0.0000001,
   },
 
-  EmbedderSmall: 0.00001, // $0.02/1M
+  "text-embedding-3-small": {
+    in: 0.0000000005,
+    out: 0,
+    cache: 0,
+  },
 };

@@ -6,7 +6,7 @@ import { chunker } from "@/search/chunker";
 import { runChatWorkflow } from "@/chat/ai/workflow";
 import { historyRepository } from "@/messages/history/repository";
 import { logger } from "@/shared/lib/logger";
-import { chargeRoom, BILLING_ERRORS } from "@/billing";
+import { charger, BILLING_ERRORS } from "@/billing";
 
 import type { SendMessageDTO } from "./types";
 
@@ -64,15 +64,16 @@ export async function sendMessage(
 
     // validate and count billing
     try {
-      await chargeRoom(room.id);
-      const newMsgs = await runChatWorkflow(room.id, msg.content);
-      for (const msg of newMsgs) {
+      const sub = await charger.validateRoom(room.id);
+      const { messages, usage } = await runChatWorkflow(room.id, msg.content);
+
+      for (const msg of messages) {
         io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
       }
     } catch (error: any) {
-      if (error.message.includes(BILLING_ERRORS.THALIA_GAS_EXCEEDED)) {
+      if (error.message.includes(BILLING_ERRORS.NOT_ENOUGH_GAS)) {
         io.to(room.id).emit("limit-exceeded", {
-          message: "Usage limit exceeded. Please upgrade your plan.",
+          message: "Usage limit exceeded",
         });
         return;
       }

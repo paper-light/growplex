@@ -40,12 +40,14 @@ export const SummaryReturnSchema = z.object({
 const summaryPromptTemplate = PromptTemplate.fromTemplate(PROMPT_TEMPLATE);
 
 const summaryBaseModel = new ChatOpenAI({
-  model: "gpt-4.1-nano",
-  temperature: 0.2,
+  model: "gpt-5-nano",
   apiKey: OPENAI_API_KEY,
-  maxTokens: 8192,
+  // temperature: 0.2,
+  // maxCompletionTokens: 8192,
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(
-  summaryBaseModel.withStructuredOutput(SummaryReturnSchema)
+  summaryBaseModel.withStructuredOutput(SummaryReturnSchema, {
+    includeRaw: true,
+  })
 );

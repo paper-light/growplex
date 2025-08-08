@@ -3,6 +3,9 @@ import { tool } from "@langchain/core/tools";
 
 import { searchChain } from "@/search/ai/workflow";
 import { EnhancerReturnSchema } from "@/search/ai/enhancer";
+import { logger } from "@/shared/lib/logger";
+
+const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
 
 export const callSearchChain = tool(
   async (input: any, config: RunnableConfig) => {
@@ -13,7 +16,11 @@ export const callSearchChain = tool(
       ...args,
       roomId,
     });
-    return result;
+
+    const usage = result.raw.response_metadata.usage_metadata;
+    log.debug({ usage }, "searchChain usage");
+
+    return result.parsed;
   },
   {
     name: "callSearchChain",

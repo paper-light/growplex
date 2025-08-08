@@ -18,6 +18,7 @@ import {
   RunnablePassthrough,
   RunnableSequence,
 } from "@langchain/core/runnables";
+import type { ModelUsage } from "@/billing/charger";
 
 const log = logger.child({
   module: "chat:ai:workflow",
@@ -29,12 +30,6 @@ interface ChatInput {
   knowledge: string;
   withTools: boolean;
   withSearch: boolean;
-}
-
-interface Usage {
-  cache: number;
-  in: number;
-  out: number;
 }
 
 const chatChain = RunnableSequence.from([
@@ -52,6 +47,15 @@ async function runTools(
   agent: AgentsResponse,
   chatInput: ChatInput
 ) {
+  const usage: ModelUsage = {
+    model: "gpt-5-nano",
+    tokens: {
+      cache: 0,
+      in: 0,
+      out: 0,
+    },
+  };
+
   log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
   const toolPromises = result!.tool_calls!.map(async (toolCall) => {
     log.debug({ toolCall }, "Tool call");
@@ -66,8 +70,17 @@ async function runTools(
 
     if (toolMessage.name === "callSearchChain") {
       const data = JSON.parse(toolMessage.content);
-      const content = data.content;
-      const success = data.success;
+      const cache = data.usage.input_token_details.cache_read;
+      const input = data.usage.input_tokens - cache;
+      const out = data.usage.output_tokens;
+
+      usage.tokens.cache += cache;
+      usage.tokens.in += input;
+      usage.tokens.out += out;
+
+      const answer = data.result;
+      const content = answer.content;
+      const success = answer.success;
       toolMessage.content = success
         ? JSON.stringify({
             content: "✅ Found relevant information for your question",
@@ -104,23 +117,26 @@ async function runTools(
       };
     })
   );
-  return newMessages;
+  return { newMessages, usage };
 }
 
-async function updateUsage(result: AIMessageChunk, usage: Usage) {
+async function updateUsage(result: AIMessageChunk, usage: ModelUsage) {
   const cache = result!.usage_metadata?.input_token_details?.cache_read ?? 0;
   const totalInput = result!.usage_metadata?.input_tokens ?? 0;
   const totalOutput = result!.usage_metadata?.output_tokens ?? 0;
-  usage.cache += cache;
-  usage.in += totalInput - cache;
-  usage.out += totalOutput;
+  usage.tokens.cache += cache;
+  usage.tokens.in += totalInput - cache;
+  usage.tokens.out += totalOutput;
 }
 export const runChatWorkflow = async (roomId: string, query: string) => {
   const allMessages: MessagesResponse[] = [];
-  const usage: Usage = {
-    cache: 0,
-    in: 0,
-    out: 0,
+  const usage: ModelUsage = {
+    model: "gpt-5-nano",
+    tokens: {
+      cache: 0,
+      in: 0,
+      out: 0,
+    },
   };
 
   log.info({ roomId, query }, "runChatWorkflow started");
@@ -165,8 +181,19 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
 
     // TOOL CALLS
     log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
-    const toolMessages = await runTools(result!, roomId, data.agent, chatInput);
+    const { newMessages: toolMessages, usage: toolUsage } = await runTools(
+      result!,
+      roomId,
+      data.agent,
+      chatInput
+    );
     allMessages.push(...(await historyRepository.updateHistory(toolMessages)));
+
+    log.debug({ toolUsage, usage }, "toolUsage and usage");
+
+    usage.tokens.cache += toolUsage.tokens.cache;
+    usage.tokens.in += toolUsage.tokens.in;
+    usage.tokens.out += toolUsage.tokens.out;
   }
 
   if (callingTools) {

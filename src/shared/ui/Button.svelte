@@ -5,6 +5,7 @@
   interface Props {
     class?: ClassValue;
     onclick?: (e: MouseEvent) => void;
+    href?: string;
     color?:
       | "primary"
       | "secondary"
@@ -27,6 +28,7 @@
   }
 
   const {
+    href,
     onclick,
     children,
     color = "primary",
@@ -71,23 +73,44 @@
   };
 </script>
 
-<button
-  {type}
-  {onclick}
-  {disabled}
-  class={[
-    "btn",
-    colorClasses[color],
-    styleClasses[style],
-    sizeClasses[size],
-    disabled && "btn-disabled",
-    active && "btn-active",
-    block && "btn-block",
-    square && "btn-square",
-    circle && "btn-circle",
-    wide && "btn-wide",
-    className,
-  ]}
->
-  {@render children()}
-</button>
+{#if href}
+  <a
+    {href}
+    class={[
+      "btn",
+      colorClasses[color],
+      styleClasses[style],
+      sizeClasses[size],
+      disabled && "btn-disabled",
+      active && "btn-active",
+      block && "btn-block",
+      square && "btn-square",
+      circle && "btn-circle",
+      wide && "btn-wide",
+      className,
+    ]}
+  >
+    {@render children()}
+  </a>
+{:else}
+  <button
+    {type}
+    {onclick}
+    {disabled}
+    class={[
+      "btn",
+      colorClasses[color],
+      styleClasses[style],
+      sizeClasses[size],
+      disabled && "btn-disabled",
+      active && "btn-active",
+      block && "btn-block",
+      square && "btn-square",
+      circle && "btn-circle",
+      wide && "btn-wide",
+      className,
+    ]}
+  >
+    {@render children()}
+  </button>
+{/if}

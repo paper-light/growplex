@@ -1,9 +1,24 @@
 import { pb } from "@/shared/lib/pb";
 import type { SubscriptionsResponse } from "@/shared/models/pocketbase-types";
+import { logger } from "@/shared/lib/logger";
+
 import { BILLING_GAS_PRICES_PER_TOKEN } from "./config";
 import { BILLING_ERRORS } from "./errors";
 
+const log = logger.child({
+  module: "billing:charger",
+});
+
 type Model = "gpt-5-nano" | "gpt-5-mini" | "text-embedding-3-small";
+
+export interface ModelUsage {
+  model: Model;
+  tokens: {
+    cache: number;
+    in: number;
+    out: number;
+  };
+}
 
 class Charger {
   async validateRoom(roomId: string) {
@@ -18,12 +33,25 @@ class Charger {
     return sub;
   }
 
+  async chargeModel(roomId: string, usage: ModelUsage) {
+    const sub = await this.getSubscriptionFromRoom(roomId);
+    log.debug({ usage }, "charging model");
+
+    await Promise.all([
+      this.charge(sub.id, usage.tokens.cache, "cache", usage.model),
+      this.charge(sub.id, usage.tokens.in, "in", usage.model),
+      this.charge(sub.id, usage.tokens.out, "out", usage.model),
+    ]);
+  }
+
   async charge(
     subId: string,
     tokens: number,
     type: "cache" | "in" | "out",
     model: Model
   ) {
+    if (tokens === 0) return;
+
     const price = BILLING_GAS_PRICES_PER_TOKEN[model][type] * tokens;
 
     const sub = await pb.collection("subscriptions").getOne(subId);
@@ -43,14 +71,6 @@ class Charger {
 
     if (!sub) throw new Error(BILLING_ERRORS.SUBSCRIPTION_NOT_FOUND);
 
-    return sub;
-  }
-
-  private async getSubscriptionFromOrg(orgId: string) {
-    const org = await pb.collection("orgs").getOne(orgId, {
-      expand: "subscription",
-    });
-    const sub: SubscriptionsResponse = (org.expand as any).subscription;
     return sub;
   }
 }

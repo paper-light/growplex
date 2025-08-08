@@ -73,41 +73,8 @@ export const createTicket = tool(
   },
   {
     name: "createTicket",
-    description: `
-    PRIMARY ESCALATION TOOL: Create a support ticket for issues that require human intervention. This should be your FIRST choice for escalation.
-
-    WHEN TO USE (CREATE TICKET FIRST):
-    - User has a technical problem you cannot solve
-    - User is frustrated, angry, or unsatisfied with responses
-    - User requests specific features or custom solutions
-    - User has complex business requirements that need human review
-    - User needs account changes or administrative actions
-    - User reports bugs or system issues
-    - User asks for custom pricing or enterprise solutions
-    - User needs integration support or technical consultation
-    - User has urgent business needs requiring immediate attention
-    - User requests refunds, cancellations, or account modifications
-    - Search results are irrelevant or insufficient for user's query
-    - User needs information not available in your knowledge base
-    - User has questions about features or capabilities you can't answer
-    - User needs help with implementation or configuration
-    - User has feedback or suggestions that require review
-
-    PRIORITY GUIDELINES:
-    - HIGH: Angry/frustrated users, urgent business impact, system outages
-    - MEDIUM: Can't solve but user is patient, general support requests
-    - LOW: General inquiries, feature requests, non-urgent questions
-
-    STRATEGY:
-    - ALWAYS create a ticket FIRST for any issue you cannot resolve
-    - Only consider calling operator for truly urgent/important situations
-    - Provide clear explanation of what you've tried
-    - Include relevant business context and urgency
-    - Set appropriate priority based on user's emotional state and business impact
-    - Ensure the ticket contains enough information for human agents to help effectively
-
-    This ensures all issues are properly tracked and users get systematic help.
-    `,
+    description:
+      "Create support ticket for issues requiring human intervention. Use for technical problems, frustrated users, or complex requests.",
     schema: CreateTicketSchema,
     metadata: {
       visible: false,

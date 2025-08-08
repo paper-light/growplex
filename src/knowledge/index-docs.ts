@@ -13,7 +13,7 @@ import {
   mergeFilters,
 } from "@/search/filters";
 import { BILLING_GAS_PRICES_PER_TOKEN } from "@/billing/config";
-import { BILLING_ERRORS } from "@/billing";
+import { BILLING_ERRORS, charger } from "@/billing";
 import { chunker } from "@/search/chunker";
 import { indexer } from "@/search/indexer";
 
@@ -69,7 +69,8 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
       try {
         const tokenCount = chunker.countTokens(doc.content);
         const estGasCost =
-          BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * tokenCount;
+          BILLING_GAS_PRICES_PER_TOKEN["text-embedding-3-small"].in *
+          tokenCount;
         if (subscription.gas < estGasCost)
           throw new Error(BILLING_ERRORS.NOT_ENOUGH_GAS);
 
@@ -83,11 +84,12 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
           [metadata]
         );
 
-        const gasCost =
-          BILLING_GAS_PRICES_PER_TOKEN.EmbedderSmall * totalTokens[0];
-        await pb.collection("subscriptions").update(subscription.id, {
-          gas: subscription.gas - gasCost,
-        });
+        await charger.charge(
+          subscription.id,
+          totalTokens[0],
+          "in",
+          "text-embedding-3-small"
+        );
 
         await pb.collection("documents").update(doc.id, {
           chunkCount: chunkCounts[0],

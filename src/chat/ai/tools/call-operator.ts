@@ -49,37 +49,8 @@ export const callOperator = tool(
   },
   {
     name: "callOperator",
-    description: `
-    EXPLICIT HUMAN TRANSFER TOOL: Transfer to human operator ONLY when user explicitly requests human assistance. This tool should be used extremely sparingly.
-
-    WHEN TO USE (ONLY when user explicitly asks):
-    - User says "I want to speak with a human"
-    - User says "Can I talk to a real person?"
-    - User says "I need to speak with someone"
-    - User says "Transfer me to a human"
-    - User says "I want to talk to a person"
-    - User explicitly requests human escalation in any form
-
-    WHEN NOT TO USE (CREATE TICKET INSTEAD):
-    - User is frustrated but doesn't ask for human
-    - User is dissatisfied with responses but doesn't request human
-    - User has complex issues but doesn't ask for human
-    - User has urgent needs but doesn't request human
-    - User is angry but doesn't ask for human
-    - Any situation where user hasn't explicitly asked for human assistance
-    - Search results being irrelevant
-    - Technical issues or support questions
-    - Feature requests or general inquiries
-
-    STRATEGY:
-    - ONLY use when user explicitly asks for human assistance
-    - For all other issues, create a ticket instead
-    - Do not assume user wants human help even if they seem frustrated
-    - Always try to help first before considering any escalation
-    - If user doesn't explicitly ask for human, create a ticket
-
-    This ensures operators are only called when genuinely requested by the user.
-    `,
+    description:
+      "Transfer to human operator ONLY when user explicitly requests human assistance.",
     schema: CallOperatorSchema,
     metadata: {
       visible: true,

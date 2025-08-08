@@ -3,6 +3,22 @@
   import { subscriptionProvider } from "@/billing/providers/subscription.svelte";
 
   const subscription = $derived(subscriptionProvider.subscription);
+
+  import { derived } from "svelte/store";
+
+  function formatDate(dateString?: string) {
+    if (!dateString) return "—";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "—";
+    return date.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  const subscribed = $derived(formatDate(subscription?.subscribed));
+  const expires = $derived(formatDate(subscription?.ended));
 </script>
 
 {#if subscription}
@@ -13,27 +29,26 @@
       month.
     </p>
 
-    <div class="flex justify-between items-center text-lg font-semibold">
+    <div class="flex justify-between items-center text-lg font-semibold mb-5">
       <div>
         <p>
-          Started: {new Date(subscription?.subscribed).toLocaleDateString()}
+          Started: {subscribed}
         </p>
-        <div>
-          {subscription.thaliaGas}
-        </div>
       </div>
       <div>
-        <p>Expires: {new Date(subscription?.ended).toLocaleDateString()}</p>
-        <div class="text-end">
-          {BILLING_LIMITS[subscription?.tier]}
-        </div>
+        <p>Expires: {expires}</p>
       </div>
     </div>
 
-    <progress
-      value={subscription.thaliaGas}
-      max={BILLING_LIMITS[subscription.tier]}
-      class="progress progress-primary max-w-xl"
-    ></progress>
+    <div class="flex flex-col gap-2">
+      <p class="text-xl font-semibold text-primary">
+        Gas remaining: {subscription.gas.toFixed(4)}
+      </p>
+      <!-- <progress
+        value={subscription.gas}
+        max={BILLING_LIMITS[subscription.tier]}
+        class="progress progress-primary max-w-xl"
+      ></progress> -->
+    </div>
   </div>
 {/if}

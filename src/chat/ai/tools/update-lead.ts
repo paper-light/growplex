@@ -86,31 +86,8 @@ export const updateLead = tool(
   },
   {
     name: "updateLead",
-    description: `
-    STRATEGIC LEAD CAPTURE: Use this tool to systematically collect and update customer information for sales follow-up.
-
-    WHEN TO USE:
-    - User provides ANY personal information (name, email, phone, etc.)
-    - User shares business information (company, role, industry)
-    - User discusses needs, pain points, or requirements
-    - User mentions budget, timeline, or decision-making process
-    - User shows interest in your solutions or services
-    - User asks about pricing, features, or implementation
-    - User provides contact information for follow-up
-    - User shares specific use cases or requirements
-    - User mentions competitors or current solutions
-    - User discusses decision makers or approval process
-
-    STRATEGY:
-    - Always be helpful first, then capture information naturally
-    - Use this to build comprehensive customer profiles
-    - Include context about their business needs and pain points
-    - Track their level of interest and buying signals
-    - Collect information that will help sales team follow up effectively
-    - Never be pushy - only capture what they willingly share
-
-    This information is crucial for converting prospects into customers and enabling effective sales follow-up.
-    `,
+    description:
+      "Update lead information when user provides personal/business details, contact info, or discusses needs/requirements.",
     schema: UpdateLeadSchema,
     metadata: {
       visible: false,

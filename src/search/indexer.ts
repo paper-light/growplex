@@ -33,12 +33,16 @@ class Indexer {
         })
       );
 
+      const allDocs = docsChunks.flat();
       const chunkCounts = docsChunks.map((docChunks) => docChunks.length);
       const totalTokens = docsChunks.map((docChunks) =>
         docChunks.reduce((acc, chunk) => acc + chunk.metadata.tokenCount, 0)
       );
 
-      await this.store.addDocuments(docsChunks.flat());
+      const batchSize = 100;
+      for (let i = 0; i < allDocs.length; i += batchSize) {
+        await this.store.addDocuments(allDocs.slice(i, i + batchSize));
+      }
 
       return {
         chunkCounts,

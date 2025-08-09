@@ -55,8 +55,16 @@ export const crawlUrlHandler = async (
         return { ok: false, error: res.error_message };
       }
 
+      const blob = new Blob([res.markdown.fit_markdown], {
+        type: "text/plain",
+      });
+      const file = new File([blob], `${document.id}.txt`, {
+        type: "text/plain",
+      });
+
       await pb.collection("documents").update(document.id, {
         content: res.markdown.fit_markdown,
+        file,
         url: res.url,
         status: docIndexed ? "unsynced" : "idle",
         metadata: {
@@ -66,6 +74,7 @@ export const crawlUrlHandler = async (
           documentId: document.id,
         },
       });
+
       return { ok: true };
     } catch (err) {
       await pb.collection("documents").update(document.id, {

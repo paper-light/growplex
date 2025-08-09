@@ -58,6 +58,9 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
     docs.map(async (doc) => {
       const docIndexed = doc.status === "indexed" || doc.status === "unsynced";
 
+      const docUrl = pb.files.getURL(doc, doc.file);
+      const fullContent = await fetch(docUrl).then((res) => res.text());
+
       const metadata = {
         ...(doc.metadata as Record<string, any>),
         orgId,
@@ -67,7 +70,7 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
       };
 
       try {
-        const tokenCount = chunker.countTokens(doc.content);
+        const tokenCount = chunker.countTokens(fullContent);
         const estGasCost =
           BILLING_GAS_PRICES_PER_TOKEN["text-embedding-3-small"].in *
           tokenCount;
@@ -80,7 +83,7 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
         });
 
         const { chunkCounts, totalTokens } = await indexer.indexTexts(
-          [doc.content],
+          [fullContent],
           [metadata]
         );
 

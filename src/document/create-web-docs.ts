@@ -16,6 +16,13 @@ export async function createWebDocs(sourceId: string, results: any[]) {
   for (const result of results) {
     if (uniqueURLs.has(result.url)) continue;
 
+    const blob = new Blob([result.markdown.fit_markdown], {
+      type: "text/plain",
+    });
+    const file = new File([blob], `${result.url}.txt`, {
+      type: "text/plain",
+    });
+
     const doc = await pb.collection("documents").create({
       source: sourceId,
       title: result?.metadata?.title || result?.url,
@@ -23,8 +30,9 @@ export async function createWebDocs(sourceId: string, results: any[]) {
       url: result.url,
       status: result.success && result.status_code === 200 ? "idle" : "error",
       content: result.success
-        ? `${result.markdown.fit_markdown.slice(0, 23000)}...`
+        ? result.markdown.fit_markdown
         : result.error_message,
+      file,
       metadata: {
         ...result?.metadata,
         orgId,

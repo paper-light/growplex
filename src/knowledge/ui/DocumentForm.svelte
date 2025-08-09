@@ -50,11 +50,31 @@
       docType !== document?.type
   );
 
+  $effect(() => {
+    if (document?.file) {
+      const url = pb.files.getURL(document, document.file);
+      fetch(url)
+        .then((res) => res.blob())
+        .then((file) => {
+          selectedFile = new File([file], document.id);
+        });
+    }
+  });
+
   async function saveDocument(e: Event) {
     e.preventDefault();
     if (!document) return;
 
     const formData = new FormData(e.target as HTMLFormElement);
+
+    const content = formData.get("content")?.toString();
+    if (content !== document.content) {
+      const blob = new Blob([content ?? ""], { type: "text/plain" });
+      const file = new File([blob], `${document.id}.txt`, {
+        type: "text/plain",
+      });
+      formData.set("file", file);
+    }
 
     try {
       const updatedDocument = await pb
@@ -66,10 +86,40 @@
     }
   }
 
-  function handleFileSelect(e: Event) {
+  async function handleFileSelect(e: Event) {
+    if (!document?.id) return;
+
     const file = (e.target as HTMLInputElement).files?.[0];
     if (file) {
-      selectedFile = file;
+      let content: string;
+
+      if (
+        file.type.startsWith("text/") ||
+        [".txt", ".md", ".json", ".xml", ".html", ".csv"].some((ext) =>
+          file.name.toLowerCase().endsWith(ext)
+        )
+      ) {
+        content = await file.text();
+      } else if (file.type === "application/pdf") {
+        throw new Error("PDF files not yet supported");
+      } else if (file.type.startsWith("image/")) {
+        throw new Error("Image files not yet supported");
+      } else {
+        const arrayBuffer = await file.arrayBuffer();
+        content = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      }
+
+      const fileExtension = file.name.split(".").pop() || "txt";
+      const newFile = new File([content], `${document?.id}.${fileExtension}`, {
+        type: file.type,
+      });
+
+      await pb.collection("documents").update(document?.id, {
+        file: newFile,
+        type: "file",
+        content,
+        status: "idle",
+      });
     }
   }
 
@@ -160,10 +210,7 @@
             {:else if docType === "file"}
               <div class="flex flex-col gap-2">
                 <FileInput
-                  accept={
-                    ".txt,.md,.json,.xml,.html,.csv"
-                  // ".txt,.md,.pdf,.doc,.docx,.rtf,.csv,.xls,.xlsx,.ppt,.pptx,.html,.xml,.json,.odt,.odp,.ods,.epub"
-                  }
+                  accept={".txt,.md,.json,.xml,.html,.csv"}
                   onchange={handleFileSelect}
                   class="w-full"
                 >

@@ -14,6 +14,13 @@ onRecordCreate((e) => {
   e.next();
 }, "documents");
 
+onRecordUpdate((e) => {
+  if (e.record.get("content").length > 5000) {
+    e.record.set("content", e.record.get("content").slice(0, 4997) + "...");
+  }
+  e.next();
+}, "documents");
+
 onRecordDelete((e) => {
   if (["indexed", "unsynced"].includes(e.record.get("status"))) {
     // Delete from Qdrant

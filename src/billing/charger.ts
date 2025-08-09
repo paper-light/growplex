@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { pb } from "@/shared/lib/pb";
 import type { SubscriptionsResponse } from "@/shared/models/pocketbase-types";
 import { logger } from "@/shared/lib/logger";
@@ -9,16 +10,42 @@ const log = logger.child({
   module: "billing:charger",
 });
 
-type Model = "gpt-5-nano" | "gpt-5-mini" | "text-embedding-3-small";
+export type Model = "gpt-5-nano" | "gpt-5-mini" | "text-embedding-3-small";
 
-export interface ModelUsage {
-  model: Model;
-  tokens: {
-    cache: number;
-    in: number;
-    out: number;
-  };
-}
+export const UsageSchema = z
+  .object({
+    "gpt-5-nano": z
+      .object({
+        cache: z.number().default(0),
+        in: z.number().default(0),
+        out: z.number().default(0),
+      })
+      .default({ cache: 0, in: 0, out: 0 }),
+    "gpt-5-mini": z
+      .object({
+        cache: z.number().default(0),
+        in: z.number().default(0),
+        out: z.number().default(0),
+      })
+      .default({ cache: 0, in: 0, out: 0 }),
+    "text-embedding-3-small": z
+      .object({
+        cache: z.number().default(0),
+        in: z.number().default(0),
+        out: z.number().default(0),
+      })
+      .default({ cache: 0, in: 0, out: 0 }),
+  })
+  .partial()
+  .transform((data) => {
+    const defaultUsage = {
+      "gpt-5-nano": { cache: 0, in: 0, out: 0 },
+      "gpt-5-mini": { cache: 0, in: 0, out: 0 },
+      "text-embedding-3-small": { cache: 0, in: 0, out: 0 },
+    };
+    return { ...defaultUsage, ...data };
+  });
+export type Usage = z.infer<typeof UsageSchema>;
 
 class Charger {
   async validateRoom(roomId: string) {
@@ -33,14 +60,35 @@ class Charger {
     return sub;
   }
 
-  async chargeModel(roomId: string, usage: ModelUsage) {
+  async chargePrice(roomId: string, price: number) {
+    if (price <= 0) return;
+
+    const sub = await this.getSubscriptionFromRoom(roomId);
+    await pb.collection("subscriptions").update(sub.id, {
+      gas: sub.gas - price,
+    });
+  }
+
+  async chargeUsage(roomId: string, usage: Usage) {
     const sub = await this.getSubscriptionFromRoom(roomId);
     log.debug({ usage }, "charging model");
 
     await Promise.all([
-      this.charge(sub.id, usage.tokens.cache, "cache", usage.model),
-      this.charge(sub.id, usage.tokens.in, "in", usage.model),
-      this.charge(sub.id, usage.tokens.out, "out", usage.model),
+      // NANO
+      this.charge(sub.id, usage["gpt-5-nano"].cache, "cache", "gpt-5-nano"),
+      this.charge(sub.id, usage["gpt-5-nano"].in, "in", "gpt-5-nano"),
+      this.charge(sub.id, usage["gpt-5-nano"].out, "out", "gpt-5-nano"),
+      // MINI
+      this.charge(sub.id, usage["gpt-5-mini"].cache, "cache", "gpt-5-mini"),
+      this.charge(sub.id, usage["gpt-5-mini"].in, "in", "gpt-5-mini"),
+      this.charge(sub.id, usage["gpt-5-mini"].out, "out", "gpt-5-mini"),
+      // EMBEDDING
+      this.charge(
+        sub.id,
+        usage["text-embedding-3-small"].in,
+        "in",
+        "text-embedding-3-small"
+      ),
     ]);
   }
 
@@ -76,3 +124,12 @@ class Charger {
 }
 
 export const charger = new Charger();
+
+// Test the schema behavior:
+// const usage = UsageSchema.parse({});
+// console.log(usage);
+// Output: {
+//   "gpt-5-nano": { cache: 0, in: 0, out: 0 },
+//   "gpt-5-mini": { cache: 0, in: 0, out: 0 },
+//   "text-embedding-3-small": { cache: 0, in: 0, out: 0 }
+// }

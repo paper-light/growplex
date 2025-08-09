@@ -28,13 +28,13 @@
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
-  let canSend = $state(true);
 
   const disabled = $derived(
     inputText.trim().length === 0 ||
       inputText.trim().length > MAX_INPUT_CHARS ||
-      !canSend ||
-      !socketProvider.online
+      !socketProvider.online ||
+      (room?.status !== "operator" &&
+        socketProvider.waitingAnswerRooms.has(room!.id))
   );
 </script>
 
@@ -46,7 +46,6 @@
         {user}
         {room}
         role={mode === "admin" ? "operator" : "user"}
-        bind:canSend
         bind:inputEl
         bind:inputText
       />
@@ -71,7 +70,6 @@
           {inputEl}
           role={mode === "admin" ? "operator" : "user"}
           bind:inputText
-          bind:canSend
         />
       </div>
     </fieldset>

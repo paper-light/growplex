@@ -123,10 +123,10 @@ const consulterPromptTemplate = ChatPromptTemplate.fromMessages([
 ]);
 
 export const baseConsulterModel = new ChatOpenAI({
-  model: "gpt-5-nano",
+  model: "gpt-5-mini",
   apiKey: OPENAI_API_KEY,
-  // temperature: 0.4,
   // maxCompletionTokens: 512,
+  // temperature: 0.4,
 });
 
 export const consulterChain = RunnableLambda.from(

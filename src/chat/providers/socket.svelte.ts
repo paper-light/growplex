@@ -12,6 +12,7 @@ class SocketProvider {
 
   joinedRooms = $state(new SvelteSet<string>());
   histories: Map<string, MessagesResponse[]> = $state(new SvelteMap());
+  waitingAnswerRooms = $state(new SvelteSet<string>());
   online = $state(false);
 
   connect(token: string) {
@@ -41,6 +42,8 @@ class SocketProvider {
         if (!this.histories.has(roomId)) this.histories.set(roomId, []);
         const history = this.histories.get(roomId)!;
         this.histories.set(roomId, [...history, message]);
+
+        if (message.role !== "user") this.waitingAnswerRooms.delete(roomId);
       }
     );
 
@@ -122,6 +125,11 @@ class SocketProvider {
       roomId,
       msgStr: JSON.stringify(newMsg),
     });
+
+    this.waitingAnswerRooms.add(roomId);
+    setTimeout(() => {
+      this.waitingAnswerRooms.delete(roomId);
+    }, 60 * 1000); // 1 minute
   }
 
   disconnect() {

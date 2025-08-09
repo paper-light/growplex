@@ -30,6 +30,7 @@ export async function sendMessage(
     };
 
     let room = await pb.collection("rooms").getOne(roomId);
+    const oldHistory = await historyRepository.getHistory(roomId, true);
 
     const msgs = await historyRepository.updateHistory([msg]);
     log.debug({ msgs }, "updated history");
@@ -57,16 +58,18 @@ export async function sendMessage(
         );
       }
     } else if (socket.data.user) {
+      // Only in preview mode operator can talk to assistant
       if (room.status !== RoomsStatusOptions.preview) return;
     }
 
+    // In "operator" assistant never answers
     if (room.status === "operator") return;
 
     // validate and count billing
     try {
       await charger.validateRoom(room.id);
       const { messages, usage } = await runChatWorkflow(room.id, msg.content);
-      await charger.chargeModel(room.id, usage);
+      await charger.chargeUsage(room.id, usage);
 
       for (const msg of messages) {
         io.to(room.id).emit("new-message", { roomId: room.id, message: msg });

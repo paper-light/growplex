@@ -8,7 +8,6 @@
   import { pb } from "@/shared/lib/pb";
 
   import { socketProvider } from "@/chat/providers/socket.svelte";
-  import { CHAT_CONFIG } from "@/chat/config";
 
   type Props = {
     user: UsersResponse | { name: string; avatar?: string };
@@ -16,7 +15,6 @@
     role?: "operator" | "user";
     inputText?: string;
     inputEl?: any;
-    canSend?: boolean;
     disabled?: boolean;
   };
 
@@ -24,7 +22,6 @@
     user,
     room,
     role = "user",
-    canSend = $bindable(true),
     inputEl = $bindable(),
     inputText = $bindable(""),
     disabled = false,
@@ -35,8 +32,6 @@
 
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-
-      canSend = false;
 
       socketProvider.sendMessage(
         inputText,
@@ -54,10 +49,6 @@
 
       inputText = "";
       if (inputEl && "style" in inputEl) inputEl.style.height = "auto";
-
-      setTimeout(() => {
-        canSend = true;
-      }, CHAT_CONFIG.MESSAGE_DELAY_SEC * 1000);
     }
   }
 </script>

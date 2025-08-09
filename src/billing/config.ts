@@ -14,24 +14,29 @@ export const BILLING_PRICES = {
   Business: 49700,
 } as const;
 
-// 5 gas = 0.01$ = 1c of our costs
+// Clients buy 1 cent per 1 gas
+// 10 gas = 0.01$ = 1c of our costs
+// Margin is 10/11 = 90.9%
+
 // Prices for business clients
 export const BILLING_GAS_PRICES_PER_TOKEN = {
+  // OPENAI
   "gpt-5-nano": {
-    cache: 0.00000000025,
-    in: 0.0000000025,
-    out: 0.00000002,
+    cache: 0.000000005,
+    in: 0.00000005,
+    out: 0.00000004,
   },
-
   "gpt-5-mini": {
-    cache: 0.00000000125,
-    in: 0.0000000125,
-    out: 0.0000001,
+    cache: 0.0000000025,
+    in: 0.000000025,
+    out: 0.0000002,
   },
-
   "text-embedding-3-small": {
-    in: 0.0000000005,
+    in: 0.000000001,
     out: 0,
     cache: 0,
   },
+
+  // GEMINI
+  
 };

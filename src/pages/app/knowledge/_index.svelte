@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { RecordModel } from "pocketbase";
-  import { Funnel, ChevronLeft, ChevronRight } from "@lucide/svelte";
+  import { Funnel } from "@lucide/svelte";
 
   import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
   import { documentsProvider } from "@/knowledge/providers/documents.svelte";
@@ -20,8 +20,6 @@
   import DomainConnect from "@/knowledge/ui/features/DomainConnect.svelte";
   import Pagination from "@/shared/ui/features/Pagination.svelte";
 
-  const PAGE_SIZE = 30;
-
   let docId = $state("");
 
   // Pagination state
@@ -35,16 +33,16 @@
   const sources = $derived(sourcesProvider.sources);
   const source = $derived(sourcesProvider.selectedSource);
 
-  const documents = $derived(
-    documentsProvider.documents.filter((d) => d.source === source?.id)
+  const documents = $derived(documentsProvider.documents);
+  const paginatedDocuments = $derived(
+    documents.slice(
+      (currentPage - 1) * documentsProvider.pageSize,
+      currentPage * documentsProvider.pageSize
+    )
   );
 
   // Pagination computed values
-  const totalPages = $derived(Math.ceil(documents.length / PAGE_SIZE));
-  const startIndex = $derived((currentPage - 1) * PAGE_SIZE);
-  const endIndex = $derived(Math.min(startIndex + PAGE_SIZE, documents.length));
-
-  const paginatedDocuments = $derived(documents.slice(startIndex, endIndex));
+  const totalPages = $derived(documentsProvider.totalPages);
 
   const stats = $derived.by(() => {
     const docs = documents.filter((d) =>

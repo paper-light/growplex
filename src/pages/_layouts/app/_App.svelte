@@ -65,7 +65,6 @@
       agentsProvider.subscribe(project.id);
       chatsProvider.subscribe(project.id);
       sourcesProvider.subscribe(project.id);
-      documentsProvider.subscribe(project.id);
       roomsProvider.subscribe(project.id);
     });
 
@@ -74,8 +73,21 @@
       agentsProvider.unsubscribe();
       chatsProvider.unsubscribe();
       sourcesProvider.unsubscribe();
-      documentsProvider.unsubscribe();
       roomsProvider.unsubscribe();
+    };
+  });
+
+  // SOURCE CHANGE EFFECT
+  $effect(() => {
+    const source = sourcesProvider.selectedSource;
+    if (!source) return;
+
+    untrack(() => {
+      documentsProvider.subscribe(source.id);
+    });
+
+    return () => {
+      documentsProvider.unsubscribe();
     };
   });
 

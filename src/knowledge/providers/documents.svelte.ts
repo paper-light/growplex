@@ -2,23 +2,38 @@ import { pb } from "@/shared/lib/pb";
 import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
 
 class DocumentsProvider {
-  private subscribed = $state(false);
+  private subscribed = false;
+
+  pageSize = $state(50);
+  totalItems = $state(0);
+  totalPages = $state(0);
 
   documents: DocumentsResponse[] = $state([]);
 
-  async load(projectId: string) {
-    const documents = await pb.collection("documents").getFullList({
-      filter: `source.project = "${projectId}"`,
+  async init(sourceId: string) {
+    const res = await pb.collection("documents").getList(1, this.pageSize, {
+      filter: `source = "${sourceId}"`,
       sort: "created",
     });
-    this.documents = documents;
+    this.documents = res.items;
+    this.totalItems = res.totalItems;
+    this.totalPages = res.totalPages;
+
+    await this.loadAll(sourceId);
   }
 
-  async subscribe(projectId: string) {
+  async loadAll(sourceId: string) {
+    this.documents = await pb.collection("documents").getFullList({
+      filter: `source = "${sourceId}"`,
+      sort: "created",
+    });
+  }
+
+  async subscribe(sourceId: string) {
     if (this.subscribed) return;
     this.subscribed = true;
 
-    await this.load(projectId);
+    await this.init(sourceId);
 
     pb.collection("documents").subscribe(
       "*",
@@ -42,7 +57,7 @@ class DocumentsProvider {
         }
       },
       {
-        filter: `source.project = "${projectId}"`,
+        filter: `source = "${sourceId}"`,
         sort: "created",
       }
     );
@@ -51,6 +66,9 @@ class DocumentsProvider {
   unsubscribe() {
     pb.collection("documents").unsubscribe();
     this.subscribed = false;
+    this.documents = [];
+    this.totalItems = 0;
+    this.totalPages = 0;
   }
 }
 

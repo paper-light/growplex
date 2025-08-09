@@ -33,7 +33,9 @@
   const sources = $derived(sourcesProvider.sources);
   const source = $derived(sourcesProvider.selectedSource);
 
-  const documents = $derived(documentsProvider.documents);
+  const documents = $derived(
+    documentsProvider.documentsMap.get(source?.id || "") || []
+  );
   const paginatedDocuments = $derived(
     documents.slice(
       (currentPage - 1) * documentsProvider.pageSize,
@@ -42,7 +44,9 @@
   );
 
   // Pagination computed values
-  const totalPages = $derived(documentsProvider.totalPages);
+  const totalPages = $derived(
+    Math.ceil(documents.length / documentsProvider.pageSize)
+  );
 
   const stats = $derived.by(() => {
     const docs = documents.filter((d) =>
@@ -284,6 +288,9 @@
 
       <footer class="p-4 border-t border-base-300 bg-base-50">
         <CreateRecord
+          onSuccess={() => {
+            currentPage = totalPages;
+          }}
           projectId={project?.id || ""}
           collection="documents"
           size="lg"

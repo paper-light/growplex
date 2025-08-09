@@ -61,6 +61,7 @@
     if (!project) return;
 
     untrack(() => {
+      documentsProvider.subscribe(project.id);
       integrationsProvider.subscribe(project.id);
       agentsProvider.subscribe(project.id);
       chatsProvider.subscribe(project.id);
@@ -69,6 +70,7 @@
     });
 
     return () => {
+      documentsProvider.unsubscribe();
       integrationsProvider.unsubscribe();
       agentsProvider.unsubscribe();
       chatsProvider.unsubscribe();
@@ -83,12 +85,8 @@
     if (!source) return;
 
     untrack(() => {
-      documentsProvider.subscribe(source.id);
+      documentsProvider.initSource(source.id);
     });
-
-    return () => {
-      documentsProvider.unsubscribe();
-    };
   });
 
   // ROOM CHANGE EFFECT

@@ -1,64 +1,86 @@
+import { SvelteMap } from "svelte/reactivity";
+
 import { pb } from "@/shared/lib/pb";
 import type { DocumentsResponse } from "@/shared/models/pocketbase-types";
 
 class DocumentsProvider {
+  pageSize = $state(50);
+
   private subscribed = false;
 
-  pageSize = $state(50);
-  totalItems = $state(0);
-  totalPages = $state(0);
+  documentsMap: SvelteMap<string, DocumentsResponse[]> = $state(
+    new SvelteMap()
+  );
 
-  documents: DocumentsResponse[] = $state([]);
+  async initSource(sourceId: string) {
+    if (this.documentsMap.has(sourceId)) return;
+    this.documentsMap.set(sourceId, []);
 
-  async init(sourceId: string) {
-    const res = await pb.collection("documents").getList(1, this.pageSize, {
+    const pageResult = await pb
+      .collection("documents")
+      .getList(1, this.pageSize, {
+        filter: `source = "${sourceId}"`,
+        sort: "created",
+      });
+    this.documentsMap.set(sourceId, pageResult.items);
+
+    const allSourceDocs = await pb.collection("documents").getFullList({
       filter: `source = "${sourceId}"`,
       sort: "created",
     });
-    this.documents = res.items;
-    this.totalItems = res.totalItems;
-    this.totalPages = res.totalPages;
-
-    await this.loadAll(sourceId);
+    this.documentsMap.set(sourceId, allSourceDocs);
   }
 
-  async loadAll(sourceId: string) {
-    this.documents = await pb.collection("documents").getFullList({
-      filter: `source = "${sourceId}"`,
-      sort: "created",
+  async loadAll(projectId: string) {
+    const sources = await pb.collection("sources").getFullList({
+      filter: `project = "${projectId}"`,
     });
+
+    for (const source of sources) {
+      await this.initSource(source.id);
+    }
   }
 
-  async subscribe(sourceId: string) {
+  async subscribe(projectId: string) {
     if (this.subscribed) return;
+
     this.subscribed = true;
 
-    await this.init(sourceId);
+    this.loadAll(projectId);
 
     pb.collection("documents").subscribe(
       "*",
       async (document) => {
         switch (document.action) {
-          case "create":
-            this.documents.push(document.record);
+          case "create": {
+            const docs = this.documentsMap.get(document.record.source) || [];
+            const newDocs = [...docs, document.record];
+            this.documentsMap.set(document.record.source, newDocs);
             break;
-          case "delete":
-            this.documents = this.documents.filter(
+          }
+          case "delete": {
+            const docs = this.documentsMap.get(document.record.source) || [];
+            const filteredDocs = docs.filter(
               (r) => r.id !== document.record.id
             );
+            this.documentsMap.set(document.record.source, filteredDocs);
             break;
-          case "update":
-            this.documents = this.documents.map((r) =>
+          }
+
+          case "update": {
+            const docs = this.documentsMap.get(document.record.source) || [];
+            const updatedDocs = docs.map((r) =>
               r.id === document.record.id ? document.record : r
             );
+            this.documentsMap.set(document.record.source, updatedDocs);
             break;
+          }
           default:
             break;
         }
       },
       {
-        filter: `source = "${sourceId}"`,
-        sort: "created",
+        filter: `source.project = "${projectId}"`,
       }
     );
   }
@@ -66,9 +88,7 @@ class DocumentsProvider {
   unsubscribe() {
     pb.collection("documents").unsubscribe();
     this.subscribed = false;
-    this.documents = [];
-    this.totalItems = 0;
-    this.totalPages = 0;
+    this.documentsMap.clear();
   }
 }
 

@@ -135,6 +135,10 @@ class SocketProvider {
   disconnect() {
     this.socket?.disconnect();
   }
+
+  private loadPreviousMessages(roomId: string) {
+    if (!this.histories.has(roomId)) return;
+  }
 }
 
 export const socketProvider = new SocketProvider();

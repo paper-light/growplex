@@ -13,6 +13,8 @@ import { context } from "./context";
 
 const log = logger.child({ module: "chat:ai:consulter" });
 
+export const CHAT_CONSULTER_MODEL = "gpt-4.1-mini";
+
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
 const CONSULTER_PROMPT_TEMPLATE_START = `
@@ -123,10 +125,10 @@ const consulterPromptTemplate = ChatPromptTemplate.fromMessages([
 ]);
 
 export const baseConsulterModel = new ChatOpenAI({
-  model: "gpt-5-mini",
+  model: CHAT_CONSULTER_MODEL,
   apiKey: OPENAI_API_KEY,
-  // maxCompletionTokens: 512,
-  // temperature: 0.4,
+  maxCompletionTokens: 512,
+  temperature: 0.4,
 });
 
 export const consulterChain = RunnableLambda.from(

@@ -90,6 +90,11 @@
     <p>
       This will run crawling and indexing of the domain and can take up to 1
       hour, depending on the size of the site.
+      <br />
+      <br />
+      <span class="text-lg font-semibold"
+        >This will cost you 0.01 gas per page.</span
+      >
     </p>
 
     <div class="flex gap-2">

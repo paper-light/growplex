@@ -4,6 +4,8 @@ import { PromptTemplate } from "@langchain/core/prompts";
 
 import { getEnv } from "@/shared/helpers/get-env";
 
+export const SEARCH_SUMMARY_MODEL = "gpt-4.1-nano";
+
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
 const PROMPT_TEMPLATE = `
@@ -40,10 +42,10 @@ export const SummaryReturnSchema = z.object({
 const summaryPromptTemplate = PromptTemplate.fromTemplate(PROMPT_TEMPLATE);
 
 const summaryBaseModel = new ChatOpenAI({
-  model: "gpt-5-nano",
+  model: SEARCH_SUMMARY_MODEL,
   apiKey: OPENAI_API_KEY,
-  // temperature: 0.2,
-  // maxCompletionTokens: 8192,
+  temperature: 0.2,
+  maxCompletionTokens: 8192,
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(

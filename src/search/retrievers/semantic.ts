@@ -3,9 +3,14 @@ import { RunnableLambda } from "@langchain/core/runnables";
 
 import { context } from "@/chat/ai/context";
 import type { SourcesResponse } from "@/shared/models/pocketbase-types";
+import { logger } from "@/shared/lib/logger";
 
 import { qdrantStore } from "../stores";
 import { createOrgFilter, createSourcesFilter, mergeFilters } from "../filters";
+
+const log = logger.child({
+  module: "search:retrievers:semantic",
+});
 
 const CHUNKS_COUNT = 100;
 
@@ -22,6 +27,8 @@ export class SemanticRetriever {
       }) => {
         const { query, context } = input;
         const { org, sources } = context;
+
+        log.info({ query, org, sources }, "Retrieving semantic chunks");
 
         const filters = mergeFilters([
           createOrgFilter(org.id),

@@ -67,9 +67,12 @@ export async function sendMessage(
 
     // validate and count billing
     try {
-      await charger.validateRoom(room.id);
-      const { messages, usage } = await runChatWorkflow(room.id, msg.content);
-      await charger.chargeUsage(room.id, usage);
+      const sub = await charger.validateRoom(room.id);
+      const { messages, usagePrice } = await runChatWorkflow(
+        room.id,
+        msg.content
+      );
+      await charger.chargePrice(sub.id, usagePrice);
 
       for (const msg of messages) {
         io.to(room.id).emit("new-message", { roomId: room.id, message: msg });

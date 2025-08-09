@@ -351,7 +351,7 @@
                   </button>
                 </div>
               {/each}
-              {#if availableAgents.length > 0}
+              {#if availableAgents.length > 0 && formAgents.length + previewAgents.length < 1}
                 <Select
                   class="w-full"
                   options={availableAgents.map((agent) => ({

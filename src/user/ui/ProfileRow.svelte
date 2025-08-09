@@ -48,7 +48,7 @@
   <div class="flex flex-col flex-1 h-full gap-1">
     <p class="text-sm font-semibold truncate">{user?.name}</p>
     <p class="badge-primary font-semibold badge badge-sm">
-      Gas: {subscription?.gas.toFixed(4)}
+      Gas: {subscription?.gas.toFixed(2)}
     </p>
   </div>
 

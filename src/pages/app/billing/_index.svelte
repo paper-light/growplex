@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { BILLING_LIMITS } from "@/billing/config";
   import { subscriptionProvider } from "@/billing/providers/subscription.svelte";
 
   const subscription = $derived(subscriptionProvider.subscription);
-
-  import { derived } from "svelte/store";
 
   function formatDate(dateString?: string) {
     if (!dateString) return "—";
@@ -42,7 +39,7 @@
 
     <div class="flex flex-col gap-2">
       <p class="text-xl font-semibold text-primary">
-        Gas remaining: {subscription.gas.toFixed(4)}
+        Gas remaining: {subscription.gas.toFixed(2)}
       </p>
       <!-- <progress
         value={subscription.gas}

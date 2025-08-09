@@ -84,7 +84,7 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
           [metadata]
         );
 
-        await charger.charge(
+        await charger.chargeModel(
           subscription.id,
           totalTokens[0],
           "in",

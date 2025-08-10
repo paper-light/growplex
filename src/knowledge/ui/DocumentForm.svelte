@@ -115,10 +115,12 @@
       });
 
       await pb.collection("documents").update(document?.id, {
-        file: newFile,
         type: "file",
+        file: newFile,
         content,
-        status: "idle",
+        status: ["indexed", "unsynced"].includes(document.status || "")
+          ? "unsynced"
+          : "idle",
       });
     }
   }

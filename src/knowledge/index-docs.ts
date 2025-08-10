@@ -21,6 +21,7 @@ const log = logger.child({
   module: "knowledge:index-docs",
 });
 
+// only indexed / unsynced docs are reindexed
 export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
   const source = await pb
     .collection("sources")
@@ -45,6 +46,7 @@ export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
   await indexDocs(sourceId, docs);
 }
 
+// Docs are always not in the knowledge base! Reindex otherwise.
 export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
   const source = await pb.collection("sources").getOne(sourceId, {
     expand: "project,project.org,project.org.subscription",
@@ -56,11 +58,6 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
 
   await Promise.all(
     docs.map(async (doc) => {
-      const docIndexed = doc.status === "indexed" || doc.status === "unsynced";
-
-      const docUrl = pb.files.getURL(doc, doc.file);
-      const fullContent = await fetch(docUrl).then((res) => res.text());
-
       const metadata = {
         ...(doc.metadata as Record<string, any>),
         orgId,
@@ -68,6 +65,13 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
         sourceId: doc.source,
         documentId: doc.id,
       };
+      await pb.collection("documents").update(doc.id, {
+        status: "indexing",
+        metadata,
+      });
+
+      const docUrl = pb.files.getURL(doc, doc.file);
+      const fullContent = await fetch(docUrl).then((res) => res.text());
 
       try {
         const tokenCount = chunker.countTokens(fullContent);
@@ -76,11 +80,6 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
           tokenCount;
         if (subscription.gas < estGasCost)
           throw new Error(BILLING_ERRORS.NOT_ENOUGH_GAS);
-
-        await pb.collection("documents").update(doc.id, {
-          status: docIndexed ? "indexed" : "indexing",
-          metadata,
-        });
 
         const { chunkCounts, totalTokens } = await indexer.indexTexts(
           [fullContent],
@@ -101,8 +100,8 @@ export async function indexDocs(sourceId: string, docs: DocumentsResponse[]) {
         });
       } catch (error) {
         await pb.collection("documents").update(doc.id, {
-          status: docIndexed ? "indexed" : "error",
-          content: docIndexed ? doc.content : (error as Error).message,
+          status: "error",
+          content: (error as Error).message,
         });
         log.error({ error }, "Error indexing doc");
       }

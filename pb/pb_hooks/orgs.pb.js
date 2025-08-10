@@ -8,7 +8,7 @@ onRecordCreate((e) => {
     const sub = new Record(subSub);
 
     sub.set("tier", "Free");
-    sub.set("gas", 1000); // 1000 / 10 = 100c = 1$ costs
+    sub.set("gas", 1000);
     txApp.save(sub);
 
     const created = sub.getDateTime("created");

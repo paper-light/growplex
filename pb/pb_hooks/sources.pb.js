@@ -5,6 +5,10 @@ onRecordCreate((e) => {
     e.record.set("name", `Source ${e.record.id.slice(0, 4)}`);
   }
 
+  if (!e.record.get("status")) {
+    e.record.set("status", "idle");
+  }
+
   e.next();
 }, "sources");
 

@@ -53,7 +53,10 @@
     </div>
 
     <div
-      class="prose chat-bubble break-words max-w-[80vw] p-2 rounded-lg"
+      class={[
+        "prose chat-bubble break-words max-w-[80vw] p-2 rounded-lg overflow-hidden",
+        "[&_pre]:overflow-x-hidden [&_pre]:whitespace-pre-wrap [&_pre]:break-words [&_pre]:mx-auto [&_pre]:max-w-[95%] [&_code]:whitespace-pre-wrap [&_code]:break-words [&_code]:overflow-wrap-anywhere [&_p]:break-words [&_p]:overflow-wrap-anywhere",
+      ]}
       class:chat-bubble-base-200={incoming}
       class:chat-bubble-primary={!incoming}
       aria-label="Chat message"

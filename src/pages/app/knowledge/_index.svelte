@@ -230,9 +230,9 @@
                           `Document ${document.id.slice(0, 4)}`}
                       </td>
                       <td class="max-w-xs">
-                        {#if document.content}
+                        {#if document.previewContent}
                           <p class="text-sm line-clamp-2">
-                            {document.content}
+                            {document.previewContent}
                           </p>
                         {:else}
                           <span class="text-base-content/50 text-sm"

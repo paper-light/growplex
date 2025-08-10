@@ -1,6 +1,13 @@
 /// <reference path="../pb_data/types.d.ts" />
 
 onRecordCreate((e) => {
+  if (e.record.get("previewContent").length > 5000) {
+    e.record.set(
+      "previewContent",
+      e.record.get("previewContent").slice(0, 4997) + "..."
+    );
+  }
+
   if (!e.record.get("type")) {
     e.record.set("type", "manual");
   }
@@ -15,8 +22,11 @@ onRecordCreate((e) => {
 }, "documents");
 
 onRecordUpdate((e) => {
-  if (e.record.get("content").length > 5000) {
-    e.record.set("content", e.record.get("content").slice(0, 4997) + "...");
+  if (e.record.get("previewContent").length > 5000) {
+    e.record.set(
+      "previewContent",
+      e.record.get("previewContent").slice(0, 4997) + "..."
+    );
   }
   e.next();
 }, "documents");

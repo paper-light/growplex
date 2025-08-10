@@ -157,11 +157,11 @@ export enum DocumentsTypeOptions {
 }
 export type DocumentsRecord<Tmetadata = unknown> = {
 	chunkCount?: number
-	content?: string
 	created?: IsoDateString
 	file?: string
 	id: string
 	metadata?: null | Tmetadata
+	previewContent?: string
 	source?: RecordIdString
 	status?: DocumentsStatusOptions
 	title?: string
@@ -315,12 +315,17 @@ export type RoomsRecord = {
 	updated?: IsoDateString
 }
 
+export enum SourcesStatusOptions {
+	"idle" = "idle",
+	"pending" = "pending",
+}
 export type SourcesRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
 	id: string
 	metadata?: null | Tmetadata
 	name?: string
 	project?: RecordIdString
+	status?: SourcesStatusOptions
 	updated?: IsoDateString
 }
 

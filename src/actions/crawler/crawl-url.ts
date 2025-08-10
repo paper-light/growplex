@@ -49,7 +49,9 @@ export const crawlUrlHandler = async (
       if (!res.success || res.status_code !== 200) {
         await pb.collection("documents").update(document.id, {
           status: docIndexed ? "indexed" : "error",
-          content: docIndexed ? document.content : res.error_message,
+          previewContent: docIndexed
+            ? document.previewContent
+            : res.error_message,
           url: docIndexed ? document.url : res.url,
         });
         return { ok: false, error: res.error_message };
@@ -63,7 +65,9 @@ export const crawlUrlHandler = async (
       });
 
       await pb.collection("documents").update(document.id, {
-        content: res.markdown.fit_markdown,
+        previewContent: res.success
+          ? res.markdown.fit_markdown
+          : res.error_message,
         file,
         url: res.url,
         status: docIndexed ? "unsynced" : "idle",
@@ -79,7 +83,9 @@ export const crawlUrlHandler = async (
     } catch (err) {
       await pb.collection("documents").update(document.id, {
         status: docIndexed ? "indexed" : "error",
-        content: docIndexed ? document.content : "Error crawling URL",
+        previewContent: docIndexed
+          ? document.previewContent
+          : "Error crawling URL",
         url: docIndexed ? document.url : input.url,
       });
       throw err;

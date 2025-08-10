@@ -6,7 +6,7 @@ services:
     volumes:
       - ./pb/pb_migrations:/pb/pb_migrations
       - ./pb/pb_hooks:/pb/pb_hooks
-      - ./pb/pb_data:/pb/pb_data
+      - pb_data:/pb/pb_data
     ports:
       - "8080:8080"
     environment:
@@ -43,16 +43,16 @@ services:
     ports:
       - "11235:11235"
 
-  # meilisearch:
-  #   image: getmeili/meilisearch:latest
-  #   ports:
-  #     - "7700:7700"
-  #   volumes:
-  #     - ./meilisearch/data:/meili_data
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./meilisearch/data:/meili_data
+    env_file:
+      - .env
+    environment:
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
 
   # weaviate:
   #   image: cr.weaviate.io/semitechnologies/weaviate:1.26.4
@@ -63,3 +63,7 @@ services:
   #   environment:
   #     - WEAVIATE_AUTH__ENABLED=false
   #     - WEAVIATE_SERVICE_PASSWORD_APIKEYS=${WEAVIATE_SERVICE_PASSWORD_APIKEYS}
+
+volumes:
+  pb_data:
+    driver: local

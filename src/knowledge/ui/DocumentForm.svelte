@@ -35,7 +35,7 @@
 
   let title = $derived(document?.title || "");
   let url = $derived(document?.url || "");
-  let content = $derived(document?.content || "");
+  let content = $derived(document?.previewContent || "");
 
   let selectedFile = $state<File | null>(null);
 
@@ -46,7 +46,7 @@
   const isFormDirty = $derived(
     title !== document?.title ||
       url !== document?.url ||
-      content !== document?.content ||
+      content !== document?.previewContent ||
       docType !== document?.type
   );
 
@@ -68,7 +68,7 @@
     const formData = new FormData(e.target as HTMLFormElement);
 
     const content = formData.get("content")?.toString();
-    if (content !== document.content) {
+    if (content !== document.previewContent) {
       const blob = new Blob([content ?? ""], { type: "text/plain" });
       const file = new File([blob], `${document.id}.txt`, {
         type: "text/plain",
@@ -117,7 +117,7 @@
       await pb.collection("documents").update(document?.id, {
         type: "file",
         file: newFile,
-        content,
+        previewContent: content,
         status: ["indexed", "unsynced"].includes(document.status || "")
           ? "unsynced"
           : "idle",

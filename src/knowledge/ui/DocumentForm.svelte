@@ -67,9 +67,9 @@
 
     const formData = new FormData(e.target as HTMLFormElement);
 
-    const content = formData.get("content")?.toString();
-    if (content !== document.previewContent) {
-      const blob = new Blob([content ?? ""], { type: "text/plain" });
+    const previewContent = formData.get("previewContent")?.toString();
+    if (previewContent !== document.previewContent) {
+      const blob = new Blob([previewContent ?? ""], { type: "text/plain" });
       const file = new File([blob], `${document.id}.txt`, {
         type: "text/plain",
       });
@@ -230,7 +230,7 @@
               <TextArea
                 disabled={docType !== "manual"}
                 color="neutral"
-                name="content"
+                name="previewContent"
                 class="w-full flex-1 min-h-0"
                 rows={20}
                 placeholder="Content"

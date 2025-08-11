@@ -1,70 +1,58 @@
-// import { getContextVariable } from "@langchain/core/context";
-// import { RunnableLambda } from "@langchain/core/runnables";
-// import type { QdrantClient } from "@qdrant/js-client-rest";
+import type { Index } from "meilisearch";
+import { RunnableLambda } from "@langchain/core/runnables";
 
-// import { embeddings } from "../embeddings";
-// import { createOrgFilter, createSourcesFilter, mergeFilters } from "../filters";
-// import { qdrantClient } from "../stores/qdrant";
-// import type {
-//   OrgsResponse,
-//   SourcesResponse,
-// } from "@/shared/models/pocketbase-types";
+import type { context } from "@/chat/ai/context";
+import type { SourcesResponse } from "@/shared/models/pocketbase-types";
 
-// const ALPHA = 0.75;
-// const CHUNKS_LIMIT = 100;
+import { meiliIndex } from "../stores";
+import { meiliEmbeddings } from "../embeddings";
 
-// export class HybridRetriever {
-//   constructor(private qdrantClient: QdrantClient) {}
+class MeiliRetriever {
+  constructor(
+    private readonly index: Index,
+    private readonly embeddingName: string,
+    private readonly limit: number
+  ) {
+    this.index = index;
+    this.embeddingName = embeddingName;
+    this.limit = limit;
+  }
 
-//   asLambda() {
-//     return RunnableLambda.from(async (input: string) => {
-//       const org: OrgsResponse | undefined = getContextVariable("org");
-//       const sources: SourcesResponse[] | undefined =
-//         getContextVariable("sources");
+  asLambda(result: "text" | "docs" = "text") {
+    return RunnableLambda.from(
+      async (input: {
+        query: string;
+        context: Awaited<ReturnType<typeof context.loadRoomContext>>;
+      }) => {
+        const { query, context } = input;
+        const { org, sources } = context;
 
-//       if (!org || !sources) throw new Error("org or sources is not defined");
+        const results = await this.retrieve(
+          query,
+          org.id,
+          sources?.map((s: SourcesResponse) => s.id) || []
+        );
 
-//       const results = await this.hybridSearch({
-//         query: input,
-//         orgId: org.id,
-//         sourceIds: sources.map((s) => s.id),
-//         limit: CHUNKS_LIMIT,
-//       });
+        if (result === "docs") return results.hits;
+        return results.hits.map((hit) => hit.content).join("\n");
+      }
+    );
+  }
 
-//       return results;
-//     });
-//   }
+  async retrieve(query: string, orgId: string, sourceIds: string[]) {
+    return this.index.search(query, {
+      hybrid: {
+        semanticRatio: 0.8,
+        embedder: this.embeddingName,
+      },
+      filter: `orgId = ${orgId} AND sourceId IN [${sourceIds.join(",")}]`,
+      limit: this.limit,
+    });
+  }
+}
 
-//   async hybridSearch({
-//     query,
-//     orgId,
-//     sourceIds,
-//     limit,
-//   }: {
-//     query: string;
-//     orgId: string;
-//     sourceIds: string[];
-//     limit: number;
-//   }) {
-//     const embedding = await embeddings.embedQuery(query);
-
-//     const results = await this.qdrantClient.search("chunks", {
-//       vector: embedding,
-//       limit,
-//       with_payload: true,
-//       with_vector: true,
-//       params: {
-//         score_fusion_type: "max",
-//         score_fusion_ratio: ALPHA,
-//       },
-//       filter: mergeFilters([
-//         createOrgFilter(orgId),
-//         createSourcesFilter(sourceIds),
-//       ]),
-//     });
-
-//     return results;
-//   }
-// }
-
-// export const hybridRetriever = new HybridRetriever(qdrantClient);
+export const meiliRetriever = new MeiliRetriever(
+  meiliIndex,
+  Object.keys(meiliEmbeddings)[0],
+  100
+);

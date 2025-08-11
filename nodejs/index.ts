@@ -8,9 +8,14 @@ import { handler as astroHandler } from "../dist/server/entry.mjs";
 
 import { attachSocketIO } from "./socket.io/controller";
 
+import { setupMeili } from "../src/search/stores/meili";
+
 const app = express();
 
 export async function start() {
+  // configure Meili index
+  await setupMeili();
+
   app.use(express.static("dist/client"));
   app.use(astroHandler);
 

@@ -54,6 +54,7 @@
     if (!record) return;
 
     deleting = true;
+    confirmOpen = false;
 
     try {
       await pb.collection(record.collectionId).delete(record.id);
@@ -62,7 +63,6 @@
       onError?.(error);
     }
 
-    confirmOpen = false;
     deleting = false;
   };
 </script>

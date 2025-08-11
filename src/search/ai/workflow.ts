@@ -12,7 +12,7 @@ import { context } from "@/chat/ai/context";
 
 import { enhancerResultToString } from "./enhancer";
 import { summaryChain } from "./summary";
-import { semanticRetriever } from "../retrievers/semantic";
+import { meiliRetriever } from "../retrievers/hybrid";
 
 const log = logger.child({ module: "search:ai:workflow" });
 
@@ -24,7 +24,7 @@ export const searchChain = RunnableSequence.from([
   }),
   RunnableParallel.from({
     args: new RunnablePassthrough(),
-    searchResult: semanticRetriever.asLambda("text"),
+    searchResult: meiliRetriever.asLambda("text"),
   }),
   RunnableLambda.from(async (input: { args: any; searchResult: string }) => {
     return { query: input.args.query, searchResult: input.searchResult };

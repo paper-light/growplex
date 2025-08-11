@@ -39,3 +39,5 @@ scripts/crawler/data/*
 qdrant/data
 
 tests/*
+
+meilisearch/data

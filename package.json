@@ -78,7 +78,7 @@
     "vitest": "^3.2.4",
     "weaviate-client": "^3.8.0",
     "xml2js": "^0.6.2",
-    "zod": "^4.0.16"
+    "zod": "^4.0.17"
   },
   "packageManager": "pnpm@10.14.0",
   "devDependencies": {

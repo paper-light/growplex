@@ -32,32 +32,11 @@ onRecordUpdate((e) => {
 }, "documents");
 
 onRecordDelete((e) => {
-  if (["indexed", "unsynced"].includes(e.record.get("status"))) {
-    // Delete from Qdrant
-    const res = $http.send({
-      url: `${$os.getenv(
-        "QDRANT_URL"
-      )}/collections/chunks/points/delete?wait=true`,
-      headers: {
-        "Content-Type": "application/json",
-        "api-key": $os.getenv("QDRANT_API_KEY"),
-      },
-      method: "POST",
-      body: JSON.stringify({
-        filter: {
-          must: [
-            {
-              key: "metadata.documentId",
-              match: { value: e.record.id },
-            },
-          ],
-        },
-      }),
-    });
+  const meili = require(`${__hooks}/lib/meili.js`);
 
-    if (res.statusCode !== 200) {
-      throw new Error("Failed to delete document from Qdrant");
-    }
+  if (["indexed", "unsynced"].includes(e.record.get("status"))) {
+    console.log("Deleting from Meili");
+    meili.meiliService.deleteByDocumentId(e.record.id);
   }
 
   e.next();

@@ -10,9 +10,9 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - QDRANT_URL=${PB_QDRANT_URL}
+      - MEILI_URL=${PB_MEILI_URL}
       - ENV=${ENV}
-      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
     env_file:
       - .env
 

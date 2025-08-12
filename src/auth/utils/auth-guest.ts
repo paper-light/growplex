@@ -1,4 +1,13 @@
 import { ChatWidgetPayloadSchema } from "@/chat/lib/models";
+import { getEnv } from "@/shared/helpers/get-env";
+
+const ENV = getEnv("ENV");
+const domain =
+  ENV === "local"
+    ? "http://localhost:2999"
+    : ENV === "dev"
+    ? "https://dev.growplex.dev"
+    : "https://growplex.dev";
 
 export async function authGuest(chatId: string, payloadStr: string) {
   const payload = payloadStr
@@ -12,7 +21,7 @@ export async function authGuest(chatId: string, payloadStr: string) {
   });
 
   // Auth for guest users
-  const response = await fetch(`/api/chat/auth`, {
+  const response = await fetch(`${domain}/api/chat/auth`, {
     method: "POST",
     body,
     headers: {

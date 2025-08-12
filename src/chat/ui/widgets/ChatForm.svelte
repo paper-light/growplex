@@ -24,8 +24,9 @@
     sourcesProvider.sources.filter((s) => integartion?.sources?.includes(s.id))
   );
   const webSource = $derived(
-    sources.find((s) => domain in (s.metadata as Record<string, unknown>)) ||
-      null
+    sources.find(
+      (s) => s.metadata && domain in (s.metadata as Record<string, unknown>)
+    ) || null
   );
 
   const domain = $derived(chat?.domain ?? "");

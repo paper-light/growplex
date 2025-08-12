@@ -5,7 +5,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "astro dev",
-    "build:gen-types": "npx pocketbase-typegen --db pb/pb_data/data.db --out src/shared/models/pocketbase-types.ts",
+    "build:gen-types": "npx pocketbase-typegen --url http://localhost:8080 --email growplexdev@gmail.com --password 'breAth20' --out src/shared/models/pocketbase-types.ts",
     "build:chat-widget": "NODE_OPTIONS='--max-old-space-size=1024' vite build --config vite.chat-widget.config.ts",
     "build": "NODE_OPTIONS='--max-old-space-size=1536' paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && NODE_OPTIONS='--max-old-space-size=3072' pnpm run build:chat-widget && NODE_OPTIONS='--max-old-space-size=3072' astro build",
     "preview": "astro preview",

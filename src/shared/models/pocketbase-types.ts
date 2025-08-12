@@ -305,13 +305,19 @@ export enum RoomsStatusOptions {
 	"preview" = "preview",
 	"seeded" = "seeded",
 }
+
+export enum RoomsTypeOptions {
+	"chatWidget" = "chatWidget",
+	"chatPreview" = "chatPreview",
+	"appAgent" = "appAgent",
+}
 export type RoomsRecord = {
 	chat?: RecordIdString
 	created?: IsoDateString
 	id: string
 	lead?: RecordIdString
-	name?: string
 	status: RoomsStatusOptions
+	type?: RoomsTypeOptions
 	updated?: IsoDateString
 }
 

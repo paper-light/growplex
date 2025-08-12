@@ -1,7 +1,6 @@
 import { type Socket, type Server } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
-import { RoomsStatusOptions } from "@/shared/models/pocketbase-types";
 import { chunker } from "@/search/chunker";
 import { runChatWorkflow } from "@/chat/ai/workflow";
 import { historyRepository } from "@/messages/history/repository";
@@ -59,13 +58,13 @@ export async function sendMessage(
       }
     } else if (socket.data.user) {
       // Only in preview mode operator can talk to assistant
-      if (room.status !== RoomsStatusOptions.preview) return;
+      log.debug({ room }, "room status");
+      if (room.status !== "preview") return;
     }
 
     // In "operator" assistant never answers
     if (room.status === "operator") return;
 
-    // validate and count billing
     try {
       const sub = await charger.validateRoom(room.id);
       const { messages, usagePrice } = await runChatWorkflow(

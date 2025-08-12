@@ -6,16 +6,11 @@ import {
   type SubscriptionsResponse,
 } from "@/shared/models/pocketbase-types";
 
-import { qdrantStore } from "@/search/stores";
-import {
-  createDocumentIdsFilter,
-  createOrgFilter,
-  mergeFilters,
-} from "@/search/filters";
 import { BILLING_GAS_PRICES_PER_TOKEN } from "@/billing/config";
 import { BILLING_ERRORS, charger } from "@/billing";
 import { chunker } from "@/search/chunker";
 import { indexer } from "@/search/indexer";
+import { meiliIndex } from "@/search/stores";
 
 const log = logger.child({
   module: "knowledge:index-docs",
@@ -28,11 +23,8 @@ export async function reindexDocs(sourceId: string, docs: DocumentsResponse[]) {
     .getOne(sourceId, { expand: "project" });
   const orgId = (source.expand as any).project.org;
 
-  await qdrantStore.delete({
-    filter: mergeFilters([
-      createOrgFilter(orgId),
-      createDocumentIdsFilter(docs.map((d) => d.id)),
-    ]),
+  await meiliIndex.deleteDocuments({
+    filter: `orgId = ${orgId} AND sourceId = ${sourceId}`,
   });
 
   await Promise.all(

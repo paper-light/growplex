@@ -1,2 +1,2 @@
-export { qdrantStore } from "./qdrant";
+// export { qdrantStore } from "./qdrant";
 export { meiliIndex } from "./meili";

@@ -1,53 +1,53 @@
-import type { QdrantVectorStore } from "@langchain/qdrant";
-import { RunnableLambda } from "@langchain/core/runnables";
+// import type { QdrantVectorStore } from "@langchain/qdrant";
+// import { RunnableLambda } from "@langchain/core/runnables";
 
-import { context } from "@/chat/ai/context";
-import type { SourcesResponse } from "@/shared/models/pocketbase-types";
-import { logger } from "@/shared/lib/logger";
+// import { context } from "@/chat/ai/context";
+// import type { SourcesResponse } from "@/shared/models/pocketbase-types";
+// import { logger } from "@/shared/lib/logger";
 
-import { qdrantStore } from "../stores";
-import { createOrgFilter, createSourcesFilter, mergeFilters } from "../filters";
+// import { qdrantStore } from "../stores";
+// import { createOrgFilter, createSourcesFilter, mergeFilters } from "../filters";
 
-const log = logger.child({
-  module: "search:retrievers:semantic",
-});
+// const log = logger.child({
+//   module: "search:retrievers:semantic",
+// });
 
-const CHUNKS_COUNT = 100;
+// const CHUNKS_COUNT = 100;
 
-export class SemanticRetriever {
-  constructor(private vectoreStore: QdrantVectorStore) {
-    this.vectoreStore = vectoreStore;
-  }
+// export class SemanticRetriever {
+//   constructor(private vectoreStore: QdrantVectorStore) {
+//     this.vectoreStore = vectoreStore;
+//   }
 
-  asLambda(result: "text" | "docs" = "text") {
-    return RunnableLambda.from(
-      async (input: {
-        query: string;
-        context: Awaited<ReturnType<typeof context.loadRoomContext>>;
-      }) => {
-        const { query, context } = input;
-        const { org, sources } = context;
+//   asLambda(result: "text" | "docs" = "text") {
+//     return RunnableLambda.from(
+//       async (input: {
+//         query: string;
+//         context: Awaited<ReturnType<typeof context.loadRoomContext>>;
+//       }) => {
+//         const { query, context } = input;
+//         const { org, sources } = context;
 
-        log.info({ query, org, sources }, "Retrieving semantic chunks");
+//         log.info({ query, org, sources }, "Retrieving semantic chunks");
 
-        const filters = mergeFilters([
-          createOrgFilter(org.id),
-          createSourcesFilter(sources?.map((s: SourcesResponse) => s.id) || []),
-        ]);
+//         const filters = mergeFilters([
+//           createOrgFilter(org.id),
+//           createSourcesFilter(sources?.map((s: SourcesResponse) => s.id) || []),
+//         ]);
 
-        const retriever = this.vectoreStore.asRetriever({
-          k: CHUNKS_COUNT,
-          ...(Object.keys(filters).length > 0 && { filter: filters }),
-        });
+//         const retriever = this.vectoreStore.asRetriever({
+//           k: CHUNKS_COUNT,
+//           ...(Object.keys(filters).length > 0 && { filter: filters }),
+//         });
 
-        const docs = await retriever.invoke(query);
+//         const docs = await retriever.invoke(query);
 
-        if (result === "docs") return docs;
+//         if (result === "docs") return docs;
 
-        return docs.map((d) => d.pageContent).join("\n");
-      }
-    );
-  }
-}
+//         return docs.map((d) => d.pageContent).join("\n");
+//       }
+//     );
+//   }
+// }
 
-export const semanticRetriever = new SemanticRetriever(qdrantStore);
+// export const semanticRetriever = new SemanticRetriever(qdrantStore);

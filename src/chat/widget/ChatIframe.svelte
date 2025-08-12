@@ -61,7 +61,7 @@
 
     // AUTH GUEST USER
     const payloadStr = localStorage.getItem("chat-widget-payload");
-    const res = await authGuest(chatId, payloadStr || "");
+    const res = await authGuest(chatId, domain, payloadStr || "");
     if (!res) {
       console.error("Failed to authenticate chat widget");
       localStorage.removeItem("chat-widget-payload");

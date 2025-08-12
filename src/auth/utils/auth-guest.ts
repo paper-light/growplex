@@ -1,15 +1,10 @@
 import { ChatWidgetPayloadSchema } from "@/chat/lib/models";
-import { getEnv } from "@/shared/helpers/get-env";
 
-const ENV = getEnv("ENV");
-const domain =
-  ENV === "local"
-    ? "http://localhost:2999"
-    : ENV === "dev"
-    ? "https://dev.growplex.dev"
-    : "https://growplex.dev";
-
-export async function authGuest(chatId: string, payloadStr: string) {
+export async function authGuest(
+  chatId: string,
+  domain: string,
+  payloadStr: string
+) {
   const payload = payloadStr
     ? ChatWidgetPayloadSchema.parse(JSON.parse(payloadStr))
     : null;

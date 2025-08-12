@@ -50,7 +50,7 @@ class RoomsProvider {
     const rooms = await pb.collection("rooms").getFullList({
       sort: "created",
       filter: `chat.project = "${projectId}"`,
-      expand: "chat",
+      expand: "chat,lead",
     });
     this.rooms = rooms;
   }
@@ -85,7 +85,7 @@ class RoomsProvider {
       {
         sort: "created",
         filter: `chat.project = "${projectId}"`,
-        expand: "chat",
+        expand: "chat,lead",
       }
     );
   }

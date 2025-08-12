@@ -4,7 +4,7 @@ import { PromptTemplate } from "@langchain/core/prompts";
 
 import { getEnv } from "@/shared/helpers/get-env";
 
-export const SEARCH_SUMMARY_MODEL = "gpt-4.1-nano";
+export const SEARCH_SUMMARY_MODEL = "gpt-5-nano";
 
 const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
 
@@ -15,9 +15,8 @@ CRITICAL RULES:
 1. ONLY use information that is EXPLICITLY present in the search results
 2. DO NOT make assumptions, inferences, or add external knowledge
 3. If the search results don't contain relevant information for the query, mark success as FALSE
-4. Be extremely conservative - if you're unsure about relevance, mark success as FALSE
-5. The summary must be factual and directly derived from the search results
-6. Do not include any information not found in the search results
+4. The summary must be factual and directly derived from the search results
+5. Do not include any information not found in the search results
 
 Query: {query}
 
@@ -44,8 +43,8 @@ const summaryPromptTemplate = PromptTemplate.fromTemplate(PROMPT_TEMPLATE);
 const summaryBaseModel = new ChatOpenAI({
   model: SEARCH_SUMMARY_MODEL,
   apiKey: OPENAI_API_KEY,
-  temperature: 0.2,
-  maxCompletionTokens: 8192,
+  // temperature: 0.2,
+  // maxCompletionTokens: 8192,
 });
 
 export const summaryChain = summaryPromptTemplate.pipe(

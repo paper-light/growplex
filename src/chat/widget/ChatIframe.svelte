@@ -25,7 +25,7 @@
 
   const iframeSrc = $derived.by(() => {
     if (!token) return null;
-    return `${domain}/embed/chat/${chatId}?theme=${initTheme}&open=${initOpen}&token=${token}`;
+    return `${domain}/embed/chat/${chatId}?theme=${initTheme || ""}&open=${initOpen}&token=${token}`;
   });
 
   onMount(async () => {

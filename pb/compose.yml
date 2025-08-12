@@ -6,6 +6,6 @@ services:
     volumes:
       - ./pb_data:/pb/pb_data
     environment:
-      - QDRANT_URL=${QDRANT_URL}
-      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - MEILI_URL=${MEILI_URL}
+      - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
       - ENV=${ENV}

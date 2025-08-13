@@ -2,22 +2,22 @@
   import type { RecordModel } from "pocketbase";
   import { Funnel } from "@lucide/svelte";
 
-  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
-  import { documentsProvider } from "@/knowledge/providers/documents.svelte";
+  import { sourcesProvider } from "@/source/providers/sources.svelte";
+  import { documentsProvider } from "@/document/providers/documents.svelte";
 
   import Button from "@/shared/ui/Button.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
 
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import EditStringField from "@/shared/ui/features/EditStringField.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
   import DeleteRecord from "@/shared/ui/features/DeleteRecord.svelte";
-  import DocumentForm from "@/knowledge/ui/DocumentForm.svelte";
-  import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
-  import { docTypeBadgeClasses } from "@/knowledge/helpers/doc-type-badge";
-  import DomainConnect from "@/knowledge/ui/features/DomainConnect.svelte";
+  import DocumentForm from "@/document/ui/DocumentForm.svelte";
+  import { docStatusBadgeClasses } from "@/document/helpers/doc-status-badge";
+  import { docTypeBadgeClasses } from "@/document/helpers/doc-type-badge";
+  import DomainConnect from "@/source/ui/DomainConnect.svelte";
   import Pagination from "@/shared/ui/features/Pagination.svelte";
 
   let docId = $state("");
@@ -32,6 +32,16 @@
 
   const sources = $derived(sourcesProvider.sources);
   const source = $derived(sourcesProvider.selectedSource);
+
+  const filteredSources = $derived(sources);
+
+  const sortedSources = $derived(
+    filteredSources.toSorted((a, b) => {
+      if (a.id === source?.id) return -1;
+      if (b.id === source?.id) return 1;
+      return 0;
+    })
+  );
 
   const documents = $derived(
     documentsProvider.documentsMap.get(source?.id || "") || []
@@ -103,7 +113,7 @@
         class="flex flex-col gap-1 flex-1 overflow-y-auto min-h-0"
         bind:this={sidebarScroll}
       >
-        {#each sources as source}
+        {#each sortedSources as source}
           {@const isSelected = settingsProvider.selectedSourceId === source.id}
           <Button
             style={isSelected ? "soft" : "ghost"}

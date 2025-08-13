@@ -1,6 +1,6 @@
 import { z } from "astro:schema";
 
-import { indexDocs, reindexDocs } from "@/knowledge/index-docs";
+import { indexDocs, reindexDocs } from "@/document/index-docs";
 import { logger } from "@/shared/lib/logger";
 
 const log = logger.child({

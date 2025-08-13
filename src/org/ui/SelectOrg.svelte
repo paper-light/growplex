@@ -19,7 +19,7 @@
 <div class={className}>
   <Dropdown
     bind:open
-    class="w-42 border border-base-300 rounded-md"
+    class="w-50 border border-base-300 rounded-md"
     selected={selectedOrgId}
     options={orgs.map((o) => ({
       value: o.id,

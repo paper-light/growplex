@@ -5,7 +5,7 @@
 
   import { uiProvider } from "@/user/ui.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
   import { integrationsCrud } from "@/integration/repositories/integration-crud";
 

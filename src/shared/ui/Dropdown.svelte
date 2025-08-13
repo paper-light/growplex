@@ -17,8 +17,11 @@
     onclose?: () => void;
     onselect?: (value: string) => void;
     children?: Snippet;
-    actions?: Snippet;
     badge?: Snippet;
+
+    mainActions?: Snippet;
+    rowActions?: Snippet;
+    endActions?: Snippet;
   }
   let {
     open = $bindable(false),
@@ -28,8 +31,10 @@
     onclose,
     onselect,
     children,
-    actions,
     badge,
+    mainActions,
+    rowActions,
+    endActions,
   }: Props = $props();
 
   const selectedOption = $derived(options.find((o) => o.value === selected));
@@ -55,23 +60,31 @@
     {:else if children}
       <span class="font-semibold">{@render children()}</span>
     {/if}
-    <ChevronDown size={14} />
+
+    {#if mainActions}
+      {@render mainActions()}
+    {:else}
+      <ChevronDown size={14} />
+    {/if}
   </summary>
 
   <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1">
-    {#each options as option}
-      <Button
-        color={option.value === selected ? "primary" : "neutral"}
-        style="ghost"
-        class={[option.value === selected && "text-primary hover:text-black"]}
-        onclick={() => {
-          onselect?.(option.value);
-        }}
-      >
-        <span class="font-semibold truncate">{option.label}</span>
-      </Button>
-    {/each}
+    <div class="max-h-80 overflow-y-auto">
+      {#each options as option}
+        <Button
+          block
+          color={option.value === selected ? "primary" : "neutral"}
+          style="ghost"
+          class={[option.value === selected && "text-primary hover:text-black"]}
+          onclick={() => {
+            onselect?.(option.value);
+          }}
+        >
+          <span class="font-semibold truncate">{option.label}</span>
+        </Button>
+      {/each}
+    </div>
 
-    {@render actions?.()}
+    {@render endActions?.()}
   </ul>
 </details>

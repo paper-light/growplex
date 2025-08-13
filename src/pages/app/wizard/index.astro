@@ -1,41 +1,26 @@
 ---
 import AppDashboard from "@/pages/_layouts/app/AppDashboard.astro";
 
-import Sidebar from "@/integration/ui/Sidebar.svelte";
-import ChatPreview from "@/chat/ui/widgets/ChatPreview.svelte";
+import ChatPreview from "@/chat/ui/widgets/Preview.svelte";
 
-import Wizard from "./_index.svelte";
+import ChatForm from "@/chat/ui/widgets/ChatForm.svelte";
+import AgentForm from "@/agent/ui/widgets/AgentForm.svelte";
+import SourcesIntegrationList from "@/source/ui/SourcesIntegrationList.svelte";
 ---
 
 <AppDashboard title="Integration Wizard">
-  <div class="w-full h-full relative">
-    <!-- Desktop Layout: Grid with flexible main content -->
-    <div
-      class="hidden lg:grid h-full w-full"
-      style="grid-template-columns: minmax(200px, 320px) minmax(400px, 1fr) minmax(340px, 400px);"
-    >
-      <div class="h-full overflow-hidden">
-        <Sidebar block client:load />
-      </div>
-
-      <div class="h-full overflow-hidden">
-        <div class="h-full flex flex-col p-4 gap-2 overflow-y-auto">
-          <Wizard client:load />
-        </div>
-      </div>
-
-      <div class="h-full overflow-hidden">
-        <ChatPreview block client:load />
-      </div>
+  <div class="w-full h-full relative grid grid-cols-[1fr_1fr_400px]">
+    <div class="flex flex-col gap-4">
+      <AgentForm client:load />
+      <SourcesIntegrationList client:load />
     </div>
 
-    <!-- Mobile Layout: Single column with overlays -->
-    <div class="lg:hidden w-full h-full relative">
-      <div class="h-full flex flex-col p-4 gap-2 overflow-y-auto">
-        <Wizard client:load />
-      </div>
-      <Sidebar client:load />
-      <ChatPreview client:load />
+    <div class="h-full overflow-hidden">
+      <ChatForm client:load />
+    </div>
+
+    <div class="h-full overflow-hidden">
+      <ChatPreview block client:load />
     </div>
   </div>
 </AppDashboard>

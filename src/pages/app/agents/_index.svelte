@@ -12,7 +12,7 @@
   import { agentCrud } from "@/agent/repositories/agent-crud";
   import { pb } from "@/shared/lib/pb";
   import Button from "@/shared/ui/Button.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import AgentAvatarUpdate from "@/agent/ui/features/AgentAvatarUpdate.svelte";
 

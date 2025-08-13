@@ -5,7 +5,6 @@
 </script>
 
 <div class="h-full flex flex-col p-4 gap-2 overflow-y-auto">
-  <ChatConnect />
   <ChatForm />
   <AgentForm />
 </div>

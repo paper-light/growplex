@@ -6,9 +6,14 @@ import { validateDomain } from "@/crawler/utils";
 import type { SourcesResponse } from "@/shared/models/pocketbase-types";
 
 import { createWebDocs } from "../document/create-web-docs";
-import { indexDocs } from "./index-docs";
+import { indexDocs } from "../document/index-docs";
+import { logger } from "@/shared/lib/logger";
 
 export type ProcessMode = "dummy" | "hybrid" | "auto";
+
+const log = logger.child({
+  module: "source:process-domain",
+});
 
 // -------------------------PUBLIC-------------------------
 
@@ -20,42 +25,56 @@ export async function processDomain(
   mode: ProcessMode = "auto",
   antiBot = false
 ) {
-  const fn = processors[mode];
-  const validatedDomain = validateDomain(domain);
+  let source: SourcesResponse | null = null;
 
-  let source: SourcesResponse;
-  if (sourceId) {
-    source = await pb.collection("sources").getOne(sourceId);
-    if (!source) throw new Error("Source not found");
-    source = await pb.collection("sources").update(sourceId, {
-      metadata: {
-        ...(source.metadata || {}),
-        domain,
-      },
-    });
-  } else {
-    source = await pb.collection("sources").create({
-      name: `Source for ${validatedDomain}`,
-      project: projectId,
-      metadata: {
-        domain,
-      },
-    });
+  try {
+    const fn = processors[mode];
+    const validatedDomain = validateDomain(domain);
+
+    if (sourceId) {
+      source = await pb.collection("sources").getOne(sourceId);
+      if (!source) throw new Error("Source not found");
+      source = await pb.collection("sources").update(sourceId, {
+        metadata: {
+          ...(source.metadata || {}),
+          domain,
+        },
+        status: "pending",
+      });
+    } else {
+      source = await pb.collection("sources").create({
+        name: `Source for ${validatedDomain}`,
+        status: "pending",
+        project: projectId,
+        metadata: {
+          domain,
+        },
+      });
+    }
+
+    if (integrationId) {
+      await pb.collection("integrations").update(integrationId, {
+        "sources+": [source!.id],
+      });
+    }
+
+    const results = await fn(validatedDomain, antiBot);
+
+    const docs = await createWebDocs(source!.id, results);
+
+    await indexDocs(source!.id, docs);
+
+    return { source, docs };
+  } catch (error) {
+    log.error(error);
+    throw error;
+  } finally {
+    if (source) {
+      await pb.collection("sources").update(source.id, {
+        status: "idle",
+      });
+    }
   }
-
-  if (integrationId) {
-    await pb.collection("integrations").update(integrationId, {
-      "sources+": [source.id],
-    });
-  }
-
-  const results = await fn(validatedDomain, antiBot);
-
-  const docs = await createWebDocs(source.id, results);
-
-  await indexDocs(source.id, docs);
-
-  return { source, docs };
 }
 
 // -------------------------PRIVATE-------------------------

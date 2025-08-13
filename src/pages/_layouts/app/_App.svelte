@@ -6,9 +6,9 @@
   import { pb } from "@/shared/lib/pb";
   import { userProvider } from "@/user/user.svelte";
   import { socketProvider } from "@/chat/providers/socket.svelte";
-  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
-  import { documentsProvider } from "@/knowledge/providers/documents.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { sourcesProvider } from "@/source/providers/sources.svelte";
+  import { documentsProvider } from "@/document/providers/documents.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";

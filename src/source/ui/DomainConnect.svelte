@@ -29,6 +29,7 @@
     sourceId?: string;
     domain?: string;
     disabled?: boolean;
+    inputDisabled?: boolean;
   }
 
   const {
@@ -42,14 +43,11 @@
     class: className = "",
     disabled = false,
     children,
+    inputDisabled = false,
   }: Props = $props();
 
   let open = $state(false);
   let value = $derived(domain);
-
-  $effect(() => {
-    if (!open) value = "";
-  });
 
   async function connect() {
     if (!value) return;
@@ -73,7 +71,7 @@
     {#if children}
       {@render children()}
     {:else}
-      Load your domain <Rocket class="size-4" />
+      Load {domain} <Rocket class="size-4" />
     {/if}
   </Button>
 </div>
@@ -86,6 +84,7 @@
       onkeydown={(e) => {
         if (e.key === "Enter") connect();
       }}
+      disabled={inputDisabled}
     />
     <p>
       This will run crawling and indexing of the domain and can take up to 1

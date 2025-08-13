@@ -20,12 +20,12 @@
   class={[
     className,
     "flex items-center gap-2 badge badge-soft badge-lg",
-    source?.indexed ? "badge-success" : "badge-info",
+    source?.status === "idle" ? "badge-success" : "badge-info",
   ]}
 >
-  {#if source?.indexed}
+  {#if source?.status === "idle"}
     <CheckCircle class="size-4" />
-  {:else}
+  {:else if source?.status === "pending"}
     <LoaderCircle class="size-4 animate-spin" />
   {/if}
   {source?.name || sourceId}

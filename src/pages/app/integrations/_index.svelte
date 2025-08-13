@@ -5,20 +5,17 @@
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
-  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
+  import { sourcesProvider } from "@/source/providers/sources.svelte";
 
   import Button from "@/shared/ui/Button.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
   import DeleteRecord from "@/shared/ui/features/DeleteRecord.svelte";
   import Thalia from "@/shared/assets/Thalia.jpg";
   import { pb } from "@/shared/lib/pb";
   import IntegrationForm from "@/integration/ui/IntegrationForm.svelte";
-  import Preview from "@/chat/ui/widgets/Preview.svelte";
-
-  let integrationId = $state("");
 
   const project = $derived(projectsProvider.selectedProject);
 
@@ -27,8 +24,23 @@
   const chats = $derived(chatsProvider.chats);
   const sources = $derived(sourcesProvider.sources);
 
+  const selectedIntegration = $derived(
+    integrationsProvider.selectedIntegration
+  );
+
+  let integrationId = $state("");
   const integration = $derived(
     integrations.find((i) => i.id === integrationId) || null
+  );
+
+  const filteredIntegrations = $derived(integrations);
+
+  const sortedIntegrations = $derived(
+    filteredIntegrations.toSorted((a, b) => {
+      if (selectedIntegration?.id === a.id) return -1;
+      if (selectedIntegration?.id === b.id) return 1;
+      return 0;
+    })
   );
 
   // Helper functions to get related entities with safe access
@@ -129,14 +141,19 @@
                 <th class="w-24">Actions</th>
               </tr>
             </thead>
+
             <tbody>
-              {#each integrations as integration}
+              {#each sortedIntegrations as integration}
                 <tr
                   onclick={() => {
                     settingsProvider.selectIntegration(integration.id);
                     integrationId = integration.id;
                   }}
-                  class="hover cursor-pointer hover:bg-base-300"
+                  class={[
+                    "hover cursor-pointer hover:bg-base-200 rounded-lg transition",
+                    integration.id === selectedIntegration?.id &&
+                      "bg-primary/20 hover:bg-primary/40",
+                  ]}
                 >
                   <td class="font-medium">
                     {integration.name ||

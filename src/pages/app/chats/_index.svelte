@@ -10,7 +10,7 @@
   import { chatCrud } from "@/chat/repositories/chat-crud";
   import { pb } from "@/shared/lib/pb";
   import Button from "@/shared/ui/Button.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import ChatAvatarUpdate from "@/chat/ui/features/crud/ChatAvatarUpdate.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
 

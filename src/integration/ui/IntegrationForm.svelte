@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { RecordModel } from "pocketbase";
   import type { ClassValue } from "svelte/elements";
   import { X, Eye } from "@lucide/svelte";
 
@@ -7,7 +6,7 @@
   import type { IntegrationsResponse } from "@/shared/models/pocketbase-types";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
-  import { sourcesProvider } from "@/knowledge/providers/sources.svelte";
+  import { sourcesProvider } from "@/source/providers/sources.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
 
   import Button from "@/shared/ui/Button.svelte";

@@ -4,7 +4,7 @@
   import Dropdown from "@/shared/ui/Dropdown.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
 
   interface Props {
@@ -24,7 +24,7 @@
 <div class={className}>
   <Dropdown
     bind:open
-    class="w-42 border border-base-300 rounded-md"
+    class="w-50 border border-base-300 rounded-md"
     selected={selectedIntegrationId}
     options={integrations.map((p) => ({
       value: p.id,
@@ -41,7 +41,7 @@
       </span>
     {/snippet}
 
-    {#snippet actions()}
+    {#snippet endActions()}
       <CreateRecord
         onSuccess={(record) => {
           settingsProvider.selectIntegration(record.id);

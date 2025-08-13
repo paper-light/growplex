@@ -3,7 +3,7 @@
 
   import Dropdown from "@/shared/ui/Dropdown.svelte";
   import { settingsProvider } from "@/user/settings.svelte";
-  import { projectsProvider } from "@/control/providers/projects.svelte";
+  import { projectsProvider } from "@/project/providers/projects.svelte";
   import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
   import { userProvider } from "@/user/user.svelte";
 
@@ -22,7 +22,7 @@
 <div class={className}>
   <Dropdown
     bind:open
-    class="w-42 border border-base-300 rounded-md"
+    class="w-50 border border-base-300 rounded-md"
     selected={selectedProjectId}
     options={projects.map((p) => ({
       value: p.id,
@@ -39,7 +39,7 @@
       </span>
     {/snippet}
 
-    {#snippet actions()}
+    {#snippet endActions()}
       <CreateRecord
         onSuccess={(record) => {
           settingsProvider.selectProject(record.id);

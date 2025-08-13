@@ -9,11 +9,11 @@
   import Button from "@/shared/ui/Button.svelte";
   import FileInput from "@/shared/ui/FileInput.svelte";
   import { pb } from "@/shared/lib/pb";
-  import { docStatusBadgeClasses } from "@/knowledge/helpers/doc-status-badge";
-  import IndexDoc from "@/knowledge/ui/features/IndexDoc.svelte";
+  import { docStatusBadgeClasses } from "@/document/helpers/doc-status-badge";
+  import IndexDoc from "@/document/ui/IndexDoc.svelte";
   import TextArea from "@/shared/ui/TextArea.svelte";
 
-  import SelectDocType from "./features/SelectDocType.svelte";
+  import SelectDocType from "./SelectDocType.svelte";
 
   interface Props {
     document: DocumentsResponse | null;

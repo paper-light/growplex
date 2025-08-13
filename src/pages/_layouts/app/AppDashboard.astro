@@ -1,11 +1,14 @@
 ---
-import { Menu } from "@lucide/astro";
+import { ChevronRight, Menu } from "@lucide/astro";
 
 import ProfileRow from "@/user/ui/ProfileRow.svelte";
 import OrgProjectSelect from "@/control/ui/OrgProjectSelect.svelte";
 
 import ThemeController from "@/shared/ui/components/ThemeController.svelte";
 import Growplex from "@/shared/assets/icons/Growplex.svg";
+import SelectOrg from "@/org/ui/SelectOrg.svelte";
+import SelectProject from "@/project/ui/SelectProject.svelte";
+import SelectIntegration from "@/integration/ui/SelectIntegration.svelte";
 
 import SidebarNav from "./_AppSidebarNav.svelte";
 import App from "./_App.astro";
@@ -19,14 +22,24 @@ const { title, favicon = Growplex.src } = Astro.props;
 
     <div class="drawer-content flex flex-col h-screen">
       <header class="navbar bg-base-100 border-b border-base-300 px-1 lg:px-6">
+        <!-- MOBILE HAMBURGER -->
         <div class="flex-none lg:hidden">
           <label for="sidebar-toggle" class="btn btn-square btn-ghost">
             <Menu class="w-6 h-6" />
           </label>
         </div>
 
-        <div class="flex-1 px-2 text-center lg:text-left">
-          <h1 class="text-xl font-semibold">{title}</h1>
+        <div
+          class="flex-1 px-2 text-center lg:text-left flex items-center gap-2"
+        >
+          <SelectOrg client:only transition:persist="org-select" />
+          <div><ChevronRight /></div>
+          <SelectProject client:only transition:persist="project-select" />
+          <div><ChevronRight /></div>
+          <SelectIntegration
+            client:only
+            transition:persist="integration-select"
+          />
         </div>
 
         <div class="flex items-center gap-2">
@@ -56,8 +69,6 @@ const { title, favicon = Growplex.src } = Astro.props;
             Beta
           </div>
         </div>
-
-        <OrgProjectSelect client:only transition:persist="org-project-select" />
 
         <SidebarNav
           active={title}

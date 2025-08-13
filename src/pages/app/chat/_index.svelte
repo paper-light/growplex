@@ -74,7 +74,7 @@
     </header>
 
     <main
-      class="flex-1 overflow-hidden max-w-4xl mx-auto border-x border-base-300"
+      class="flex-1 overflow-hidden w-full md:w-4xl max-w-4xl mx-auto border-x border-base-300"
     >
       <Messages class="px-12 py-4" {messages} mode="operator" />
     </main>

@@ -1,6 +1,6 @@
 import { uuidv4 } from "zod";
 import type { Document } from "@langchain/core/documents";
-import { Index } from "meilisearch";
+import { type Index } from "meilisearch";
 
 import { withSimpleRetry } from "@/shared/helpers/with-retry";
 import { logger } from "@/shared/lib/logger";

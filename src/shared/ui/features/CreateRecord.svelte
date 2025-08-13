@@ -16,8 +16,8 @@
     onSuccess?: (record: RecordModel) => void;
     onError?: (error: unknown) => void;
 
-    projectId: string;
     collection: string;
+    projectId?: string;
     data?: Record<string, any>;
   }
 
@@ -36,11 +36,12 @@
 
   const createRecord = async () => {
     try {
-      const record = await pb.collection(collection).create({
+      const payload = {
         ...data,
-        project: projectId,
-      });
+      };
+      if (projectId) payload.project = projectId;
 
+      const record = await pb.collection(collection).create(payload);
       onSuccess?.(record);
     } catch (error) {
       onError?.(error);

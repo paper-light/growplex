@@ -8,11 +8,18 @@
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import EditStringField from "@/shared/ui/features/EditStringField.svelte";
   import EditTextField from "@/shared/ui/features/EditTextField.svelte";
+  import type { ClassValue } from "svelte/elements";
+
+  interface Props {
+    class?: ClassValue;
+  }
+
+  const { class: className }: Props = $props();
 
   const agent = $derived(agentsProvider.selectedIntegrationAgent);
 </script>
 
-<Card title="Agent" class="max-w-2xl mx-auto">
+<Card title="Agent" class={["max-w-2xl mx-auto", className]}>
   <div class="space-y-4">
     <AgentSelect />
 

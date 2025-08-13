@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { ClassValue } from "svelte/elements";
+
   import { projectsProvider } from "@/project/providers/projects.svelte";
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
@@ -7,6 +9,12 @@
   import { sourcesProvider } from "../providers/sources.svelte";
   import SourceStatus from "./SourceStatus.svelte";
   import DomainConnect from "./DomainConnect.svelte";
+
+  interface Props {
+    class?: ClassValue;
+  }
+
+  const { class: className }: Props = $props();
 
   const project = $derived(projectsProvider.selectedProject);
 
@@ -31,7 +39,7 @@
   );
 </script>
 
-<Card title="Connected Knowledge">
+<Card title="Connected Knowledge" class={[className]}>
   <div class="flex flex-col gap-4">
     {#each integrationSources as source}
       <SourceStatus sourceId={source.id} />

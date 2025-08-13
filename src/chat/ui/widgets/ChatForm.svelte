@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { ClassValue } from "svelte/elements";
   import type { RecordModel } from "pocketbase";
 
   import Card from "@/shared/ui/Card.svelte";
@@ -10,14 +11,19 @@
   import ThemeSelection from "@/chat/ui/features/crud/ThemeSelection.svelte";
   import EditStringField from "@/shared/ui/features/EditStringField.svelte";
   import EditTextField from "@/shared/ui/features/EditTextField.svelte";
-
   import ChatConnect from "../features/crud/ChatConnect.svelte";
+
+  interface Props {
+    class?: ClassValue;
+  }
+
+  const { class: className }: Props = $props();
 
   const project = $derived(projectsProvider.selectedProject);
   const chat = $derived(chatsProvider.selectedIntegrationChat);
 </script>
 
-<Card title="Chat" class="space-y-4 max-w-2xl mx-auto">
+<Card title="Chat" class={["space-y-4 max-w-2xl mx-auto", className]}>
   <div class="mb-4 space-y-2">
     <ChatConnect />
     <EditStringField

@@ -35,7 +35,7 @@
 <button
   use:clickOutside={{ callback: () => (open = false) }}
   class={[
-    "flex items-center gap-2 justify-between dropdown dropdown-top dropdown-center bg-base-200 rounded-2xl p-1 border border-base-300 cursor-pointer",
+    "flex items-center gap-2 justify-between dropdown dropdown-top dropdown-center bg-base-200 p-1 border border-base-300 cursor-pointer",
     className,
   ]}
   class:dropdown-open={open}

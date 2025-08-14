@@ -19,8 +19,8 @@
     children?: Snippet;
     badge?: Snippet;
 
-    mainActions?: Snippet;
-    rowActions?: Snippet;
+    mainActions?: Snippet<[string]>;
+    rowActions?: Snippet<[string, boolean]>;
     endActions?: Snippet;
   }
   let {
@@ -52,35 +52,49 @@
   }}
   class={["dropdown relative", className]}
 >
-  <summary class="btn btn-block btn-ghost truncate justify-between">
-    {@render badge?.()}
+  <summary class="btn btn-block btn-ghost justify-between">
+    <div class="flex items-center gap-2 min-w-0 flex-1">
+      {@render badge?.()}
 
-    {#if selectedOption}
-      <span class="font-semibold">{selectedOption.label}</span>
-    {:else if children}
-      <span class="font-semibold">{@render children()}</span>
-    {/if}
+      {#if selectedOption}
+        <span class="font-semibold truncate">{selectedOption.label}</span>
+      {:else if children}
+        <span class="font-semibold truncate">{@render children()}</span>
+      {/if}
+    </div>
 
-    {#if mainActions}
-      {@render mainActions()}
-    {:else}
-      <ChevronDown size={14} />
-    {/if}
+    <div class="flex items-center gap-1 flex-shrink-0">
+      {#if mainActions}
+        {@render mainActions?.(selectedOption?.value || "")}
+      {:else if rowActions}
+        {@render rowActions?.(selectedOption?.value || "", false)}
+      {:else}
+        <ChevronDown size={14} />
+      {/if}
+    </div>
   </summary>
 
   <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1">
     <div class="max-h-80 overflow-y-auto">
       {#each options as option}
         <Button
-          block
           color={option.value === selected ? "primary" : "neutral"}
           style="ghost"
-          class={[option.value === selected && "text-primary hover:text-black"]}
+          class={[
+            "justify-between w-full",
+            option.value === selected && "text-primary hover:text-black",
+          ]}
           onclick={() => {
             onselect?.(option.value);
           }}
         >
-          <span class="font-semibold truncate">{option.label}</span>
+          <div class="flex items-center min-w-0 flex-1">
+            <span class="font-semibold truncate">{option.label}</span>
+          </div>
+
+          <div class="flex items-center gap-1 flex-shrink-0">
+            {@render rowActions?.(option.value, option.value === selected)}
+          </div>
         </Button>
       {/each}
     </div>

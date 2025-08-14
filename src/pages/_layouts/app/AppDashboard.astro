@@ -31,18 +31,15 @@ const { title, favicon = Growplex.src } = Astro.props;
         <div
           class="flex-1 px-2 text-center lg:text-left flex items-center gap-2"
         >
-          <SelectOrg client:only transition:persist="org-select" />
+          <SelectOrg client:only />
           <div><ChevronRight /></div>
-          <SelectProject client:only transition:persist="project-select" />
+          <SelectProject client:only />
           <div><ChevronRight /></div>
-          <SelectIntegration
-            client:only
-            transition:persist="integration-select"
-          />
+          <SelectIntegration client:only />
         </div>
 
         <div class="flex items-center gap-2">
-          <ThemeController client:only transition:persist="theme-controller" />
+          <ThemeController client:only />
         </div>
       </header>
 
@@ -63,7 +60,7 @@ const { title, favicon = Growplex.src } = Astro.props;
           <h1 class="text-xl font-semibold text-primary">Growplex</h1>
 
           <div
-            class="absolute -top-1 right-3 badge badge-soft badge-info badge-sm font-semibold"
+            class="absolute -top-1 right-1 badge badge-soft badge-info badge-sm font-semibold"
           >
             Beta
           </div>

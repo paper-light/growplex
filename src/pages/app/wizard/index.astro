@@ -11,16 +11,20 @@ import SourcesIntegrationList from "@/source/ui/SourcesIntegrationList.svelte";
 <AppDashboard title="Integration Wizard">
   <div class="w-full h-full relative grid grid-cols-[1fr_1fr_400px]">
     <div class="flex flex-col gap-4">
-      <AgentForm class="flex-1" client:load />
-      <SourcesIntegrationList class="flex-1" client:load />
+      <AgentForm class="flex-1" client:load transition:persist="agent-form" />
+      <SourcesIntegrationList
+        class="flex-1"
+        client:load
+        transition:persist="sources-integration-list"
+      />
     </div>
 
     <div class="h-full overflow-hidden">
-      <ChatForm class="h-full" client:load />
+      <ChatForm class="h-full" client:load transition:persist="chat-form" />
     </div>
 
     <div class="h-full overflow-hidden">
-      <ChatPreview block client:load />
+      <ChatPreview block client:load transition:persist="chat-preview" />
     </div>
   </div>
 </AppDashboard>

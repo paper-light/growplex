@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
-  import { X, Eye } from "@lucide/svelte";
+  import { X, Eye, Edit } from "@lucide/svelte";
 
   import { pb } from "@/shared/lib/pb";
   import type { IntegrationsResponse } from "@/shared/models/pocketbase-types";
@@ -288,12 +288,21 @@
     <header
       class="flex items-center justify-between p-4 border-b border-base-300"
     >
-      <Input
-        size="lg"
-        placeholder="Integration name"
-        bind:value={formName}
-        class="w-64"
-      />
+      <h3 class="text-lg font-semibold">Edit Integration</h3>
+
+      <div>
+        <Input
+          color="neutral"
+          size="lg"
+          placeholder="Integration name"
+          bind:value={formName}
+          class="w-96"
+          labelPosition="right"
+        >
+          <Edit size={18} />
+        </Input>
+      </div>
+
       <div class="flex items-center gap-2">
         <Button
           type="button"

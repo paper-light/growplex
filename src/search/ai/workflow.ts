@@ -6,7 +6,7 @@ import {
 } from "@langchain/core/runnables";
 
 import { logger } from "@/shared/lib/logger";
-import { context } from "@/chat/ai/context";
+import { consulterMemory } from "@/chat/ai/consulter/memory";
 
 import { enhancerResultToString } from "./enhancer";
 import { summaryChain } from "./summary";
@@ -17,7 +17,7 @@ const log = logger.child({ module: "search:ai:workflow" });
 export const searchChain = RunnableSequence.from([
   // enhancerChain,
   RunnableParallel.from({
-    context: context.asLambda(),
+    memory: consulterMemory.asLambda(),
     query: enhancerResultToString,
   }),
   RunnableParallel.from({

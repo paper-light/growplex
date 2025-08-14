@@ -75,12 +75,12 @@
   </summary>
 
   <ul class="dropdown-content menu bg-base-100 rounded-box shadow w-full mt-1">
-    <div class="max-h-80 overflow-y-auto">
+    <div class="max-h-80 overflow-y-auto max-w-full">
       {#each options as option}
         <Button
           color={option.value === selected ? "primary" : "neutral"}
           style="ghost"
-          class={[
+        class={[
             "justify-between w-full",
             option.value === selected && "text-primary hover:text-black",
           ]}

@@ -2,7 +2,7 @@ import { type Socket, type Server } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
 import { chunker } from "@/search/chunker";
-import { runChatWorkflow } from "@/chat/ai/workflow";
+import { runChatWorkflow } from "@/chat/ai/consulter/workflows";
 import { historyRepository } from "@/messages/history/repository";
 import { logger } from "@/shared/lib/logger";
 import { charger, BILLING_ERRORS } from "@/billing";

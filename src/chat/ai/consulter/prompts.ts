@@ -1,23 +1,9 @@
-import { ChatOpenAI } from "@langchain/openai";
 import {
   ChatPromptTemplate,
   MessagesPlaceholder,
 } from "@langchain/core/prompts";
-import { RunnableLambda } from "@langchain/core/runnables";
 
-import { getEnv } from "@/shared/helpers/get-env";
-import { logger } from "@/shared/lib/logger";
-
-import { chatTools } from "./tools";
-import { context } from "./context";
-
-const log = logger.child({ module: "chat:ai:consulter" });
-
-export const CHAT_CONSULTER_MODEL = "gpt-4.1-mini";
-
-const OPENAI_API_KEY = getEnv("OPENAI_API_KEY");
-
-const CONSULTER_PROMPT_TEMPLATE_START = `
+export const CONSULTER_PROMPT_TEMPLATE_START = `
 You are a professional business consultant and lead generation specialist. Your primary goal is to provide exceptional value to potential customers while identifying and capturing sales opportunities.
 
 ## CRITICAL TOOL USAGE INSTRUCTIONS:
@@ -74,7 +60,7 @@ Additional instructions: {system}
 Knowledge: {knowledge}
 `;
 
-const CONSULTER_PROMPT_TEMPLATE_END = `
+export const CONSULTER_PROMPT_TEMPLATE_END = `
 ## RESPONSE GENERATION GUIDELINES:
 
 ### ALWAYS DO:
@@ -114,55 +100,15 @@ const CONSULTER_PROMPT_TEMPLATE_END = `
 Always follow system instructions.
 Use tools appropriately to provide the best possible assistance.
 
+Current user information:
+{lead}
+
 Answer:
 `;
 
-const consulterPromptTemplate = ChatPromptTemplate.fromMessages([
+export const consulterPromptTemplate = ChatPromptTemplate.fromMessages([
   ["system", CONSULTER_PROMPT_TEMPLATE_START],
   new MessagesPlaceholder("history"),
   ["human", "{query}"],
   ["system", CONSULTER_PROMPT_TEMPLATE_END],
 ]);
-
-export const baseConsulterModel = new ChatOpenAI({
-  model: CHAT_CONSULTER_MODEL,
-  apiKey: OPENAI_API_KEY,
-  maxCompletionTokens: 512,
-  temperature: 0.4,
-});
-
-export const consulterChain = RunnableLambda.from(
-  (input: {
-    history: string;
-    chainInput: {
-      query: string;
-      withTools: boolean;
-      withSearch: boolean;
-      knowledge: string;
-    };
-    context: Awaited<ReturnType<typeof context.loadRoomContext>>;
-  }) => {
-    const { history, chainInput, context } = input;
-    const { query, withTools, withSearch, knowledge } = chainInput;
-    const { agent } = context;
-
-    let tools = withTools ? chatTools : [];
-    if (!withSearch) tools = tools.filter((t) => t.name !== "callSearchChain");
-
-    log.debug(
-      { withTools, withSearch, tools },
-      "consulterChain withTools and withSearch"
-    );
-    log.debug({ history }, "consulterChain history");
-    log.debug({ knowledge, query, system: agent.system }, "Template variables");
-
-    return consulterPromptTemplate
-      .pipe(baseConsulterModel.bindTools(tools))
-      .invoke({
-        history,
-        knowledge,
-        system: agent.system,
-        query,
-      });
-  }
-);

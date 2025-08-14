@@ -1,1 +1,1 @@
-export * from "./consulter";
+export * from "./consulter/chain";

@@ -10,8 +10,6 @@ import {
 } from "@/shared/models/pocketbase-types";
 import { pb } from "@/shared/lib/pb";
 import { chunker } from "@/search/chunker";
-import { RunnableLambda } from "@langchain/core/runnables";
-import { historyLangchainAdapter } from "./langchain-adapter";
 import { CHAT_CONFIG } from "@/chat/config";
 
 const HISTORY_TOKENS = CHAT_CONFIG.MAX_HISTORY_TOKENS;
@@ -20,19 +18,8 @@ const REDIS_PREFIX = "messages:history:";
 
 const log = logger.child({ module: "messages:history:repository" });
 
-class HistoryRepository {
+export class HistoryRepository {
   private lengthProximation = Math.ceil((HISTORY_TOKENS / MAX_MSG_TOKENS) * 2);
-
-  asLambda() {
-    return RunnableLambda.from(async (input: { roomId: string }) => {
-      const { roomId } = input;
-
-      const pbHistory = await this.getHistory(roomId, false);
-      const history = historyLangchainAdapter.buildLangchainHistory(pbHistory);
-
-      return history;
-    });
-  }
 
   // Public API
   async getHistory(
@@ -73,6 +60,74 @@ class HistoryRepository {
     } catch (error) {
       log.error({ error }, "getHistory() error");
       throw error;
+    }
+  }
+
+  async replaceMessage(msgId: string, msg: Partial<MessagesRecord>) {
+    const roomId = msg.room;
+    if (!roomId) {
+      log.error({ msg }, "replaceMessage() error");
+      throw new Error("roomId is required");
+    }
+
+    // 1) Update PocketBase
+    try {
+      await pb.collection("messages").update(msgId, msg);
+      log.debug({ msgId, roomId }, "updated message in PocketBase");
+    } catch (error) {
+      log.error(
+        { error, msgId, roomId },
+        "failed to update message in PocketBase"
+      );
+      throw error;
+    }
+
+    // 2) Update Redis cache
+    try {
+      const redisKey = this.getRedisKey(roomId);
+      const pipeline = redisClient.multi();
+
+      // Get all messages from cache
+      const rawCached = await redisClient.lrange(redisKey, 0, -1);
+      const cachedMessages = rawCached.map((r) =>
+        JSON.parse(r)
+      ) as MessagesResponse[];
+
+      // Find the message with matching ID and replace it
+      let found = false;
+      const updatedMessages = cachedMessages.map((cachedMsg) => {
+        if (cachedMsg.id === msgId) {
+          found = true;
+          return {
+            ...cachedMsg,
+            ...msg,
+          };
+        }
+        return cachedMsg;
+      });
+
+      if (!found) {
+        log.warn(
+          { msgId, roomId },
+          "message not found in cache, skipping cache update"
+        );
+        return;
+      }
+
+      pipeline.del(redisKey);
+      updatedMessages.forEach((m) =>
+        pipeline.rpush(redisKey, JSON.stringify(m))
+      );
+
+      pipeline.ltrim(redisKey, -this.lengthProximation, -1);
+
+      await pipeline.exec();
+      log.debug({ msgId, roomId }, "updated message in Redis cache");
+    } catch (error) {
+      log.error(
+        { error, msgId, roomId },
+        "failed to update message in Redis cache"
+      );
     }
   }
 

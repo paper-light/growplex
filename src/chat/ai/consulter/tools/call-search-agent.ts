@@ -1,34 +1,57 @@
 import type { RunnableConfig } from "@langchain/core/runnables";
 import { tool } from "@langchain/core/tools";
 
-import { searchChain } from "@/search/ai/workflow";
-import { EnhancerReturnSchema } from "@/search/ai/enhancer";
 import { logger } from "@/shared/lib/logger";
+import type { Usager } from "@/billing/usager";
+import { EnhancerReturnSchema } from "@/search/ai/enhancer/schemas";
+import { runSearchWorkflow } from "@/search/ai/searcher/workflows";
+
+import type { ConsulterMemory } from "../memories";
+import type { WorkflowConfig } from "../workflows";
 
 const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
 
 export const callSearchChain = tool(
   async (input: any, config: RunnableConfig) => {
     const args = EnhancerReturnSchema.parse(input);
-    const { roomId } = config.configurable || {};
+    const { memory, usager, workflowConfig } = config.configurable as {
+      memory: ConsulterMemory;
+      usager: Usager;
+      workflowConfig: WorkflowConfig;
+    };
 
-    const result = await searchChain.invoke({
-      ...args,
-      roomId,
-    });
+    const { result } = await runSearchWorkflow(
+      memory.room.id,
+      args,
+      usager,
+      memory
+    );
 
-    const usage = (result.raw as any).usage_metadata;
-    log.debug({ usage }, "searchChain usage");
+    result.content = result.success
+      ? JSON.stringify({
+          content: "✅ Found relevant information for your question",
+          success: true,
+        })
+      : JSON.stringify({
+          content: "❌ No relevant information found",
+          success: false,
+        });
 
-    return { result: result.parsed, usage };
+    workflowConfig.knowledge = JSON.stringify(
+      `Relevant to query: ${result.success ? "✅" : "❌"}
+      Search results: ${result.content}`
+    );
+    workflowConfig.withSearch = false;
+
+    return result;
   },
   {
-    name: "callSearchChain",
+    name: "callSearchAgent",
     description:
       "Search knowledge base for factual questions requiring current information or data not in chat history.",
     schema: EnhancerReturnSchema,
     metadata: {
-      visible: false,
+      visible: true,
     },
   }
 );

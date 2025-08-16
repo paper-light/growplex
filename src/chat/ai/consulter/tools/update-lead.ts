@@ -4,7 +4,8 @@ import { tool } from "@langchain/core/tools";
 import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
-import type { LeadsResponse } from "@/shared/models/pocketbase-types";
+
+import type { ConsulterMemory } from "../memories";
 
 const log = logger.child({
   module: "chat-service:agent:tools",
@@ -45,25 +46,15 @@ export const updateLead = tool(
   async (input: any, config: RunnableConfig) => {
     const args = UpdateLeadSchema.parse(input);
     const { description, name, email, phone, tg, payload } = args;
-    const { roomId } = config.configurable || {};
+    const { memory } = config.configurable as { memory: ConsulterMemory };
 
-    const room = await pb.collection("rooms").getOne(roomId, {
-      expand: "lead",
-    });
-    const lead: LeadsResponse = (room.expand as any)?.lead;
+    const room = memory.room;
+    const lead = memory.lead;
 
     if (room.status === "preview") {
       return {
         success: true,
         content: `Lead is not updated in preview mode`,
-      };
-    }
-
-    if (!lead) {
-      log.warn({ roomId }, "Update lead tool call error: Lead is not set");
-      return {
-        success: false,
-        content: "Lead is not set",
       };
     }
 

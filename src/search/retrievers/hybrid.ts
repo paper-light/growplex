@@ -1,8 +1,4 @@
 import type { Index } from "meilisearch";
-import { RunnableLambda } from "@langchain/core/runnables";
-
-import { type consulterMemory } from "@/chat/ai/consulter/memory";
-import type { SourcesResponse } from "@/shared/models/pocketbase-types";
 
 import { meiliIndex } from "../stores";
 import { meiliEmbeddings } from "../embeddings";
@@ -16,29 +12,6 @@ class MeiliRetriever {
     this.index = index;
     this.embeddingName = embeddingName;
     this.defaultLimit = defaultLimit;
-  }
-
-  asLambda(result: "text" | "docs" = "text") {
-    return RunnableLambda.from(
-      async (input: {
-        query: string;
-        memory: Awaited<ReturnType<typeof consulterMemory.loadRoomContext>>;
-      }) => {
-        const { query, memory } = input;
-        const { org, sources } = memory;
-
-        const limit = this.getDynamicLimit(query);
-        const results = await this.retrieve(
-          query,
-          org.id,
-          sources?.map((s: SourcesResponse) => s.id) || [],
-          limit
-        );
-
-        if (result === "docs") return results.hits;
-        return results.hits.map((hit) => hit.content).join("\n");
-      }
-    );
   }
 
   async retrieve(

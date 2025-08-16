@@ -5,13 +5,15 @@ import { rateLimitThrow } from "@/shared/helpers/rate-limite";
 
 import { guardRoomAccess } from "@/auth/guards/guard-room-access";
 
+import { CHAT_CONFIG } from "@/chat/config";
+import { chunker } from "@/search/chunker";
+import { sender } from "@/messages/sender/sender";
+
 import { joinRoom } from "./join-room";
 import { sendMessage } from "./send-message";
 import { chatRateLimiter } from "./rate-limiter";
 import { useMiddlewares } from "./middleware";
 import type { JoinRoomDTO, SendMessageDTO } from "./types";
-import { CHAT_CONFIG } from "@/chat/config";
-import { chunker } from "@/search/chunker";
 
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
@@ -28,6 +30,7 @@ export function attachSocketIO(httpServer: any) {
 
       await guardRoomAccess(socket, room);
 
+      sender.addSocket(dto.roomId, socket);
       await joinRoom(socket, room);
     });
 
@@ -58,11 +61,13 @@ export function attachSocketIO(httpServer: any) {
     });
 
     socket.on("leave-room", (dto) => {
+      sender.removeSocket(dto.roomId, socket.id);
       socket.leave(dto.roomId);
     });
 
     socket.on("disconnect", async () => {
       console.log(`🔴 Socket disconnected: ${socket.id}`);
+      sender.removeSocketFromAllRooms(socket.id);
     });
   });
 }

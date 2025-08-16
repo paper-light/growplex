@@ -1,36 +1,41 @@
 import { historyRepository } from "@/messages/history/repository";
-import type {
-  AgentsResponse,
-  MessagesResponse,
-} from "@/shared/models/pocketbase-types";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 
-import { AIMessageChunk, ToolMessage } from "@langchain/core/messages";
-import { chatToolsMap } from "./tools";
+import { AIMessageChunk } from "@langchain/core/messages";
+import { callTool, chatTools } from "./tools";
 
 import { logger } from "@/shared/lib/logger";
-import { langfuseHandler } from "@/shared/lib/langfuse";
 import { Usager } from "@/billing/usager";
 
-import { SEARCH_SUMMARY_MODEL } from "@/search/ai/summary";
-
-import { consulterMemory } from "./memory";
-import { CHAT_CONSULTER_MODEL } from "./models";
-import { consulterChain, type DynamicConsulterChainInput } from "./chain";
+import { loadConsulterMemory } from "./memories";
+import { baseConsulterModel, CHAT_CONSULTER_MODEL } from "./models";
+import { consulterPromptTemplate } from "./prompts";
+import { sender } from "@/messages/sender/sender";
 
 const log = logger.child({
   module: "chat:ai:workflow",
 });
 
-export const runChatWorkflow = async (roomId: string, query: string) => {
-  const allMessages: MessagesResponse[] = [];
-  const usager = new Usager();
+export type WorkflowConfig = {
+  roomId: string;
+  query: string;
+  withTools: boolean;
+  withSearch: boolean;
+  knowledge: string;
+};
+
+export const runChatWorkflow = async (
+  roomId: string,
+  query: string,
+  usager: Usager | null = null
+) => {
+  if (!usager) usager = new Usager();
 
   log.info({ roomId, query }, "runChatWorkflow started");
 
-  let data = await consulterMemory.loadRoomContext(roomId);
+  const memory = await loadConsulterMemory(roomId);
   log.debug({ roomId }, "Loaded context data");
-  const chatInput: DynamicConsulterChainInput = {
+  const workflowConfig: WorkflowConfig = {
     query,
     roomId,
     knowledge: "",
@@ -39,16 +44,29 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
   };
 
   let result: AIMessageChunk | null = null;
-  let callingTools = true;
+  let callingTools;
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
+    if (i === 2) workflowConfig.withTools = false;
+    let tools = workflowConfig.withTools ? chatTools : [];
+    if (!workflowConfig.withSearch) {
+      tools = tools.filter((t) => t.name !== "callSearchChain");
+    }
+
     // CHAT CHAIN
     log.info({ iteration: i, roomId }, "Invoking chatChain");
-    result = await consulterChain.invoke(chatInput, {
-      callbacks: [langfuseHandler],
-    });
 
-    callingTools = !!result?.tool_calls?.length;
+    result = await consulterPromptTemplate
+      .pipe(baseConsulterModel.bindTools(tools))
+      .invoke({
+        history: memory.history,
+        knowledge: workflowConfig.knowledge,
+        system: memory.agent.system,
+        query,
+        lead: JSON.stringify(memory.lead, null, 2),
+      });
+
+    callingTools = !!result!.tool_calls?.length;
     usager.update(result!, CHAT_CONSULTER_MODEL);
 
     log.debug({ result, usager }, "chatChain result");
@@ -57,117 +75,31 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         msg: result!,
         opts: {
           roomId,
-          agent: data.agent,
+          agent: memory.agent,
           visible: !callingTools,
         },
       },
     ]);
-    allMessages.push(...(await historyRepository.updateHistory(newMessages)));
-
-    if (!callingTools) break;
-
-    // TOOL CALLS
-    log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
-    const toolMessages = await runTools(
-      result!,
-      roomId,
-      data.agent,
-      chatInput,
-      usager
+    const assistantMessages = await historyRepository.updateHistory(
+      newMessages
     );
-    allMessages.push(...(await historyRepository.updateHistory(toolMessages)));
-  }
-
-  if (callingTools) {
-    chatInput.withTools = false;
-    log.info({ roomId }, "Final assistant message after tools");
-    result = await consulterChain.invoke(chatInput, {
-      callbacks: [langfuseHandler],
-    });
-
-    usager.update(result!, CHAT_CONSULTER_MODEL);
-
-    const newMessages = historyLangchainAdapter.buildPBHistory([
-      {
-        msg: result!,
-        opts: {
-          roomId,
-          agent: data.agent,
-          visible: true,
-        },
-      },
-    ]);
-    allMessages.push(...(await historyRepository.updateHistory(newMessages)));
-  }
-
-  log.info({ count: allMessages.length }, "runChatWorkflow completed");
-  return {
-    messages: allMessages.filter((m) => m.visible),
-    usagePrice: usager.calculatePrice(),
-  };
-};
-
-async function runTools(
-  result: AIMessageChunk,
-  roomId: string,
-  agent: AgentsResponse,
-  chatInput: DynamicConsulterChainInput,
-  usager: Usager
-) {
-  log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
-  const toolPromises = result!.tool_calls!.map(async (toolCall) => {
-    log.debug({ toolCall }, "Tool call");
-
-    const toolMessage = await chatToolsMap[toolCall.name].invoke(toolCall, {
-      configurable: {
-        roomId,
-      },
-      callbacks: [langfuseHandler],
-    });
-    log.debug({ toolMessage, name: toolCall.name }, "Tool message");
-
-    if (toolMessage.name === "callSearchChain") {
-      const data = JSON.parse(toolMessage.content);
-      usager.updateMetadataUsage(data.usage, SEARCH_SUMMARY_MODEL);
-
-      const answer = data.result;
-      const content = answer.content;
-      const success = answer.success;
-      toolMessage.content = success
-        ? JSON.stringify({
-            content: "✅ Found relevant information for your question",
-            success: true,
-          })
-        : JSON.stringify({
-            content: "❌ No relevant information found",
-            success: false,
-          });
-
-      chatInput.knowledge = JSON.stringify(
-        `Relevant to query: ${success ? "✅" : "❌"}
-        Search results: ${content}`
-      );
-      chatInput.withSearch = false;
+    if (!callingTools) {
+      sender.sendMessage(roomId, assistantMessages[0]);
+      break;
     }
 
-    return toolMessage as ToolMessage;
-  });
-  const toolMessages = await Promise.all(toolPromises);
-  log.debug({ toolMessages }, "Tool messages results");
+    log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
 
-  const newMessages = historyLangchainAdapter.buildPBHistory(
-    toolMessages.map((toolMessage) => {
-      return {
-        msg: toolMessage,
-        opts: {
-          roomId,
-          agent: agent,
-          visible:
-            // @ts-ignore
-            chatToolsMap[toolMessage.name]?.metadata?.visible ?? false,
-        },
-      };
-    })
-  );
-  return newMessages;
-}
+    await Promise.all(
+      result!.tool_calls!.map(async (toolCall) => {
+        await callTool(toolCall, memory, workflowConfig, usager);
+      })
+    );
+  }
+
+  // END LOOP
+  log.info({ roomId }, "runChatWorkflow completed");
+  return {
+    price: usager.calculatePrice(),
+  };
+};

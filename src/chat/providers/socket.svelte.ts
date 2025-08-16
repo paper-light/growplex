@@ -37,6 +37,19 @@ class SocketProvider {
     );
 
     this.socket.on(
+      "update-message",
+      (data: { roomId: string; message: MessagesResponse }) => {
+        const { roomId, message } = data;
+        if (!this.histories.has(roomId)) this.histories.set(roomId, []);
+        const history = this.histories.get(roomId)!;
+        this.histories.set(
+          roomId,
+          history.map((h) => (h.id === message.id ? message : h))
+        );
+      }
+    );
+
+    this.socket.on(
       "new-message",
       (data: { roomId: string; message: MessagesResponse }) => {
         const { roomId, message } = data;

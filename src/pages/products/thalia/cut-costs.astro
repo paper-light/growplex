@@ -1,0 +1,493 @@
+---
+import { Image } from "astro:assets";
+
+import Content from "@/pages/_layouts/content/Content.astro";
+import ThaliaImg from "@/shared/assets/Thalia.jpg";
+import PantheonImg from "@/shared/assets/Pantheon.jpg";
+import GrowplexLogo from "@/shared/assets/icons/Growplex.svg";
+---
+
+<Content title="Thalia - AI Business Assistant | Cut Costs & Increase Sales">
+  <div class="max-w-7xl mx-auto px-4 pb-16 space-y-32">
+    <!-- Hero Section with Antique Architecture Theme -->
+    <section class="hero min-h-screen relative overflow-hidden">
+      <!-- Background with antique architecture elements -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-yellow-100 via-lime-50 to-yellow-200 opacity-90"
+      >
+      </div>
+      <div class="absolute inset-0 antique-pattern opacity-30"></div>
+
+      <div
+        class="hero-content flex-col lg:flex-row-reverse items-center text-center lg:text-left relative z-10"
+      >
+        <div class="lg:w-1/2 mb-8 lg:mb-0">
+          <div class="relative">
+            <Image
+              src={ThaliaImg}
+              alt="Thalia AI Assistant - Classical Wisdom for Modern Business"
+              class="rounded-2xl shadow-2xl mx-auto w-full max-w-md lg:max-w-lg h-auto"
+            />
+            <!-- Decorative antique frame -->
+            <div
+              class="absolute -inset-4 bg-gradient-to-r from-yellow-400 to-lime-500 rounded-3xl opacity-20 blur-xl"
+            >
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:w-1/2 space-y-8">
+          <div
+            class="flex items-center justify-center lg:justify-start gap-3 mb-6"
+          >
+            <Image src={GrowplexLogo} alt="Growplex" class="w-8 h-8" />
+            <span class="badge badge-secondary badge-lg"
+              >AI Business Assistant</span
+            >
+          </div>
+
+          <h1
+            class="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-yellow-600 to-lime-600 bg-clip-text text-transparent"
+          >
+            Thalia
+          </h1>
+          <p class="text-2xl lg:text-3xl font-semibold text-base-content">
+            Increase Sales by 40% with AI That Never Sleeps
+          </p>
+          <p class="text-lg text-base-content/80 max-w-2xl">
+            Transform your website visitors into paying customers with an AI
+            assistant that knows your business better than a rookie operator.
+            <span class="font-semibold text-primary"
+              >No visitor left unanswered - in any language, 24/7.</span
+            >
+          </p>
+
+          <div
+            class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start"
+          >
+            <a href="#demo" class="btn btn-primary btn-lg text-lg px-8">
+              Get Free Demo
+            </a>
+            <a href="#how-it-works" class="btn btn-outline btn-lg text-lg px-8">
+              See How It Works
+            </a>
+          </div>
+
+          <!-- Trust indicators -->
+          <div
+            class="flex items-center justify-center lg:justify-start gap-6 text-sm text-base-content/70"
+          >
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-success rounded-full"></div>
+              <span>300% ROI in first month</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-success rounded-full"></div>
+              <span>24/7 Support</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Target Audience Pain Points -->
+    <section id="problems" class="space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-4xl font-bold">
+          The Hidden Cost of Unanswered Questions
+        </h2>
+        <p class="text-xl text-base-content/80 max-w-3xl mx-auto">
+          Every unanswered visitor question is money walking out the door.
+          Here's what's really costing your business:
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="card bg-base-100 shadow-xl border-l-4 border-error">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">📱</div>
+            <h3 class="card-title justify-center text-error">70%</h3>
+            <p class="text-lg font-semibold">Visitors leave without answers</p>
+            <p class="text-base-content/70">They never come back</p>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl border-l-4 border-warning">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">⏰</div>
+            <h3 class="card-title justify-center text-warning">30-50%</h3>
+            <p class="text-lg font-semibold">Potential customers lost</p>
+            <p class="text-base-content/70">Operators can't keep up</p>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl border-l-4 border-info">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">🗂</div>
+            <h3 class="card-title justify-center text-info">15 min</h3>
+            <p class="text-lg font-semibold">Time to find answers</p>
+            <p class="text-base-content/70">Information scattered everywhere</p>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl border-l-4 border-error">
+          <div class="card-body text-center">
+            <div class="text-4xl mb-4">💸</div>
+            <h3 class="card-title justify-center text-error">₽500-5000</h3>
+            <p class="text-lg font-semibold">Lost per unanswered query</p>
+            <p class="text-base-content/70">Real money walking away</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-4xl font-bold">How Thalia Transforms Your Business</h2>
+        <p class="text-xl text-base-content/80 max-w-3xl mx-auto">
+          Like the ancient wisdom of classical architecture, Thalia brings
+          timeless efficiency to modern business challenges
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-8">
+          <div
+            class="card bg-gradient-to-br from-yellow-50 to-lime-50 border-2 border-yellow-200"
+          >
+            <div class="card-body">
+              <div class="flex items-start gap-4">
+                <div class="text-3xl">🧠</div>
+                <div>
+                  <h3 class="card-title text-xl">
+                    Knows Your Business Better Than a Rookie
+                  </h3>
+                  <ul class="space-y-2 mt-4">
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span>Instantly finds answers in ALL your documents</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        >Remembers every detail from website, Google Drive, CRM</span
+                      >
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        ><strong>Result:</strong> Response time drops from 15 minutes
+                        to 30 seconds</span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="card bg-gradient-to-br from-yellow-50 to-lime-50 border-2 border-yellow-200"
+          >
+            <div class="card-body">
+              <div class="flex items-start gap-4">
+                <div class="text-3xl">🤖</div>
+                <div>
+                  <h3 class="card-title text-xl">
+                    Works Like an Experienced Sales Manager
+                  </h3>
+                  <ul class="space-y-2 mt-4">
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span>Consults visitors personally</span>
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span>Automatically collects EVERY visitor's contact</span
+                      >
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        ><strong>Result:</strong> Conversion grows from 3% to 12%</span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="card bg-gradient-to-br from-yellow-50 to-lime-50 border-2 border-yellow-200"
+          >
+            <div class="card-body">
+              <div class="flex items-start gap-4">
+                <div class="text-3xl">🌍</div>
+                <div>
+                  <h3 class="card-title text-xl">
+                    Speaks ALL Languages of the World
+                  </h3>
+                  <ul class="space-y-2 mt-4">
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        >Ukrainians, Chinese, Arabs get consultation in their
+                        language</span
+                      >
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        >Your English site becomes accessible to 7 billion
+                        people</span
+                      >
+                    </li>
+                    <li class="flex items-center gap-2">
+                      <div class="w-2 h-2 bg-success rounded-full"></div>
+                      <span
+                        ><strong>Result:</strong> +25% international clients without
+                        extra costs</span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="relative">
+          <Image
+            src={PantheonImg}
+            alt="Classical Architecture - Symbol of Timeless Efficiency"
+            class="rounded-2xl shadow-2xl w-full h-auto"
+          />
+          <!-- Overlay with stats -->
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-2xl flex items-end"
+          >
+            <div class="p-8 text-white">
+              <h3 class="text-2xl font-bold mb-4">Proven Results</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-yellow-400">300%</div>
+                  <div class="text-sm">ROI First Month</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-lime-400">40%</div>
+                  <div class="text-sm">Sales Growth</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-yellow-400">90%</div>
+                  <div class="text-sm">Faster Response</div>
+                </div>
+                <div class="text-center">
+                  <div class="text-3xl font-bold text-lime-400">24/7</div>
+                  <div class="text-sm">Always Working</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="space-y-12">
+      <div class="text-center space-y-4">
+        <h2 class="text-4xl font-bold">
+          Transparent Pricing - Pay Only for What You Use
+        </h2>
+        <p class="text-xl text-base-content/80 max-w-3xl mx-auto">
+          Our Gas-based currency ensures you never overpay. Scale with your
+          business growth.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body text-center">
+            <h3 class="card-title justify-center text-2xl">Starter</h3>
+            <div class="text-4xl font-bold text-primary my-4">Pay per use</div>
+            <ul class="space-y-3 text-left">
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Agent responses in chat</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Knowledge base indexing</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Basic lead generation</span>
+              </li>
+            </ul>
+            <div class="card-actions justify-center mt-6">
+              <a href="#demo" class="btn btn-outline btn-wide">Get Started</a>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="card bg-gradient-to-br from-yellow-50 to-lime-50 border-2 border-primary shadow-xl relative"
+        >
+          <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+            <span class="badge badge-primary badge-lg">Most Popular</span>
+          </div>
+          <div class="card-body text-center">
+            <h3 class="card-title justify-center text-2xl">Professional</h3>
+            <div class="text-4xl font-bold text-primary my-4">Custom</div>
+            <ul class="space-y-3 text-left">
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Everything in Starter</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Advanced lead generation</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Multi-language support</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Priority support</span>
+              </li>
+            </ul>
+            <div class="card-actions justify-center mt-6">
+              <a href="#demo" class="btn btn-primary btn-wide">Get Demo</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-xl">
+          <div class="card-body text-center">
+            <h3 class="card-title justify-center text-2xl">Enterprise</h3>
+            <div class="text-4xl font-bold text-primary my-4">Custom</div>
+            <ul class="space-y-3 text-left">
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Everything in Professional</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Custom integrations</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>Dedicated account manager</span>
+              </li>
+              <li class="flex items-center gap-2">
+                <div class="w-2 h-2 bg-success rounded-full"></div>
+                <span>SLA guarantees</span>
+              </li>
+            </ul>
+            <div class="card-actions justify-center mt-6">
+              <a href="#demo" class="btn btn-outline btn-wide">Contact Sales</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section
+      id="demo"
+      class="hero bg-gradient-to-r from-yellow-100 to-lime-100 rounded-3xl"
+    >
+      <div class="hero-content text-center">
+        <div class="max-w-4xl space-y-8">
+          <div class="space-y-4">
+            <h2 class="text-4xl lg:text-5xl font-bold text-base-content">
+              Get 50+ New Leads in Your First Week
+            </h2>
+            <p class="text-xl text-base-content/80">
+              <span class="font-semibold text-primary"
+                >Or we'll refund your money.</span
+              >
+              No risk, guaranteed results.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card bg-base-100 shadow-lg">
+              <div class="card-body text-center">
+                <div class="text-3xl mb-2">✅</div>
+                <h3 class="font-semibold">Free Setup</h3>
+                <p class="text-sm text-base-content/70">Worth ₽15,000</p>
+              </div>
+            </div>
+            <div class="card bg-base-100 shadow-lg">
+              <div class="card-body text-center">
+                <div class="text-3xl mb-2">✅</div>
+                <h3 class="font-semibold">7-Day Trial</h3>
+                <p class="text-sm text-base-content/70">No payment required</p>
+              </div>
+            </div>
+            <div class="card bg-base-100 shadow-lg">
+              <div class="card-body text-center">
+                <div class="text-3xl mb-2">✅</div>
+                <h3 class="font-semibold">Personal Demo</h3>
+                <p class="text-sm text-base-content/70">On your data</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="alert alert-warning max-w-2xl mx-auto">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">⏰</span>
+                <span>Limited: Only 20 connections per month</span>
+              </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <a
+                href="https://t.me/growplex"
+                class="btn btn-primary btn-lg text-lg px-8"
+              >
+                Order Demo & Get ROI Calculation
+              </a>
+              <a
+                href="tel:+1234567890"
+                class="btn btn-outline btn-lg text-lg px-8"
+              >
+                Call Now
+              </a>
+            </div>
+
+            <p class="text-sm text-base-content/70">
+              First leads arrive within 2 hours • Setup in 1 business day • Pays
+              for itself in first week
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Content>
+
+<style>
+  /* Custom gradient for primary-secondary */
+  .bg-gradient-primary-secondary {
+    background: linear-gradient(135deg, hsl(var(--p)) 0%, hsl(var(--s)) 100%);
+  }
+
+  /* Antique architecture decorative elements */
+  .antique-pattern {
+    background-image: radial-gradient(
+        circle at 25% 25%,
+        rgba(251, 191, 36, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 75% 75%,
+        rgba(132, 204, 22, 0.1) 0%,
+        transparent 50%
+      );
+  }
+</style>

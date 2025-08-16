@@ -5,6 +5,8 @@ import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
+import type { ConsulterMemory } from "../memories";
+
 const log = logger.child({
   module: "chat:ai:tools:create-ticket",
 });
@@ -38,9 +40,9 @@ export const createTicket = tool(
   async (input: any, config: RunnableConfig) => {
     const args = CreateTicketSchema.parse(input);
     const { title, description, priority, payload } = args;
-    const { roomId } = config.configurable || {};
+    const { memory } = config.configurable as { memory: ConsulterMemory };
 
-    const room = await pb.collection("rooms").getOne(roomId);
+    const room = memory.room;
 
     if (room.status === "preview") {
       return {
@@ -51,7 +53,7 @@ export const createTicket = tool(
 
     const msg = await pb
       .collection("messages")
-      .getFirstListItem(`room = "${roomId}" && role = "user"`, {
+      .getFirstListItem(`room = "${room.id}" && role = "user"`, {
         sort: "-created",
       });
 

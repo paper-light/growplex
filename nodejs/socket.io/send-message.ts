@@ -67,15 +67,8 @@ export async function sendMessage(
 
     try {
       const sub = await charger.validateRoom(room.id);
-      const { messages, usagePrice } = await runChatWorkflow(
-        room.id,
-        msg.content
-      );
-      await charger.chargePrice(sub.id, usagePrice);
-
-      for (const msg of messages) {
-        io.to(room.id).emit("new-message", { roomId: room.id, message: msg });
-      }
+      const { price } = await runChatWorkflow(room.id, msg.content);
+      await charger.chargePrice(sub.id, price);
     } catch (error: any) {
       if (error.message.includes(BILLING_ERRORS.NOT_ENOUGH_GAS)) {
         io.to(room.id).emit("limit-exceeded", {

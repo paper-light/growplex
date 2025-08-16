@@ -3,7 +3,10 @@ import jwt from "jsonwebtoken";
 import { AUTH_JWT_SECRET } from "astro:env/server";
 
 import { pb } from "@/shared/lib/pb";
-import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
+import {
+  RoomsTypeOptions,
+  type LeadsResponse,
+} from "@/shared/models/pocketbase-types";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -13,7 +16,7 @@ const CORS_HEADERS = {
 
 export async function POST({ request }: { request: Request }) {
   try {
-    let { chatId, roomId, username } = await request.json();
+    let { chatId, roomId, username, identity } = await request.json();
 
     if (!chatId)
       return new Response("Missing id", {
@@ -34,19 +37,6 @@ export async function POST({ request }: { request: Request }) {
         status: 400,
         headers: CORS_HEADERS,
       });
-
-    // try {
-    //   new URL(chat.domain);
-    //   new URL(origin);
-    // } catch {
-    //   return new Response("Invalid domain format", {
-    //     status: 400,
-    //     headers: CORS_HEADERS,
-    //   });
-    // }
-
-    // const originHost = new URL(origin).hostname;
-    // const monoHost = new URL(MONO_URL).hostname;
 
     if (chat.domain !== origin) {
       return new Response("Forbidden", {
@@ -69,19 +59,11 @@ export async function POST({ request }: { request: Request }) {
           });
         }
       } catch (err) {
-        const room = await pb.collection("rooms").create({
-          chat: chat.id,
-          status: "seeded",
-          type: RoomsTypeOptions.chatWidget,
-        });
+        const room = await initRoom(chat.id, identity);
         roomId = room.id;
       }
     } else {
-      const room = await pb.collection("rooms").create({
-        chat: chat.id,
-        status: "seeded",
-        type: RoomsTypeOptions.chatWidget,
-      });
+      const room = await initRoom(chat.id, identity);
       roomId = room.id;
     }
 
@@ -112,4 +94,21 @@ export async function OPTIONS() {
     status: 200,
     headers: CORS_HEADERS,
   });
+}
+
+async function initRoom(chatId: string, identity?: string) {
+  let lead: LeadsResponse | null = null;
+  const leads = await pb.collection("leads").getFullList({
+    filter: `id = "${identity}" || externalUser = "${identity}"`,
+  });
+
+  if (leads.length > 0) lead = leads[0];
+
+  const room = await pb.collection("rooms").create({
+    chat: chatId,
+    status: lead ? "auto" : "seeded",
+    type: RoomsTypeOptions.chatWidget,
+    lead: lead?.id,
+  });
+  return room;
 }

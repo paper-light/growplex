@@ -97,6 +97,8 @@ class SocketProvider {
     if (!this.histories.has(roomId)) return;
     this.socket?.emit("leave-room", { roomId });
     this.joinedRooms.delete(roomId);
+    this.histories.delete(roomId);
+    this.waitingAnswerRooms.delete(roomId);
   }
 
   leaveAllRooms() {

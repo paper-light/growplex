@@ -8,9 +8,9 @@
   import Button from "@/shared/ui/Button.svelte";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
-  import { roomCrud } from "@/chat/repositories/room-crud";
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import Chat from "@/chat/ui/widgets/Chat.svelte";
+  import { pb } from "@/shared/lib/pb";
 
   interface Props {
     class?: ClassValue;
@@ -42,10 +42,16 @@
     if (!chat || !agent) return;
 
     untrack(async () => {
-      if (room) {
-        socketProvider.leaveRoom(room.id);
-        await roomCrud.delete(room.id);
-      }
+      if (!room) return;
+      const msgs = await pb.collection("messages").getFullList({
+        filter: `room = "${room.id}"`,
+        sort: "created",
+      });
+      await Promise.all(
+        msgs.slice(1).map((msg) => pb.collection("messages").delete(msg.id))
+      );
+      socketProvider.leaveRoom(room.id);
+      socketProvider.joinRoom(room.id);
     });
   });
 

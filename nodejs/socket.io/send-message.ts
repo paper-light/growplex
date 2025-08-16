@@ -3,7 +3,7 @@ import { type Socket, type Server } from "socket.io";
 import { pb } from "@/shared/lib/pb";
 import { chunker } from "@/search/chunker";
 import { runChatWorkflow } from "@/chat/ai/consulter/workflows";
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { logger } from "@/shared/lib/logger";
 import { charger, BILLING_ERRORS } from "@/billing";
 
@@ -30,7 +30,7 @@ export async function sendMessage(
 
     let room = await pb.collection("rooms").getOne(roomId);
 
-    const msgs = await historyRepository.updateHistory([msg]);
+    const msgs = await pbHistoryRepository.updateHistory([msg]);
     log.debug({ msgs }, "updated history");
 
     io.to(room.id).emit("new-message", {

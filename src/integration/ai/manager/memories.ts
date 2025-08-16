@@ -9,7 +9,7 @@ import type {
   LeadsResponse,
 } from "@/shared/models/pocketbase-types";
 import { pb } from "@/shared/lib/pb";
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 
 export type IntegrationManagerMemory = {
@@ -44,7 +44,7 @@ export async function loadIntegrationManagerMemory(
   const sources: SourcesResponse[] = (integration.expand as any)?.sources || [];
 
   // HISTORY
-  const pbHistory: MessagesResponse[] = await historyRepository.getHistory(
+  const pbHistory: MessagesResponse[] = await pbHistoryRepository.getHistory(
     roomId,
     false
   );

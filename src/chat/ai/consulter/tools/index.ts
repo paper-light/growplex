@@ -3,7 +3,7 @@ import type { StructuredTool } from "@langchain/core/tools";
 import { MessagesRoleOptions } from "@/shared/models/pocketbase-types";
 
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import type { ToolMessage } from "@langchain/core/messages";
 import type { Usager } from "@/billing/usager";
 import type { Model, ModelUsage } from "@/billing/types";
@@ -47,7 +47,7 @@ export const callTool = async (
     visible: ["callSearchAgent", "callOperator"].includes(toolCall.name),
   };
   // PROMISE UPDATE
-  const pbMessages = await historyRepository.updateHistory([
+  const pbMessages = await pbHistoryRepository.updateHistory([
     {
       content: "<PROMISE>",
       role: MessagesRoleOptions.tool,
@@ -100,7 +100,7 @@ export const callTool = async (
     loading: false,
     needApproval: false,
   };
-  const updatedMsg = await historyRepository.replaceMessage(
+  const updatedMsg = await pbHistoryRepository.replaceMessage(
     pbMessages[0].id,
     msg
   );

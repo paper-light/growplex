@@ -29,7 +29,6 @@ export class HistoryRepository {
     const redisKey = `${REDIS_PREFIX}${roomId}`;
     log.debug({ roomId, redisKey }, "getHistory() start");
 
-    // 1) Try Redis cache
     try {
       const cachedMessages = await this.getCachedHistory(roomId);
       if (cachedMessages.length) {
@@ -41,22 +40,9 @@ export class HistoryRepository {
       throw error;
     }
 
-    // 2) Try DB
     try {
       const msgs = await this.seedCacheFromPB(roomId);
-      if (msgs.length > 0) return await this.trimHistory(msgs, onlyVisible);
-    } catch (error) {
-      log.error({ error }, "getHistory() error");
-      throw error;
-    }
-
-    // 3) Seed with firstMessage
-    try {
-      log.debug(
-        { roomId },
-        "no history found in PB and cache, seeding firstMessage"
-      );
-      return await this.seedHistory(roomId);
+      return await this.trimHistory(msgs, onlyVisible);
     } catch (error) {
       log.error({ error }, "getHistory() error");
       throw error;

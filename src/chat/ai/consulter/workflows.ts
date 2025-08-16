@@ -1,4 +1,4 @@
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 
 import { AIMessageChunk } from "@langchain/core/messages";
@@ -78,7 +78,7 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
         },
       },
     ]);
-    const assistantMessages = await historyRepository.updateHistory(
+    const assistantMessages = await pbHistoryRepository.updateHistory(
       newMessages
     );
     if (!callingTools) {

@@ -25,6 +25,7 @@ onRecordCreate((e) => {
       console.log("Created agent with id:", agent.id);
 
       e.record.set("agents", [agent.id]);
+      txApp.save(e.record);
     }
 
     if (chats.length === 0) {

@@ -1,6 +1,6 @@
 import { logger } from "@/shared/lib/logger";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { pb } from "@/shared/lib/pb";
 import type {
   ChatsResponse,
@@ -46,7 +46,7 @@ export async function loadConsulterMemory(
   const sources: SourcesResponse[] = (integration.expand as any)?.sources || [];
 
   // HISTORY
-  const pbHistory: MessagesResponse[] = await historyRepository.getHistory(
+  const pbHistory: MessagesResponse[] = await pbHistoryRepository.getHistory(
     roomId,
     false
   );

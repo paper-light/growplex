@@ -63,8 +63,12 @@ export class HistoryRepository {
     }
   }
 
-  async replaceMessage(msgId: string, msg: Partial<MessagesRecord>) {
+  async replaceMessage(
+    msgId: string,
+    msg: Partial<MessagesRecord>
+  ): Promise<MessagesResponse> {
     const roomId = msg.room;
+    let finalMsg: MessagesResponse;
     if (!roomId) {
       log.error({ msg }, "replaceMessage() error");
       throw new Error("roomId is required");
@@ -72,7 +76,7 @@ export class HistoryRepository {
 
     // 1) Update PocketBase
     try {
-      await pb.collection("messages").update(msgId, msg);
+      finalMsg = await pb.collection("messages").update(msgId, msg);
       log.debug({ msgId, roomId }, "updated message in PocketBase");
     } catch (error) {
       log.error(
@@ -111,7 +115,7 @@ export class HistoryRepository {
           { msgId, roomId },
           "message not found in cache, skipping cache update"
         );
-        return;
+        return finalMsg;
       }
 
       pipeline.del(redisKey);
@@ -123,11 +127,13 @@ export class HistoryRepository {
 
       await pipeline.exec();
       log.debug({ msgId, roomId }, "updated message in Redis cache");
+      return finalMsg;
     } catch (error) {
       log.error(
         { error, msgId, roomId },
         "failed to update message in Redis cache"
       );
+      return finalMsg;
     }
   }
 

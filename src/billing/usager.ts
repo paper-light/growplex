@@ -18,6 +18,10 @@ export class Usager {
     };
   }
 
+  get() {
+    return this.usage;
+  }
+
   updateMetadataUsage(usage: any, model: Model) {
     const cache = usage.input_token_details.cache_read;
     const input = usage.input_tokens - cache;
@@ -34,6 +38,14 @@ export class Usager {
     this.usage[model].cache += cache;
     this.usage[model].in += totalInput - cache;
     this.usage[model].out += totalOutput;
+  }
+
+  updateByUsage(usage: Record<Model, ModelUsage>) {
+    for (const model of Object.keys(this.usage) as Model[]) {
+      this.usage[model].cache += usage[model].cache;
+      this.usage[model].in += usage[model].in;
+      this.usage[model].out += usage[model].out;
+    }
   }
 
   calculatePrice() {

@@ -13,13 +13,10 @@ import { summaryPromptTemplate } from "../summary/prompts";
 export async function runSearchWorkflow(
   roomId: string,
   callConfig: z.infer<typeof EnhancerReturnSchema>,
-  usager: Usager | null = null,
   memory: SearchMemory | null = null
 ) {
-  if (!usager) usager = new Usager();
+  const usager = new Usager();
   if (!memory) memory = await loadSearchMemory(roomId);
-
-  // create promise message
 
   // DETERMINISTIC LOGIC
   const query = `
@@ -44,12 +41,10 @@ Entities: ${callConfig.entities.join(", ")}
       searchResult,
     });
 
-  // update promise message with result
-
   usager.updateMetadataUsage(
     (result.raw as any).usage_metadata,
     SEARCH_SUMMARY_MODEL
   );
 
-  return { result: result.parsed, price: usager.calculatePrice() };
+  return { result: result.parsed, usage: usager.get() };
 }

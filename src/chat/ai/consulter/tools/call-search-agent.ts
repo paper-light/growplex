@@ -2,9 +2,9 @@ import type { RunnableConfig } from "@langchain/core/runnables";
 import { tool } from "@langchain/core/tools";
 
 import { logger } from "@/shared/lib/logger";
-import type { Usager } from "@/billing/usager";
 import { EnhancerReturnSchema } from "@/search/ai/enhancer/schemas";
 import { runSearchWorkflow } from "@/search/ai/searcher/workflows";
+import type { Model, ModelUsage } from "@/billing/types";
 
 import type { ConsulterMemory } from "../memories";
 import type { WorkflowConfig } from "../workflows";
@@ -14,18 +14,26 @@ const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
 export const callSearchChain = tool(
   async (input: any, config: RunnableConfig) => {
     const args = EnhancerReturnSchema.parse(input);
-    const { memory, usager, workflowConfig } = config.configurable as {
-      memory: ConsulterMemory;
-      usager: Usager;
-      workflowConfig: WorkflowConfig;
-    };
+    const { memory, updateWorkflowConfig, updateUsager } =
+      config.configurable as {
+        memory: ConsulterMemory;
+        updateWorkflowConfig: (config: Partial<WorkflowConfig>) => void;
+        updateUsager: (usage: Record<Model, ModelUsage>) => void;
+      };
 
-    const { result } = await runSearchWorkflow(
+    const { result, usage } = await runSearchWorkflow(
       memory.room.id,
       args,
-      usager,
       memory
     );
+
+    updateWorkflowConfig({
+      knowledge: JSON.stringify(
+        `Relevant to query: ${result.success ? "✅" : "❌"}
+      Search results: ${result.content}`
+      ),
+      withSearch: false,
+    });
 
     result.content = result.success
       ? JSON.stringify({
@@ -37,11 +45,7 @@ export const callSearchChain = tool(
           success: false,
         });
 
-    workflowConfig.knowledge = JSON.stringify(
-      `Relevant to query: ${result.success ? "✅" : "❌"}
-      Search results: ${result.content}`
-    );
-    workflowConfig.withSearch = false;
+    updateUsager(usage);
 
     return result;
   },

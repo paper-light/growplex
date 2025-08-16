@@ -9,6 +9,9 @@ import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 import { historyRepository } from "@/messages/history/repository";
 import type { ToolMessage } from "@langchain/core/messages";
 import type { Usager } from "@/billing/usager";
+import type { Model, ModelUsage } from "@/billing/types";
+import { sender } from "@/messages/sender/sender";
+import { logger } from "@/shared/lib/logger";
 
 import type { ConsulterMemory } from "../memories";
 import type { WorkflowConfig } from "../workflows";
@@ -17,6 +20,8 @@ import { callSearchChain } from "./call-search-agent";
 import { updateLead } from "./update-lead";
 import { createTicket } from "./create-ticket";
 import { callOperator } from "./call-operator";
+
+const log = logger.child({ module: "chat:ai:consulter:tools" });
 
 export const chatTools: StructuredTool[] = [
   updateLead,
@@ -71,19 +76,29 @@ export const callTool = async (
       event: toolCall.name as MessagesEventOptions,
     },
   ]);
+  sender.sendMessage(memory.room.id, pbMessages[0], "new-message");
 
+  log.debug({ usager }, "usager before tool call");
   // CALL TOOL
   const toolMessage: ToolMessage = await chatToolsMap[toolCall.name].invoke(
     toolCall,
     {
       configurable: {
         memory,
-        usager,
-        workflowConfig,
+        updateWorkflowConfig: (config: Partial<WorkflowConfig>) => {
+          Object.assign(workflowConfig, config);
+        },
+        updateUsager: (usage: Record<Model, ModelUsage>) => {
+          usager.updateByUsage(usage);
+        },
       },
     }
   );
+  workflowConfig.messages.push(toolMessage);
 
+  log.debug({ usager }, "usager after tool call");
+
+  // UPDATE PROMISE MESSAGE
   const updatedMessages = historyLangchainAdapter.buildPBHistory([
     {
       msg: toolMessage,
@@ -101,5 +116,9 @@ export const callTool = async (
     loading: false,
     needApproval: false,
   };
-  await historyRepository.replaceMessage(pbMessages[0].id, msg);
+  const updatedMsg = await historyRepository.replaceMessage(
+    pbMessages[0].id,
+    msg
+  );
+  sender.sendMessage(memory.room.id, updatedMsg, "update-message");
 };

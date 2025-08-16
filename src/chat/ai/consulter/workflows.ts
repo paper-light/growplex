@@ -22,25 +22,21 @@ export type WorkflowConfig = {
   withTools: boolean;
   withSearch: boolean;
   knowledge: string;
+  messages: any[];
 };
 
-export const runChatWorkflow = async (
-  roomId: string,
-  query: string,
-  usager: Usager | null = null
-) => {
-  if (!usager) usager = new Usager();
+export const runChatWorkflow = async (roomId: string, query: string) => {
+  const usager = new Usager();
+  const memory = await loadConsulterMemory(roomId);
 
   log.info({ roomId, query }, "runChatWorkflow started");
-
-  const memory = await loadConsulterMemory(roomId);
-  log.debug({ roomId }, "Loaded context data");
   const workflowConfig: WorkflowConfig = {
     query,
     roomId,
     knowledge: "",
     withTools: true,
     withSearch: true,
+    messages: [],
   };
 
   let result: AIMessageChunk | null = null;
@@ -56,15 +52,17 @@ export const runChatWorkflow = async (
     // CHAT CHAIN
     log.info({ iteration: i, roomId }, "Invoking chatChain");
 
+    log.debug({ workflowConfig }, "before consulter call");
     result = await consulterPromptTemplate
       .pipe(baseConsulterModel.bindTools(tools))
       .invoke({
-        history: memory.history,
+        history: [...memory.history, ...workflowConfig.messages],
         knowledge: workflowConfig.knowledge,
         system: memory.agent.system,
         query,
         lead: JSON.stringify(memory.lead, null, 2),
       });
+    workflowConfig.messages.push(result!);
 
     callingTools = !!result!.tool_calls?.length;
     usager.update(result!, CHAT_CONSULTER_MODEL);

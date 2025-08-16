@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { ClassValue } from "svelte/elements";
-  import { MessagesEventOptions } from "@/shared/models/pocketbase-types";
+
   interface Props {
     class?: ClassValue;
-    type: MessagesEventOptions;
+    type: string;
   }
 
   let { type, class: className }: Props = $props();
@@ -17,9 +17,9 @@
     "text-sm text-base-content/70",
   ]}
 >
-  {#if type === MessagesEventOptions.callOperator}
+  {#if type === "callOperator"}
     <p>Waiting for operator...</p>
-  {:else if type === MessagesEventOptions.operatorConnected}
+  {:else if type === "operatorConnected"}
     <p>Operator connected</p>
   {/if}
 </div>

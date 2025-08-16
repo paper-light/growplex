@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { AUTH_JWT_SECRET } from "astro:env/server";
 
 import { pb } from "@/shared/lib/pb";
+import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
@@ -71,6 +72,7 @@ export async function POST({ request }: { request: Request }) {
         const room = await pb.collection("rooms").create({
           chat: chat.id,
           status: "seeded",
+          type: RoomsTypeOptions.chatWidget,
         });
         roomId = room.id;
       }
@@ -78,6 +80,7 @@ export async function POST({ request }: { request: Request }) {
       const room = await pb.collection("rooms").create({
         chat: chat.id,
         status: "seeded",
+        type: RoomsTypeOptions.chatWidget,
       });
       roomId = room.id;
     }

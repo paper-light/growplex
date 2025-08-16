@@ -6,6 +6,7 @@ import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
 import type { ConsulterMemory } from "../memories";
+import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const log = logger.child({
   module: "chat:ai:tools:create-ticket",
@@ -44,10 +45,10 @@ export const createTicket = tool(
 
     const room = memory.room;
 
-    if (room.status === "preview") {
+    if (room.type !== RoomsTypeOptions.chatWidget) {
       return {
         success: true,
-        content: `Ticket is not created in preview mode`,
+        content: `Cannot create ticket in ${room.type} mode, only in chatWidget mode`,
       };
     }
 

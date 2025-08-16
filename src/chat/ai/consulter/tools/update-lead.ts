@@ -6,6 +6,7 @@ import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
 import type { ConsulterMemory } from "../memories";
+import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const log = logger.child({
   module: "chat-service:agent:tools",
@@ -51,10 +52,10 @@ export const updateLead = tool(
     const room = memory.room;
     const lead = memory.lead;
 
-    if (room.status === "preview") {
+    if (room.type !== RoomsTypeOptions.chatWidget) {
       return {
         success: true,
-        content: `Lead is not updated in preview mode`,
+        content: `Cannot update lead in ${room.type} mode, only in chatWidget mode`,
       };
     }
 

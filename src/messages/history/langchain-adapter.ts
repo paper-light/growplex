@@ -5,7 +5,6 @@ import {
   type AgentsResponse,
   type MessagesResponse,
   type MessagesRecord,
-  MessagesEventOptions,
 } from "@/shared/models/pocketbase-types";
 import {
   SystemMessage,
@@ -126,7 +125,7 @@ class HistoryLangchainAdapter {
           msg.content.toString(),
           "gpt-4"
         ),
-        event: msg.name as MessagesEventOptions,
+        event: msg.name,
         metadata: {
           ...(opts.metadata || {}),
           ...(msg.response_metadata || {}),

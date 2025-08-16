@@ -3,7 +3,6 @@ import { io, type Socket } from "socket.io-client";
 
 import {
   MessagesRoleOptions,
-  MessagesEventOptions,
   type MessagesRecord,
   type MessagesResponse,
 } from "@/shared/models/pocketbase-types";
@@ -113,7 +112,8 @@ class SocketProvider {
     roomId: string,
     metadata: Record<string, any> = {},
     role: MessagesRoleOptions = MessagesRoleOptions.user,
-    event: MessagesEventOptions = MessagesEventOptions.message
+    event = "message",
+    mode: "consulter" | "integration-manager" = "consulter"
   ) {
     if (!this.socket || !this.online) {
       console.warn("socket not connected, skipping sendMessage");
@@ -140,12 +140,15 @@ class SocketProvider {
     this.socket.emit("send-message", {
       roomId,
       msgStr: JSON.stringify(newMsg),
+      mode,
     });
 
-    this.waitingAnswerRooms.add(roomId);
-    setTimeout(() => {
-      this.waitingAnswerRooms.delete(roomId);
-    }, 60 * 1000); // 1 minute
+    if (role === "user") {
+      this.waitingAnswerRooms.add(roomId);
+      setTimeout(() => {
+        this.waitingAnswerRooms.delete(roomId);
+      }, 60 * 1000); // 1 minute
+    }
   }
 
   disconnect() {

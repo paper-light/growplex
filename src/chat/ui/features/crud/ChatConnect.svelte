@@ -5,6 +5,7 @@
   import Button from "@/shared/ui/Button.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
+  import { formatConnectionScript } from "@/chat/lib/format-connection-script";
 
   interface Props {
     class?: ClassValue;
@@ -20,26 +21,8 @@
   const chatId = $derived(currentChat?.id);
 
   const instruction = $derived.by(() => {
-    return `
-<script src="https://growplex.dev/scripts/chat-widget.js"><\/script>
-
-<script>
-  (function () {
-    if (!window.ChatWidget) return;
-
-    const theme = document.documentElement.getAttribute("data-theme");
-    const open = localStorage.getItem("chat-widget-open") === "true";
-
-    if (!window.ChatWidget) return;
-    window.ChatWidget.init({
-      chatId: ${chatId},
-      domain: "https://growplex.dev",
-      listenTheme: false, // if true, will listen html data-theme attribute
-      // initTheme: theme || ${theme} || "light", // you can set any default theme here
-      initOpen: open,
-    });
-  })();
-<\/script>`.trim();
+    if (!chatId) return "";
+    return formatConnectionScript(chatId, theme || "light");
   });
 
   async function onclose() {

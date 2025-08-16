@@ -3,9 +3,13 @@ import type { Socket } from "socket.io";
 import { pb } from "@/shared/lib/pb";
 import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 
-export async function guardRoomAccess(socket: Socket, room: RoomsResponse) {
+export async function guardRoomAccess(
+  socket: Socket,
+  room: RoomsResponse,
+  mode: "consulter" | "integration-manager" = "consulter"
+) {
   if (socket.data.guest) {
-    if (socket.data.guest.roomId === room.id) return;
+    if (socket.data.guest.roomId === room.id && mode === "consulter") return;
   } else if (socket.data.user) {
     const user = socket.data.user;
     const ownedOrgId = user.expand!.orgMembers!.find(

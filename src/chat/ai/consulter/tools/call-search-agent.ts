@@ -11,7 +11,7 @@ import type { WorkflowConfig } from "../workflows";
 
 const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
 
-export const callSearchChain = tool(
+export const callSearchAgent = tool(
   async (input: any, config: RunnableConfig) => {
     const args = EnhancerReturnSchema.parse(input);
     const { memory, updateWorkflowConfig, updateUsager } =

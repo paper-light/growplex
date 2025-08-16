@@ -16,7 +16,7 @@ const log = logger.child({
 export async function sendMessage(
   socket: Socket,
   io: Server,
-  { roomId, msgStr }: SendMessageDTO
+  { roomId, msgStr, mode = "consulter" }: SendMessageDTO
 ) {
   try {
     // ALWAYS ON SEND MESSAGE
@@ -29,7 +29,6 @@ export async function sendMessage(
     };
 
     let room = await pb.collection("rooms").getOne(roomId);
-    const oldHistory = await historyRepository.getHistory(roomId, true);
 
     const msgs = await historyRepository.updateHistory([msg]);
     log.debug({ msgs }, "updated history");
@@ -40,16 +39,11 @@ export async function sendMessage(
     });
 
     if (socket.data.guest) {
-      // GUEST: SEEDED -> AUTO
       if (room.status === "seeded") {
-        const lead = await pb.collection("leads").create({
-          type: "warm",
-        });
         room = await pb.collection("rooms").update(
           room.id,
           {
             status: "auto",
-            lead: lead.id,
           },
           {
             expand: "chat",
@@ -57,17 +51,23 @@ export async function sendMessage(
         );
       }
     } else if (socket.data.user) {
-      // Only in preview mode operator can talk to assistant
       log.debug({ room }, "room status");
-      if (room.status !== "preview") return;
+      if (room.type === "chatWidget") return;
     }
 
-    // In "operator" assistant never answers
     if (room.status === "operator") return;
 
     try {
       const sub = await charger.validateRoom(room.id);
-      const { price } = await runChatWorkflow(room.id, msg.content);
+
+      let price = 0;
+      if (mode === "consulter") {
+        const { price: p } = await runChatWorkflow(room.id, msg.content);
+        price = p;
+      } else if (mode === "integration-manager") {
+        // const { price } = await runIntegrationManagerWorkflow(room.id, msg.content);
+      }
+
       await charger.chargePrice(sub.id, price);
     } catch (error: any) {
       if (error.message.includes(BILLING_ERRORS.NOT_ENOUGH_GAS)) {

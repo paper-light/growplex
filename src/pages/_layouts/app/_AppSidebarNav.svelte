@@ -10,6 +10,7 @@
     Ticket,
     Rocket,
     Blocks,
+    FileUser,
   } from "@lucide/svelte";
 
   interface Props {
@@ -107,14 +108,20 @@
     <li class="w-full">
       <details class="group block w-full" open={true}>
         <summary class={classHeader(["Chat Rooms"])}>
-          <span>Messanger</span>
+          <span>CRM</span>
         </summary>
 
         <ul class="mt-2 space-y-1">
           <li class="w-full">
-            <a href={`/app/chat`} class={linkClass("Chat Rooms")}>
+            <a href={`/app/leads`} class={linkClass("Leads")}>
+              <FileUser size={18} />
+              Leads
+            </a>
+          </li>
+          <li class="w-full">
+            <a href={`/app/chat`} class={linkClass("Messanger")}>
               <MessageSquare size={18} />
-              Chat Rooms
+              Messanger
             </a>
           </li>
           <li class="w-full">

@@ -5,6 +5,7 @@ import type { RunnableConfig } from "@langchain/core/runnables";
 import { pb } from "@/shared/lib/pb";
 
 import type { ConsulterMemory } from "../memories";
+import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const CallOperatorSchema = z.object({
   description: z
@@ -29,10 +30,10 @@ export const callOperator = tool(
 
     const room = memory.room;
 
-    if (room.status === "preview") {
+    if (room.type !== RoomsTypeOptions.chatWidget) {
       return {
         success: true,
-        content: `Cannot call operator in preview mode`,
+        content: `Cannot call operator in ${room.type} mode, only in chatWidget mode`,
       };
     }
 

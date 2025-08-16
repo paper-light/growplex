@@ -8,7 +8,6 @@
   import Button from "@/shared/ui/Button.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import {
-    MessagesEventOptions,
     MessagesRoleOptions,
     type MessagesResponse,
   } from "@/shared/models/pocketbase-types";
@@ -74,7 +73,7 @@
           return false;
         })()}
 
-        {#if msg.event && msg.event !== MessagesEventOptions.message}
+        {#if msg.event && msg.event !== "message"}
           <EventMessage type={msg.event} />
         {:else}
           <ChatMessage {msg} {avatar} {incoming} />

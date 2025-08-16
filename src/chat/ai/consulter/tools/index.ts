@@ -1,9 +1,6 @@
 import type { StructuredTool } from "@langchain/core/tools";
 
-import {
-  MessagesEventOptions,
-  MessagesRoleOptions,
-} from "@/shared/models/pocketbase-types";
+import { MessagesRoleOptions } from "@/shared/models/pocketbase-types";
 
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 import { historyRepository } from "@/messages/history/repository";
@@ -16,7 +13,7 @@ import { logger } from "@/shared/lib/logger";
 import type { ConsulterMemory } from "../memories";
 import type { WorkflowConfig } from "../workflows";
 
-import { callSearchChain } from "./call-search-agent";
+import { callSearchAgent } from "./call-search-agent";
 import { updateLead } from "./update-lead";
 import { createTicket } from "./create-ticket";
 import { callOperator } from "./call-operator";
@@ -27,7 +24,7 @@ export const chatTools: StructuredTool[] = [
   updateLead,
   createTicket,
   callOperator,
-  callSearchChain,
+  callSearchAgent,
 ];
 
 export const chatToolsMap = chatTools.reduce((acc, tool) => {
@@ -42,28 +39,13 @@ export const callTool = async (
   usager: Usager
 ) => {
   // PRE VISIBILITY
-  let visible = false;
   const metadata = {
     toolCallId: toolCall.id,
     loading: true,
     needApproval: false,
+    toolName: toolCall.name,
+    visible: ["callSearchAgent", "callOperator"].includes(toolCall.name),
   };
-  switch (toolCall.name) {
-    case "callSearchAgent":
-      visible = true;
-      break;
-    case "callOperator":
-      visible = true;
-      break;
-    case "createTicket":
-      visible = false;
-      break;
-    case "updateLead":
-      visible = false;
-      break;
-    default:
-      break;
-  }
   // PROMISE UPDATE
   const pbMessages = await historyRepository.updateHistory([
     {
@@ -72,11 +54,13 @@ export const callTool = async (
       metadata,
       room: memory.room.id,
       sentBy: memory.agent.name,
-      visible,
-      event: toolCall.name as MessagesEventOptions,
+      visible: metadata.visible,
+      event: toolCall.name,
     },
   ]);
-  sender.sendMessage(memory.room.id, pbMessages[0], "new-message");
+
+  if (metadata.visible)
+    sender.sendMessage(memory.room.id, pbMessages[0], "new-message");
 
   log.debug({ usager }, "usager before tool call");
   // CALL TOOL
@@ -105,7 +89,7 @@ export const callTool = async (
       opts: {
         roomId: memory.room.id,
         agent: memory.agent,
-        visible,
+        visible: metadata.visible,
       },
     },
   ]);
@@ -120,5 +104,6 @@ export const callTool = async (
     pbMessages[0].id,
     msg
   );
-  sender.sendMessage(memory.room.id, updatedMsg, "update-message");
+  if (metadata.visible)
+    sender.sendMessage(memory.room.id, updatedMsg, "update-message");
 };

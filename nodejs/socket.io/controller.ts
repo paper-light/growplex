@@ -39,7 +39,7 @@ export function attachSocketIO(httpServer: any) {
         expand: "chat",
       });
 
-      await guardRoomAccess(socket, room);
+      await guardRoomAccess(socket, room, dto.mode);
 
       const msg = JSON.parse(dto.msgStr);
 

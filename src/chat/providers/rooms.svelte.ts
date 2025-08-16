@@ -24,7 +24,7 @@ class RoomsProvider {
     const map: SvelteMap<string, RoomsResponse> = new SvelteMap();
     if (this.rooms.length == 0) return map;
 
-    const previewRooms = this.rooms.filter((r) => r.status === "preview");
+    const previewRooms = this.rooms.filter((r) => r.type === "chatPreview");
 
     previewRooms.forEach((r) => {
       map.set(r.chat, r);

@@ -32,7 +32,8 @@ onRecordCreate((e) => {
     const col = txApp.findCollectionByNameOrId("rooms");
     const room = new Record(col);
     room.set("chat", e.record.id);
-    room.set("status", "preview");
+    room.set("type", "chatPreview");
+    room.set("status", "auto");
     txApp.save(room);
   });
 }, "chats");

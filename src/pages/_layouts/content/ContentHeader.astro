@@ -72,39 +72,39 @@ const { active } = Astro.props;
           ></path>
         </svg>
       </label>
-
-      <input type="checkbox" id="modal_burger" class="modal-toggle" />
-      <div class="modal modal-end" role="dialog">
-        <div class="relative modal-box min-w-sm">
-          <label
-            for="modal_burger"
-            class="btn btn-sm btn-circle absolute right-4 top-2 text-lg font-bold"
-            >✕</label
-          >
-          <h3 class="text-xl font-bold text-center">Navigation</h3>
-          <nav class="*:text-lg space-y-2 mb-2">
-            <a
-              href="/"
-              class={`block link link-hover ${active === "Home" && "font-bold"}`}
-              >Home</a
-            >
-            <a
-              href="/products/forge"
-              class={`block link link-hover ${active === "Forge" && "font-bold"}`}
-              >Forge</a
-            >
-            <a
-              href="/products"
-              class={`block link link-hover ${active === "Products" && "font-bold"}`}
-              >Products</a
-            >
-          </nav>
-
-          <h4 class="text-xl font-bold text-center">Controls</h4>
-          <ThemeController client:load size="size-12" />
-        </div>
-        <label class="modal-backdrop" for="modal_burger">Close</label>
-      </div>
     </div>
   </div>
 </header>
+
+<input type="checkbox" id="modal_burger" class="modal-toggle" />
+<div class="modal modal-end z-100" role="dialog">
+  <div class="relative modal-box min-w-sm">
+    <label
+      for="modal_burger"
+      class="btn btn-sm btn-circle absolute right-4 top-2 text-lg font-bold"
+      >✕</label
+    >
+    <h3 class="text-xl font-bold text-center">Navigation</h3>
+    <nav class="*:text-lg space-y-2 mb-2">
+      <a
+        href="/"
+        class={`block link link-hover ${active === "Home" && "font-bold"}`}
+        >Home</a
+      >
+      <a
+        href="/products/forge"
+        class={`block link link-hover ${active === "Forge" && "font-bold"}`}
+        >Forge</a
+      >
+      <a
+        href="/products"
+        class={`block link link-hover ${active === "Products" && "font-bold"}`}
+        >Products</a
+      >
+    </nav>
+
+    <h4 class="text-xl font-bold text-center">Controls</h4>
+    <ThemeController client:load size="size-12" />
+  </div>
+  <label class="modal-backdrop" for="modal_burger">Close</label>
+</div>

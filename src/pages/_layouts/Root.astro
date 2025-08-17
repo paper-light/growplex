@@ -28,6 +28,16 @@ const {
 
     <title>{title}</title>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#059669" />
+
     <ClientRouter />
     <Posthog />
 
@@ -35,7 +45,14 @@ const {
 
     <slot name="head" />
   </head>
-  <body>
+  <body class="font-sans antialiased leading-relaxed">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md focus:bg-base-200 focus:text-base-content"
+    >
+      Skip to content
+    </a>
+
     <PortalHost client:only />
 
     <div transition:persist="chat-widget-root" id="chat-widget-root"></div>

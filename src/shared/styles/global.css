@@ -11,13 +11,38 @@
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
-  --color-primary: var(--color-lime-700);
-  --color-secondary: var(--color-yellow-600);
+  --color-primary: var(--color-emerald-600);
+  --color-secondary: var(--color-amber-600);
+  --color-accent: var(--color-sky-600);
+  --color-neutral: var(--color-neutral-700);
+  --color-info: var(--color-sky-600);
+  --color-success: var(--color-emerald-600);
+  --color-warning: var(--color-amber-600);
+  --color-error: var(--color-rose-600);
 }
 
 @plugin "daisyui/theme" {
   name: "dark";
   default: true;
-  --color-primary: var(--color-lime-600);
-  --color-secondary: var(--color-yellow-600);
+  --color-primary: var(--color-emerald-500);
+  --color-secondary: var(--color-amber-500);
+  --color-accent: var(--color-sky-500);
+  --color-neutral: var(--color-neutral-800);
+  --color-info: var(--color-sky-500);
+  --color-success: var(--color-emerald-500);
+  --color-warning: var(--color-amber-500);
+  --color-error: var(--color-rose-500);
+}
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+@layer base {
+  html { @apply scroll-smooth; }
+  body { @apply bg-base-100 text-base-content; }
+  h1 { @apply tracking-tight; }
+  h2 { @apply tracking-tight; }
+  h3 { @apply tracking-tight; }
+  ::selection { @apply bg-primary/20; }
 }

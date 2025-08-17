@@ -8,32 +8,32 @@ const { active } = Astro.props;
 
 <header
   class="w-full backdrop-blur-md bg-base-100/70 border-b border-base-300 sticky top-0 z-10"
+  role="banner"
 >
   <div
-    class="max-w-screen-xl flex justify-between items-center px-4 py-2 mx-auto"
+    class="max-w-screen-xl flex justify-between items-center px-4 py-3 mx-auto"
   >
     <a
       href="/"
-      class="inline-flex text-xl font-bold relative items-center gap-1"
+      class="inline-flex text-xl font-bold relative items-center gap-2"
+      aria-label="Growplex Home"
     >
-      <Growplex class="size-10" />
-
+      <Growplex class="size-9" />
       <span>Growplex</span>
-      <span class="absolute top-1 -right-18 text-xs hidden">by Gold Swan</span>
     </a>
 
     <!-- Desktop -->
-    <nav class="gap-5 hidden md:flex">
-      <a href="/" class={`link link-hover ${active === "Home" && "font-bold"}`}
+    <nav class="gap-6 hidden md:flex" aria-label="Primary Navigation">
+      <a href="/" class={`link link-hover ${active === "Home" && "font-semibold underline underline-offset-8"}`}
         >Home</a
       >
       <a
         href="/products/forge"
-        class={`link link-hover ${active === "Forge" && "font-bold"}`}>Forge</a
+        class={`link link-hover ${active === "Forge" && "font-semibold underline underline-offset-8"}`}>Forge</a
       >
       <a
         href="/products"
-        class={`link link-hover ${["Products", "Pantheon", "Hestia", "Athena", "Aletheia", "Calliope", "Iynx", "Thalia"].includes(active) && "font-bold"}`}
+        class={`link link-hover ${["Products", "Pantheon", "Hestia", "Athena", "Aletheia", "Calliope", "Iynx", "Thalia"].includes(active) && "font-semibold underline underline-offset-8"}`}
         >Products</a
       >
     </nav>
@@ -48,7 +48,9 @@ const { active } = Astro.props;
         <slot name="CTA">
           <button
             onclick="CTAMainModal.showModal()"
-            class="btn btn-primary rounded-xl px-4 hidden md:inline-block"
+            class="btn btn-primary btn-sm md:btn-md rounded-xl px-4"
+            aria-haspopup="dialog"
+            aria-controls="CTAMainModal"
           >
             Contact Us
           </button>
@@ -58,7 +60,7 @@ const { active } = Astro.props;
 
     <!-- Mobile -->
     <div class="md:hidden">
-      <label for="modal_burger" class="btn btn-circle swap swap-rotate">
+      <label for="modal_burger" class="btn btn-ghost btn-circle swap swap-rotate" aria-label="Open Menu">
         <!-- hamburger icon -->
         <svg
           class="swap-off fill-current"
@@ -66,6 +68,8 @@ const { active } = Astro.props;
           width="32"
           height="32"
           viewBox="0 0 512 512"
+          role="img"
+          aria-hidden="true"
         >
           <path
             d="M64,384H448V341.33H64Zm0-106.67H448V234.67H64ZM64,128v42.67H448V128Z"
@@ -77,28 +81,29 @@ const { active } = Astro.props;
 </header>
 
 <input type="checkbox" id="modal_burger" class="modal-toggle" />
-<div class="modal modal-end z-100" role="dialog">
+<div class="modal modal-end z-100" role="dialog" aria-modal="true" aria-labelledby="mobileNavTitle">
   <div class="relative modal-box min-w-sm">
     <label
       for="modal_burger"
       class="btn btn-sm btn-circle absolute right-4 top-2 text-lg font-bold"
+      aria-label="Close Menu"
       >✕</label
     >
-    <h3 class="text-xl font-bold text-center">Navigation</h3>
-    <nav class="*:text-lg space-y-2 mb-2">
+    <h3 id="mobileNavTitle" class="text-xl font-bold text-center">Navigation</h3>
+    <nav class="*:text-lg space-y-2 mb-2" aria-label="Mobile Navigation">
       <a
         href="/"
-        class={`block link link-hover ${active === "Home" && "font-bold"}`}
+        class={`block link link-hover ${active === "Home" && "font-semibold"}`}
         >Home</a
       >
       <a
         href="/products/forge"
-        class={`block link link-hover ${active === "Forge" && "font-bold"}`}
+        class={`block link link-hover ${active === "Forge" && "font-semibold"}`}
         >Forge</a
       >
       <a
         href="/products"
-        class={`block link link-hover ${active === "Products" && "font-bold"}`}
+        class={`block link link-hover ${active === "Products" && "font-semibold"}`}
         >Products</a
       >
     </nav>

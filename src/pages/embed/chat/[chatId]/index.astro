@@ -43,6 +43,7 @@ if (!chat.domain) throw new Error("Chat domain not configured");
     agents={agents}
     operators={[]}
     sender={{
+      id: lead.id,
       avatar,
       name: lead.name,
       role: "guest",

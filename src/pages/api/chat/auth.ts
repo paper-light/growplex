@@ -104,11 +104,19 @@ async function initRoom(chatId: string, identity?: string) {
 
   if (leads.length > 0) lead = leads[0];
 
+  if (!lead) {
+    lead = await pb.collection("leads").create({
+      name: `Guest-${nanoid(2)}`,
+      externalUser: identity,
+      type: "cold",
+    });
+  }
+
   const room = await pb.collection("rooms").create({
     chat: chatId,
     status: lead ? "auto" : "seeded",
     type: RoomsTypeOptions.chatWidget,
-    lead: lead?.id,
+    lead: lead!.id,
   });
   return room;
 }

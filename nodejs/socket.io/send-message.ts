@@ -49,6 +49,9 @@ export async function sendMessage(
             expand: "chat",
           }
         );
+        await pb.collection("leads").update(room.lead, {
+          type: "warm",
+        });
       }
     } else if (socket.data.user) {
       log.debug({ room }, "room status");

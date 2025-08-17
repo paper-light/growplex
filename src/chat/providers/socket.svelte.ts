@@ -7,7 +7,15 @@ import {
   type MessagesResponse,
 } from "@/shared/models/pocketbase-types";
 
+export type Sender = {
+  id: string;
+  avatar: string;
+  name: string;
+  role: "guest" | "operator";
+};
+
 class SocketProvider {
+  sender: Sender | null = null;
   socket: Socket | null = null;
 
   joinedRooms = $state(new SvelteSet<string>());
@@ -75,6 +83,10 @@ class SocketProvider {
     });
   }
 
+  attachSender(sender: Sender) {
+    this.sender = sender;
+  }
+
   joinRoom(roomId: string) {
     console.log("JOINING ROOM:", roomId);
     if (!this.socket || !this.online) {
@@ -97,7 +109,6 @@ class SocketProvider {
     if (!this.histories.has(roomId)) return;
     this.socket?.emit("leave-room", { roomId });
     this.joinedRooms.delete(roomId);
-    this.histories.delete(roomId);
     this.waitingAnswerRooms.delete(roomId);
   }
 
@@ -110,11 +121,10 @@ class SocketProvider {
 
   sendMessage(
     content: string,
-    username: string,
     roomId: string,
-    metadata: Record<string, any> = {},
     role: MessagesRoleOptions = MessagesRoleOptions.user,
     event = "message",
+    metadata: Record<string, any> = {},
     mode: "consulter" | "integration-manager" = "consulter"
   ) {
     if (!this.socket || !this.online) {
@@ -134,7 +144,7 @@ class SocketProvider {
       role,
       visible: true,
       room: roomId,
-      sentBy: username,
+      sentBy: this.sender?.id,
       metadata,
       event,
     };

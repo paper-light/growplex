@@ -99,7 +99,7 @@ class HistoryLangchainAdapter {
           `SELECTED TOOLS: \n\n${JSON.stringify(msg.tool_calls)}`,
         role: MessagesRoleOptions.assistant,
         room: opts.roomId,
-        sentBy: opts.agent?.name,
+        sentBy: opts.agent!.id,
         visible: opts.visible,
         contentTokensCount: chunker.countTokens(
           msg.content.toString(),
@@ -108,9 +108,6 @@ class HistoryLangchainAdapter {
         metadata: {
           ...(opts.metadata || {}),
           ...(msg.response_metadata || {}),
-          avatar: opts.agent?.avatar
-            ? pb.files.getURL(opts.agent, opts.agent.avatar)
-            : undefined,
           toolMessages: msg.tool_calls || undefined,
         },
       };
@@ -119,7 +116,7 @@ class HistoryLangchainAdapter {
         content: msg.content.toString(),
         role: MessagesRoleOptions.tool,
         room: opts.roomId,
-        sentBy: opts.agent?.name,
+        sentBy: opts.agent!.id,
         visible: opts.visible,
         contentTokensCount: chunker.countTokens(
           msg.content.toString(),

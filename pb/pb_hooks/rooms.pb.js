@@ -1,52 +1,63 @@
 /// <reference path="../pb_data/types.d.ts" />
 
-onRecordCreate((e) => {
-  e.next();
+// onRecordCreate((e) => {
+//   e.next();
 
-  $app.runInTransaction((txApp) => {
-    // INIT ROOM WITH MESSAGE
-    if (e.record.get("chat")) {
-      const chat = txApp.findRecordById("chats", e.record.get("chat"));
-      const integration = txApp.findRecordById(
-        "integrations",
-        chat.get("integration")
-      );
+//   $app.runInTransaction((txApp) => {
+//     // INIT ROOM WITH MESSAGE
+//     if (e.record.get("chat")) {
+//       const chat = txApp.findRecordById("chats", e.record.get("chat"));
+//       const integration = txApp.findRecordById(
+//         "integrations",
+//         chat.get("integration")
+//       );
+//       const agent = txApp.findRecordById(
+//         "agents",
+//         integration.get("agents")[0]
+//       );
 
-      console.log("Creating room before agent fetch");
-      const agent = txApp.findRecordById(
-        "agents",
-        integration.get("agents")[0]
-      );
+//       const col = txApp.findCollectionByNameOrId("messages");
+//       const msg = new Record(col);
+//       msg.set("room", e.record.id);
+//       msg.set("content", chat.get("firstMessage"));
+//       msg.set("role", "assistant");
+//       msg.set("event", "message");
+//       msg.set("visible", true);
 
-      console.log("Creating room before message init");
-      const col = txApp.findCollectionByNameOrId("messages");
-      const msg = new Record(col);
-      msg.set("room", e.record.id);
-      msg.set("content", chat.get("firstMessage"));
-      msg.set("role", "assistant");
-      msg.set("event", "message");
-      msg.set("visible", true);
+//       msg.set("sentBy", agent.get("name"));
+//       txApp.save(msg);
+//     }
+//   });
+// }, "rooms");
 
-      msg.set("sentBy", agent.get("name"));
-      txApp.save(msg);
-    }
-  });
-}, "rooms");
+// onRecordUpdate((e) => {
+//   $app.runInTransaction((txApp) => {
+//     // React on "cleaning" status
+//     if (e.record.get("status") === "cleaning") {
+//       const messages = txApp.findRecordsByFilter(
+//         "messages",
+//         `room = "${e.record.id}"`,
+//         "created"
+//       );
 
-onRecordUpdate((e) => {
-  $app.runInTransaction((txApp) => {
-    if (e.record.get("type") !== "chatWidget" || e.record.get("lead")) return;
-    const col = txApp.findCollectionByNameOrId("leads");
-    const lead = new Record(col);
-    lead.set("type", "warm");
-    txApp.save(lead);
+//       messages.forEach((msg) => {
+//         txApp.delete(msg);
+//       });
+//     }
 
-    e.record.set("lead", lead.id);
-    txApp.save(e.record);
-  });
+//     // Create lead if not exists during update
+//     if (e.record.get("type") !== "chatWidget" || e.record.get("lead")) return;
+//     const col = txApp.findCollectionByNameOrId("leads");
+//     const lead = new Record(col);
+//     lead.set("type", "warm");
+//     txApp.save(lead);
 
-  e.next();
-}, "rooms");
+//     e.record.set("lead", lead.id);
+//     txApp.save(e.record);
+//   });
+
+//   e.next();
+// }, "rooms");
 
 onRecordDelete((e) => {
   $app.runInTransaction((txApp) => {

@@ -6,12 +6,9 @@
   import {
     MessagesRoleOptions,
     type RoomsResponse,
-    type UsersResponse,
   } from "@/shared/models/pocketbase-types";
-  import { pb } from "@/shared/lib/pb";
 
   type Props = {
-    user: UsersResponse | { name: string; avatar?: string };
     room: RoomsResponse | { id: string };
     role?: "operator" | "user";
     inputText?: string;
@@ -21,7 +18,6 @@
   };
 
   let {
-    user,
     room,
     inputEl,
     role = "user",
@@ -35,11 +31,7 @@
 
     socketProvider.sendMessage(
       inputText,
-      user.name,
       room.id,
-      {
-        avatar: user?.avatar ? pb.files.getURL(user, user.avatar) : "",
-      },
       role === "operator"
         ? MessagesRoleOptions.operator
         : MessagesRoleOptions.user

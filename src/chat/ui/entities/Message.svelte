@@ -5,17 +5,17 @@
   import type { ClassValue } from "svelte/elements";
 
   import type { MessagesResponse } from "@/shared/models/pocketbase-types";
-
+  import type { Sender } from "@/chat/providers/socket.svelte";
+  import Man from "@/shared/assets/Man.jpg";
   interface Props {
     class?: ClassValue;
     incoming: boolean;
     msg: MessagesResponse;
-    avatar: string;
   }
 
-  const { msg, avatar, incoming, class: className = "" }: Props = $props();
+  const { msg, incoming, class: className = "" }: Props = $props();
 
-  const finalAvatar = (msg.metadata as any)?.avatar || avatar;
+  const sender: Sender | null = (msg.metadata as any)?.sender;
 
   // TIME
   const utcTs = DateTime.fromFormat(msg.created, "yyyy-MM-dd HH:mm:ss.SSS'Z'", {
@@ -37,14 +37,14 @@
       <div class="size-10 rounded-full overflow-hidden">
         <img
           alt={msg.role}
-          src={finalAvatar}
+          src={sender?.avatar || Man.src}
           class="w-full h-full object-cover"
         />
       </div>
     </div>
 
     <div class="chat-header flex items-center space-x-2">
-      <span class="text-sm font-semibold">{msg.sentBy}</span>
+      <span class="text-sm font-semibold">{sender?.name || sender?.id}</span>
       {#if formattedTime}
         <time datetime={msg.created} class="text-xs opacity-50">
           {formattedTime}

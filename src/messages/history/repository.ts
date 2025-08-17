@@ -1,298 +1,298 @@
-import { redisClient } from "@/shared/lib/redis";
-import { logger } from "@/shared/lib/logger";
-import {
-  type ChatsResponse,
-  type IntegrationsResponse,
-  type MessagesResponse,
-  type AgentsResponse,
-  type MessagesRecord,
-  MessagesRoleOptions,
-} from "@/shared/models/pocketbase-types";
-import { pb } from "@/shared/lib/pb";
-import { chunker } from "@/search/chunker";
-import { CHAT_CONFIG } from "@/chat/config";
+// import { redisClient } from "@/shared/lib/redis";
+// import { logger } from "@/shared/lib/logger";
+// import {
+//   type ChatsResponse,
+//   type IntegrationsResponse,
+//   type MessagesResponse,
+//   type AgentsResponse,
+//   type MessagesRecord,
+//   MessagesRoleOptions,
+// } from "@/shared/models/pocketbase-types";
+// import { pb } from "@/shared/lib/pb";
+// import { chunker } from "@/search/chunker";
+// import { CHAT_CONFIG } from "@/chat/config";
 
-const HISTORY_TOKENS = CHAT_CONFIG.MAX_HISTORY_TOKENS;
-const MAX_MSG_TOKENS = CHAT_CONFIG.MAX_MSG_TOKENS;
-const REDIS_PREFIX = "messages:history:";
+// const HISTORY_TOKENS = CHAT_CONFIG.MAX_HISTORY_TOKENS;
+// const MAX_MSG_TOKENS = CHAT_CONFIG.MAX_MSG_TOKENS;
+// const REDIS_PREFIX = "messages:history:";
 
-const log = logger.child({ module: "messages:history:repository" });
+// const log = logger.child({ module: "messages:history:repository" });
 
-export class HistoryRepository {
-  private lengthProximation = Math.ceil((HISTORY_TOKENS / MAX_MSG_TOKENS) * 2);
+// export class HistoryRepository {
+//   private lengthProximation = Math.ceil((HISTORY_TOKENS / MAX_MSG_TOKENS) * 2);
 
-  // Public API
-  async getHistory(
-    roomId: string,
-    onlyVisible: boolean
-  ): Promise<MessagesResponse[]> {
-    const redisKey = `${REDIS_PREFIX}${roomId}`;
-    log.debug({ roomId, redisKey }, "getHistory() start");
+//   // Public API
+//   async getHistory(
+//     roomId: string,
+//     onlyVisible: boolean
+//   ): Promise<MessagesResponse[]> {
+//     const redisKey = `${REDIS_PREFIX}${roomId}`;
+//     log.debug({ roomId, redisKey }, "getHistory() start");
 
-    try {
-      const cachedMessages = await this.getCachedHistory(roomId);
-      if (cachedMessages.length) {
-        log.debug({ roomId, count: cachedMessages.length }, "cache hit");
-        return await this.trimHistory(cachedMessages, onlyVisible);
-      }
-    } catch (error) {
-      log.error({ error }, "getHistory() error");
-      throw error;
-    }
+//     try {
+//       const cachedMessages = await this.getCachedHistory(roomId);
+//       if (cachedMessages.length) {
+//         log.debug({ roomId, count: cachedMessages.length }, "cache hit");
+//         return await this.trimHistory(cachedMessages, onlyVisible);
+//       }
+//     } catch (error) {
+//       log.error({ error }, "getHistory() error");
+//       throw error;
+//     }
 
-    try {
-      const msgs = await this.seedCacheFromPB(roomId);
-      return await this.trimHistory(msgs, onlyVisible);
-    } catch (error) {
-      log.error({ error }, "getHistory() error");
-      throw error;
-    }
-  }
+//     try {
+//       const msgs = await this.seedCacheFromPB(roomId);
+//       return await this.trimHistory(msgs, onlyVisible);
+//     } catch (error) {
+//       log.error({ error }, "getHistory() error");
+//       throw error;
+//     }
+//   }
 
-  async replaceMessage(
-    msgId: string,
-    msg: Partial<MessagesRecord>
-  ): Promise<MessagesResponse> {
-    const roomId = msg.room;
-    let finalMsg: MessagesResponse;
-    if (!roomId) {
-      log.error({ msg }, "replaceMessage() error");
-      throw new Error("roomId is required");
-    }
+//   async replaceMessage(
+//     msgId: string,
+//     msg: Partial<MessagesRecord>
+//   ): Promise<MessagesResponse> {
+//     const roomId = msg.room;
+//     let finalMsg: MessagesResponse;
+//     if (!roomId) {
+//       log.error({ msg }, "replaceMessage() error");
+//       throw new Error("roomId is required");
+//     }
 
-    // 1) Update PocketBase
-    try {
-      finalMsg = await pb.collection("messages").update(msgId, msg);
-      log.debug({ msgId, roomId }, "updated message in PocketBase");
-    } catch (error) {
-      log.error(
-        { error, msgId, roomId },
-        "failed to update message in PocketBase"
-      );
-      throw error;
-    }
+//     // 1) Update PocketBase
+//     try {
+//       finalMsg = await pb.collection("messages").update(msgId, msg);
+//       log.debug({ msgId, roomId }, "updated message in PocketBase");
+//     } catch (error) {
+//       log.error(
+//         { error, msgId, roomId },
+//         "failed to update message in PocketBase"
+//       );
+//       throw error;
+//     }
 
-    // 2) Update Redis cache
-    try {
-      const redisKey = this.getRedisKey(roomId);
-      const pipeline = redisClient.multi();
+//     // 2) Update Redis cache
+//     try {
+//       const redisKey = this.getRedisKey(roomId);
+//       const pipeline = redisClient.multi();
 
-      // Get all messages from cache
-      const rawCached = await redisClient.lrange(redisKey, 0, -1);
-      const cachedMessages = rawCached.map((r) =>
-        JSON.parse(r)
-      ) as MessagesResponse[];
+//       // Get all messages from cache
+//       const rawCached = await redisClient.lrange(redisKey, 0, -1);
+//       const cachedMessages = rawCached.map((r) =>
+//         JSON.parse(r)
+//       ) as MessagesResponse[];
 
-      // Find the message with matching ID and replace it
-      let found = false;
-      const updatedMessages = cachedMessages.map((cachedMsg) => {
-        if (cachedMsg.id === msgId) {
-          found = true;
-          return {
-            ...cachedMsg,
-            ...msg,
-          };
-        }
-        return cachedMsg;
-      });
+//       // Find the message with matching ID and replace it
+//       let found = false;
+//       const updatedMessages = cachedMessages.map((cachedMsg) => {
+//         if (cachedMsg.id === msgId) {
+//           found = true;
+//           return {
+//             ...cachedMsg,
+//             ...msg,
+//           };
+//         }
+//         return cachedMsg;
+//       });
 
-      if (!found) {
-        log.warn(
-          { msgId, roomId },
-          "message not found in cache, skipping cache update"
-        );
-        return finalMsg;
-      }
+//       if (!found) {
+//         log.warn(
+//           { msgId, roomId },
+//           "message not found in cache, skipping cache update"
+//         );
+//         return finalMsg;
+//       }
 
-      pipeline.del(redisKey);
-      updatedMessages.forEach((m) =>
-        pipeline.rpush(redisKey, JSON.stringify(m))
-      );
+//       pipeline.del(redisKey);
+//       updatedMessages.forEach((m) =>
+//         pipeline.rpush(redisKey, JSON.stringify(m))
+//       );
 
-      pipeline.ltrim(redisKey, -this.lengthProximation, -1);
+//       pipeline.ltrim(redisKey, -this.lengthProximation, -1);
 
-      await pipeline.exec();
-      log.debug({ msgId, roomId }, "updated message in Redis cache");
-      return finalMsg;
-    } catch (error) {
-      log.error(
-        { error, msgId, roomId },
-        "failed to update message in Redis cache"
-      );
-      return finalMsg;
-    }
-  }
+//       await pipeline.exec();
+//       log.debug({ msgId, roomId }, "updated message in Redis cache");
+//       return finalMsg;
+//     } catch (error) {
+//       log.error(
+//         { error, msgId, roomId },
+//         "failed to update message in Redis cache"
+//       );
+//       return finalMsg;
+//     }
+//   }
 
-  async updateHistory(messages: Partial<MessagesRecord>[]) {
-    const roomId = messages[0].room;
-    if (!roomId) {
-      log.error({ messages }, "updateHistory() error");
-      throw new Error("roomId is required");
-    }
+//   async updateHistory(messages: Partial<MessagesRecord>[]) {
+//     const roomId = messages[0].room;
+//     if (!roomId) {
+//       log.error({ messages }, "updateHistory() error");
+//       throw new Error("roomId is required");
+//     }
 
-    const createdMessages: MessagesResponse[] = [];
-    for (const msg of messages) {
-      const createdMsg = await pb.collection("messages").create(msg);
-      createdMessages.push(createdMsg);
-    }
+//     const createdMessages: MessagesResponse[] = [];
+//     for (const msg of messages) {
+//       const createdMsg = await pb.collection("messages").create(msg);
+//       createdMessages.push(createdMsg);
+//     }
 
-    log.debug({ roomId, count: messages.length }, "updated history");
+//     log.debug({ roomId, count: messages.length }, "updated history");
 
-    await this.updateCacheIncrementally(roomId, createdMessages);
+//     await this.updateCacheIncrementally(roomId, createdMessages);
 
-    return createdMessages;
-  }
+//     return createdMessages;
+//   }
 
-  private async updateCacheIncrementally(
-    roomId: string,
-    newMessages: MessagesResponse[]
-  ) {
-    const redisKey = this.getRedisKey(roomId);
+//   private async updateCacheIncrementally(
+//     roomId: string,
+//     newMessages: MessagesResponse[]
+//   ) {
+//     const redisKey = this.getRedisKey(roomId);
 
-    try {
-      const pipeline = redisClient.multi();
+//     try {
+//       const pipeline = redisClient.multi();
 
-      // Add new messages to the right side of the list
-      newMessages.forEach((m) => pipeline.rpush(redisKey, JSON.stringify(m)));
+//       // Add new messages to the right side of the list
+//       newMessages.forEach((m) => pipeline.rpush(redisKey, JSON.stringify(m)));
 
-      // Keep only the last N messages to prevent unbounded growth
-      pipeline.ltrim(redisKey, -this.lengthProximation, -1);
+//       // Keep only the last N messages to prevent unbounded growth
+//       pipeline.ltrim(redisKey, -this.lengthProximation, -1);
 
-      await pipeline.exec();
-      log.debug(
-        { roomId, count: newMessages.length },
-        "cache updated incrementally"
-      );
+//       await pipeline.exec();
+//       log.debug(
+//         { roomId, count: newMessages.length },
+//         "cache updated incrementally"
+//       );
 
-      // Return the updated cache
-      return await this.getCachedHistory(roomId);
-    } catch (error) {
-      log.error({ error, roomId }, "failed to update cache incrementally");
-      // Fallback to full rebuild
-      try {
-        return await this.seedCacheFromPB(roomId);
-      } catch (rebuildError) {
-        log.error(
-          { error: rebuildError, roomId },
-          "failed to rebuild cache, returning empty array"
-        );
-        return [];
-      }
-    }
-  }
+//       // Return the updated cache
+//       return await this.getCachedHistory(roomId);
+//     } catch (error) {
+//       log.error({ error, roomId }, "failed to update cache incrementally");
+//       // Fallback to full rebuild
+//       try {
+//         return await this.seedCacheFromPB(roomId);
+//       } catch (rebuildError) {
+//         log.error(
+//           { error: rebuildError, roomId },
+//           "failed to rebuild cache, returning empty array"
+//         );
+//         return [];
+//       }
+//     }
+//   }
 
-  private async trimHistory(history: MessagesResponse[], onlyVisible = true) {
-    let totalTokens = 0;
-    const trimmedHistory: MessagesResponse[] = [];
-    for (const msg of history) {
-      if (onlyVisible && !msg.visible) continue;
-      totalTokens += msg.contentTokensCount;
-      trimmedHistory.push(msg);
-      if (totalTokens > HISTORY_TOKENS) break;
-    }
-    return trimmedHistory;
-  }
+//   private async trimHistory(history: MessagesResponse[], onlyVisible = true) {
+//     let totalTokens = 0;
+//     const trimmedHistory: MessagesResponse[] = [];
+//     for (const msg of history) {
+//       if (onlyVisible && !msg.visible) continue;
+//       totalTokens += msg.contentTokensCount;
+//       trimmedHistory.push(msg);
+//       if (totalTokens > HISTORY_TOKENS) break;
+//     }
+//     return trimmedHistory;
+//   }
 
-  private async getCachedHistory(roomId: string) {
-    const redisKey = this.getRedisKey(roomId);
-    const rawCached = await redisClient.lrange(
-      redisKey,
-      -this.lengthProximation,
-      -1
-    );
-    return rawCached.map((r) => JSON.parse(r)) as MessagesResponse[];
-  }
+//   private async getCachedHistory(roomId: string) {
+//     const redisKey = this.getRedisKey(roomId);
+//     const rawCached = await redisClient.lrange(
+//       redisKey,
+//       -this.lengthProximation,
+//       -1
+//     );
+//     return rawCached.map((r) => JSON.parse(r)) as MessagesResponse[];
+//   }
 
-  private async seedHistory(roomId: string) {
-    log.warn(
-      { roomId },
-      "no history found in PB and cache, seeding firstMessage"
-    );
+//   private async seedHistory(roomId: string) {
+//     log.warn(
+//       { roomId },
+//       "no history found in PB and cache, seeding firstMessage"
+//     );
 
-    const room = await pb.collection("rooms").getOne(roomId, {
-      expand: "chat,chat.integration,chat.integration.agents",
-    });
+//     const room = await pb.collection("rooms").getOne(roomId, {
+//       expand: "chat,chat.integration,chat.integration.agents",
+//     });
 
-    const chat: ChatsResponse = (room.expand as any).chat as ChatsResponse;
-    const integration: IntegrationsResponse = (chat.expand as any)
-      .integration as IntegrationsResponse;
-    const agent: AgentsResponse = (integration.expand as any)
-      .agents?.[0] as AgentsResponse;
+//     const chat: ChatsResponse = (room.expand as any).chat as ChatsResponse;
+//     const integration: IntegrationsResponse = (chat.expand as any)
+//       .integration as IntegrationsResponse;
+//     const agent: AgentsResponse = (integration.expand as any)
+//       .agents?.[0] as AgentsResponse;
 
-    if (!chat || !integration || !agent) {
-      log.error(
-        {
-          roomId,
-          chatId: chat?.id,
-          integrationId: integration?.id,
-          agentId: agent?.id,
-        },
-        "no chat, integration or agent found"
-      );
-      throw new Error("no chat, integration or agent found");
-    }
+//     if (!chat || !integration || !agent) {
+//       log.error(
+//         {
+//           roomId,
+//           chatId: chat?.id,
+//           integrationId: integration?.id,
+//           agentId: agent?.id,
+//         },
+//         "no chat, integration or agent found"
+//       );
+//       throw new Error("no chat, integration or agent found");
+//     }
 
-    const welcome: Partial<MessagesRecord> = {
-      content: chat.firstMessage,
-      role: MessagesRoleOptions.assistant,
-      visible: true,
-      room: roomId,
-      sentBy: agent.name,
-      contentTokensCount: chunker.countTokens(chat.firstMessage, "gpt-4"),
-      metadata: agent?.avatar
-        ? {
-            avatar: pb.files.getURL(agent, agent.avatar),
-          }
-        : undefined,
-    };
+//     const welcome: Partial<MessagesRecord> = {
+//       content: chat.firstMessage,
+//       role: MessagesRoleOptions.assistant,
+//       visible: true,
+//       room: roomId,
+//       sentBy: agent.name,
+//       contentTokensCount: chunker.countTokens(chat.firstMessage, "gpt-4"),
+//       metadata: agent?.avatar
+//         ? {
+//             avatar: pb.files.getURL(agent, agent.avatar),
+//           }
+//         : undefined,
+//     };
 
-    await pb.collection("messages").create(welcome);
-    return await this.seedCacheFromPB(roomId);
-  }
+//     await pb.collection("messages").create(welcome);
+//     return await this.seedCacheFromPB(roomId);
+//   }
 
-  async seedCacheFromPB(roomId: string) {
-    const redisKey = this.getRedisKey(roomId);
-    let msgs: MessagesResponse[] = [];
+//   async seedCacheFromPB(roomId: string) {
+//     const redisKey = this.getRedisKey(roomId);
+//     let msgs: MessagesResponse[] = [];
 
-    // 1) Load from PB
-    try {
-      const res = await pb
-        .collection("messages")
-        .getList(1, this.lengthProximation, {
-          filter: `room = "${roomId}"`,
-          sort: "-created",
-        });
-      msgs = res.items.reverse();
-      log.info({ roomId, count: msgs.length }, "loaded from PB");
-    } catch (pbErr) {
-      log.error({ err: pbErr, roomId }, "PocketBase fetch error");
-      throw pbErr;
-    }
+//     // 1) Load from PB
+//     try {
+//       const res = await pb
+//         .collection("messages")
+//         .getList(1, this.lengthProximation, {
+//           filter: `room = "${roomId}"`,
+//           sort: "-created",
+//         });
+//       msgs = res.items.reverse();
+//       log.info({ roomId, count: msgs.length }, "loaded from PB");
+//     } catch (pbErr) {
+//       log.error({ err: pbErr, roomId }, "PocketBase fetch error");
+//       throw pbErr;
+//     }
 
-    // 2) Seed cache - replace entire cache with fresh data
-    if (msgs.length > 0) {
-      try {
-        const pipeline = redisClient.multi();
-        // Clear existing cache first
-        pipeline.del(redisKey);
-        // Add all messages
-        msgs.forEach((m) => pipeline.rpush(redisKey, JSON.stringify(m)));
-        await pipeline.exec();
-        log.debug(
-          { roomId, count: msgs.length },
-          "cache seeded from PB with all messages"
-        );
-      } catch (seedErr) {
-        log.error({ err: seedErr, roomId }, "failed to seed cache");
-      }
-    }
+//     // 2) Seed cache - replace entire cache with fresh data
+//     if (msgs.length > 0) {
+//       try {
+//         const pipeline = redisClient.multi();
+//         // Clear existing cache first
+//         pipeline.del(redisKey);
+//         // Add all messages
+//         msgs.forEach((m) => pipeline.rpush(redisKey, JSON.stringify(m)));
+//         await pipeline.exec();
+//         log.debug(
+//           { roomId, count: msgs.length },
+//           "cache seeded from PB with all messages"
+//         );
+//       } catch (seedErr) {
+//         log.error({ err: seedErr, roomId }, "failed to seed cache");
+//       }
+//     }
 
-    return msgs;
-  }
+//     return msgs;
+//   }
 
-  private getRedisKey(roomId: string) {
-    return `${REDIS_PREFIX}${roomId}`;
-  }
-}
+//   private getRedisKey(roomId: string) {
+//     return `${REDIS_PREFIX}${roomId}`;
+//   }
+// }
 
-export const historyRepository = new HistoryRepository();
+// export const historyRepository = new HistoryRepository();

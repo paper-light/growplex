@@ -7,6 +7,8 @@ import { ChatWidgetPayloadSchema } from "@/chat/lib/models";
 import Root from "@/pages/_layouts/Root.astro";
 
 import Embed from "./_index.svelte";
+import type { LeadsResponse } from "@/shared/models/pocketbase-types";
+import Man from "@/shared/assets/Man.jpg";
 
 const { chatId } = Astro.params;
 
@@ -20,24 +22,31 @@ const decoded = jwt.verify(token, AUTH_JWT_SECRET);
 console.log("GUEST JWT:", decoded);
 const { roomId, username } = ChatWidgetPayloadSchema.parse(decoded);
 
-const room = await pb.collection("rooms").getOne(roomId);
+const room = await pb.collection("rooms").getOne(roomId, { expand: "lead" });
+const lead: LeadsResponse = (room.expand as any).lead;
+const avatar = lead.avatar ? pb.files.getURL(lead, lead.avatar) : Man.src;
 
 const chat = await pb.collection("chats").getOne(chatId, {
   expand: "integration,integration.agents",
 });
-const agent = (chat.expand as any)?.integration.expand.agents[0];
+const agents = (chat.expand as any)?.integration.expand.agents;
 
-if (!chat || !agent) throw new Error("Integration not properly configured");
+if (!chat || !agents) throw new Error("Integration not properly configured");
 if (!chat.domain) throw new Error("Chat domain not configured");
 ---
 
 <Root title={chat.name || "Chat"} needCookies={false} loadTheme={false}>
   <Embed
     token={token}
-    user={{ name: username }}
     room={room}
     chat={chat}
-    agent={agent}
+    agents={agents}
+    operators={[]}
+    sender={{
+      avatar,
+      name: lead.name,
+      role: "guest",
+    }}
     client:only
     initTheme={initTheme}
     initOpen={initOpen}

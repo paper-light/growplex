@@ -3,25 +3,47 @@
   import { fade } from "svelte/transition";
   import { ChevronsDown } from "@lucide/svelte";
 
-  import Thalia from "@/shared/assets/Thalia.jpg";
-  import Man from "@/shared/assets/Man.jpg";
   import Button from "@/shared/ui/Button.svelte";
   import { scrollToBottom } from "@/shared/actions/scroll-bottom";
   import {
     MessagesRoleOptions,
     type MessagesResponse,
+    type AgentsResponse,
+    type UsersResponse,
   } from "@/shared/models/pocketbase-types";
+  import { type Sender } from "@/chat/providers/socket.svelte";
 
   import EventMessage from "@/chat/ui/entities/EventMessage.svelte";
   import ChatMessage from "@/chat/ui/entities/Message.svelte";
+  import Thalia from "@/shared/assets/Thalia.jpg";
+  import { pb } from "@/shared/lib/pb";
+  import Man from "@/shared/assets/Man.jpg";
 
   interface Props {
     class?: ClassValue;
     messages: MessagesResponse[];
-    mode: "operator" | "guest";
+    agents: AgentsResponse[];
+    operators: UsersResponse[];
+    sender: Sender;
   }
 
-  let { messages, class: className, mode }: Props = $props();
+  let {
+    messages,
+    class: className,
+    sender,
+    agents,
+    operators,
+  }: Props = $props();
+
+  const msgsWithSender = $derived.by(() => {
+    return messages.map((msg) => {
+      msg.metadata = {
+        ...(msg.metadata || {}),
+        sender: getSender(msg),
+      };
+      return msg;
+    });
+  });
 
   let messagesContainer: HTMLDivElement | null = $state(null);
   let showScrollButton = $state(false);
@@ -38,15 +60,36 @@
     showScrollButton = !atBottom;
   }
 
-  function getAvatar(msg: MessagesResponse) {
-    if ((msg.metadata as any)?.avatar) return (msg.metadata as any).avatar;
-
-    if (msg.role === MessagesRoleOptions.assistant) {
-      return Thalia.src;
-    } else if (msg.role === MessagesRoleOptions.operator) {
-      return Man.src;
+  function getSender(msg: MessagesResponse) {
+    if (
+      (msg.role === "user" && sender.role === "guest") ||
+      msg.role === sender.role
+    ) {
+      return sender;
+    } else if (msg.role === "assistant") {
+      const agent = agents.find((a) => a.id === msg.sentBy);
+      const avatar = agent?.avatar
+        ? pb.files.getURL(agent, agent.avatar)
+        : Thalia.src;
+      return {
+        id: agent?.id || "",
+        avatar,
+        name: agent?.name || agent?.id || "Agent",
+        role: "assistant",
+      };
+    } else if (msg.role === "operator") {
+      const operator = operators.find((o) => o.id === msg.sentBy);
+      const avatar = operator?.avatar
+        ? pb.files.getURL(operator, operator.avatar)
+        : Man.src;
+      return {
+        id: operator?.id || "",
+        avatar,
+        name: operator?.name || operator?.id || "Operator",
+        role: "operator",
+      };
     }
-    return Man.src;
+    return null;
   }
 </script>
 
@@ -64,19 +107,19 @@
         </p>
       </div>
     {:else}
-      {#each messages as msg (msg.id)}
-        {@const avatar = getAvatar(msg)}
+      {#each msgsWithSender as msg (msg.id)}
         {@const incoming = (() => {
-          if (mode === "operator")
+          if (sender.role === "operator")
             return msg.role !== MessagesRoleOptions.operator;
-          if (mode === "guest") return msg.role !== MessagesRoleOptions.user;
+          if (sender.role === "guest")
+            return msg.role !== MessagesRoleOptions.user;
           return false;
         })()}
 
         {#if msg.event && msg.event !== "message"}
           <EventMessage type={msg.event} />
         {:else}
-          <ChatMessage {msg} {avatar} {incoming} />
+          <ChatMessage {msg} {incoming} />
         {/if}
       {/each}
     {/if}

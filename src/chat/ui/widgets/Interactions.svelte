@@ -1,9 +1,5 @@
 <script lang="ts">
-  import type {
-    RoomsResponse,
-    UsersResponse,
-  } from "@/shared/models/pocketbase-types";
-  import { userProvider } from "@/user/user.svelte";
+  import type { RoomsResponse } from "@/shared/models/pocketbase-types";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
   import Button from "@/shared/ui/Button.svelte";
 
@@ -15,16 +11,14 @@
   const MAX_INPUT_CHARS = CHAT_CONFIG.MAX_MSG_TOKENS * 0.75 * 4.5;
   interface Props {
     parentRoom?: RoomsResponse;
-    parentUser?: UsersResponse | { name: string };
     mode?: "widget" | "admin";
   }
 
-  let { parentRoom, parentUser, mode = "widget" }: Props = $props();
+  let { parentRoom, mode = "widget" }: Props = $props();
 
   const room = $derived(
     mode === "admin" ? roomsProvider.selectedRoom : parentRoom!
   );
-  const user = $derived(mode === "admin" ? userProvider.user! : parentUser!);
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
   let inputText = $state("");
@@ -43,7 +37,6 @@
     <fieldset class="fieldset">
       <MessageField
         {disabled}
-        {user}
         {room}
         role={mode === "admin" ? "operator" : "user"}
         bind:inputEl
@@ -65,7 +58,6 @@
 
         <SendMessage
           {disabled}
-          {user}
           {room}
           {inputEl}
           role={mode === "admin" ? "operator" : "user"}

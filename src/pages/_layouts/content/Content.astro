@@ -6,6 +6,7 @@ import Header from "./ContentHeader.astro";
 import Footer from "./ContentFooter.astro";
 
 import ChatLoad from "@/pages/_global/ChatLoad.astro";
+import FormCTA from "@/shared/ui/components/FormCTA.svelte";
 
 const { title, favicon = Growplex.src } = Astro.props;
 ---
@@ -20,4 +21,17 @@ const { title, favicon = Growplex.src } = Astro.props;
   <Footer />
 
   <ChatLoad />
+
+  <div
+    class="fixed bottom-8 left-1/2 transform -translate-x-1/2 rounded-3xl md:hidden z-50"
+  >
+    <button
+      onclick="CTAMainModal.showModal()"
+      class="btn btn-lg rounded-3xl btn-primary px-16"
+    >
+      Contact
+    </button>
+  </div>
+
+  <FormCTA client:only />
 </Root>

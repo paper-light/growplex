@@ -7,6 +7,10 @@
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import type { RoomsResponse } from "@/shared/models/pocketbase-types";
   import { settingsProvider } from "@/user/settings.svelte";
+  import { userProvider } from "@/user/user.svelte";
+  import { pb } from "@/shared/lib/pb";
+  import Man from "@/shared/assets/Man.jpg";
+  import { agentsProvider } from "@/agent/providers/agents.svelte";
 
   const ROOM_STATUSES = [
     { value: "operator", label: "Operator", color: "success" },
@@ -14,6 +18,13 @@
     { value: "auto", label: "Auto", color: "info" },
     { value: "seeded", label: "Seeded", color: "secondary" },
   ];
+
+  const user = $derived(userProvider.user);
+  const avatar = $derived(
+    user?.avatar ? pb.files.getURL(user, user.avatar) : Man.src
+  );
+
+  const integrationAgents = $derived(agentsProvider.integrationAgents);
 
   const rooms = $derived(roomsProvider.integrationRooms);
   const selectedRoom = $derived(roomsProvider.selectedRoom);
@@ -241,7 +252,18 @@
     <main
       class="flex-1 overflow-hidden w-full md:w-4xl max-w-4xl mx-auto border-x border-base-300"
     >
-      <Messages class="px-12 py-4" {messages} mode="operator" />
+      <Messages
+        class="px-12 py-4"
+        {messages}
+        operators={user ? [user] : []}
+        agents={integrationAgents}
+        sender={{
+          id: user?.id || "",
+          avatar,
+          name: user?.name || "Guest",
+          role: "operator",
+        }}
+      />
     </main>
 
     <footer class="flex-shrink-0">

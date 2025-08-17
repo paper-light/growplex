@@ -5,6 +5,7 @@
   import { pb } from "@/shared/lib/pb";
   import type { ChatsResponse } from "@/shared/models/pocketbase-types";
   import { chatCrud } from "@/chat/repositories/chat-crud";
+  import Pantheon from "@/shared/assets/Pantheon.jpg";
 
   interface Props {
     chat: ChatsResponse | null;
@@ -42,6 +43,7 @@
     class={className}
     {avatar}
     size="md"
+    fallbackSrc={Pantheon.src}
     onChange={handleAvatarChange}
   />
 {/key}

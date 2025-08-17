@@ -1,7 +1,7 @@
 <script lang="ts">
   import { untrack } from "svelte";
 
-  import Thalia from "@/shared/assets/Thalia.jpg";
+  import Pantheon from "@/shared/assets/Pantheon.jpg";
   import {
     type ChatsResponse,
     type AgentsResponse,
@@ -10,25 +10,27 @@
   } from "@/shared/models/pocketbase-types";
   import { pb } from "@/shared/lib/pb";
 
-  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
   import { injectTheme } from "@/chat/utils/injectTheme";
 
   import Interactions from "./Interactions.svelte";
   import Messages from "./Messages.svelte";
   interface Props {
     chat: ChatsResponse;
-    agent: AgentsResponse;
+    agents: AgentsResponse[];
+    operators: UsersResponse[];
     root: HTMLElement;
     room: RoomsResponse;
-    user: UsersResponse | { name: string };
+    sender: Sender;
     theme?: string;
   }
 
-  const { root, chat, theme, room, user }: Props = $props();
+  const { root, chat, theme, room, agents, sender, operators }: Props =
+    $props();
 
   const chatAvatar = chat.avatar
     ? pb.files.getURL(chat, chat.avatar)
-    : Thalia.src;
+    : Pantheon.src;
 
   const messages = $derived.by(() => {
     if (!room) return [];
@@ -37,6 +39,10 @@
   });
 
   const online = $derived(socketProvider.online);
+
+  $effect(() => {
+    socketProvider.attachSender(sender);
+  });
 
   $effect(() => {
     if (!theme || !root) return;
@@ -89,7 +95,7 @@
   </header>
 
   <main class="flex-1 overflow-hidden">
-    <Messages {messages} mode="guest" />
+    <Messages {agents} {operators} {messages} {sender} />
   </main>
 
   <footer
@@ -99,6 +105,6 @@
       bg-base-100
     "
   >
-    <Interactions parentRoom={room} parentUser={user} mode="widget" />
+    <Interactions parentRoom={room} mode="widget" />
   </footer>
 </div>

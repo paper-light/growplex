@@ -1,7 +1,7 @@
 import { type Socket } from "socket.io";
 
 import type { RoomsResponse } from "@/shared/models/pocketbase-types";
-import { historyRepository } from "@/messages/history/repository";
+import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { logger } from "@/shared/lib/logger";
 
 const log = logger.child({
@@ -13,7 +13,7 @@ export async function joinRoom(socket: Socket, room: RoomsResponse) {
   socket.join(room.id);
 
   try {
-    const history = await historyRepository.getHistory(room.id, true);
+    const history = await pbHistoryRepository.getHistory(room.id, true);
     socket.emit("chat-history", { roomId: room.id, history });
   } catch (err) {
     log.error({ err }, "Error in getHistory");

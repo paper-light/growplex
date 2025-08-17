@@ -1,10 +1,14 @@
 import { pb } from "@/shared/lib/pb";
 import { CHAT_CONFIG } from "@/chat/config";
 import type {
+  AgentsResponse,
+  ChatsResponse,
+  IntegrationsResponse,
   MessagesRecord,
   MessagesResponse,
 } from "@/shared/models/pocketbase-types";
 import { logger } from "@/shared/lib/logger";
+import { chunker } from "@/search/chunker";
 
 const HISTORY_TOKENS = CHAT_CONFIG.MAX_HISTORY_TOKENS;
 const MAX_MSG_TOKENS = CHAT_CONFIG.MAX_MSG_TOKENS;
@@ -22,7 +26,28 @@ export class PBHistoryRepository {
         sort: "-created",
       });
 
-    return await this.trimHistory(res.items.reverse(), onlyVisible);
+    const history = await this.trimHistory(res.items.reverse(), onlyVisible);
+    if (history.length === 0) {
+      const room = await pb.collection("rooms").getOne(roomId, {
+        expand: "chat,chat.integration,chat.integration.agents",
+      });
+      const chat: ChatsResponse = (room.expand as any).chat;
+      const integration: IntegrationsResponse = (chat.expand as any)
+        .integration;
+      const agent: AgentsResponse = (integration.expand as any).agents[0];
+
+      const welcomeMessage = await pb.collection("messages").create({
+        room: roomId,
+        role: "assistant",
+        content: chat.firstMessage,
+        contentTokensCount: chunker.countTokens(chat.firstMessage, "gpt-4"),
+        sentBy: agent.id,
+        visible: true,
+      });
+      history.push(welcomeMessage);
+    }
+
+    return history;
   }
 
   async replaceMessage(msgId: string, msg: Partial<MessagesRecord>) {

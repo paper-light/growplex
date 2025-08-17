@@ -11,6 +11,7 @@
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import Chat from "@/chat/ui/widgets/Chat.svelte";
   import { pb } from "@/shared/lib/pb";
+  import Man from "@/shared/assets/Man.jpg";
 
   interface Props {
     class?: ClassValue;
@@ -24,8 +25,11 @@
     onClose,
   }: Props = $props();
 
+  const integrationAgents = $derived(agentsProvider.integrationAgents);
   const agent = $derived(agentsProvider.selectedIntegrationAgent || null);
   const chat = $derived(chatsProvider.selectedIntegrationChat || null);
+
+  const user = $derived(userProvider.user);
   const token = $derived(userProvider.token);
 
   const room = $derived(
@@ -36,8 +40,6 @@
 
   let containerEl: HTMLElement | null = $state(null);
 
-  const username = $derived(userProvider.user?.name || "");
-
   $effect(() => {
     if (!chat || !agent) return;
 
@@ -46,9 +48,10 @@
       const msgs = await pb.collection("messages").getFullList({
         filter: `room = "${room.id}"`,
         sort: "created",
+        fields: "id",
       });
       await Promise.all(
-        msgs.slice(1).map((msg) => pb.collection("messages").delete(msg.id))
+        msgs.map((msg) => pb.collection("messages").delete(msg.id))
       );
       socketProvider.leaveRoom(room.id);
       socketProvider.joinRoom(room.id);
@@ -98,14 +101,20 @@
             <h1 class="text-2xl font-bold text-nowrap text-error">{error}</h1>
           {/each}
         </div>
-      {:else if chat && agent && room && username && containerEl}
+      {:else if chat && agent && room && user && containerEl}
         <Chat
           {chat}
-          {agent}
+          operators={[user]}
+          agents={integrationAgents}
           theme={previewTheme}
           root={containerEl}
           {room}
-          user={{ name: username }}
+          sender={{
+            id: user.id,
+            avatar: Man.src,
+            name: user.name,
+            role: "guest",
+          }}
         />
       {:else}
         <div class="flex flex-col items-center justify-center h-full gap-5">

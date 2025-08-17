@@ -8,23 +8,33 @@
     RoomsResponse,
     UsersResponse,
   } from "@/shared/models/pocketbase-types.ts";
-  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
   import Button from "@/shared/ui/Button.svelte";
 
   import Chat from "@/chat/ui/widgets/Chat.svelte";
 
   interface Props {
-    user: UsersResponse | { name: string };
     room: RoomsResponse;
-    agent: AgentsResponse;
+    agents: AgentsResponse[];
     chat: ChatsResponse;
+    sender: Sender;
+    operators: UsersResponse[];
     token: string;
 
     initTheme?: string;
     initOpen?: boolean;
   }
 
-  let { chat, agent, user, room, token, initTheme, initOpen }: Props = $props();
+  let {
+    chat,
+    agents,
+    room,
+    token,
+    initTheme,
+    initOpen,
+    sender,
+    operators,
+  }: Props = $props();
 
   let open = $state(initOpen || false);
 
@@ -95,7 +105,7 @@
       <X size={22} />
     </Button>
 
-    <Chat {chat} {agent} {theme} {root} {room} {user} />
+    <Chat {chat} {agents} {operators} {theme} {root} {room} {sender} />
   </div>
 
   <!-- FAB Button -->

@@ -1,341 +1,211 @@
 ---
 import Content from "@/pages/_layouts/content/Content.astro";
 import PantheonSrc from "@/shared/assets/Pantheon.jpg";
-import ThaliaImg from "@/shared/assets/Thalia.jpg";
-import AletheiaImg from "@/shared/assets/Aletheia.jpg";
-import CalliopeImg from "@/shared/assets/Calliope.jpg";
-import AthenaImg from "@/shared/assets/Athena.jpg";
-import IynxImg from "@/shared/assets/Iynx.jpg";
-import HestiaImg from "@/shared/assets/Hestia.jpg";
 import Image from "astro/components/Image.astro";
 ---
 
 <Content title="Pantheon">
   <div class="max-w-6xl mx-auto px-4 pb-12 space-y-24">
-    <!-- Hero (image on the left for a fresh look) -->
-    <section class="hero bg-base-200 min-h-screen">
-      <div
-        class="hero-content flex-col-reverse lg:flex-row-reverse items-center text-center lg:text-left"
-      >
-        <div class="lg:w-1/2 space-y-6">
-          <span class="badge badge-primary">Platform Hub</span>
-          <h1 class="text-5xl font-bold">Pantheon</h1>
-          <p class="py-4 text-lg">
-            The ultimate linking module that connects all Growplex products into
-            one seamless experience. We bring the best AI-native marketing
-            toolkit on the market, optimized for every funnel stage.
-          </p>
-          <button
-            onclick="CTAMainModal.showModal()"
-            class="btn btn-primary btn-lg"
-          >
-            Get Started
-          </button>
-        </div>
+    <!-- Block 1 — Hero -->
+    <section class="hero bg-base-200 min-h-[70vh] rounded-2xl">
+      <div class="hero-content flex-col lg:flex-row-reverse gap-10">
         <div class="lg:w-1/2">
           <Image
             src={PantheonSrc}
             alt="Pantheon Illustration"
-            class="rounded-lg shadow-2xl mx-auto w-3/4 sm:w-2/3 md:w-1/2 lg:w-full max-w-full h-auto"
+            class="rounded-xl shadow-2xl w-full h-auto object-cover"
           />
         </div>
-      </div>
-    </section>
-
-    <!-- Features -->
-    <section class="space-y-8">
-      <h2 class="text-3xl font-bold text-center">Platform Capabilities</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Unified Dashboard -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">Unified Dashboard</h3>
-            <p>
-              Single command center for all your AI marketing tools. Monitor
-              performance, manage campaigns, and optimize across all modules
-              from one interface.
-            </p>
-          </div>
-        </div>
-        <!-- Seamless Integration -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">Seamless Integration</h3>
-            <p>
-              Connect Thalia, Aletheia, Calliope, Athena, Iynx, and Hestia into
-              a cohesive workflow that adapts to your customer journey.
-            </p>
-          </div>
-        </div>
-        <!-- AI-Native Experience -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">AI-Native Experience</h3>
-            <p>
-              Built from the ground up for AI-powered marketing. Every
-              interaction, every decision, every optimization is enhanced by
-              intelligent automation.
-            </p>
-          </div>
-        </div>
-        <!-- Funnel Optimization -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">Funnel Optimization</h3>
-            <p>
-              Automatically route leads through the optimal path using data from
-              all connected modules. Maximize conversion at every stage.
-            </p>
-          </div>
-        </div>
-        <!-- Cross-Module Analytics -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">Cross-Module Analytics</h3>
-            <p>
-              Comprehensive insights that span your entire marketing ecosystem.
-              Understand how each module contributes to your overall success.
-            </p>
-          </div>
-        </div>
-        <!-- Custom Workflows -->
-        <div
-          class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
-        >
-          <div class="card-body">
-            <h3 class="card-title">Custom Workflows</h3>
-            <p>
-              Design your perfect marketing automation. Connect modules in ways
-              that match your unique business processes and customer journey.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Connected Products -->
-    <section class="space-y-8">
-      <h2 class="text-3xl font-bold text-center">Connected Products</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Thalia -->
-        <a
-          href="/products/thalia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-secondary/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={ThaliaImg}
-              alt="Thalia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-secondary mb-2">Chat Agent</span>
-            <h3 class="card-title">Thalia</h3>
-            <p class="text-base-content/80">
-              Conversational AI agent for effortless lead warming and
-              qualification.
-            </p>
-          </div>
-        </a>
-        <!-- Aletheia -->
-        <a
-          href="/products/aletheia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-info/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={AletheiaImg}
-              alt="Aletheia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-info mb-2">Market Monitor</span>
-            <h3 class="card-title">Aletheia</h3>
-            <p class="text-base-content/80">
-              Real-time monitoring and insight generation from news, social
-              media, and more.
-            </p>
-          </div>
-        </a>
-        <!-- Calliope -->
-        <a
-          href="/products/calliope"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-accent/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={CalliopeImg}
-              alt="Calliope"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-accent mb-2">Content AI</span>
-            <h3 class="card-title">Calliope</h3>
-            <p class="text-base-content/80">
-              AI-powered content generation: blogs, reels, video narratives, and
-              AI streamers.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Athena -->
-        <a
-          href="/products/athena"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-success/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={AthenaImg}
-              alt="Athena"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-success mb-2">LLM-SEO</span>
-            <h3 class="card-title">Athena</h3>
-            <p class="text-base-content/80">
-              Automated website optimization, metadata generation, and AI-driven
-              SEO.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Iynx -->
-        <a
-          href="/products/iynx"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-warning/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={IynxImg}
-              alt="Iynx"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-warning mb-2">Outreach</span>
-            <h3 class="card-title">Iynx</h3>
-            <p class="text-base-content/80">
-              Proactive multi-channel campaigns and personalized offers for warm
-              leads.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Hestia -->
-        <a
-          href="/products/hestia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-neutral/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={HestiaImg}
-              alt="Hestia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-neutral mb-2">Retention</span>
-            <h3 class="card-title">Hestia</h3>
-            <ul
-              class="text-left text-base-content/80 text-sm list-disc list-inside space-y-1"
-            >
-              <li>
-                Client Health Score (0–100) based on purchases, engagement, and
-                feedback
-              </li>
-              <li>Trigger-based campaigns and automatic re-engagement</li>
-              <li>ML-powered repeat purchase prediction for cross- & upsell</li>
-              <li>Auto-NPS & feedback loops</li>
-            </ul>
-            <div class="mt-4 text-xs text-base-content/60">
-              Result: reduced churn, increased LTV, and lower acquisition costs.
-            </div>
-            <div class="mt-2">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section class="text-center space-y-6">
-      <h2 class="text-3xl font-bold">How Pantheon Works</h2>
-      <div class="flex flex-col md:flex-row items-center justify-center gap-12">
-        <div class="flex-1 flex flex-col items-center space-y-4">
-          <div
-            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-          >
-            1
-          </div>
-          <p>
-            Connect your existing Growplex modules or start with our recommended
-            setup.
+        <div class="lg:w-1/2 text-center lg:text-left space-y-6">
+          <span class="badge badge-primary">Platform Hub</span>
+          <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">
+            Pantheon — it’s like a library for clients, sales, marketing, retention, and reputation.
+          </h1>
+          <p class="text-lg md:text-xl opacity-80">
+            With the librarian inside — a chat that brings you exactly what you need, when you need it.
           </p>
-        </div>
-        <div class="flex-1 flex flex-col items-center space-y-4">
-          <div
-            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-          >
-            2
+          <div class="flex items-center gap-4 justify-center lg:justify-start">
+            <button onclick="CTAMainModal.showModal()" class="btn btn-primary btn-lg">
+              👉 Start Free (Beta Access)
+            </button>
           </div>
-          <p>
-            Configure workflows that match your customer journey and business
-            processes.
-          </p>
-        </div>
-        <div class="flex-1 flex flex-col items-center space-y-4">
-          <div
-            class="rounded-full bg-primary text-primary-content p-4 text-2xl font-bold"
-          >
-            3
-          </div>
-          <p>
-            Watch as Pantheon orchestrates your entire AI marketing ecosystem
-            for maximum impact and efficiency.
-          </p>
         </div>
       </div>
     </section>
 
-    <!-- Get Started -->
+    <!-- Block 2 — The Pains -->
     <section class="space-y-8">
-      <h2 class="text-3xl font-bold text-center">
-        Ready to Unify Your Marketing Stack?
+      <div class="alert bg-base-200 border border-base-300">
+        <div class="flex flex-col w-full">
+          <h2 class="text-2xl md:text-3xl font-bold">
+            “No onboarding. If you’re in the platform — you’re ready. Just open the chat and start running everything.”
+          </h2>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">CRMs require painful onboarding</h3>
+            <p class="opacity-80">you need a specialist or whole team to set them up.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">Too many tools</h3>
+            <p class="opacity-80">Data is scattered. Nothing talks to each other.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">Reputation blind spots</h3>
+            <p class="opacity-80">you learn about bad mentions too late.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">Endless manual work</h3>
+            <p class="opacity-80">reports, follow-ups, lead search.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">No single picture</h3>
+            <p class="opacity-80">sales, clients, marketing all live in different dashboards.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200 h-full">
+          <div class="card-body">
+            <h3 class="card-title">Tool switching kills focus</h3>
+            <p class="opacity-80">and eats money.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Block 3 — How Pantheon Solves It -->
+    <section class="space-y-8">
+      <h2 class="text-3xl md:text-4xl font-bold text-center">
+        One chat. One platform. Everything connected.
       </h2>
-      <form class="max-w-lg mx-auto space-y-4">
-        <textarea
-          class="hidden textarea textarea-bordered w-full"
-          placeholder="Tell us about your current marketing setup..."
-        ></textarea>
-        <a
-          class="btn btn-primary w-full"
-          href="https://t.me/growplex"
-          target="_blank"
-        >
-          Contact Us on Telegram
-        </a>
-      </form>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">One place for everything</h3>
+            <p class="opacity-80">clients, sales, marketing, retention, reputation.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Full CRM inside</h3>
+            <p class="opacity-80">contacts, pipelines, deals, analytics.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Built-in communication</h3>
+            <p class="opacity-80">email, calls, messengers, social media.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Automation by default</h3>
+            <p class="opacity-80">follow-ups, reminders, triggers.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Clear data dashboards</h3>
+            <p class="opacity-80">KPIs, leads, revenue — in one screen.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Reputation monitoring</h3>
+            <p class="opacity-80">mentions and competitors tracked automatically.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Lead generation</h3>
+            <p class="opacity-80">find and qualify prospects without leaving chat.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Cross-module synergy</h3>
+            <p class="opacity-80">Pantheon connects to Thalia, Aletheia, and every other module.</p>
+          </div>
+        </div>
+        <div class="card bg-base-100 border border-base-200">
+          <div class="card-body gap-2">
+            <h3 class="card-title">Chat as control center</h3>
+            <p class="opacity-80">type it → Pantheon runs it.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card bg-primary text-primary-content">
+        <div class="card-body items-center text-center">
+          <h3 class="card-title">👉 No onboarding</h3>
+          <p>If you’re in the platform — you’re ready. Just open the chat and start running everything.</p>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button onclick="CTAMainModal.showModal()" class="btn btn-primary btn-lg">
+          👉 Start Free (Beta Access)
+        </button>
+      </div>
+    </section>
+
+    <!-- Block 4 — How It Works -->
+    <section class="space-y-8">
+      <h2 class="text-3xl font-bold text-center">How It Works</h2>
+
+      <ul class="steps steps-vertical md:steps-horizontal w-full">
+        <li class="step step-primary">
+          <div class="mt-3 md:mt-0">
+            <div class="font-semibold">Log in</div>
+            <div class="opacity-70 text-sm">no setup needed if you’re on the platform.</div>
+          </div>
+        </li>
+        <li class="step step-primary">
+          <div class="mt-3 md:mt-0">
+            <div class="font-semibold">Chat</div>
+            <div class="opacity-70 text-sm">just type: “Show me hot leads” / “Send follow-up” / “Build sales report.”</div>
+          </div>
+        </li>
+        <li class="step step-primary">
+          <div class="mt-3 md:mt-0">
+            <div class="font-semibold">Pantheon executes</div>
+            <div class="opacity-70 text-sm">pulls data, runs tasks, connects modules.</div>
+          </div>
+        </li>
+        <li class="step step-primary">
+          <div class="mt-3 md:mt-0">
+            <div class="font-semibold">Get results</div>
+            <div class="opacity-70 text-sm">faster sales, better marketing, controlled reputation.</div>
+          </div>
+        </li>
+      </ul>
+
+      <p class="text-center opacity-70">Note: No complicated dashboards. No learning curves. Just chat.</p>
+    </section>
+
+    <!-- Block 5 — Final CTA -->
+    <section class="space-y-6 text-center">
+      <h2 class="text-4xl md:text-5xl font-extrabold">👉 Unlock your Jarvis.</h2>
+      <p class="text-lg md:text-xl opacity-80 max-w-3xl mx-auto">
+        👉 Pantheon is your all-in-one command center. One chat to run sales, clients, marketing, and reputation — no onboarding, no chaos.
+      </p>
+      <div class="flex items-center justify-center">
+        <button onclick="CTAMainModal.showModal()" class="btn btn-primary btn-lg">
+          👉 Unlock Free Access
+        </button>
+      </div>
+      <p class="text-sm opacity-70">👉 Free until beta closes. After that — invite only.</p>
     </section>
   </div>
 </Content>

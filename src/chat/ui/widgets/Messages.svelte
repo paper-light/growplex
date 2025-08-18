@@ -13,7 +13,6 @@
   } from "@/shared/models/pocketbase-types";
   import { type Sender } from "@/chat/providers/socket.svelte";
 
-  import EventMessage from "@/chat/ui/entities/EventMessage.svelte";
   import ChatMessage from "@/chat/ui/entities/Message.svelte";
   import Thalia from "@/shared/assets/Thalia.jpg";
   import { pb } from "@/shared/lib/pb";
@@ -116,11 +115,7 @@
           return false;
         })()}
 
-        {#if msg.event && msg.event !== "message"}
-          <EventMessage type={msg.event} />
-        {:else}
-          <ChatMessage {msg} {incoming} />
-        {/if}
+        <ChatMessage {msg} {incoming} />
       {/each}
     {/if}
 

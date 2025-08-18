@@ -21,5 +21,7 @@
     <p>Waiting for operator...</p>
   {:else if type === "operatorConnected"}
     <p>Operator connected</p>
+  {:else if type === "operatorDisconnected"}
+    <p>Operator disconnected</p>
   {/if}
 </div>

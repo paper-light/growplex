@@ -1,4 +1,7 @@
 <script module>
+  const LIGHT_THEME = "corporate";
+  const DARK_THEME = "sunset";
+
   let selectedDark = $state(false);
 </script>
 
@@ -8,14 +11,14 @@
   const { size = "size-9" } = $props();
 
   onMount(() => {
-    localStorage.getItem("theme") === "dark"
+    localStorage.getItem("theme") === DARK_THEME
       ? (selectedDark = true)
       : (selectedDark = false);
   });
 
   $effect(() => {
-    let newTheme = "light";
-    if (selectedDark) newTheme = "dark";
+    let newTheme = LIGHT_THEME;
+    if (selectedDark) newTheme = DARK_THEME;
 
     document.documentElement.setAttribute("data-theme", newTheme);
     localStorage.setItem("theme", newTheme);

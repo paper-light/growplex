@@ -80,7 +80,7 @@
         <Button
           color={option.value === selected ? "primary" : "neutral"}
           style="ghost"
-        class={[
+          class={[
             "justify-between w-full",
             option.value === selected && "text-primary hover:text-black",
           ]}

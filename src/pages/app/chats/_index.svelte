@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Thalia from "@/shared/assets/Thalia.jpg";
+  import Pantheon from "@/shared/assets/Pantheon.jpg";
   import Input from "@/shared/ui/Input.svelte";
   import Select from "@/shared/ui/Select.svelte";
   import { chatsProvider } from "@/chat/providers/chats.svelte";
@@ -99,7 +99,7 @@
           class="h-full p-3 hover:bg-base-300 transition cursor-pointer flex flex-col"
           image={{
             styles: "size-36 rounded-3xl",
-            src: pb.files.getURL(chat, chat.avatar) || Thalia.src,
+            src: pb.files.getURL(chat, chat.avatar) || Pantheon.src,
             alt: chat.name || chat.id,
             mode: "side",
           }}

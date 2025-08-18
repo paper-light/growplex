@@ -93,18 +93,16 @@ class HistoryLangchainAdapter {
         },
       };
     } else if (msg instanceof AIMessage || msg instanceof AIMessageChunk) {
+      const content =
+        msg.content.toString() ||
+        `SELECTED TOOLS: \n\n${JSON.stringify(msg.tool_calls)}`;
       return {
-        content:
-          msg.content.toString() ||
-          `SELECTED TOOLS: \n\n${JSON.stringify(msg.tool_calls)}`,
+        content,
         role: MessagesRoleOptions.assistant,
         room: opts.roomId,
         sentBy: opts.agent!.id,
         visible: opts.visible,
-        contentTokensCount: chunker.countTokens(
-          msg.content.toString(),
-          "gpt-4"
-        ),
+        contentTokensCount: chunker.countTokens(content, "gpt-4"),
         metadata: {
           ...(opts.metadata || {}),
           ...(msg.response_metadata || {}),

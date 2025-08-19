@@ -35,6 +35,7 @@
   const messages = $derived.by(() => {
     if (!room) return [];
     const history = socketProvider.histories.get(room.id);
+    console.log("HISTORY:", history);
     return history || [];
   });
 

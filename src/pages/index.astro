@@ -6,296 +6,308 @@ import AthenaImg from "@/shared/assets/Athena.jpg";
 import IynxImg from "@/shared/assets/Iynx.jpg";
 import HestiaImg from "@/shared/assets/Hestia.jpg";
 import PantheonImg from "@/shared/assets/Pantheon.jpg";
-import { Image } from "astro:assets";
 import Content from "@/pages/_layouts/content/Content.astro";
+import Hero from "@/shared/ui/sections/Hero.svelte";
+import Pains from "@/shared/ui/sections/Pains.svelte";
+import Features from "@/shared/ui/sections/Features.svelte";
+import HowItWorks from "@/shared/ui/sections/HowItWorks.svelte";
+import Products from "@/shared/ui/sections/Products.svelte";
+import CTA from "@/shared/ui/sections/CTA.svelte";
+// import DemetraImg from "@/shared/assets/Demetra.jpg";
 ---
 
 <Content title="Home">
-  <div class="max-w-7xl mx-auto px-4 py-20 space-y-32">
-    <!-- Hero Section -->
-    <section class="text-center space-y-8">
-      <div class="flex flex-col items-center gap-4">
-        <h1
-          class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-gradient-primary-secondary"
-        >
-          AI-Native Marketing Funnel Optimization
-        </h1>
-        <p class="text-lg md:text-2xl max-w-2xl mx-auto text-base-content/80">
-          Growplex is your all-in-one platform for automating, optimizing, and
-          scaling every stage of your marketing funnel with the latest in AI,
-          LLMs, and agentic automation.
-        </p>
-        <a href="/products" class="btn btn-primary btn-lg mt-4 shadow-xl"
-          >Explore Our Products</a
-        >
-      </div>
-    </section>
+  <div class="max-w-7xl mx-auto px-4 pb-20 space-y-32">
+    <Hero
+      client:load
+      title="Growplex is the Oracle of Marketing"
+      description="No onboarding — build campaigns, attract leads, check reputation, and manage retention, all through chat."
+      buttonText="Start Now — Free Until 2026"
+      image={PantheonImg.src}
+      modalId="CTAMainModal"
+      overlay
+    />
 
-    <!-- Company Intro -->
-    <section class="max-w-3xl mx-auto text-center space-y-4">
-      <h2
-        class="text-2xl md:text-3xl font-bold"
-        style="color: var(--color-secondary)"
-      >
-        What is Growplex?
-      </h2>
-      <p class="text-base md:text-lg text-base-content/80">
-        We empower marketing experts to seamlessly fuse their skills with
-        advanced AI tools, optimizing every stage of the funnel—from lead
-        capture and qualification to content, outreach, analytics, and
-        retention. Growplex is built for speed, scale, and seamless integration.
-      </p>
-    </section>
+    <!-- Pain Points Section -->
+    <Pains
+      client:load
+      title="Recognize This?"
+      pains={[
+        {
+          title: "Ad Spend Waste",
+          description:
+            'You keep raising ad spend while conversions stay flat — the "next tweak" never fixes it.',
+          icon: "💰",
+        },
+        {
+          title: "Silent Nights",
+          description:
+            "Nights and weekends go silent; warm buyers bounce to whoever replies first.",
+          icon: "⏰",
+        },
+        {
+          title: "Lost Leads",
+          description:
+            "Leads wait; by the time you call, they've chosen a competitor.",
+          icon: "👥",
+        },
+        {
+          title: "Competitor Speed",
+          description:
+            "Competitors ship faster, bid on your brand, copy your offers — you notice after the damage.",
+          icon: "📉",
+        },
+        {
+          title: "Reputation Risk",
+          description:
+            "One angry post outranks your site by morning; you hear from a friend, not an alert.",
+          icon: "⚠️",
+        },
+        {
+          title: "Data Chaos",
+          description:
+            "Ten tools, twenty tabs — scattered data, murky attribution; decisions are guesses.",
+          icon: "📊",
+        },
+        {
+          title: "Reply Hell",
+          description:
+            "Your team drowns in repetitive replies instead of closing deals.",
+          icon: "💬",
+        },
+        {
+          title: "Customer Churn",
+          description:
+            "Customers buy once and vanish — winning new ones costs more than keeping them.",
+          icon: "🎯",
+        },
+      ]}
+      theme="gradient"
+    />
 
-    <!-- Product Suite -->
-    <section id="products" class="space-y-8">
-      <h2 class="text-3xl font-bold text-center mb-8">Our Product Suite</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        <!-- Thalia -->
-        <a
-          href="/products/thalia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-primary/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={ThaliaImg}
-              alt="Thalia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-secondary mb-2">Chat Agent</span>
-            <h3 class="card-title">Thalia</h3>
-            <p class="text-base-content/80">
-              Conversational AI agent for effortless lead warming and
-              qualification.
-            </p>
-          </div>
-        </a>
-        <!-- Aletheia -->
-        <a
-          href="/products/aletheia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-info/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={AletheiaImg}
-              alt="Aletheia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-info mb-2">Market Monitor</span>
-            <h3 class="card-title">Aletheia</h3>
-            <p class="text-base-content/80">
-              Real-time monitoring and insight generation from news, social
-              media, and more.
-            </p>
-          </div>
-        </a>
-        <!-- Calliope -->
-        <a
-          href="/products/calliope"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-accent/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={CalliopeImg}
-              alt="Calliope"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-accent mb-2">Content AI</span>
-            <h3 class="card-title">Calliope</h3>
-            <p class="text-base-content/80">
-              AI-powered content generation: blogs, reels, video narratives, and
-              AI streamers.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Athena -->
-        <a
-          href="/products/athena"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-success/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={AthenaImg}
-              alt="Athena"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-success mb-2">LLM-SEO</span>
-            <h3 class="card-title">Athena</h3>
-            <p class="text-base-content/80">
-              Automated website optimization, metadata generation, and AI-driven
-              SEO.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Iynx -->
-        <a
-          href="/products/iynx"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-warning/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={IynxImg}
-              alt="Iynx"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-warning mb-2">Outreach</span>
-            <h3 class="card-title">Iynx</h3>
-            <p class="text-base-content/80">
-              Proactive multi-channel campaigns and personalized offers for warm
-              leads.
-            </p>
-            <div class="mt-4">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-        <!-- Hestia -->
-        <a
-          href="/products/hestia"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-neutral/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={HestiaImg}
-              alt="Hestia"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-neutral mb-2">Retention</span>
-            <h3 class="card-title">Hestia</h3>
-            <ul
-              class="text-left text-base-content/80 text-sm list-disc list-inside space-y-1"
-            >
-              <li>
-                Client Health Score (0–100) based on purchases, engagement, and
-                feedback
-              </li>
-              <li>Trigger-based campaigns and automatic re-engagement</li>
-              <li>ML-powered repeat purchase prediction for cross- & upsell</li>
-              <li>Auto-NPS & feedback loops</li>
-            </ul>
-            <div class="mt-4 text-xs text-base-content/60">
-              Result: reduced churn, increased LTV, and lower acquisition costs.
-            </div>
-            <div class="mt-2">
-              <span class="badge badge-outline">Coming Soon</span>
-            </div>
-          </div>
-        </a>
-      </div>
+    <!-- Features Section -->
+    <Features
+      client:load
+      subtitle="Solution"
+      title="Here's How We Fix It"
+      features={[
+        {
+          title: "Zero Setup",
+          description:
+            "One chat, zero setup. Say it — we run it: campaigns, lists, reports.",
+          icon: "⚡",
+          impact: {
+            metric: "Setup Time",
+            value: "5",
+            unit: "minutes",
+          },
+        },
+        {
+          title: "Instant Capture",
+          description:
+            "Capture and reply instantly. Qualify and route leads in seconds, not hours.",
+          icon: "🎯",
+          impact: {
+            metric: "Response Time",
+            value: "<30",
+            unit: "seconds",
+          },
+        },
+        {
+          title: "Chat-Driven Ads",
+          description:
+            "Launch ads from chat. Set audiences, budgets, go live — no dashboards.",
+          icon: "📱",
+          impact: {
+            metric: "Campaign Launch",
+            value: "2",
+            unit: "minutes",
+          },
+        },
+        {
+          title: "Competitor Intel",
+          description:
+            "See competitors early. Spot launches, pricing, ads — act before they do.",
+          icon: "👁️",
+          impact: {
+            metric: "Detection Speed",
+            value: "24/7",
+            unit: "monitoring",
+          },
+        },
+        {
+          title: "Reputation Shield",
+          description:
+            "Protect reputation in real-time. Alerts and responses in the same thread.",
+          icon: "🛡️",
+          impact: {
+            metric: "Response Time",
+            value: "5",
+            unit: "minutes",
+          },
+        },
+        {
+          title: "Single Source",
+          description:
+            "One source of truth. Contacts, spend, and revenue on a single timeline — with clear attribution.",
+          icon: "📊",
+          impact: {
+            metric: "Data Sources",
+            value: "1",
+            unit: "platform",
+          },
+        },
+        {
+          title: "Customer Retention",
+          description:
+            "Keep customers longer. Automated win-backs, reminders, and offers that lift LTV.",
+          icon: "💎",
+          impact: {
+            metric: "LTV Increase",
+            value: "40%",
+            unit: "average",
+          },
+        },
+      ]}
+      stats={{
+        total: "10x",
+        label: "Faster Marketing Operations",
+        description:
+          "Join thousands of marketers who've transformed their operations with AI-powered automation",
+      }}
+      theme="gradient"
+    />
 
-      <!-- Pantheon - Full Width Row -->
-      <div class="grid grid-cols-1 gap-8">
-        <a
-          href="/products/pantheon"
-          class="group card bg-base-100 border border-base-200 shadow-xl transition-all duration-200 hover:shadow-2xl hover:border-primary/60 hover:-translate-y-1 cursor-pointer no-underline"
-        >
-          <figure class="px-4 pt-4">
-            <Image
-              src={PantheonImg}
-              alt="Pantheon"
-              class="rounded-xl h-84 w-full object-cover object-top mx-auto"
-            />
-          </figure>
-          <div class="card-body items-center text-center">
-            <span class="badge badge-primary mb-2">Platform Hub</span>
-            <h3 class="card-title text-3xl">Pantheon</h3>
-            <p class="text-lg text-base-content/80 max-w-3xl">
-              The ultimate linking module that connects all Growplex products
-              into one seamless experience. We bring the best AI-native
-              marketing toolkit on the market, optimized for every funnel stage.
-            </p>
-            <div class="flex flex-wrap justify-center gap-4 mt-4">
-              <span class="badge badge-secondary">Thalia</span>
-              <span class="badge badge-info">Aletheia</span>
-              <span class="badge badge-accent">Calliope</span>
-              <span class="badge badge-success">Athena</span>
-              <span class="badge badge-warning">Iynx</span>
-              <span class="badge badge-neutral">Hestia</span>
-            </div>
-          </div>
-        </a>
-      </div>
-    </section>
+    <!-- How It Works Section -->
+    <HowItWorks
+      client:load
+      title="How It Works"
+      steps={[
+        {
+          number: 1,
+          title: "Sign in — no setup",
+          description: "You're ready the moment you enter.",
+          // image: ThaliaImg.src,
+        },
+        {
+          number: 2,
+          title: "Open chat",
+          description: "One place to run everything.",
+        },
+        {
+          number: 3,
+          title: "Type your intent",
+          description:
+            '"Find hot leads in Berlin." "Launch search ads for Product X with $2k budget." "Show mentions from the last 24h." "Build the weekly sales report."',
+        },
+        {
+          number: 4,
+          title: "We execute",
+          description:
+            "Data is pulled, assets created, workflows scheduled — automatically.",
+        },
+        {
+          number: 5,
+          title: "You approve",
+          description: "One-tap preview/change/approve; everything tracked.",
+        },
+        {
+          number: 6,
+          title: "See outcomes",
+          description:
+            "Leads captured, ads live, mentions handled, reports delivered — all logged on a single timeline.",
+        },
+      ]}
+      theme="gradient"
+    />
 
-    <!-- Value Proposition / Why Growplex -->
-    <section class="mt-24">
-      <h2 class="text-3xl font-bold text-center mb-8">Why Choose Growplex?</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div
-          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
-        >
-          <h3
-            class="text-xl font-semibold mb-2"
-            style="color: var(--color-primary)"
-          >
-            Empowering Marketers with AI
-          </h3>
-          <p class="text-base-content/80">
-            Growplex enables marketing professionals to seamlessly combine their
-            expertise with advanced AI tools, maximizing impact and efficiency
-            at every funnel stage.
-          </p>
-        </div>
-        <div
-          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
-        >
-          <h3
-            class="text-xl font-semibold mb-2"
-            style="color: var(--color-secondary)"
-          >
-            Full-Funnel Automation
-          </h3>
-          <p class="text-base-content/80">
-            Our platform covers the entire customer journey—from lead generation
-            to retention—ensuring no opportunity is missed and every touchpoint
-            is optimized.
-          </p>
-        </div>
-        <div
-          class="card bg-base-100 shadow-md border border-base-200 p-6 text-center"
-        >
-          <h3
-            class="text-xl font-semibold mb-2"
-            style="color: var(--color-accent)"
-          >
-            Seamless Integration & Scalability
-          </h3>
-          <p class="text-base-content/80">
-            Easily integrate Growplex with your existing stack. Our API-first,
-            multi-channel approach ensures your marketing operations scale as
-            you grow.
-          </p>
-        </div>
-      </div>
-    </section>
+    <!-- Products Section -->
+    <Products
+      client:load
+      title="The Oracle & Modules"
+      oracle={{
+        title: "Oracle (Chat)",
+        description:
+          "The conversational interface that connects you to the entire platform. Type what you need; the system orchestrates every module.",
+        image: PantheonImg.src,
+        // href: "/products/oracle",
+      }}
+      modules={[
+        {
+          name: "Thalia",
+          description:
+            "Website chat that greets, answers, qualifies, and captures leads 24/7 (multilingual).",
+          badge: "Chat Agent",
+          image: ThaliaImg.src,
+          href: "/products/thalia",
+        },
+        {
+          name: "Aletheia",
+          description:
+            "Find target companies with contacts; monitor mentions; track competitors in real time.",
+          badge: "Market Monitor",
+          image: AletheiaImg.src,
+          href: "/products/aletheia",
+        },
+        {
+          name: "Calliope",
+          description:
+            "Generate ad copy, posts, and landing content; test variations on command.",
+          badge: "Content AI",
+          image: CalliopeImg.src,
+          href: "/products/calliope",
+        },
+        {
+          name: "Athena",
+          description:
+            "AI-SEO: metadata, on-page, internal linking, structured data.",
+          badge: "LLM-SEO",
+          image: AthenaImg.src,
+          href: "/products/athena",
+        },
+        {
+          name: "Iynx",
+          description:
+            "Outreach engine: personalized sequences across email/LinkedIn; automated follow-ups.",
+          badge: "Outreach",
+          image: IynxImg.src,
+          href: "/products/iynx",
+        },
+        {
+          name: "Hestia",
+          description:
+            "Retention & loyalty: lifecycle triggers, win-backs, cohorts, LTV growth.",
+          badge: "Retention",
+          image: HestiaImg.src,
+          href: "/products/hestia",
+        },
+        {
+          name: "Demetra",
+          description:
+            "Offline marketing: plan OOH, print, events, partnerships; manage vendors and budgets.",
+          badge: "Offline",
+          // image: DemetraImg.src,
+          // href: "/products/demetra",
+        },
+      ]}
+      pantheon={{
+        title: "Pantheon",
+        description:
+          "The command center where everything comes together — unified CRM, timeline, automation, and analytics. All signals from Oracle and every module converge here.",
+        image: PantheonImg.src,
+        // href: "/products/pantheon",
+      }}
+      theme="gradient"
+    />
 
-    <!-- Footer CTA -->
-    <section class="text-center mt-24">
-      <h2 class="text-2xl font-bold mb-4">
-        Ready to optimize your funnel with AI?
-      </h2>
-      <button
-        onclick="CTAMainModal.showModal()"
-        class="btn btn-primary btn-lg shadow-xl">Contact Us</button
-      >
-    </section>
+    <!-- Final CTA Section -->
+    <CTA
+      client:load
+      headline="Ready to act?"
+      subheadline="Create campaigns, find leads, check reputation, and manage retention — all through chat."
+      buttonText="Start Now — Free Until 2026"
+      modalId="CTAMainModal"
+      theme="gradient"
+    />
   </div>
 </Content>

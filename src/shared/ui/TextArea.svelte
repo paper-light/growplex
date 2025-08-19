@@ -86,7 +86,7 @@
 
 <label>
   {#if children}
-    <p class="label block">{@render children()}</p>
+    <p class="label font-semibold">{@render children()}</p>
   {/if}
 
   <textarea

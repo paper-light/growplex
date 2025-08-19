@@ -31,7 +31,7 @@
     onkeypress?: (e: KeyboardEvent) => void;
     onchange?: (e: Event) => void;
     children?: Snippet;
-    legend?: Snippet;
+    legend?: string;
   }
   let {
     class: className = "",
@@ -79,7 +79,7 @@
 
 <fieldset>
   {#if legend}
-    <legend class="fieldset-legend">{@render legend()}</legend>
+    <legend class="fieldset-legend opacity-60">{legend}</legend>
   {/if}
 
   <label

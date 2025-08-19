@@ -35,6 +35,7 @@
   }: Props = $props();
 
   const msgsWithSender = $derived.by(() => {
+    console.log("MESSAGES WITH SENDER:", messages);
     return messages.map((msg) => {
       msg.metadata = {
         ...(msg.metadata || {}),

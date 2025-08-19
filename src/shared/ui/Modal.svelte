@@ -8,7 +8,7 @@
 
   interface Props {
     open?: boolean;
-    id?: string;
+    portalId?: string;
     class?: ClassValue;
     children?: any;
     onclose?: () => void;
@@ -19,18 +19,20 @@
     transparent?: boolean;
 
     transition?: boolean;
+    id?: string;
   }
 
   let {
-    id = "body",
-    class: className = "",
     open = $bindable(false),
+    portalId = "body",
+    class: className = "",
     children,
     onclose,
     placement = "center",
     backdrop = false,
     noPadding = false,
     transparent = false,
+    id,
   }: Props = $props();
 
   let dialogElement: HTMLDialogElement | null = $state(null);
@@ -50,22 +52,26 @@
     }
   });
 
-  $effect(() => {
-    if (open && dialogElement) {
-      dialogElement.showModal();
-    } else if (!open && dialogElement) {
-      dialogElement.close();
-    }
-  });
-
   function handleClose() {
     open = false;
+    dialogElement?.close();
     onclose?.();
   }
+
+  $effect(() => {
+    console.log("EFFECT", open, dialogElement);
+    if (!dialogElement) return;
+    if (open) {
+      dialogElement.showModal();
+    } else {
+      handleClose();
+    }
+  });
 </script>
 
-<div use:portal={id}>
+<div use:portal={portalId}>
   <dialog
+    {id}
     style={transparent ? "background: transparent" : ""}
     bind:this={dialogElement}
     class={["modal", placementClass]}

@@ -36,14 +36,8 @@ export const callSearchAgent = tool(
     });
 
     result.content = result.success
-      ? JSON.stringify({
-          content: "✅ Found relevant information for your question",
-          success: true,
-        })
-      : JSON.stringify({
-          content: "❌ No relevant information found",
-          success: false,
-        });
+      ? "✅ Found relevant information for your question"
+      : "❌ No relevant information found";
 
     updateUsager(usage);
 

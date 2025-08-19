@@ -46,13 +46,13 @@ class SocketProvider {
     this.socket.on(
       "update-message",
       (data: { roomId: string; message: MessagesResponse }) => {
+        console.log("UPDATE MESSAGE:", data);
         const { roomId, message } = data;
-        if (!this.histories.has(roomId)) this.histories.set(roomId, []);
-        const history = this.histories.get(roomId)!;
-        this.histories.set(
-          roomId,
-          history.map((h) => (h.id === message.id ? message : h))
+        const history = this.histories.get(roomId) || [];
+        const updatedHistory = history.map((m) =>
+          m.id === message.id ? message : m
         );
+        this.histories.set(roomId, updatedHistory);
       }
     );
 
@@ -60,8 +60,7 @@ class SocketProvider {
       "new-message",
       (data: { roomId: string; message: MessagesResponse }) => {
         const { roomId, message } = data;
-        if (!this.histories.has(roomId)) this.histories.set(roomId, []);
-        const history = this.histories.get(roomId)!;
+        const history = this.histories.get(roomId) || [];
         this.histories.set(roomId, [...history, message]);
 
         if (message.role !== "user") this.waitingAnswerRooms.delete(roomId);

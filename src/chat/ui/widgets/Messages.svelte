@@ -34,16 +34,15 @@
     operators,
   }: Props = $props();
 
-  const msgsWithSender = $derived.by(() => {
-    console.log("MESSAGES WITH SENDER:", messages);
-    return messages.map((msg) => {
-      msg.metadata = {
+  const msgsWithSender = $derived(
+    messages.map((msg) => ({
+      ...msg,
+      metadata: {
         ...(msg.metadata || {}),
         sender: getSender(msg),
-      };
-      return msg;
-    });
-  });
+      },
+    }))
+  );
 
   let messagesContainer: HTMLDivElement | null = $state(null);
   let showScrollButton = $state(false);
@@ -91,6 +90,13 @@
     }
     return null;
   }
+
+  function isIncoming(msg: MessagesResponse) {
+    if (sender.role === "operator")
+      return msg.role !== MessagesRoleOptions.operator;
+    if (sender.role === "guest") return msg.role !== MessagesRoleOptions.user;
+    return false;
+  }
 </script>
 
 <div class={[className, "relative h-full bg-base-100"]}>
@@ -107,15 +113,8 @@
         </p>
       </div>
     {:else}
-      {#each msgsWithSender as msg (msg.id)}
-        {@const incoming = (() => {
-          if (sender.role === "operator")
-            return msg.role !== MessagesRoleOptions.operator;
-          if (sender.role === "guest")
-            return msg.role !== MessagesRoleOptions.user;
-          return false;
-        })()}
-
+      {#each msgsWithSender as msg (msg)}
+        {@const incoming = isIncoming(msg)}
         <ChatMessage {msg} {incoming} />
       {/each}
     {/if}

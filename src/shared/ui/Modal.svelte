@@ -59,7 +59,6 @@
   }
 
   $effect(() => {
-    console.log("EFFECT", open, dialogElement);
     if (!dialogElement) return;
     if (open) {
       dialogElement.showModal();

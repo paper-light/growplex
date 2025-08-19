@@ -1,16 +1,16 @@
+import { AIMessageChunk } from "@langchain/core/messages";
+
 import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
-
-import { AIMessageChunk } from "@langchain/core/messages";
-import { callTool, chatTools } from "./tools";
-
 import { logger } from "@/shared/lib/logger";
 import { Usager } from "@/billing/usager";
+import { sender } from "@/messages/sender/sender";
+import { langfuseHandler } from "@/shared/lib/langfuse";
 
 import { loadConsulterMemory } from "./memories";
 import { baseConsulterModel, CHAT_CONSULTER_MODEL } from "./models";
 import { consulterPromptTemplate } from "./prompts";
-import { sender } from "@/messages/sender/sender";
+import { callTool, chatTools } from "./tools";
 
 const log = logger.child({
   module: "chat:ai:workflow",
@@ -55,13 +55,18 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
     log.debug({ workflowConfig }, "before consulter call");
     result = await consulterPromptTemplate
       .pipe(baseConsulterModel.bindTools(tools))
-      .invoke({
-        history: [...memory.history, ...workflowConfig.messages],
-        knowledge: workflowConfig.knowledge,
-        system: memory.agent.system,
-        query,
-        lead: JSON.stringify(memory.lead, null, 2),
-      });
+      .invoke(
+        {
+          history: [...memory.history, ...workflowConfig.messages],
+          knowledge: workflowConfig.knowledge,
+          system: memory.agent.system,
+          query,
+          lead: JSON.stringify(memory.lead, null, 2),
+        },
+        {
+          callbacks: [langfuseHandler],
+        }
+      );
     workflowConfig.messages.push(result!);
 
     callingTools = !!result!.tool_calls?.length;
@@ -88,11 +93,9 @@ export const runChatWorkflow = async (roomId: string, query: string) => {
 
     log.debug({ toolCalls: result!.tool_calls }, "Calling tools");
 
-    await Promise.all(
-      result!.tool_calls!.map(async (toolCall) => {
-        await callTool(toolCall, memory, workflowConfig, usager);
-      })
-    );
+    for (const toolCall of result!.tool_calls!) {
+      await callTool(toolCall, memory, workflowConfig, usager);
+    }
   }
 
   // END LOOP

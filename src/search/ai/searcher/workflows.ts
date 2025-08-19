@@ -1,7 +1,7 @@
 import type z from "zod";
 
 import { Usager } from "@/billing/usager";
-
+import { langfuseHandler } from "@/shared/lib/langfuse";
 import { meiliRetriever } from "@/search/retrievers/hybrid";
 
 import { EnhancerReturnSchema } from "../enhancer/schemas";
@@ -36,10 +36,15 @@ Entities: ${callConfig.entities.join(", ")}
         includeRaw: true,
       })
     )
-    .invoke({
-      query,
-      searchResult,
-    });
+    .invoke(
+      {
+        query,
+        searchResult,
+      },
+      {
+        callbacks: [langfuseHandler],
+      }
+    );
 
   usager.updateMetadataUsage(
     (result.raw as any).usage_metadata,

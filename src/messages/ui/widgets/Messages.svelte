@@ -13,7 +13,7 @@
   } from "@/shared/models/pocketbase-types";
   import { type Sender } from "@/chat/providers/socket.svelte";
 
-  import ChatMessage from "@/chat/ui/entities/Message.svelte";
+  import ChatMessage from "@/messages/ui/entities/Message.svelte";
   import Thalia from "@/shared/assets/Thalia.jpg";
   import { pb } from "@/shared/lib/pb";
   import Man from "@/shared/assets/Man.jpg";
@@ -65,7 +65,7 @@
       msg.role === sender.role
     ) {
       return sender;
-    } else if (msg.role === "assistant") {
+    } else if (["assistant", "tool"].includes(msg.role)) {
       const agent = agents.find((a) => a.id === msg.sentBy);
       const avatar = agent?.avatar
         ? pb.files.getURL(agent, agent.avatar)

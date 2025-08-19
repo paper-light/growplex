@@ -98,11 +98,16 @@ export async function OPTIONS() {
 
 async function initRoom(chatId: string, identity?: string) {
   let lead: LeadsResponse | null = null;
+  let newLead = true;
+
   const leads = await pb.collection("leads").getFullList({
     filter: `id = "${identity}" || externalUser = "${identity}"`,
   });
 
-  if (leads.length > 0) lead = leads[0];
+  if (leads.length > 0) {
+    lead = leads[0];
+    newLead = false;
+  }
 
   if (!lead) {
     lead = await pb.collection("leads").create({
@@ -114,7 +119,7 @@ async function initRoom(chatId: string, identity?: string) {
 
   const room = await pb.collection("rooms").create({
     chat: chatId,
-    status: lead ? "auto" : "seeded",
+    status: newLead ? "seeded" : "auto",
     type: RoomsTypeOptions.chatWidget,
     lead: lead!.id,
   });

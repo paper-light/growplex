@@ -9,12 +9,12 @@
     type UsersResponse,
   } from "@/shared/models/pocketbase-types";
   import { pb } from "@/shared/lib/pb";
+  import Messages from "@/messages/ui/widgets/Messages.svelte";
 
   import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
   import { injectTheme } from "@/chat/utils/injectTheme";
 
   import Interactions from "./Interactions.svelte";
-  import Messages from "./Messages.svelte";
   interface Props {
     chat: ChatsResponse;
     agents: AgentsResponse[];

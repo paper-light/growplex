@@ -2,7 +2,7 @@
   import { SvelteSet } from "svelte/reactivity";
 
   import Interactions from "@/chat/ui/widgets/Interactions.svelte";
-  import Messages from "@/chat/ui/widgets/Messages.svelte";
+  import Messages from "@/messages/ui/widgets/Messages.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
   import { socketProvider } from "@/chat/providers/socket.svelte";
   import type { RoomsResponse } from "@/shared/models/pocketbase-types";

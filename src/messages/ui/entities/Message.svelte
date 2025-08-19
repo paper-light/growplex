@@ -9,6 +9,7 @@
   import Man from "@/shared/assets/Man.jpg";
 
   import DividerMessage from "./DividerMessage.svelte";
+  import SearchContent from "./SearchContent.svelte";
 
   interface Props {
     class?: ClassValue;
@@ -34,9 +35,11 @@
   });
 </script>
 
+<!-- DIVIDER HAS COMPLETELY DIFFERENT UI -->
 {#if msg.event && ["operatorConnected", "operatorDisconnected", "callOperator"].includes(msg.event)}
   <DividerMessage type={msg.event} />
 {:else}
+  <!-- MESSAGE BUBBLE -->
   <div class={["chat-group", className]}>
     <div class={incoming ? "chat chat-start" : "chat chat-end"}>
       <div class="chat-image avatar">
@@ -67,7 +70,11 @@
         class:chat-bubble-primary={!incoming}
         aria-label="Chat message"
       >
-        {@html safeHtml}
+        {#if msg.event === "message"}
+          {@html safeHtml}
+        {:else if msg.event === "callSearchAgent"}
+          <SearchContent {msg} />
+        {/if}
       </div>
 
       <!-- {#if msg.status}

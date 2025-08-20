@@ -1,47 +1,57 @@
-import { logger } from "@/shared/lib/logger";
+import { pb } from "@/shared/lib/pb";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 import { pbHistoryRepository } from "@/messages/history/pb-repository";
-import { pb } from "@/shared/lib/pb";
-import type {
-  ChatsResponse,
-  LeadsResponse,
-  AgentsResponse,
-  IntegrationsResponse,
-  SourcesResponse,
-  OrgsResponse,
-  MessagesResponse,
-  RoomsResponse,
+import {
+  type ChatsResponse,
+  type LeadsResponse,
+  type AgentsResponse,
+  type IntegrationsResponse,
+  type SourcesResponse,
+  type OrgsResponse,
+  type MessagesResponse,
+  type RoomsResponse,
 } from "@/shared/models/pocketbase-types";
 
-const log = logger.child({ module: "chat:ai:context" });
+const EXPAND = [
+  "lead",
+  "chat",
+  // INTEGRATION
+  "chat.integration",
+  "chat.integration.agents",
+  "chat.integration.sources",
 
-export type ConsulterMemory = {
+  // PROJECT
+  "chat.project",
+  "chat.project.org",
+].join(",");
+
+export type RoomMemory = {
   room: RoomsResponse;
   lead: LeadsResponse;
   chat: ChatsResponse;
   integration: IntegrationsResponse;
-  agent: AgentsResponse;
   org: OrgsResponse;
+  agents: AgentsResponse[];
   sources: SourcesResponse[];
+
+  // HISTORY
   history: any[]; // LangchainMessage[];
   message: MessagesResponse;
 };
 
-export async function loadConsulterMemory(
-  roomId: string
-): Promise<ConsulterMemory> {
+export async function loadRoomMemory(roomId: string): Promise<RoomMemory> {
   const room = await pb.collection("rooms").getOne(roomId, {
-    expand:
-      "lead,chat,chat.integration,chat.integration.agents,chat.integration.sources,chat.project,chat.project.org",
+    expand: EXPAND,
   });
 
   // ROOM POCKETBASE DATA
   const lead: LeadsResponse = (room.expand as any)?.lead || null;
   const chat: ChatsResponse = (room.expand as any)?.chat || null;
+
+  // INTEGRATION
   const integration: IntegrationsResponse =
     (chat.expand as any)?.integration || null;
-  const agent: AgentsResponse =
-    (integration.expand as any)?.agents?.[0] || null;
+  const agents: AgentsResponse[] = (integration.expand as any)?.agents || [];
   const org: OrgsResponse = (chat.expand as any)?.project.expand.org || null;
   const sources: SourcesResponse[] = (integration.expand as any)?.sources || [];
 
@@ -59,7 +69,7 @@ export async function loadConsulterMemory(
     lead,
     chat,
     integration,
-    agent,
+    agents,
     sources,
     org,
 

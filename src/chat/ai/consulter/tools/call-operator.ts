@@ -4,7 +4,7 @@ import type { RunnableConfig } from "@langchain/core/runnables";
 
 import { pb } from "@/shared/lib/pb";
 
-import type { ConsulterMemory } from "../memories";
+import type { RoomMemory } from "@/shared/ai/memories/load-room-memory";
 import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const CallOperatorSchema = z.object({
@@ -26,7 +26,7 @@ export const callOperator = tool(
   async (input: any, config: RunnableConfig) => {
     const args = CallOperatorSchema.parse(input);
     const { description, payload } = args;
-    const { memory } = config.configurable as { memory: ConsulterMemory };
+    const { memory } = config.configurable as { memory: RoomMemory };
 
     const room = memory.room;
 
@@ -57,6 +57,7 @@ export const callOperator = tool(
     schema: CallOperatorSchema,
     metadata: {
       visible: true,
+      needApproval: false,
     },
   }
 );

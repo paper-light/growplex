@@ -16,7 +16,7 @@
 </script>
 
 {#if loading}
-  <span class="loading loading-spinner loading-lg text-info"></span>
+  <span class="loading loading-spinner text-info mr-1"></span>
   <span class="">Searching...</span>
 {:else if success}
   <!-- <Check class="size-4 text-success" /> -->

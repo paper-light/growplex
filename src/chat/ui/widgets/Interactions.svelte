@@ -11,13 +11,15 @@
   const MAX_INPUT_CHARS = CHAT_CONFIG.MAX_MSG_TOKENS * 0.75 * 4.5;
   interface Props {
     parentRoom?: RoomsResponse;
-    mode?: "widget" | "admin";
+    mode?: "widget" | "admin" | "oracle";
   }
 
   let { parentRoom, mode = "widget" }: Props = $props();
 
   const room = $derived(
-    mode === "admin" ? roomsProvider.selectedRoom : parentRoom!
+    ["admin", "oracle"].includes(mode)
+      ? roomsProvider.selectedRoom
+      : parentRoom!
   );
 
   let inputEl: HTMLTextAreaElement | null = $state(null);
@@ -56,13 +58,7 @@
           {/if}
         {/if}
 
-        <SendMessage
-          {disabled}
-          {room}
-          {inputEl}
-          role={mode === "admin" ? "operator" : "user"}
-          bind:inputText
-        />
+        <SendMessage {disabled} {room} {inputEl} {mode} bind:inputText />
       </div>
     </fieldset>
   </div>

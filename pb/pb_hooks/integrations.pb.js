@@ -40,6 +40,19 @@ onRecordCreate((e) => {
       e.record.set("chats", [chat.id]);
     }
 
+    const chatCollection = txApp.findCollectionByNameOrId("chats");
+    const chat = new Record(chatCollection);
+
+    // Inner chat for oracle in context of that integration
+    chat.set("project", projectId);
+    chat.set("integration", e.record.id);
+    chat.set(
+      "firstMessage",
+      "I am your Marketing Oracle. Let's startup manage your CRM!"
+    );
+    chat.set("type", "inner");
+    txApp.save(chat);
+
     txApp.save(e.record);
     console.log("Integration record setup complete. Proceeding to next.");
   });

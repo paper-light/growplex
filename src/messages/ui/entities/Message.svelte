@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fade } from "svelte/transition";
   import { marked } from "marked";
   import DOMPurify from "dompurify";
   import { DateTime } from "luxon";
@@ -40,7 +41,7 @@
   <DividerMessage type={msg.event} />
 {:else}
   <!-- MESSAGE BUBBLE -->
-  <div class={["chat-group", className]}>
+  <div transition:fade class={["chat-group", className]}>
     <div class={incoming ? "chat chat-start" : "chat chat-end"}>
       <div class="chat-image avatar">
         <div class="size-10 rounded-full overflow-hidden">

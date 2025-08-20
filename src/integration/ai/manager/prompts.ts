@@ -11,10 +11,10 @@ export const INTEGRATION_MANAGER_PROMPT_TEMPLATE_END = `
   Current integration state:
   {integration}
 
-  Current agent state:
-  {agent}
+  Current integration agents:
+  {agents}
 
-  Current chat state:
+  Current integration chat:
   {chat}
   
   Answer:

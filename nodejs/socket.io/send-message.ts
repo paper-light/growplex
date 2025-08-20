@@ -2,10 +2,11 @@ import { type Socket, type Server } from "socket.io";
 
 import { pb } from "@/shared/lib/pb";
 import { chunker } from "@/search/chunker";
-import { runChatWorkflow } from "@/chat/ai/consulter/workflows";
+import { runConsulter } from "@/chat/ai/consulter/run";
 import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { logger } from "@/shared/lib/logger";
 import { charger, BILLING_ERRORS } from "@/billing";
+import { runOracle } from "@/gateway/ai/oracle/run";
 
 import type { SendMessageDTO } from "./types";
 
@@ -65,10 +66,11 @@ export async function sendMessage(
 
       let price = 0;
       if (mode === "consulter") {
-        const { price: p } = await runChatWorkflow(room.id, msg.content);
+        const { price: p } = await runConsulter(room.id, msg.content);
         price = p;
-      } else if (mode === "integration-manager") {
-        // const { price } = await runIntegrationManagerWorkflow(room.id, msg.content);
+      } else if (mode === "oracle") {
+        const { price: p } = await runOracle(room.id, msg.content);
+        price = p;
       }
 
       await charger.chargePrice(sub.id, price);

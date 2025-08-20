@@ -39,7 +39,7 @@
     <li class="w-full">
       <a href="/app" class={["text-left", linkClass("Home")]}>
         <Home size={18} />
-        Home
+        Home Oracle
       </a>
     </li>
     <li class="w-full">

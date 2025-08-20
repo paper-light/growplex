@@ -3,20 +3,23 @@ import type z from "zod";
 import { Usager } from "@/billing/usager";
 import { langfuseHandler } from "@/shared/lib/langfuse";
 import { meiliRetriever } from "@/search/retrievers/hybrid";
+import {
+  loadRoomMemory,
+  type RoomMemory,
+} from "@/shared/ai/memories/load-room-memory";
 
 import { EnhancerReturnSchema } from "../enhancer/schemas";
-import { loadSearchMemory, type SearchMemory } from "./memories";
-import { SEARCH_SUMMARY_MODEL, summaryBaseModel } from "../summary/models";
+import { SEARCH_SUMMARY_MODEL, summaryBaseModel } from "../summary/llms";
 import { SummaryReturnSchema } from "../summary/schemas";
 import { summaryPromptTemplate } from "../summary/prompts";
 
-export async function runSearchWorkflow(
+export async function runSearcher(
   roomId: string,
   callConfig: z.infer<typeof EnhancerReturnSchema>,
-  memory: SearchMemory | null = null
+  memory: RoomMemory | null = null
 ) {
   const usager = new Usager();
-  if (!memory) memory = await loadSearchMemory(roomId);
+  if (!memory) memory = await loadRoomMemory(roomId);
 
   // DETERMINISTIC LOGIC
   const query = `

@@ -5,7 +5,7 @@ import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
-import type { ConsulterMemory } from "../memories";
+import type { RoomMemory } from "@/shared/ai/memories/load-room-memory";
 import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const log = logger.child({
@@ -41,7 +41,7 @@ export const createTicket = tool(
   async (input: any, config: RunnableConfig) => {
     const args = CreateTicketSchema.parse(input);
     const { title, description, priority, payload } = args;
-    const { memory } = config.configurable as { memory: ConsulterMemory };
+    const { memory } = config.configurable as { memory: RoomMemory };
 
     const room = memory.room;
 
@@ -81,6 +81,7 @@ export const createTicket = tool(
     schema: CreateTicketSchema,
     metadata: {
       visible: false,
+      needApproval: false,
     },
   }
 );

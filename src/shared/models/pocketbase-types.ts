@@ -23,7 +23,6 @@ export enum Collections {
 	Orgs = "orgs",
 	Projects = "projects",
 	Rooms = "rooms",
-	Senders = "senders",
 	Sources = "sources",
 	Subscriptions = "subscriptions",
 	Tickets = "tickets",
@@ -125,6 +124,7 @@ export type AgentsRecord = {
 export enum ChatsTypeOptions {
 	"web" = "web",
 	"tg" = "tg",
+	"inner" = "inner",
 }
 export type ChatsRecord<Ttheme = unknown> = {
 	avatar?: string
@@ -204,7 +204,6 @@ export enum LeadsTypeOptions {
 	"client" = "client",
 }
 export type LeadsRecord<Tmetadata = unknown> = {
-	avatar?: string
 	created?: IsoDateString
 	description?: string
 	email?: string
@@ -302,6 +301,7 @@ export enum RoomsTypeOptions {
 	"chatWidget" = "chatWidget",
 	"chatPreview" = "chatPreview",
 	"integrationAgent" = "integrationAgent",
+	"oracle" = "oracle",
 }
 export type RoomsRecord = {
 	chat?: RecordIdString
@@ -311,15 +311,6 @@ export type RoomsRecord = {
 	status: RoomsStatusOptions
 	type?: RoomsTypeOptions
 	updated?: IsoDateString
-}
-
-export type SendersRecord = {
-	agent?: RecordIdString
-	created?: IsoDateString
-	id: string
-	lead?: RecordIdString
-	updated?: IsoDateString
-	user?: RecordIdString
 }
 
 export enum SourcesStatusOptions {
@@ -405,7 +396,6 @@ export type OrgMembersResponse<Texpand = unknown> = Required<OrgMembersRecord> &
 export type OrgsResponse<Texpand = unknown> = Required<OrgsRecord> & BaseSystemFields<Texpand>
 export type ProjectsResponse<Texpand = unknown> = Required<ProjectsRecord> & BaseSystemFields<Texpand>
 export type RoomsResponse<Texpand = unknown> = Required<RoomsRecord> & BaseSystemFields<Texpand>
-export type SendersResponse<Texpand = unknown> = Required<SendersRecord> & BaseSystemFields<Texpand>
 export type SourcesResponse<Tmetadata = unknown, Texpand = unknown> = Required<SourcesRecord<Tmetadata>> & BaseSystemFields<Texpand>
 export type SubscriptionsResponse<TusagePayload = unknown, Texpand = unknown> = Required<SubscriptionsRecord<TusagePayload>> & BaseSystemFields<Texpand>
 export type TicketsResponse<Tmetadata = unknown, Texpand = unknown> = Required<TicketsRecord<Tmetadata>> & BaseSystemFields<Texpand>
@@ -431,7 +421,6 @@ export type CollectionRecords = {
 	orgs: OrgsRecord
 	projects: ProjectsRecord
 	rooms: RoomsRecord
-	senders: SendersRecord
 	sources: SourcesRecord
 	subscriptions: SubscriptionsRecord
 	tickets: TicketsRecord
@@ -456,7 +445,6 @@ export type CollectionResponses = {
 	orgs: OrgsResponse
 	projects: ProjectsResponse
 	rooms: RoomsResponse
-	senders: SendersResponse
 	sources: SourcesResponse
 	subscriptions: SubscriptionsResponse
 	tickets: TicketsResponse
@@ -484,7 +472,6 @@ export type TypedPocketBase = PocketBase & {
 	collection(idOrName: 'orgs'): RecordService<OrgsResponse>
 	collection(idOrName: 'projects'): RecordService<ProjectsResponse>
 	collection(idOrName: 'rooms'): RecordService<RoomsResponse>
-	collection(idOrName: 'senders'): RecordService<SendersResponse>
 	collection(idOrName: 'sources'): RecordService<SourcesResponse>
 	collection(idOrName: 'subscriptions'): RecordService<SubscriptionsResponse>
 	collection(idOrName: 'tickets'): RecordService<TicketsResponse>

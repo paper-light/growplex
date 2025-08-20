@@ -24,17 +24,32 @@ export type IntegrationManagerMemory = {
   history: any[]; // LangchainMessage[];
 };
 
+const EXPAND = [
+  "lead",
+  "chat",
+  // INTEGRATION
+  "chat.integration",
+  "chat.integration.agents",
+  "chat.integration.sources",
+  "chat.integration.chats",
+  // PROJECT
+  "chat.project",
+  "chat.project.org",
+  "chat.project.agents",
+].join(",");
+
 export async function loadIntegrationManagerMemory(
   roomId: string
 ): Promise<IntegrationManagerMemory> {
   const room = await pb.collection("rooms").getOne(roomId, {
-    expand:
-      "lead,chat,chat.integration,chat.integration.agents,chat.integration.sources,chat.integration.chats,chat.project,chat.project.org",
+    expand: EXPAND,
   });
 
   // ROOM POCKETBASE DATA
   const lead: LeadsResponse = (room.expand as any)?.lead || null;
   const chat: ChatsResponse = (room.expand as any)?.chat || null;
+
+  // INTEGRATION POCKETBASE DATA
   const integration: IntegrationsResponse =
     (chat.expand as any)?.integration || null;
   const agent: AgentsResponse =

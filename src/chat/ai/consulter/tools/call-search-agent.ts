@@ -3,31 +3,26 @@ import { tool } from "@langchain/core/tools";
 
 import { logger } from "@/shared/lib/logger";
 import { EnhancerReturnSchema } from "@/search/ai/enhancer/schemas";
-import { runSearchWorkflow } from "@/search/ai/searcher/workflows";
+import { runSearcher } from "@/search/ai/searcher/run";
 import type { Model, ModelUsage } from "@/billing/types";
 
-import type { ConsulterMemory } from "../memories";
-import type { WorkflowConfig } from "../workflows";
+import type { RoomMemory } from "@/shared/ai/memories/load-room-memory";
+import type { RunConsulterConfig } from "../run";
 
 const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
 
 export const callSearchAgent = tool(
   async (input: any, config: RunnableConfig) => {
     const args = EnhancerReturnSchema.parse(input);
-    const { memory, updateWorkflowConfig, updateUsager } =
-      config.configurable as {
-        memory: ConsulterMemory;
-        updateWorkflowConfig: (config: Partial<WorkflowConfig>) => void;
-        updateUsager: (usage: Record<Model, ModelUsage>) => void;
-      };
+    const { memory, updateRunConfig, updateUsager } = config.configurable as {
+      memory: RoomMemory;
+      updateRunConfig: (config: Partial<RunConsulterConfig>) => void;
+      updateUsager: (usage: Record<Model, ModelUsage>) => void;
+    };
 
-    const { result, usage } = await runSearchWorkflow(
-      memory.room.id,
-      args,
-      memory
-    );
+    const { result, usage } = await runSearcher(memory.room.id, args, memory);
 
-    updateWorkflowConfig({
+    updateRunConfig({
       knowledge: JSON.stringify(
         `Relevant to query: ${result.success ? "✅" : "❌"}
       Search results: ${result.content}`
@@ -50,6 +45,7 @@ export const callSearchAgent = tool(
     schema: EnhancerReturnSchema,
     metadata: {
       visible: true,
+      needApproval: false,
     },
   }
 );

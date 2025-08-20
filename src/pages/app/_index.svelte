@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { SvelteSet } from "svelte/reactivity";
-
   import Interactions from "@/chat/ui/widgets/Interactions.svelte";
   import Messages from "@/messages/ui/widgets/Messages.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
@@ -11,18 +9,15 @@
   import { pb } from "@/shared/lib/pb";
   import Man from "@/shared/assets/Man.jpg";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
-
-  const ROOM_STATUSES = [
-    { value: "operator", label: "Operator", color: "success" },
-    { value: "waitingOperator", label: "Waiting", color: "warning" },
-    { value: "auto", label: "Auto", color: "info" },
-    { value: "seeded", label: "Seeded", color: "secondary" },
-  ];
+  import CreateRecord from "@/shared/ui/features/CreateRecord.svelte";
+  import { chatsProvider } from "@/chat/providers/chats.svelte";
 
   const user = $derived(userProvider.user);
   const avatar = $derived(
     user?.avatar ? pb.files.getURL(user, user.avatar) : Man.src
   );
+
+  const innerChat = $derived(chatsProvider.innerChat);
 
   const integrationAgents = $derived(agentsProvider.integrationAgents);
 
@@ -31,14 +26,12 @@
 
   const filteredRooms = $derived.by(() => {
     if (!rooms.length) return [];
-
-    let filtered = rooms.filter((r) => r.type === "chatWidget");
-    if (selectedTypes.size > 0)
-      filtered = filtered.filter((room) => selectedTypes.has(room.status));
-
+    let filtered = rooms.filter(
+      (r) => r.type === "oracle" && r.chat === innerChat?.id
+    );
     return filtered;
   });
-  const sortedRooms = $derived(filteredRooms.sort(sortRooms));
+  const sortedRooms = $derived(filteredRooms);
 
   const messages = $derived.by(() => {
     if (!selectedRoom) return [];
@@ -50,9 +43,6 @@
   let sidebarScroll = $state<HTMLElement | null>(null);
   let roomListElement: HTMLDivElement | null = $state(null);
   let scrollPosition = $state(0);
-
-  // FILTERS
-  let selectedTypes = $state<Set<string>>(new SvelteSet());
 
   function sortRooms(a: RoomsResponse, b: RoomsResponse) {
     const order = {
@@ -90,32 +80,6 @@
     saveScrollPosition();
     settingsProvider.selectRoom(room.id);
   }
-
-  async function handleIntegrationChange(e: Event) {
-    const target = e.target as HTMLSelectElement;
-    settingsProvider.selectIntegration(target.value);
-  }
-
-  function toggleTypeFilter(type: string) {
-    const newSelected = new Set(selectedTypes);
-    if (newSelected.has(type)) {
-      newSelected.delete(type);
-    } else {
-      newSelected.add(type);
-    }
-    selectedTypes = newSelected;
-  }
-
-  function getStatusInfo(status: string) {
-    const statusMap: Record<string, { label: string; color: string }> = {
-      operator: { label: "Operator", color: "badge-success" },
-      waitingOperator: { label: "Waiting", color: "badge-warning" },
-      auto: { label: "Auto", color: "badge-info" },
-      seeded: { label: "Seeded", color: "badge-secondary" },
-      frozen: { label: "Frozen", color: "badge-neutral" },
-    };
-    return statusMap[status] || { label: status, color: "badge-neutral" };
-  }
 </script>
 
 <div class="flex h-full w-full">
@@ -123,39 +87,22 @@
     class="w-80 h-full bg-base-100 px-4 py-2 flex flex-col border-r border-base-300 bg-base-200"
   >
     <div class="flex flex-col gap-4 flex-1 min-h-0">
-      <h2 class="font-semibold text-center border-b border-base-300 pb-2">
-        Rooms
-      </h2>
-
-      <!-- Filters -->
-      <div class="p-4 border-b border-base-300">
-        <div class="flex flex-wrap gap-2">
-          {#each ROOM_STATUSES as type}
-            {@const count = sortedRooms.filter(
-              (room) => room.status === type.value
-            ).length}
-            {#if count > 0}
-              <button
-                class="btn btn-xs"
-                class:btn-primary={selectedTypes.has(type.value)}
-                class:btn-outline={!selectedTypes.has(type.value)}
-                onclick={() => toggleTypeFilter(type.value)}
-              >
-                {type.label}
-                <span class="badge badge-xs ml-1">{count}</span>
-              </button>
-            {/if}
-          {/each}
-
-          {#if selectedTypes.size > 0}
-            <button
-              class="btn btn-xs btn-ghost"
-              onclick={() => (selectedTypes = new Set())}
-            >
-              Clear
-            </button>
-          {/if}
-        </div>
+      <div
+        class="flex items-center justify-center border-b border-base-300 pb-2"
+      >
+        <CreateRecord
+          collection="rooms"
+          data={{
+            type: "oracle",
+            status: "auto",
+            chat: innerChat?.id,
+          }}
+          onSuccess={(room) => {
+            settingsProvider.selectRoom(room.id);
+          }}
+        >
+          + Create room
+        </CreateRecord>
       </div>
 
       <!-- Room List -->
@@ -169,23 +116,10 @@
             class="flex flex-col items-center justify-center p-8 text-center"
           >
             <div class="text-4xl mb-2">💬</div>
-            <p class="text-base-content/70">
-              {selectedTypes.size > 0
-                ? "No rooms match your filters"
-                : "No rooms available"}
-            </p>
-            {#if selectedTypes.size > 0}
-              <button
-                class="btn btn-sm btn-outline mt-2"
-                onclick={() => (selectedTypes = new Set())}
-              >
-                Clear filters
-              </button>
-            {/if}
+            <p class="text-base-content/70">No oracle rooms available</p>
           </div>
         {:else}
           {#each sortedRooms as room}
-            {@const statusInfo = getStatusInfo(room.status)}
             {@const isActive = selectedRoom?.id === room.id}
             <button
               class="w-full p-3 hover:bg-base-200 transition-colors border-b border-base-200 last:border-b-0 relative hover:cursor-pointer"
@@ -195,11 +129,6 @@
             >
               <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3 min-w-0 flex-1">
-                  <!-- Status indicator -->
-                  <div class="flex-shrink-0">
-                    <span class="badge badge-xs {statusInfo.color}"></span>
-                  </div>
-
                   <!-- Room info -->
                   <div class="min-w-0 flex-1">
                     <div
@@ -210,21 +139,7 @@
                         ? room.id.substring(0, 8) + "..."
                         : room.id}
                     </div>
-                    <div
-                      class="text-xs truncate"
-                      class:text-primary={isActive}
-                      class:text-base-content={!isActive}
-                    >
-                      {statusInfo.label}
-                    </div>
                   </div>
-                </div>
-
-                <!-- Status badge -->
-                <div class="flex-shrink-0">
-                  <span class="badge badge-xs {statusInfo.color}">
-                    {statusInfo.label}
-                  </span>
                 </div>
               </div>
 
@@ -242,7 +157,7 @@
   </aside>
 
   <!-- Main Content Area -->
-  {#if sortedRooms.length > 0}
+  {#if innerChat && sortedRooms.length > 0}
     <div class="flex flex-col flex-1 min-w-0">
       <header class="flex-shrink-0">
         <div class="flex items-center justify-between">
@@ -261,14 +176,15 @@
           sender={{
             id: user?.id || "",
             avatar,
-            name: user?.name || "Guest",
-            role: "operator",
+            name: user?.name || "Admin",
+            role: "user",
           }}
+          chat={innerChat}
         />
       </main>
 
       <footer class="flex-shrink-0">
-        <Interactions mode="admin" />
+        <Interactions mode="oracle" />
       </footer>
     </div>
   {:else}
@@ -276,7 +192,20 @@
       class="flex flex-col items-center justify-center p-8 text-center w-full h-full"
     >
       <div class="text-4xl mb-2">💬</div>
-      <p class="text-base-content/70">No rooms available</p>
+      <p class="text-base-content/70">No oracle rooms available</p>
+      <CreateRecord
+        collection="rooms"
+        data={{
+          type: "oracle",
+          status: "auto",
+          chat: innerChat?.id,
+        }}
+        onSuccess={(room) => {
+          settingsProvider.selectRoom(room.id);
+        }}
+      >
+        Create first and start working!
+      </CreateRecord>
     </div>
   {/if}
 </div>

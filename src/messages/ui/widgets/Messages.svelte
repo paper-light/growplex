@@ -10,6 +10,7 @@
     type MessagesResponse,
     type AgentsResponse,
     type UsersResponse,
+    type ChatsResponse,
   } from "@/shared/models/pocketbase-types";
   import { type Sender } from "@/chat/providers/socket.svelte";
 
@@ -17,9 +18,11 @@
   import Thalia from "@/shared/assets/Thalia.jpg";
   import { pb } from "@/shared/lib/pb";
   import Man from "@/shared/assets/Man.jpg";
+  import Pantheon from "@/shared/assets/Pantheon.jpg";
 
   interface Props {
     class?: ClassValue;
+    chat?: ChatsResponse;
     messages: MessagesResponse[];
     agents: AgentsResponse[];
     operators: UsersResponse[];
@@ -31,6 +34,7 @@
     class: className,
     sender,
     agents,
+    chat,
     operators,
   }: Props = $props();
 
@@ -66,16 +70,25 @@
     ) {
       return sender;
     } else if (["assistant", "tool"].includes(msg.role)) {
-      const agent = agents.find((a) => a.id === msg.sentBy);
-      const avatar = agent?.avatar
-        ? pb.files.getURL(agent, agent.avatar)
-        : Thalia.src;
-      return {
-        id: agent?.id || "",
-        avatar,
-        name: agent?.name || agent?.id || "Agent",
-        role: "assistant",
-      };
+      if (chat?.type === "inner") {
+        return {
+          id: chat?.id || "",
+          avatar: Pantheon.src,
+          name: "Marketing Oracle",
+          role: "assistant",
+        };
+      } else {
+        const agent = agents.find((a) => a.id === msg.sentBy);
+        const avatar = agent?.avatar
+          ? pb.files.getURL(agent, agent.avatar)
+          : Thalia.src;
+        return {
+          id: agent?.id || "",
+          avatar,
+          name: agent?.name || agent?.id || "Agent",
+          role: "assistant",
+        };
+      }
     } else if (msg.role === "operator") {
       const operator = operators.find((o) => o.id === msg.sentBy);
       const avatar = operator?.avatar
@@ -94,7 +107,8 @@
   function isIncoming(msg: MessagesResponse) {
     if (sender.role === "operator")
       return msg.role !== MessagesRoleOptions.operator;
-    if (sender.role === "guest") return msg.role !== MessagesRoleOptions.user;
+    if (sender.role === "guest" || sender.role === "user")
+      return msg.role !== MessagesRoleOptions.user;
     return false;
   }
 </script>

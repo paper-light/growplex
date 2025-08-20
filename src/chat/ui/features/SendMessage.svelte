@@ -9,8 +9,8 @@
   } from "@/shared/models/pocketbase-types";
 
   type Props = {
-    room: RoomsResponse | { id: string };
-    role?: "operator" | "user";
+    room: RoomsResponse;
+    mode?: "widget" | "admin" | "oracle";
     inputText?: string;
     inputEl?: HTMLTextAreaElement | null;
     class?: string;
@@ -20,7 +20,7 @@
   let {
     room,
     inputEl,
-    role = "user",
+    mode = "widget",
     class: className,
     inputText = $bindable(""),
     disabled = false,
@@ -32,9 +32,12 @@
     socketProvider.sendMessage(
       inputText,
       room.id,
-      role === "operator"
+      ["admin", "oracle"].includes(mode)
         ? MessagesRoleOptions.operator
-        : MessagesRoleOptions.user
+        : MessagesRoleOptions.user,
+      "message",
+      {},
+      room.type === "oracle" ? "oracle" : "consulter"
     );
 
     inputText = "";

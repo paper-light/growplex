@@ -16,6 +16,16 @@ class ChatsProvider {
     return this.chats.filter((c) => c.integration === integration.id);
   });
 
+  innerChat = $derived.by(() => {
+    const integration = integrationsProvider.selectedIntegration;
+    if (this.chats.length == 0 || !integration) return null;
+
+    return this.chats.find(
+      (c) => c.type === "inner" && c.integration === integration.id
+    );
+  });
+
+  // Global selected across all chats
   selectedChat = $derived.by(() => {
     if (!this.chats.length) return null;
 
@@ -29,6 +39,7 @@ class ChatsProvider {
     return this.chats[0];
   });
 
+  // Selected chat for Wizard widget mostly
   selectedIntegrationChat = $derived.by(() => {
     if (this.integrationChats.length == 0) return null;
 

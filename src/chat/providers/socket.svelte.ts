@@ -11,7 +11,7 @@ export type Sender = {
   id: string;
   avatar: string;
   name: string;
-  role: "guest" | "operator";
+  role: "guest" | "operator" | "user";
 };
 
 class SocketProvider {
@@ -124,7 +124,7 @@ class SocketProvider {
     role: MessagesRoleOptions = MessagesRoleOptions.user,
     event = "message",
     metadata: Record<string, any> = {},
-    mode: "consulter" | "integration-manager" = "consulter"
+    mode: "consulter" | "oracle" = "consulter"
   ) {
     if (!this.socket || !this.online) {
       console.warn("socket not connected, skipping sendMessage");

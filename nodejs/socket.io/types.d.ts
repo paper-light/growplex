@@ -8,5 +8,5 @@ export interface SendMessageDTO {
   chatId: string;
   roomId: string;
   msgStr: string;
-  mode?: "consulter" | "integration-manager";
+  mode?: "consulter" | "oracle";
 }

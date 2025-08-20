@@ -53,7 +53,8 @@ const { title, favicon = Growplex.src } = Astro.props;
       <aside
         class="w-72 lg:w-64 bg-base-100 border-r border-base-300 flex flex-col h-screen pt-4"
       >
-        <div
+        <a
+          href="/app"
           class="flex items-center justify-center gap-1 mb-4 select-none relative"
         >
           <Growplex class="size-8" />
@@ -64,7 +65,7 @@ const { title, favicon = Growplex.src } = Astro.props;
           >
             Beta
           </div>
-        </div>
+        </a>
 
         <SidebarNav
           active={title}

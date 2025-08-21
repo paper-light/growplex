@@ -2,7 +2,7 @@
   import Interactions from "@/chat/ui/widgets/Interactions.svelte";
   import Messages from "@/messages/ui/widgets/Messages.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
-  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
   import type { RoomsResponse } from "@/shared/models/pocketbase-types";
   import { settingsProvider } from "@/user/settings.svelte";
   import { userProvider } from "@/user/user.svelte";
@@ -16,6 +16,13 @@
   const avatar = $derived(
     user?.avatar ? pb.files.getURL(user, user.avatar) : Man.src
   );
+
+  const sender: Sender = $derived({
+    id: user?.id || "",
+    avatar,
+    name: user?.name || "Admin",
+    role: "admin",
+  });
 
   const innerChat = $derived(chatsProvider.innerChat);
 
@@ -91,6 +98,7 @@
         class="flex items-center justify-center border-b border-base-300 pb-2"
       >
         <CreateRecord
+          block
           collection="rooms"
           data={{
             type: "oracle",
@@ -173,18 +181,13 @@
           {messages}
           operators={user ? [user] : []}
           agents={integrationAgents}
-          sender={{
-            id: user?.id || "",
-            avatar,
-            name: user?.name || "Admin",
-            role: "user",
-          }}
+          {sender}
           chat={innerChat}
         />
       </main>
 
       <footer class="flex-shrink-0">
-        <Interactions mode="oracle" />
+        <Interactions {sender} room={selectedRoom!} />
       </footer>
     </div>
   {:else}

@@ -52,7 +52,7 @@
     "langchain": "^0.3.31",
     "langfuse": "^3.38.4",
     "langfuse-langchain": "^3.38.4",
-    "langsmith": "^0.3.61",
+    "langsmith": "^0.3.62",
     "luxon": "^3.7.1",
     "marked": "^16.2.0",
     "meilisearch": "^0.51.0",

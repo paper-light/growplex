@@ -1,13 +1,17 @@
 import type { RecordSubscription } from "pocketbase";
 import type { StructuredTool } from "@langchain/core/tools";
 
-import type { MessagesResponse } from "@/shared/models/pocketbase-types";
+import type {
+  AgentsResponse,
+  MessagesResponse,
+} from "@/shared/models/pocketbase-types";
 import type { Usager } from "@/billing/usager";
 import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
 
 import { rejectTool } from "./reject-tool";
 import { approveTool } from "./approve-tool";
+import type { Memory } from "../memories";
 
 const log = logger.child({ module: "shared:ai:tools:msg-wait" });
 
@@ -19,7 +23,8 @@ export async function msgWait(
   msg: MessagesResponse,
   tool: StructuredTool,
   toolCall: any,
-  memory: any,
+  memory: Memory,
+  agent: AgentsResponse,
   runConfig: any,
   usager: Usager
 ) {
@@ -34,9 +39,10 @@ export async function msgWait(
         pb.collection("messages").unsubscribe(msg.id);
         try {
           await rejectTool(
-            msg,
+            msg.id,
             toolCall,
             memory,
+            agent,
             runConfig,
             metadata,
             "Tool was rejected by user"
@@ -56,8 +62,9 @@ export async function msgWait(
           await approveTool(
             tool,
             toolCall,
-            msg,
+            msg.id,
             memory,
+            agent,
             metadata,
             runConfig,
             usager

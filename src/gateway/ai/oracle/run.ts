@@ -1,5 +1,5 @@
 import { Usager } from "@/billing/usager";
-import { loadRoomMemory } from "@/shared/ai/memories/load-room-memory";
+import { loadMemory } from "@/shared/ai/memories";
 import { langfuseHandler } from "@/shared/lib/langfuse";
 import { historyLangchainAdapter } from "@/messages/history/langchain-adapter";
 import { pbHistoryRepository } from "@/messages/history/pb-repository";
@@ -19,7 +19,9 @@ export type RunOracleConfig = {
 
 export async function runOracle(roomId: string, query: string) {
   const usager = new Usager();
-  const memory = await loadRoomMemory(roomId);
+
+  const memory = await loadMemory(roomId);
+
   const runConfig: RunOracleConfig = {
     query,
     roomId,
@@ -27,7 +29,7 @@ export async function runOracle(roomId: string, query: string) {
     messages: [],
   };
 
-  const MAX_ITERATIONS = 5;
+  const MAX_ITERATIONS = 3;
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     if (i === MAX_ITERATIONS - 1) runConfig.withTools = false;
     const tools = runConfig.withTools ? oracleTools : [];
@@ -36,10 +38,20 @@ export async function runOracle(roomId: string, query: string) {
       .pipe(baseOracleModel.bindTools(tools))
       .invoke(
         {
+          // Call context
           query: runConfig.query,
-          integration: memory.integration,
-          agents: memory.agents,
-          chat: memory.chat,
+          history: [...memory.room.history, ...runConfig.messages],
+          // Project context
+          project: memory.project.project,
+          org: memory.project.org,
+          project_agents: memory.project.agents,
+          project_chats: memory.project.chats,
+          project_sources: memory.project.sources,
+          // Integration context
+          integration: memory.integration.integration,
+          integration_agents: memory.integration.agents,
+          integration_chats: memory.integration.chats,
+          integration_sources: memory.integration.sources,
         },
         {
           callbacks: [langfuseHandler],
@@ -54,7 +66,7 @@ export async function runOracle(roomId: string, query: string) {
         msg: result!,
         opts: {
           roomId,
-          agent: memory.agents[0],
+          agent: memory.integration.agents[0],
           visible: !callingTools,
         },
       },
@@ -72,6 +84,7 @@ export async function runOracle(roomId: string, query: string) {
         oracleToolsMap[toolCall.name],
         toolCall,
         memory,
+        memory.integration.agents[0],
         runConfig,
         usager
       );

@@ -11,7 +11,7 @@ export type Sender = {
   id: string;
   avatar: string;
   name: string;
-  role: "guest" | "operator" | "user";
+  role: "guest" | "operator" | "user" | "admin";
 };
 
 class SocketProvider {
@@ -121,10 +121,10 @@ class SocketProvider {
   sendMessage(
     content: string,
     roomId: string,
-    role: MessagesRoleOptions = MessagesRoleOptions.user,
+    mode: "consulter" | "oracle",
+    role: MessagesRoleOptions,
     event = "message",
-    metadata: Record<string, any> = {},
-    mode: "consulter" | "oracle" = "consulter"
+    metadata: Record<string, any> = {}
   ) {
     if (!this.socket || !this.online) {
       console.warn("socket not connected, skipping sendMessage");
@@ -154,7 +154,7 @@ class SocketProvider {
       mode,
     });
 
-    if (role === "user") {
+    if (["guest", "user", "admin"].includes(role)) {
       this.waitingAnswerRooms.add(roomId);
       setTimeout(() => {
         this.waitingAnswerRooms.delete(roomId);

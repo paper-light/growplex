@@ -8,6 +8,8 @@
   import { pb } from "@/shared/lib/pb";
 
   interface Props {
+    wide?: boolean;
+    block?: boolean;
     class?: ClassValue;
     style?: "soft" | "outline" | "ghost" | "solid";
     color?: "primary" | "secondary" | "accent" | "neutral" | "error";
@@ -22,6 +24,8 @@
   }
 
   const {
+    wide = false,
+    block = false,
     projectId,
     collection,
     data,
@@ -49,8 +53,9 @@
   };
 </script>
 
-<div class={[className]}>
+<div class={[className, block && "w-full"]}>
   <Button
+    {wide}
     {style}
     {color}
     {size}

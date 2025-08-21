@@ -8,12 +8,17 @@ import { guardRoomAccess } from "@/auth/guards/guard-room-access";
 import { CHAT_CONFIG } from "@/chat/config";
 import { chunker } from "@/search/chunker";
 import { sender } from "@/messages/sender/sender";
+import { logger } from "@/shared/lib/logger";
 
 import { joinRoom } from "./join-room";
 import { sendMessage } from "./send-message";
 import { chatRateLimiter } from "./rate-limiter";
 import { useMiddlewares } from "./middleware";
 import type { JoinRoomDTO, SendMessageDTO } from "./types";
+
+const log = logger.child({
+  module: "socket.io:controller",
+});
 
 export function attachSocketIO(httpServer: any) {
   const io = new IOServer(httpServer);
@@ -35,6 +40,7 @@ export function attachSocketIO(httpServer: any) {
     });
 
     socket.on("send-message", async (dto: SendMessageDTO) => {
+      log.debug({ dto }, "send-message");
       const room = await pb.collection("rooms").getOne(dto.roomId, {
         expand: "chat",
       });

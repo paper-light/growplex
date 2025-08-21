@@ -11,6 +11,7 @@
   import { pb } from "@/shared/lib/pb";
   import Man from "@/shared/assets/Man.jpg";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
+  import type { Sender } from "@/chat/providers/socket.svelte";
 
   const ROOM_STATUSES = [
     { value: "operator", label: "Operator", color: "success" },
@@ -23,6 +24,13 @@
   const avatar = $derived(
     user?.avatar ? pb.files.getURL(user, user.avatar) : Man.src
   );
+
+  const sender: Sender = $derived({
+    id: user?.id || "",
+    avatar,
+    name: user?.name || "Admin",
+    role: "admin",
+  });
 
   const integrationAgents = $derived(agentsProvider.integrationAgents);
 
@@ -258,17 +266,12 @@
           {messages}
           operators={user ? [user] : []}
           agents={integrationAgents}
-          sender={{
-            id: user?.id || "",
-            avatar,
-            name: user?.name || "Guest",
-            role: "operator",
-          }}
+          {sender}
         />
       </main>
 
       <footer class="flex-shrink-0">
-        <Interactions mode="admin" />
+        <Interactions {sender} room={selectedRoom!} />
       </footer>
     </div>
   {:else}

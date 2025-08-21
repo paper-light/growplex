@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ChevronsRight } from "@lucide/svelte";
 
-  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
   import Button from "@/shared/ui/Button.svelte";
   import {
     MessagesRoleOptions,
@@ -10,20 +10,20 @@
 
   type Props = {
     room: RoomsResponse;
-    mode?: "widget" | "admin" | "oracle";
     inputText?: string;
     inputEl?: HTMLTextAreaElement | null;
     class?: string;
     disabled?: boolean;
+    sender: Sender;
   };
 
   let {
     room,
     inputEl,
-    mode = "widget",
     class: className,
     inputText = $bindable(""),
     disabled = false,
+    sender,
   }: Props = $props();
 
   async function send() {
@@ -32,12 +32,10 @@
     socketProvider.sendMessage(
       inputText,
       room.id,
-      ["admin", "oracle"].includes(mode)
-        ? MessagesRoleOptions.operator
-        : MessagesRoleOptions.user,
+      room.type === "oracle" ? "oracle" : "consulter",
+      sender.role as MessagesRoleOptions,
       "message",
-      {},
-      room.type === "oracle" ? "oracle" : "consulter"
+      {}
     );
 
     inputText = "";

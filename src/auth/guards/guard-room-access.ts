@@ -6,7 +6,7 @@ import type { RoomsResponse } from "@/shared/models/pocketbase-types";
 export async function guardRoomAccess(
   socket: Socket,
   room: RoomsResponse,
-  mode: "consulter" | "integration-manager" = "consulter"
+  mode: "consulter" | "oracle" = "consulter"
 ) {
   if (socket.data.guest) {
     if (socket.data.guest.roomId === room.id && mode === "consulter") return;

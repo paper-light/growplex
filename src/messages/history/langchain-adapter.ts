@@ -100,7 +100,7 @@ class HistoryLangchainAdapter {
         content,
         role: MessagesRoleOptions.assistant,
         room: opts.roomId,
-        sentBy: opts.agent!.id,
+        sentBy: opts.agent?.id,
         visible: opts.visible,
         contentTokensCount: chunker.countTokens(content, "gpt-4"),
         metadata: {
@@ -114,7 +114,7 @@ class HistoryLangchainAdapter {
         content: msg.content.toString(),
         role: MessagesRoleOptions.tool,
         room: opts.roomId,
-        sentBy: opts.agent!.id,
+        sentBy: opts.agent?.id,
         visible: opts.visible,
         contentTokensCount: chunker.countTokens(
           msg.content.toString(),
@@ -144,8 +144,17 @@ class HistoryLangchainAdapter {
           content: msg.content,
           name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
         });
-
       case MessagesRoleOptions.user:
+        return new HumanMessage({
+          content: msg.content,
+          name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
+        });
+      case MessagesRoleOptions.admin:
+        return new HumanMessage({
+          content: msg.content,
+          name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
+        });
+      case MessagesRoleOptions.guest:
         return new HumanMessage({
           content: msg.content,
           name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
@@ -159,7 +168,7 @@ class HistoryLangchainAdapter {
           return new AIMessage({
             content: msg.content,
             name: `${msg.role}-${msg.sentBy.replace(/[\s<|\\/>\:]+/g, "_")}`,
-            tool_calls: toolMessages.map((tool: any, index: number) => {
+            tool_calls: toolMessages.map((tool: any) => {
               return {
                 id: tool.id,
                 name: tool.name,

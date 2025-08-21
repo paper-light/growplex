@@ -105,6 +105,6 @@
       bg-base-100
     "
   >
-    <Interactions parentRoom={room} mode="widget" />
+    <Interactions {room} {sender} />
   </footer>
 </div>

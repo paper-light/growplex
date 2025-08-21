@@ -223,6 +223,8 @@ export enum MessagesRoleOptions {
 	"assistant" = "assistant",
 	"system" = "system",
 	"tool" = "tool",
+	"guest" = "guest",
+	"admin" = "admin",
 }
 export type MessagesRecord<Tmetadata = unknown> = {
 	content: string

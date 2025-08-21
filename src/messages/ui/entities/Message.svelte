@@ -11,6 +11,7 @@
 
   import DividerMessage from "./DividerMessage.svelte";
   import SearchContent from "./SearchContent.svelte";
+  import ApprovableMessage from "./ApprovableMessage.svelte";
 
   interface Props {
     class?: ClassValue;
@@ -19,6 +20,8 @@
   }
 
   const { msg, incoming, class: className = "" }: Props = $props();
+
+  const isApprovable = $derived((msg.metadata as any)?.needApproval);
 
   const sender: Sender | null = (msg.metadata as any)?.sender;
 
@@ -71,7 +74,9 @@
         class:chat-bubble-primary={!incoming}
         aria-label="Chat message"
       >
-        {#if msg.event === "message"}
+        {#if isApprovable}
+          <ApprovableMessage {msg} />
+        {:else if msg.event === "message"}
           {@html safeHtml}
         {:else if msg.event === "callSearchAgent"}
           <SearchContent {msg} />

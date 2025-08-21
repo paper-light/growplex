@@ -6,7 +6,7 @@ import { logger } from "@/shared/lib/logger";
 import { Usager } from "@/billing/usager";
 import { sender } from "@/messages/sender/sender";
 import { langfuseHandler } from "@/shared/lib/langfuse";
-import { loadRoomMemory } from "@/shared/ai/memories/load-room-memory";
+import { loadMemory } from "@/shared/ai/memories";
 import { callTool } from "@/shared/ai/tools/call-tool";
 
 import { baseConsulterModel, CHAT_CONSULTER_MODEL } from "./llms";
@@ -28,7 +28,7 @@ export type RunConsulterConfig = {
 
 export const runConsulter = async (roomId: string, query: string) => {
   const usager = new Usager();
-  const memory = await loadRoomMemory(roomId);
+  const memory = await loadMemory(roomId);
 
   log.info({ roomId, query }, "runChatWorkflow started");
   const runConfig: RunConsulterConfig = {
@@ -58,11 +58,12 @@ export const runConsulter = async (roomId: string, query: string) => {
       .pipe(baseConsulterModel.bindTools(tools))
       .invoke(
         {
-          history: [...memory.history, ...runConfig.messages],
-          knowledge: runConfig.knowledge,
-          system: memory.agents[0].system,
           query,
-          lead: JSON.stringify(memory.lead, null, 2),
+          history: [...memory.room.history, ...runConfig.messages],
+          knowledge: runConfig.knowledge,
+
+          system: memory.integration.agents[0].system,
+          lead: JSON.stringify(memory.room.lead, null, 2),
         },
         {
           callbacks: [langfuseHandler],
@@ -79,7 +80,7 @@ export const runConsulter = async (roomId: string, query: string) => {
         msg: result!,
         opts: {
           roomId,
-          agent: memory.agents[0],
+          agent: memory.integration.agents[0],
           visible: !callingTools,
         },
       },
@@ -99,6 +100,7 @@ export const runConsulter = async (roomId: string, query: string) => {
         consulterToolsMap[toolCall.name],
         toolCall,
         memory,
+        memory.integration.agents[0],
         runConfig,
         usager
       );

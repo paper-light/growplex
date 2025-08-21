@@ -7,7 +7,11 @@ class ChatsProvider {
   // STATE
   private subscribed = false;
 
-  chats: ChatsResponse[] = $state([]);
+  private _chats: ChatsResponse[] = $state([]);
+
+  chats = $derived.by(() => {
+    return this._chats.filter((c) => c.type !== "inner");
+  });
 
   integrationChats = $derived.by(() => {
     const integration = integrationsProvider.selectedIntegration;
@@ -20,7 +24,7 @@ class ChatsProvider {
     const integration = integrationsProvider.selectedIntegration;
     if (this.chats.length == 0 || !integration) return null;
 
-    return this.chats.find(
+    return this._chats.find(
       (c) => c.type === "inner" && c.integration === integration.id
     );
   });
@@ -59,7 +63,7 @@ class ChatsProvider {
       filter: `project = "${projectId}"`,
       sort: "created",
     });
-    this.chats = chats;
+    this._chats = chats;
   }
 
   async subscribe(projectId: string) {
@@ -74,13 +78,13 @@ class ChatsProvider {
         console.log("chat", chat);
         switch (chat.action) {
           case "create":
-            this.chats.push(chat.record);
+            this._chats.push(chat.record);
             break;
           case "delete":
-            this.chats = this.chats.filter((r) => r.id !== chat.record.id);
+            this._chats = this._chats.filter((r) => r.id !== chat.record.id);
             break;
           case "update":
-            this.chats = this.chats.map((r) =>
+            this._chats = this._chats.map((r) =>
               r.id === chat.record.id ? chat.record : r
             );
             break;

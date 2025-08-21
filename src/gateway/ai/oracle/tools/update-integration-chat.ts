@@ -4,12 +4,14 @@ import { type ToolRunnableConfig, tool } from "@langchain/core/tools";
 import { logger } from "@/shared/lib/logger";
 import { themes } from "@/shared/styles/themes";
 import { pb } from "@/shared/lib/pb";
+import type { Memory } from "@/shared/ai/memories";
 
 const log = logger.child({
   module: "gateway:ai:oracle:tools",
 });
 
 export const UpdateIntegrationChatSchema = z.object({
+  chatId: z.string().describe("The id of the integration chat to update"),
   domain: z
     .string()
     .optional()
@@ -31,23 +33,37 @@ export const UpdateIntegrationChatSchema = z.object({
 
 export const updateIntegrationChatTool = tool(
   async (input: any, config: ToolRunnableConfig) => {
-    const { domain, theme, name, firstMessage } =
+    const { chatId, domain, theme, name, firstMessage } =
       UpdateIntegrationChatSchema.parse(input);
-    const memory = config.configurable?.memory as any;
+    const { memory } = config.configurable as { memory: Memory };
 
-    const updatedChat = await pb.collection("chats").update(memory.chat.id, {
-      domain,
-      theme,
-      name,
-      firstMessage,
-    });
+    const chat = memory.project.chats.find((c) => c.id === chatId);
+    if (!chat) {
+      return {
+        success: false,
+        content: `Chat not found`,
+      };
+    }
 
-    log.info({ updatedChat }, "Updated chat");
-
-    return {
-      success: true,
-      message: `Updated chat: ${JSON.stringify(updatedChat)}`,
-    };
+    try {
+      const updatedChat = await pb.collection("chats").update(chat.id, {
+        domain,
+        theme,
+        name,
+        firstMessage,
+      });
+      log.info({ updatedChat }, "Updated chat");
+      return {
+        success: true,
+        content: `Updated chat: ${JSON.stringify(updatedChat)}`,
+      };
+    } catch (error) {
+      log.error({ error }, "Failed to update chat");
+      return {
+        success: false,
+        content: `Failed to update chat: ${error}`,
+      };
+    }
   },
   {
     schema: UpdateIntegrationChatSchema,

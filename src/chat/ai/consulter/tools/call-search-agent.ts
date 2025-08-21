@@ -6,7 +6,7 @@ import { EnhancerReturnSchema } from "@/search/ai/enhancer/schemas";
 import { runSearcher } from "@/search/ai/searcher/run";
 import type { Model, ModelUsage } from "@/billing/types";
 
-import type { RoomMemory } from "@/shared/ai/memories/load-room-memory";
+import type { Memory } from "@/shared/ai/memories";
 import type { RunConsulterConfig } from "../run";
 
 const log = logger.child({ module: "chat:ai:tools:call-search-agent" });
@@ -15,12 +15,16 @@ export const callSearchAgent = tool(
   async (input: any, config: RunnableConfig) => {
     const args = EnhancerReturnSchema.parse(input);
     const { memory, updateRunConfig, updateUsager } = config.configurable as {
-      memory: RoomMemory;
+      memory: Memory;
       updateRunConfig: (config: Partial<RunConsulterConfig>) => void;
       updateUsager: (usage: Record<Model, ModelUsage>) => void;
     };
 
-    const { result, usage } = await runSearcher(memory.room.id, args, memory);
+    const { result, usage } = await runSearcher(
+      memory.room.room.id,
+      args,
+      memory
+    );
 
     updateRunConfig({
       knowledge: JSON.stringify(

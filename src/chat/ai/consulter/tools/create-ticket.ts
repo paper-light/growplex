@@ -5,7 +5,7 @@ import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
 import type { RunnableConfig } from "@langchain/core/runnables";
 
-import type { RoomMemory } from "@/shared/ai/memories/load-room-memory";
+import type { Memory } from "@/shared/ai/memories";
 import { RoomsTypeOptions } from "@/shared/models/pocketbase-types";
 
 const log = logger.child({
@@ -41,9 +41,9 @@ export const createTicket = tool(
   async (input: any, config: RunnableConfig) => {
     const args = CreateTicketSchema.parse(input);
     const { title, description, priority, payload } = args;
-    const { memory } = config.configurable as { memory: RoomMemory };
+    const { memory } = config.configurable as { memory: Memory };
 
-    const room = memory.room;
+    const room = memory.room.room;
 
     if (room.type !== RoomsTypeOptions.chatWidget) {
       return {

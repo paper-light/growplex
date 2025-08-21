@@ -14,7 +14,7 @@
   } from "@/shared/models/pocketbase-types";
   import { type Sender } from "@/chat/providers/socket.svelte";
 
-  import ChatMessage from "@/messages/ui/entities/Message.svelte";
+  import Message from "@/messages/ui/entities/Message.svelte";
   import Thalia from "@/shared/assets/Thalia.jpg";
   import { pb } from "@/shared/lib/pb";
   import Man from "@/shared/assets/Man.jpg";
@@ -107,8 +107,9 @@
   function isIncoming(msg: MessagesResponse) {
     if (sender.role === "operator")
       return msg.role !== MessagesRoleOptions.operator;
-    if (sender.role === "guest" || sender.role === "user")
-      return msg.role !== MessagesRoleOptions.user;
+    if (sender.role === "guest") return msg.role !== MessagesRoleOptions.guest;
+    if (sender.role === "user") return msg.role !== MessagesRoleOptions.user;
+    if (sender.role === "admin") return msg.role !== MessagesRoleOptions.admin;
     return false;
   }
 </script>
@@ -129,7 +130,7 @@
     {:else}
       {#each msgsWithSender as msg (msg)}
         {@const incoming = isIncoming(msg)}
-        <ChatMessage {msg} {incoming} />
+        <Message {msg} {incoming} />
       {/each}
     {/if}
 

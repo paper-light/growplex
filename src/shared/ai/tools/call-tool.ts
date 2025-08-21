@@ -5,12 +5,14 @@ import type { StructuredTool } from "@langchain/core/tools";
 import type { Usager } from "@/billing/usager";
 import {
   MessagesRoleOptions,
-  type MessagesResponse,
+  type AgentsResponse,
 } from "@/shared/models/pocketbase-types";
 import { pbHistoryRepository } from "@/messages/history/pb-repository";
 import { sender } from "@/messages/sender/sender";
 import { pb } from "@/shared/lib/pb";
 import { logger } from "@/shared/lib/logger";
+
+import type { Memory } from "../memories";
 
 import { rejectTool } from "./reject-tool";
 import { msgWait } from "./msg-wait";
@@ -28,7 +30,8 @@ export const ToolMetadata = z.object({
 export async function callTool(
   tool: StructuredTool,
   toolCall: any,
-  memory: any,
+  memory: Memory,
+  agent: AgentsResponse,
   runConfig: any,
   usager: Usager
 ) {
@@ -39,6 +42,8 @@ export async function callTool(
     toolName: tool.name,
     needApproval: toolMetadata.needApproval,
     visible: toolMetadata.visible,
+    args: toolCall.args,
+    waitingSeconds: toolMetadata.maxWaitSeconds,
   };
 
   // Create pending message
@@ -47,8 +52,8 @@ export async function callTool(
       content: "<PROMISE>",
       role: MessagesRoleOptions.tool,
       metadata: msgMetadata,
-      room: memory.room.id,
-      sentBy: memory.agents[0].id,
+      room: memory.room.room.id,
+      sentBy: agent.id,
       visible: msgMetadata.visible,
       event: toolCall.name,
     },
@@ -62,7 +67,7 @@ export async function callTool(
     })
   );
   if (msgMetadata.visible) {
-    sender.sendMessage(memory.room.id, pbMessages[0], "new-message");
+    sender.sendMessage(memory.room.room.id, pbMessages[0], "new-message");
   }
 
   if (toolMetadata.needApproval) {
@@ -73,9 +78,10 @@ export async function callTool(
 
           if (toolMetadata.autoCancel) {
             await rejectTool(
-              pbMessages[0],
+              pbMessages[0].id,
               toolCall,
               memory,
+              agent,
               runConfig,
               msgMetadata,
               "Tool was not approved by user"
@@ -93,6 +99,7 @@ export async function callTool(
             tool,
             toolCall,
             memory,
+            agent,
             runConfig,
             usager
           )
@@ -105,8 +112,9 @@ export async function callTool(
     await approveTool(
       tool,
       toolCall,
-      pbMessages[0],
+      pbMessages[0].id,
       memory,
+      agent,
       msgMetadata,
       runConfig,
       usager

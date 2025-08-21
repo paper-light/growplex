@@ -3,37 +3,54 @@ import { type ToolRunnableConfig, tool } from "@langchain/core/tools";
 
 import { logger } from "@/shared/lib/logger";
 import { pb } from "@/shared/lib/pb";
+import type { Memory } from "@/shared/ai/memories";
 
 const log = logger.child({
   module: "gateway:ai:oracle:tools",
 });
 
 export const UpdateIntegrationAgentSchema = z.object({
+  agentId: z.string().describe("The id of the integration agent to update"),
   system: z
     .string()
     .optional()
     .describe(
-      "The system prompt of the integration agent. This should be specific"
+      "The system prompt of the integration agent. Set only if user is changing behavior of the agent."
     ),
   name: z.string().optional().describe("The name of the integration agent"),
 });
 
 export const updateIntegrationAgentTool = tool(
   async (input: any, config: ToolRunnableConfig) => {
-    const { system, name } = UpdateIntegrationAgentSchema.parse(input);
-    const memory = config.configurable?.memory as any;
+    const { agentId, system, name } = UpdateIntegrationAgentSchema.parse(input);
+    const { memory } = config.configurable as { memory: Memory };
 
-    const updatedAgent = await pb.collection("agents").update(memory.agent.id, {
-      system,
-      name,
-    });
+    try {
+      const agent = memory.integration.agents.find((a) => a.id === agentId);
+      if (!agent) {
+        return {
+          success: false,
+          content: `Agent not found`,
+        };
+      }
 
-    log.info({ updatedAgent }, "Updated agent");
+      const updatedAgent = await pb.collection("agents").update(agent.id, {
+        system,
+        name,
+      });
 
-    return {
-      success: true,
-      message: `Updated agent: ${JSON.stringify(updatedAgent)}`,
-    };
+      log.info({ updatedAgent }, "Updated agent");
+      return {
+        success: true,
+        content: `Updated agent: ${JSON.stringify(updatedAgent)}`,
+      };
+    } catch (error) {
+      log.error({ error }, "Failed to update agent");
+      return {
+        success: false,
+        content: `Failed to update agent: ${error}`,
+      };
+    }
   },
   {
     schema: UpdateIntegrationAgentSchema,

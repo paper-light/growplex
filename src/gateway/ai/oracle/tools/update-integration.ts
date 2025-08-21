@@ -2,8 +2,8 @@ import z from "zod";
 import { type ToolRunnableConfig, tool } from "@langchain/core/tools";
 
 import { logger } from "@/shared/lib/logger";
-import { themes } from "@/shared/styles/themes";
 import { pb } from "@/shared/lib/pb";
+import type { Memory } from "@/shared/ai/memories";
 
 const log = logger.child({
   module: "gateway:ai:oracle:tools",
@@ -58,44 +58,53 @@ export const updateIntegrationTool = tool(
       addChats,
       removeChats,
     } = UpdateIntegrationSchema.parse(input);
-    const memory = config.configurable?.memory as any;
+    const memory = config.configurable?.memory as Memory;
 
-    const updatedIntegration = await pb
-      .collection("integrations")
-      .update(memory.integration.id, {
-        name,
-        "agents+": addAgents,
-        "agents-": removeAgents,
-        "sources+": addKnowledgeSources,
-        "sources-": removeKnowledgeSources,
-        "operators+": addOperators,
-        "operators-": removeOperators,
-      });
+    try {
+      const updatedIntegration = await pb
+        .collection("integrations")
+        .update(memory.integration.integration.id, {
+          name,
+          "agents+": addAgents,
+          "agents-": removeAgents,
+          "sources+": addKnowledgeSources,
+          "sources-": removeKnowledgeSources,
+          "operators+": addOperators,
+          "operators-": removeOperators,
+        });
+      log.info({ updatedIntegration }, "Updated integration");
 
-    for (const chatId of addChats ?? []) {
-      await pb.collection("chats").update(chatId, {
-        integration: memory.integration.id,
-      });
+      for (const chatId of addChats ?? []) {
+        await pb.collection("chats").update(chatId, {
+          integration: memory.integration.integration.id,
+        });
+      }
+
+      for (const chatId of removeChats ?? []) {
+        await pb.collection("chats").update(chatId, {
+          integration: null,
+        });
+      }
+
+      log.info({ updatedIntegration }, "Updated integration");
+
+      return {
+        success: true,
+        content: `Updated integration: ${JSON.stringify(updatedIntegration)}`,
+      };
+    } catch (error) {
+      log.error({ error }, "Failed to update integration");
+      return {
+        success: false,
+        content: `Failed to update integration: ${error}`,
+      };
     }
-
-    for (const chatId of removeChats ?? []) {
-      await pb.collection("chats").update(chatId, {
-        integration: null,
-      });
-    }
-
-    log.info({ updatedIntegration }, "Updated integration");
-
-    return {
-      success: true,
-      message: `Updated integration: ${JSON.stringify(updatedIntegration)}`,
-    };
   },
   {
     schema: UpdateIntegrationSchema,
-    name: "update-integration-chat",
+    name: "update-integration",
     description:
-      "Update the integration chat with the given domain, theme, name, and first message",
+      "Update the integration with the given name, agents, knowledge sources, chats, operators",
     metadata: {
       visible: true,
       needApproval: true,

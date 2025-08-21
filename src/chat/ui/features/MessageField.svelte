@@ -5,11 +5,11 @@
   } from "@/shared/models/pocketbase-types";
   import TextArea from "@/shared/ui/TextArea.svelte";
 
-  import { socketProvider } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
 
   type Props = {
     room: RoomsResponse;
-    role?: "operator" | "user";
+    sender: Sender;
     inputText?: string;
     inputEl?: any;
     disabled?: boolean;
@@ -17,7 +17,7 @@
 
   let {
     room,
-    role = "user",
+    sender,
     inputEl = $bindable(),
     inputText = $bindable(""),
     disabled = false,
@@ -32,9 +32,10 @@
       socketProvider.sendMessage(
         inputText,
         room.id,
-        role === "operator"
-          ? MessagesRoleOptions.operator
-          : MessagesRoleOptions.user
+        room.type === "oracle" ? "oracle" : "consulter",
+        sender.role as MessagesRoleOptions,
+        "message",
+        {}
       );
 
       inputText = "";

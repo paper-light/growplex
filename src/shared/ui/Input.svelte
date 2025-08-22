@@ -38,7 +38,7 @@
     ghost = false,
     required = false,
     name,
-    color = "primary",
+    color = "neutral",
     size = "md",
     type = "text",
     value = $bindable(),

@@ -125,10 +125,10 @@
             </a>
           </li>
           <li class="w-full">
-            <span class={linkClass("Tickets", true)} title="Coming soon">
+            <a href={`/app/tickets`} class={linkClass("Tickets")}>
               <Ticket size={18} />
               Tickets
-            </span>
+            </a>
           </li>
         </ul>
       </details>

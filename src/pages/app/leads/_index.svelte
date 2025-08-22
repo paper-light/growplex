@@ -8,6 +8,7 @@
   import Button from "@/shared/ui/Button.svelte";
   import Input from "@/shared/ui/Input.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
+  import LeadForm from "@/leads/ui/LeadForm.svelte";
 
   const LEAD_LEVELS = [
     { value: "cold", label: "Cold", color: "info" },
@@ -50,10 +51,6 @@
 
   function handleLeadClick(leadId: string) {
     selectedLeadId = leadId;
-  }
-
-  function handleCancel() {
-    selectedLeadId = "";
   }
 
   function toggleLevel(level: string) {
@@ -102,7 +99,7 @@
                   color={selectedLevels.has(level.value)
                     ? (level.color as any)
                     : "neutral"}
-                  style={selectedLevels.has(level.value) ? "soft" : "outline"}
+                  style="solid"
                   onclick={() => toggleLevel(level.value)}
                 >
                   {level.label}
@@ -113,12 +110,7 @@
 
           <!-- Clear Filters -->
           {#if search || selectedLevels.size > 0}
-            <Button
-              onclick={clearFilters}
-              color="neutral"
-              style="outline"
-              size="sm"
-            >
+            <Button onclick={clearFilters} color="neutral" size="sm">
               Clear
             </Button>
           {/if}
@@ -244,92 +236,12 @@
   </main>
 </div>
 
-<!-- Lead Form Modal (placeholder for now) -->
 <Modal
   class="w-full max-w-xl h-full"
   open={!!selectedLead}
   placement="left"
-  onclose={handleCancel}
+  onclose={() => (selectedLeadId = "")}
   backdrop
 >
-  <div class="h-full flex flex-col">
-    <div class="flex items-center justify-between p-4 border-b border-base-300">
-      <h2 class="text-xl font-bold">
-        {selectedLead?.name || `Lead ${selectedLead?.id?.slice(0, 4) || "N/A"}`}
-      </h2>
-      <Button onclick={handleCancel} color="neutral" style="outline">
-        Close
-      </Button>
-    </div>
-
-    <div class="flex-1 p-4 overflow-auto">
-      <div class="space-y-4">
-        <div class="card bg-base-100 shadow-lg">
-          <div class="card-body">
-            <h3 class="card-title">Lead Details</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label class="label">
-                  <span class="label-text font-medium">Name</span>
-                </label>
-                <p class="text-base-content/70">
-                  {selectedLead?.name || "Not specified"}
-                </p>
-              </div>
-
-              <div>
-                <label class="label">
-                  <span class="label-text font-medium">Level</span>
-                </label>
-                {#if selectedLead?.level}
-                  <span
-                    class={[
-                      "badge",
-                      `badge-${LEAD_LEVELS.find((l) => l.value === selectedLead.level)?.color || "neutral"}`,
-                    ]}
-                  >
-                    {LEAD_LEVELS.find((l) => l.value === selectedLead.level)
-                      ?.label || selectedLead.level}
-                  </span>
-                {:else}
-                  <p class="text-base-content/50">Not specified</p>
-                {/if}
-              </div>
-
-              <div>
-                <label class="label">
-                  <span class="label-text font-medium">Email</span>
-                </label>
-                <p class="text-base-content/70">
-                  {selectedLead?.email || "Not specified"}
-                </p>
-              </div>
-
-              <div>
-                <label class="label">
-                  <span class="label-text font-medium">Phone</span>
-                </label>
-                <p class="text-base-content/70">
-                  {selectedLead?.phone || "Not specified"}
-                </p>
-              </div>
-
-              <div class="md:col-span-2">
-                <label class="label">
-                  <span class="label-text font-medium">Description</span>
-                </label>
-                <p class="text-base-content/70">
-                  {selectedLead?.description || "No description provided"}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center text-base-content/50">
-          <p>Lead form implementation coming soon...</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <LeadForm lead={selectedLead} onSuccess={() => (selectedLeadId = "")} />
 </Modal>

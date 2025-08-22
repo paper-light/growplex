@@ -29,7 +29,7 @@
     value = $bindable(),
     options = [],
     size = "md",
-    color = "primary",
+    color = "neutral",
     ghost = false,
     disabled = false,
   }: Props = $props();

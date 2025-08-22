@@ -55,7 +55,7 @@ export const createTicket = tool(
 
     const msg = await pb
       .collection("messages")
-      .getFirstListItem(`room = "${room.id}" && role = "user"`, {
+      .getFirstListItem(`room = "${room.id}" && role = "guest"`, {
         sort: "-created",
       });
 

@@ -1,0 +1,9 @@
+---
+import AppDashboard from "@/pages/_layouts/app/AppDashboard.astro";
+
+import TicketsSreen from "./_index.svelte";
+---
+
+<AppDashboard title="Tickets">
+  <TicketsSreen client:load transition-persist="tickets-screen" />
+</AppDashboard>

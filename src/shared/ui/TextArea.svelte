@@ -38,7 +38,7 @@
     class: className = "",
     ghost = false,
     grow = false,
-    color = "primary",
+    color = "neutral",
     size = "md",
     value = $bindable(),
     disabled = false,

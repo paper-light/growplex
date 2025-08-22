@@ -24,7 +24,7 @@ class ProjectsProvider {
   async load(orgId: string) {
     const projects = await pb.collection("projects").getFullList({
       filter: `org = "${orgId}"`,
-      sort: "created",
+      sort: "-created",
     });
     this.projects = projects;
   }
@@ -41,7 +41,7 @@ class ProjectsProvider {
         console.log("project", project);
         switch (project.action) {
           case "create":
-            this.projects.push(project.record);
+            this.projects.unshift(project.record);
             break;
           case "delete":
             this.projects = this.projects.filter(
@@ -59,7 +59,7 @@ class ProjectsProvider {
       },
       {
         filter: `org = "${orgId}"`,
-        sort: "created",
+        sort: "-created",
       }
     );
   }

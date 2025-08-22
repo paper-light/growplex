@@ -2,7 +2,6 @@
 
 onRecordCreate((e) => {
   e.next();
-
   $app.runInTransaction((txApp) => {
     const integrations = txApp.findRecordsByFilter(
       "integrations",

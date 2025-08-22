@@ -59,22 +59,22 @@
 //   e.next();
 // }, "rooms");
 
-onRecordDelete((e) => {
-  $app.runInTransaction((txApp) => {
-    if (e.record.get("lead")) {
-      const lead = txApp.findRecordById("leads", e.record.get("lead"));
-      if (lead) txApp.delete(lead);
-    }
+// onRecordDelete((e) => {
+//   $app.runInTransaction((txApp) => {
+//     if (e.record.get("lead")) {
+//       const lead = txApp.findRecordById("leads", e.record.get("lead"));
+//       if (lead) txApp.delete(lead);
+//     }
 
-    if (e.record.get("type") !== "chatPreview" || e.record.get("chat") === "")
-      return;
+//     if (e.record.get("type") !== "chatPreview" || e.record.get("chat") === "")
+//       return;
 
-    const col = txApp.findCollectionByNameOrId("rooms");
-    const room = new Record(col);
-    room.set("chat", e.record.get("chat"));
-    room.set("type", "chatPreview");
-    txApp.save(room);
-  });
+//     const col = txApp.findCollectionByNameOrId("rooms");
+//     const room = new Record(col);
+//     room.set("chat", e.record.get("chat"));
+//     room.set("type", "chatPreview");
+//     txApp.save(room);
+//   });
 
-  e.next();
-}, "rooms");
+//   e.next();
+// }, "rooms");

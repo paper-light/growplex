@@ -61,7 +61,7 @@ class ChatsProvider {
   async load(projectId: string) {
     const chats = await pb.collection("chats").getFullList({
       filter: `project = "${projectId}"`,
-      sort: "created",
+      sort: "-created",
     });
     this._chats = chats;
   }
@@ -78,7 +78,7 @@ class ChatsProvider {
         console.log("chat", chat);
         switch (chat.action) {
           case "create":
-            this._chats.push(chat.record);
+            this._chats.unshift(chat.record);
             break;
           case "delete":
             this._chats = this._chats.filter((r) => r.id !== chat.record.id);
@@ -94,7 +94,7 @@ class ChatsProvider {
       },
       {
         filter: `project = "${projectId}"`,
-        sort: "created",
+        sort: "-created",
       }
     );
   }

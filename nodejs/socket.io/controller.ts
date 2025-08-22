@@ -66,9 +66,15 @@ export function attachSocketIO(httpServer: any) {
       sendMessage(socket, io, dto);
     });
 
-    socket.on("leave-room", (dto) => {
+    socket.on("leave-room", async (dto) => {
       sender.removeSocket(dto.roomId, socket.id);
       socket.leave(dto.roomId);
+
+      if (socket.data.guest) {
+        await pb.collection("rooms").update(dto.roomId, {
+          online: false,
+        });
+      }
     });
 
     socket.on("disconnect", async () => {

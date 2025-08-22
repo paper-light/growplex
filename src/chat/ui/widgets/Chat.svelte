@@ -60,6 +60,10 @@
     untrack(() => {
       socketProvider.joinRoom(room.id);
     });
+
+    return () => {
+      socketProvider.leaveRoom(room.id);
+    };
   });
 </script>
 

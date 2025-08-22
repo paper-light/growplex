@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { onMount } from "svelte";
+
   import Interactions from "@/chat/ui/widgets/Interactions.svelte";
   import Messages from "@/messages/ui/widgets/Messages.svelte";
   import { roomsProvider } from "@/chat/providers/rooms.svelte";
@@ -51,15 +53,12 @@
   let roomListElement: HTMLDivElement | null = $state(null);
   let scrollPosition = $state(0);
 
-  function sortRooms(a: RoomsResponse, b: RoomsResponse) {
-    const order = {
-      operator: 0,
-      waitingOperator: 1,
-      auto: 2,
-      seeded: 3,
-    };
-    return (order[a.status] ?? 99) - (order[b.status] ?? 99);
-  }
+  onMount(() => {
+    if (!sortedRooms.find((r) => r.id === selectedRoom?.id)) {
+      const room = sortedRooms[0];
+      if (room) settingsProvider.selectRoom(room.id);
+    }
+  });
 
   function saveScrollPosition() {
     if (roomListElement) {

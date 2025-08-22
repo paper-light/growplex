@@ -12,6 +12,7 @@
   import Man from "@/shared/assets/Man.jpg";
   import { agentsProvider } from "@/agent/providers/agents.svelte";
   import type { Sender } from "@/chat/providers/socket.svelte";
+  import { onMount } from "svelte";
 
   const ROOM_STATUSES = [
     { value: "operator", label: "Operator", color: "success" },
@@ -62,6 +63,13 @@
   // FILTERS
   let selectedTypes = $state<Set<string>>(new SvelteSet());
 
+  onMount(() => {
+    if (!sortedRooms.find((r) => r.id === selectedRoom?.id)) {
+      const room = sortedRooms[0];
+      if (room) settingsProvider.selectRoom(room.id);
+    }
+  });
+
   function sortRooms(a: RoomsResponse, b: RoomsResponse) {
     const order = {
       operator: 0,
@@ -97,11 +105,6 @@
   async function handleRoomClick(room: RoomsResponse) {
     saveScrollPosition();
     settingsProvider.selectRoom(room.id);
-  }
-
-  async function handleIntegrationChange(e: Event) {
-    const target = e.target as HTMLSelectElement;
-    settingsProvider.selectIntegration(target.value);
   }
 
   function toggleTypeFilter(type: string) {

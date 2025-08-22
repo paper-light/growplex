@@ -35,13 +35,7 @@
 
   const filteredIntegrations = $derived(integrations);
 
-  const sortedIntegrations = $derived(
-    filteredIntegrations.toSorted((a, b) => {
-      if (selectedIntegration?.id === a.id) return -1;
-      if (selectedIntegration?.id === b.id) return 1;
-      return 0;
-    })
-  );
+  const sortedIntegrations = $derived(filteredIntegrations);
 
   // Helper functions to get related entities with safe access
   const getIntegrationAgents = (integration: any) => {

@@ -26,7 +26,7 @@ class IntegrationsProvider {
   private async load(projectId: string) {
     const integrations = await pb.collection("integrations").getFullList({
       filter: `project = "${projectId}"`,
-      sort: "created",
+      sort: "-created",
     });
     this.integrations = integrations;
   }
@@ -43,7 +43,7 @@ class IntegrationsProvider {
         console.log("integration", integration);
         switch (integration.action) {
           case "create":
-            this.integrations.push(integration.record);
+            this.integrations.unshift(integration.record);
             break;
           case "delete":
             this.integrations = this.integrations.filter(
@@ -61,7 +61,7 @@ class IntegrationsProvider {
       },
       {
         filter: `project = "${projectId}"`,
-        sort: "created",
+        sort: "-created",
       }
     );
   }

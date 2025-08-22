@@ -25,7 +25,7 @@ class LeadsProvider {
       async (lead) => {
         switch (lead.action) {
           case "create":
-            this.leads.push(lead.record);
+            this.leads.unshift(lead.record);
             break;
           case "delete":
             this.leads = this.leads.filter((r) => r.id !== lead.record.id);
@@ -41,6 +41,7 @@ class LeadsProvider {
       },
       {
         filter: `project = "${projectId}"`,
+        sort: "-created",
       }
     );
   }

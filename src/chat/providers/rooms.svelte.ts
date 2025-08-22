@@ -48,7 +48,7 @@ class RoomsProvider {
 
   async load(projectId: string) {
     const rooms = await pb.collection("rooms").getFullList({
-      sort: "created",
+      sort: "-created",
       filter: `chat.project = "${projectId}"`,
       expand: "chat",
     });
@@ -66,7 +66,7 @@ class RoomsProvider {
       (room) => {
         switch (room.action) {
           case "create":
-            this.rooms.push(room.record);
+            this.rooms.unshift(room.record);
             break;
 
           case "delete":
@@ -83,7 +83,7 @@ class RoomsProvider {
         }
       },
       {
-        sort: "created",
+        sort: "-created",
         filter: `chat.project = "${projectId}"`,
         expand: "chat",
       }

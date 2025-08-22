@@ -35,13 +35,7 @@
 
   const filteredSources = $derived(sources);
 
-  const sortedSources = $derived(
-    filteredSources.toSorted((a, b) => {
-      if (a.id === source?.id) return -1;
-      if (b.id === source?.id) return 1;
-      return 0;
-    })
-  );
+  const sortedSources = $derived(filteredSources);
 
   const documents = $derived(
     documentsProvider.documentsMap.get(source?.id || "") || []

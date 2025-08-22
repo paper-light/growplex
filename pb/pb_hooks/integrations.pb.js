@@ -5,6 +5,20 @@ onRecordCreate((e) => {
 
   $app.runInTransaction((txApp) => {
     const projectId = e.record.get("project");
+
+    const project = txApp.findRecordById("projects", projectId);
+    const org = txApp.findRecordById("orgs", project.get("org"));
+    const member = txApp.findRecordsByFilter(
+      "orgMembers",
+      `org = "${org.id}" && role = 'owner'`
+    )[0];
+    const user = txApp.findRecordsByFilter(
+      "users",
+      `orgMembers:each = "${member.id}"`
+    )[0];
+
+    e.record.set("operators", [user.id]);
+
     const agents = e.record.get("agents");
     const chats = txApp.findRecordsByFilter(
       "chats",

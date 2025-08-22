@@ -110,10 +110,17 @@ async function initRoom(chatId: string, identity?: string) {
   }
 
   if (!lead) {
+    const chat = await pb.collection("chats").getOne(chatId, {
+      expand: "project",
+    });
+    const project = (chat.expand as any)?.project;
+    if (!project) throw new Error("Chat does not have a project");
+
     lead = await pb.collection("leads").create({
       name: `Guest-${nanoid(2)}`,
       externalUser: identity,
-      type: "cold",
+      level: "cold",
+      project: project.id,
     });
   }
 

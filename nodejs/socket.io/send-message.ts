@@ -51,7 +51,7 @@ export async function sendMessage(
           }
         );
         await pb.collection("leads").update(room.lead, {
-          type: "warm",
+          level: "warm",
         });
       }
     } else if (socket.data.user) {

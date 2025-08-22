@@ -166,16 +166,16 @@
 
   <!-- Main Content Area -->
   {#if innerChat && sortedRooms.length > 0}
-    <div class="flex flex-col flex-1 min-w-0">
+    <div
+      class="flex flex-col flex-1 min-w-0 md:w-4xl max-w-4xl mx-auto border-x border-base-100"
+    >
       <header class="flex-shrink-0">
         <div class="flex items-center justify-between">
           <h1 class="text-2xl font-bold">Chat</h1>
         </div>
       </header>
 
-      <main
-        class="flex-1 overflow-hidden w-full md:w-4xl max-w-4xl mx-auto border-x border-base-300"
-      >
+      <main class="flex-1 overflow-hidden w-full">
         <Messages
           class="px-12 py-4"
           {messages}

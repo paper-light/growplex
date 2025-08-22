@@ -27,9 +27,10 @@ const lead: LeadsResponse = (room.expand as any).lead;
 const avatar = lead.avatar ? pb.files.getURL(lead, lead.avatar) : Man.src;
 
 const chat = await pb.collection("chats").getOne(chatId, {
-  expand: "integration,integration.agents",
+  expand: "integration,integration.agents,integration.operators",
 });
 const agents = (chat.expand as any)?.integration.expand.agents;
+const operators = (chat.expand as any)?.integration.expand.operators;
 
 if (!chat || !agents) throw new Error("Integration not properly configured");
 if (!chat.domain) throw new Error("Chat domain not configured");
@@ -41,7 +42,7 @@ if (!chat.domain) throw new Error("Chat domain not configured");
     room={room}
     chat={chat}
     agents={agents}
-    operators={[]}
+    operators={operators}
     sender={{
       id: lead.id,
       avatar,

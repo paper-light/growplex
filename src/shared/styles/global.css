@@ -21,4 +21,5 @@
   --color-primary: var(--color-lime-500);
   --color-secondary: var(--color-yellow-500);
   --color-neutral-content: var(--color-slate-200);
+  --color-neutral: var(--color-slate-500);
 }

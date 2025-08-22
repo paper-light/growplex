@@ -203,15 +203,25 @@ export enum LeadsTypeOptions {
 	"hot" = "hot",
 	"client" = "client",
 }
+
+export enum LeadsLevelOptions {
+	"cold" = "cold",
+	"warm" = "warm",
+	"hot" = "hot",
+	"client" = "client",
+}
 export type LeadsRecord<Tmetadata = unknown> = {
+	avatar?: string
 	created?: IsoDateString
 	description?: string
 	email?: string
 	externalUser?: string
 	id: string
+	level?: LeadsLevelOptions
 	metadata?: null | Tmetadata
 	name?: string
 	phone?: string
+	project?: RecordIdString
 	tg?: string
 	type?: LeadsTypeOptions
 	updated?: IsoDateString
@@ -310,6 +320,7 @@ export type RoomsRecord = {
 	created?: IsoDateString
 	id: string
 	lead?: RecordIdString
+	online?: boolean
 	status: RoomsStatusOptions
 	type?: RoomsTypeOptions
 	updated?: IsoDateString
@@ -354,14 +365,23 @@ export enum TicketsPriorityOptions {
 	"high" = "high",
 	"medium" = "medium",
 }
+
+export enum TicketsTypeOptions {
+	"feedback" = "feedback",
+	"support" = "support",
+	"ai" = "ai",
+}
 export type TicketsRecord<Tmetadata = unknown> = {
 	created?: IsoDateString
 	description?: string
+	done?: boolean
 	id: string
 	message?: RecordIdString
 	metadata?: null | Tmetadata
 	priority?: TicketsPriorityOptions
+	project?: RecordIdString
 	title?: string
+	type?: TicketsTypeOptions
 	updated?: IsoDateString
 }
 

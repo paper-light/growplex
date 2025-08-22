@@ -8,7 +8,7 @@ class TicketsProvider {
 
   private async load(projectId: string) {
     const tickets = await pb.collection("tickets").getFullList({
-      filter: `message.room.chat.project = "${projectId}"`,
+      filter: `project = "${projectId}"`,
       sort: "-created",
     });
     this.tickets = tickets;

@@ -1,7 +1,9 @@
 ---
 import AppDashboard from "@/pages/_layouts/app/AppDashboard.astro";
+
+import LeadsSreen from "./_index.svelte";
 ---
 
 <AppDashboard title="Leads">
-  <div>Leads</div>
+  <LeadsSreen client:load transition-persist="leads-screen" />
 </AppDashboard>

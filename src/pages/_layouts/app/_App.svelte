@@ -15,6 +15,7 @@
   import { integrationsProvider } from "@/integration/providers/integrations.svelte";
   import { subscriptionProvider } from "@/billing/providers/subscription.svelte";
   import { ticketsProvider } from "@/ticket/providers/tickets.svelte";
+  import { leadsProvider } from "@/leads/providers/leads.svelte";
 
   // GLOBAL
   onMount(() => {
@@ -69,6 +70,7 @@
       sourcesProvider.subscribe(project.id);
       roomsProvider.subscribe(project.id);
       ticketsProvider.subscribe(project.id);
+      leadsProvider.subscribe(project.id);
     });
 
     return () => {
@@ -79,6 +81,7 @@
       sourcesProvider.unsubscribe();
       roomsProvider.unsubscribe();
       ticketsProvider.unsubscribe();
+      leadsProvider.unsubscribe();
     };
   });
 

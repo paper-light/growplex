@@ -44,6 +44,7 @@ export const createTicket = tool(
     const { memory } = config.configurable as { memory: Memory };
 
     const room = memory.room.room;
+    const project = memory.project.project;
 
     if (room.type !== RoomsTypeOptions.chatWidget) {
       return {
@@ -64,6 +65,8 @@ export const createTicket = tool(
       description,
       priority,
       metadata: payload,
+      project: project.id,
+      type: "ai",
     });
 
     return {

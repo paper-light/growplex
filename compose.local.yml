@@ -16,21 +16,6 @@ services:
     env_file:
       - .env
 
-  # qdrant:
-  #   image: qdrant/qdrant:latest
-  #   ports:
-  #     - 6333:6333
-  #   volumes:
-  #     - ./qdrant/data:/qdrant/storage
-  #   environment:
-  #     QDRANT__AUTH__ENABLE: true
-  #     QDRANT__AUTH__API_KEY: ${QDRANT_API_KEY}
-  #     QDRANT__STORAGE__PATH: /qdrant/storage
-  #     QDRANT__STORAGE__VECTOR_CACHE_SIZE: 1000000000
-  #     QDRANT__STORAGE__VECTOR_CACHE_TTL: 604800
-  #   env_file:
-  #     - .env
-
   redis:
     image: docker.dragonflydb.io/dragonflydb/dragonfly
     ports:
@@ -54,15 +39,12 @@ services:
     environment:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
 
-  # weaviate:
-  #   image: cr.weaviate.io/semitechnologies/weaviate:1.26.4
-  #   ports:
-  #     - "8008:8080"
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - WEAVIATE_AUTH__ENABLED=false
-  #     - WEAVIATE_SERVICE_PASSWORD_APIKEYS=${WEAVIATE_SERVICE_PASSWORD_APIKEYS}
+  searxng:
+    image: searxng/searxng
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env
 
 volumes:
   pb_data:

@@ -1,7 +1,7 @@
 ---
 import AppDashboard from "@/pages/_layouts/app/AppDashboard.astro";
 
-import ChatPreview from "@/chat/ui/widgets/Preview.svelte";
+import Preview from "@/chat/ui/widgets/Preview.svelte";
 
 import ChatForm from "@/chat/ui/widgets/ChatForm.svelte";
 import AgentForm from "@/agent/ui/widgets/AgentForm.svelte";
@@ -24,7 +24,7 @@ import SourcesIntegrationList from "@/source/ui/SourcesIntegrationList.svelte";
     </div>
 
     <div class="h-full overflow-hidden">
-      <ChatPreview block client:load transition:persist="chat-preview" />
+      <Preview client:load transition:persist="chat-preview" />
     </div>
   </div>
 </AppDashboard>

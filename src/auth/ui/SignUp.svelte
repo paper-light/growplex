@@ -9,7 +9,7 @@
   let username = $state("");
   let email = $state("");
   let password = $state("");
-  let confirmPassword = $state("");
+  let passwordConfirm = $state("");
   let agreed = $state(false);
   let loading = $state(false);
   let error: AuthError | null = $state(null);
@@ -18,7 +18,7 @@
     email.length === 0 ||
       password.length === 0 ||
       username.length === 0 ||
-      password !== confirmPassword ||
+      password !== passwordConfirm ||
       !agreed
   );
 
@@ -27,7 +27,7 @@
     error = null;
     loading = true;
 
-    if (password !== confirmPassword) {
+    if (password !== passwordConfirm) {
       error = { message: "Passwords do not match" };
       return;
     }
@@ -36,7 +36,7 @@
       await pb.collection("users").create({
         email,
         password,
-        passwordConfirm: confirmPassword,
+        passwordConfirm,
         name: username,
       });
       await pb.collection("users").authWithPassword(email, password, {
@@ -116,7 +116,7 @@
         id="confirmPassword"
         type="password"
         placeholder="••••••••"
-        bind:value={confirmPassword}
+        bind:value={passwordConfirm}
         required
         class="input input-bordered w-full"
       />

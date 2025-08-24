@@ -100,12 +100,14 @@
     const room = roomsProvider.selectedRoom;
     if (!room || !socketProvider.online) return;
 
+    const currentRoomId = room.id;
+
     untrack(() => {
-      socketProvider.joinRoom(room.id);
+      socketProvider.joinRoom(currentRoomId);
     });
 
     return () => {
-      socketProvider.leaveRoom(room.id);
+      socketProvider.leaveRoom(currentRoomId);
     };
   });
 </script>

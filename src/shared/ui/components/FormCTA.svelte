@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { z } from "zod";
   import { navigate } from "astro:transitions/client";
   import { actions } from "astro:actions";
 
@@ -6,6 +7,10 @@
   import TextArea from "../TextArea.svelte";
   import Input from "../Input.svelte";
   import Button from "../Button.svelte";
+
+  const ContactSchema = z.email().or(z.string().regex(/^\+[1-9]\d{1,14}$/));
+
+  let err = $state("");
 
   let contact = $state("");
   let message = $state("");
@@ -15,15 +20,21 @@
   async function handleSubmit(e: Event) {
     e.preventDefault();
 
+    const result = ContactSchema.safeParse(contact);
+    if (!result.success) {
+      err = result.error.message;
+      return;
+    }
+
+    err = "";
     navigate("/app/auth/sign-up");
-    const { data, error } = await actions.sendTG({
+    const { data, error } = await actions.sendCTA({
       contact,
       message,
-      source: "<unknown>",
     });
 
     if (error) {
-      console.error("sendTG error:", error);
+      console.error("sendCTA error:", error);
     } else {
       contact = "";
       message = "";
@@ -36,7 +47,7 @@
   <form onsubmit={handleSubmit} class="space-y-4">
     <Input
       legend="Your Email or Phone"
-      color="neutral"
+      color={err ? "error" : "neutral"}
       class="w-full"
       required
       bind:value={contact}

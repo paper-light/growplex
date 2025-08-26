@@ -8,7 +8,7 @@ import { getEnv } from "@/shared/helpers/get-env";
 const PROJECT_ID = getEnv("PROJECT_ID");
 
 const log = logger.child({
-  module: "actions:feedback:send",
+  module: "actions:tickets:send",
 });
 
 export const FeedbackSchema = z.object({

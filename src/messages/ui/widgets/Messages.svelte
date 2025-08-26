@@ -12,7 +12,7 @@
     type UsersResponse,
     type ChatsResponse,
   } from "@/shared/models/pocketbase-types";
-  import { type Sender } from "@/chat/providers/socket.svelte";
+  import { socketProvider, type Sender } from "@/chat/providers/socket.svelte";
 
   import Message from "@/messages/ui/entities/Message.svelte";
   import Thalia from "@/shared/assets/Thalia.jpg";
@@ -37,6 +37,10 @@
     chat,
     operators,
   }: Props = $props();
+
+  const isWaitingAnswer = $derived(
+    socketProvider.waitingAnswerRooms.has(messages?.[0]?.room)
+  );
 
   const msgsWithSender = $derived(
     messages.map((msg) => ({
@@ -132,6 +136,9 @@
         {@const incoming = isIncoming(msg)}
         <Message {msg} {incoming} />
       {/each}
+      {#if isWaitingAnswer}
+        <div class="text-left text-sm text-base-content/50">Generating...</div>
+      {/if}
     {/if}
 
     {#if showScrollButton}

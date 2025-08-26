@@ -63,7 +63,8 @@ class SocketProvider {
         const history = this.histories.get(roomId) || [];
         this.histories.set(roomId, [...history, message]);
 
-        if (message.role !== "user") this.waitingAnswerRooms.delete(roomId);
+        if (["assistant", "operator"].includes(message.role))
+          this.waitingAnswerRooms.delete(roomId);
       }
     );
 

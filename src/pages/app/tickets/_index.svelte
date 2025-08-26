@@ -26,7 +26,7 @@
   const tickets = $derived(ticketsProvider.tickets);
 
   let search = $state("");
-  let selectedType = $state("ai");
+  let selectedType = $state("");
   let selectedPriorities: SvelteSet<
     (typeof TICKET_PRIORITIES)[number]["value"]
   > = $state(new SvelteSet());
@@ -68,7 +68,7 @@
 
   function clearFilters() {
     search = "";
-    selectedType = "ai";
+    selectedType = "";
     selectedPriorities.clear();
     showDone = false;
   }
@@ -145,7 +145,7 @@
           </div>
 
           <!-- Clear Filters -->
-          {#if search || selectedType !== "ai" || selectedPriorities.size > 0 || showDone}
+          {#if search || selectedType !== "" || selectedPriorities.size > 0 || showDone}
             <Button onclick={clearFilters} color="neutral" size="sm">
               Clear
             </Button>
@@ -260,7 +260,7 @@
           <h2 class="text-lg font-bold">No tickets found</h2>
           <p class="text-base-content/70">
             {search ||
-            selectedType !== "ai" ||
+            selectedType !== "" ||
             selectedPriorities.size > 0 ||
             showDone
               ? "Try adjusting your filters"

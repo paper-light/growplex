@@ -32,8 +32,9 @@ export const feedbackHandler = async ({
     const ticket = await pb.collection("tickets").create({
       type,
       title,
-      message,
+      description: message,
       project: PROJECT_ID,
+      priority: "medium",
     });
 
     return ticket;

@@ -38,8 +38,11 @@
       title = "";
       message = "";
       err = "";
-      onSuccess?.();
       open = false;
+      onSuccess?.();
+
+      // @ts-ignore
+      document.getElementById("FeedbackModal")?.close();
     }
 
     onFinish?.();

@@ -14,7 +14,7 @@
   --color-primary: var(--color-lime-600);
   --color-secondary: var(--color-amber-600);
   /* --color-neutral-content: var(--color-slate-200); */
-  --color-neutral: var(--color-gray-500);
+  --color-neutral: var(--color-gray-700);
 }
 
 @plugin "daisyui/theme" {

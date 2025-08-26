@@ -25,7 +25,7 @@ class TicketsProvider {
       async (ticket) => {
         switch (ticket.action) {
           case "create":
-            this.tickets.push(ticket.record);
+            this.tickets.unshift(ticket.record);
             break;
           case "delete":
             this.tickets = this.tickets.filter(
@@ -43,6 +43,7 @@ class TicketsProvider {
       },
       {
         filter: `project = "${projectId}"`,
+        sort: "-created",
       }
     );
   }

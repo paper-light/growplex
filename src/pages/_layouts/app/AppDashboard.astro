@@ -11,6 +11,7 @@ import SelectIntegration from "@/integration/ui/SelectIntegration.svelte";
 
 import SidebarNav from "./_AppSidebarNav.svelte";
 import App from "./_App.astro";
+import FeedbackForm from "@/user/ui/FeedbackForm.svelte";
 
 const { title, favicon = Growplex.src } = Astro.props;
 ---
@@ -74,6 +75,14 @@ const { title, favicon = Growplex.src } = Astro.props;
         />
 
         <div class="mt-auto">
+          <div>
+            <FeedbackForm client:only />
+            <button
+              onclick="FeedbackModal.showModal()"
+              class="btn btn-neutral w-full">Feedback</button
+            >
+          </div>
+
           <ProfileRow
             client:only
             transition:persist="profile-row"

@@ -17,19 +17,19 @@ services:
       - .env
 
   redis:
-    image: docker.dragonflydb.io/dragonflydb/dragonfly
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:latest
     ports:
       - "6389:6379"
     volumes:
       - ./redis/data:/redis/data
 
   crawl4ai:
-    image: unclecode/crawl4ai
+    image: unclecode/crawl4ai:latest
     ports:
       - "11235:11235"
 
   meilisearch:
-    image: getmeili/meilisearch
+    image: getmeili/meilisearch:latest
     ports:
       - "7700:7700"
     volumes:
@@ -40,9 +40,13 @@ services:
       - MEILI_MASTER_KEY=${MEILI_MASTER_KEY}
 
   searxng:
-    image: searxng/searxng
+    image: searxng/searxng:latest
     ports:
-      - "8888:8888"
+      - "8888:8080"
+    environment:
+      - SEARXNG_SECRET=your-secret-key-change-this-in-production
+    volumes:
+      - ./searxng/settings.yml:/etc/searxng/settings.yml
     env_file:
       - .env
 

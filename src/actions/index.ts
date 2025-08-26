@@ -4,6 +4,7 @@ import { tgHandler, TGSchema } from "./notification/tg";
 import { indexWebHandler, IndexWebSchema } from "./knowledge/index-web";
 import { indexDocsHandler, IndexDocsSchema } from "./knowledge/index-docs";
 import { crawlUrlHandler, CrawlUrlSchema } from "./crawler/crawl-url";
+import { feedbackHandler, FeedbackSchema } from "./feedback/send";
 
 export const server = {
   sendTG: defineAction({
@@ -24,5 +25,10 @@ export const server = {
   crawlUrl: defineAction({
     input: CrawlUrlSchema,
     handler: crawlUrlHandler,
+  }),
+
+  sendFeedback: defineAction({
+    input: FeedbackSchema,
+    handler: feedbackHandler,
   }),
 };

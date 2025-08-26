@@ -1,5 +1,10 @@
-import { TG_ID, TG_TOKEN } from "astro:env/server";
 import { z } from "astro:schema";
+import { tgNotifier } from "@/notifications/tg";
+import { logger } from "@/shared/lib/logger";
+
+const log = logger.child({
+  module: "actions:notification:tg",
+});
 
 export const TGSchema = z.object({
   contact: z.string(),
@@ -17,21 +22,10 @@ export const tgHandler = async ({
     `*Contact:* ${contact}\n` +
     `*Message:* ${message}\n` +
     `*Source:* ${source}`;
-  const resp = await fetch(
-    `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: TG_ID,
-        text,
-        parse_mode: "Markdown",
-      }),
-    }
-  );
-  if (!resp.ok) {
-    const err = await resp.text();
-    throw new Error(`Telegram API error: ${err}`);
+  try {
+    await tgNotifier.sendMessage(text);
+  } catch (err) {
+    log.error(err);
+    throw err;
   }
-  return { success: true };
 };

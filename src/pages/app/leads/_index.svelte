@@ -10,6 +10,7 @@
   import Modal from "@/shared/ui/Modal.svelte";
   import LeadForm from "@/leads/ui/LeadForm.svelte";
   import Crawl4Leads from "@/leads/ui/Crawl4Leads.svelte";
+  import Pagination from "@/shared/ui/features/Pagination.svelte";
 
   const LEAD_LEVELS = [
     { value: "cold", label: "Cold", color: "info" },
@@ -20,6 +21,10 @@
 
   const project = $derived(projectsProvider.selectedProject);
   const leads = $derived(leadsProvider.leads);
+
+  let page = $state(1);
+  let pageSize = $state(50);
+  const totalPages = $derived(Math.ceil(leads.length / pageSize));
 
   let search = $state("");
   let selectedLevels: SvelteSet<(typeof LEAD_LEVELS)[number]["value"]> = $state(
@@ -50,6 +55,10 @@
 
   const sortedLeads = $derived(filteredLeads);
 
+  const paginatedLeads = $derived(
+    sortedLeads.slice((page - 1) * pageSize, page * pageSize)
+  );
+
   function handleLeadClick(leadId: string) {
     selectedLeadId = leadId;
   }
@@ -65,6 +74,10 @@
   function clearFilters() {
     search = "";
     selectedLevels.clear();
+  }
+
+  function handlePageChange(newPage: number) {
+    page = newPage;
   }
 </script>
 
@@ -126,7 +139,7 @@
 
   <main class="flex-1 flex flex-col min-h-0 p-4">
     <div class="flex flex-col gap-4 flex-1 min-h-0">
-      {#if leads.length > 0}
+      {#if paginatedLeads.length > 0}
         <div class="overflow-x-auto flex-1">
           <table class="table w-full">
             <thead class="sticky top-0 bg-base-100 z-10">
@@ -142,7 +155,7 @@
             </thead>
 
             <tbody>
-              {#each sortedLeads as lead}
+              {#each paginatedLeads as lead}
                 <tr
                   onclick={() => handleLeadClick(lead.id)}
                   class={[
@@ -233,6 +246,15 @@
       {/if}
     </div>
   </main>
+
+  {#if totalPages > 1}
+    <Pagination
+      {page}
+      {totalPages}
+      itemsLength={sortedLeads.length}
+      onPageChange={handlePageChange}
+    />
+  {/if}
 </div>
 
 <Modal

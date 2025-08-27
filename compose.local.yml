@@ -24,7 +24,7 @@ services:
       - ./redis/data:/redis/data
 
   crawl4ai:
-    image: unclecode/crawl4ai:0.7.3
+    image: unclecode/crawl4ai:latest
     ports:
       - "11235:11235"
 
@@ -44,7 +44,7 @@ services:
     ports:
       - "8888:8080"
     environment:
-      - SEARXNG_SECRET=your-secret-key-change-this-in-production
+      - SEARXNG_SECRET=${SEARCH_SECRET}
     volumes:
       - ./searxng/settings.yml:/etc/searxng/settings.yml
     env_file:

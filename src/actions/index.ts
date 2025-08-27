@@ -9,6 +9,7 @@ import {
   webMainCTAHandler,
   WebMainCTASchema,
 } from "./tickets/web-main-cta-send";
+import { minerHandler, MinerSchema } from "./leads/miner";
 
 export const server = {
   sendCTA: defineAction({
@@ -34,5 +35,10 @@ export const server = {
   sendFeedback: defineAction({
     input: FeedbackSchema,
     handler: feedbackHandler,
+  }),
+
+  mineLeads: defineAction({
+    input: MinerSchema,
+    handler: minerHandler,
   }),
 };

@@ -9,6 +9,7 @@
   import Input from "@/shared/ui/Input.svelte";
   import Modal from "@/shared/ui/Modal.svelte";
   import LeadForm from "@/leads/ui/LeadForm.svelte";
+  import Crawl4Leads from "@/leads/ui/Crawl4Leads.svelte";
 
   const LEAD_LEVELS = [
     { value: "cold", label: "Cold", color: "info" },
@@ -118,9 +119,7 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <Button>
-          Crawl for leads <Search class="size-4" />
-        </Button>
+        <Crawl4Leads />
       </div>
     </div>
   </header>

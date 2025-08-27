@@ -1,22 +1,31 @@
 import type { Model, ModelUsage } from "./types";
 
-const MARKUP = 5;
+const MARKUP = 10;
 
-export const BILLING_GAS_QUOTAS = {
-  Free: 1000,
-  Lite: 2000,
-  Plus: 3500,
-  Pro: 9000,
-  Business: 55000,
-} as const;
+// export const BILLING_GAS_QUOTAS = {
+//   Free: 1000,
+//   Lite: 2000,
+//   Plus: 3500,
+//   Pro: 9000,
+//   Business: 55000,
+// } as const;
 
-export const BILLING_PRICES = {
-  Free: 0,
-  Lite: 2700,
-  Plus: 6700,
-  Pro: 9700,
-  Business: 49700,
-} as const;
+// export const BILLING_PRICES = {
+//   Free: 0,
+//   Lite: 2700,
+//   Plus: 6700,
+//   Pro: 9700,
+//   Business: 49700,
+// } as const;
+
+export const API_CENTS_PER_CHUNK = {
+  meili: 0.0003 * 100,
+};
+
+export const API_CENTS_PER_SEARCH = {
+  brave: (5 * 100) / 1000,
+  meili: 0.0004 * 100,
+};
 
 const API_CENTS_PER_TOKEN: Record<Model, ModelUsage> = {
   // OPENAI
@@ -72,3 +81,12 @@ export const BILLING_GAS_PRICES_PER_TOKEN: Record<Model, ModelUsage> = (() => {
   }
   return prices;
 })();
+
+export const BILLING_GAS_PRICES_PER_SEARCH = {
+  brave: API_CENTS_PER_SEARCH.brave * MARKUP,
+  meili: API_CENTS_PER_SEARCH.meili * MARKUP,
+};
+
+export const BILLING_GAS_PRICES_PER_CRAWL = {
+  price: 0.01,
+};

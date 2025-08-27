@@ -1,3 +1,0 @@
-services:
-  crawl4ai:
-    image: unclecode/crawl4ai:0.6.1

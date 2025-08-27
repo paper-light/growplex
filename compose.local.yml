@@ -24,7 +24,7 @@ services:
       - ./redis/data:/redis/data
 
   crawl4ai:
-    image: unclecode/crawl4ai:latest
+    image: unclecode/crawl4ai:0.7.3
     ports:
       - "11235:11235"
 

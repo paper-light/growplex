@@ -1,8 +1,8 @@
 import { z } from "astro:schema";
 
 import { logger } from "@/shared/lib/logger";
-import { runMiner } from "@/leads/ai/miner/run";
 import { charger } from "@/billing";
+import { runMiner } from "@/leads/ai/run-miner";
 
 const log = logger.child({
   module: "actions:leads:miner",

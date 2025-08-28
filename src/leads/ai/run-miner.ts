@@ -9,9 +9,11 @@ import { braveSearch } from "@/search/web/brave-search";
 import { pb } from "@/shared/lib/pb";
 import { charger } from "@/billing";
 
-import { LeadsResponseSchema } from "./schemas";
-import { MINER_MODEL, minerBaseModel } from "./llms";
-import { minerPromptTemplate } from "./prompts";
+import { LeadsResponseSchema } from "./miner/schemas";
+import { MINER_MODEL, minerBaseModel } from "./miner/llms";
+import { minerPromptTemplate } from "./miner/prompts";
+import { queryCreatorPromptTemplate } from "./query-creator/prompts";
+import { queryCreatorBaseModel } from "./query-creator/llms";
 
 const log = logger.child({
   module: "leads:ai:miner:run",
@@ -24,8 +26,14 @@ export async function runMiner(
   projectId: string,
   subscriptionId: string
 ) {
-  log.debug({ query }, "Brave search query");
-  const urls = (await braveSearch.search(query)).map((r: any) => r.url);
+  const enhancedQuery = (
+    await queryCreatorPromptTemplate.pipe(queryCreatorBaseModel).invoke({
+      rawQuery: query,
+    })
+  ).content.toString();
+
+  log.debug({ enhancedQuery }, "Brave search query");
+  const urls = (await braveSearch.search(enhancedQuery)).map((r: any) => r.url);
   await charger.chargePrice(
     subscriptionId,
     BILLING_GAS_PRICES_PER_SEARCH.brave
@@ -37,7 +45,7 @@ export async function runMiner(
     urls.map(async (url: string) => {
       const usager = new Usager();
 
-      const results = await deepCrawlUrls([url], false, false, 5, 2);
+      const results = await deepCrawlUrls([url], true, false, 10, 2);
       await charger.chargePrice(
         subscriptionId,
         BILLING_GAS_PRICES_PER_CRAWL.price
@@ -67,7 +75,9 @@ export async function runMiner(
       await charger.chargePrice(subscriptionId, price);
 
       log.debug({ result: result.parsed }, "Miner result");
-      const dtos = result.parsed.leads;
+      const dtos = result.parsed.leads.filter(
+        (lead: any) => lead.email || lead.phone
+      );
       const leads = await Promise.all(
         dtos.map(async (dto: any) => {
           return await pb.collection("leads").create({
